@@ -1,119 +1,215 @@
-# 다음 세션을 위한 지침서
+# 다음 세션을 위한 지침
 
-## 프로젝트 현황
+## 프로젝트 상태 요약
 
-### 🎯 완료된 주요 작업
-1. **블로그 시스템 개선**
-   - 모든 포스트(11개) 정상 표시 (페이지네이션: 첫 페이지 9개, 두 번째 페이지 2개)
-   - 블로그 상세 페이지 레이아웃 개선 (사이드바 유지)
-   - 관련 포스트를 카드 형식에서 리스트 형식으로 변경
-   - 관련 포스트 개수 3개 → 5개로 증가
+### 현재 상태
+- **프로젝트**: MysticSight Tarot (Next.js 15.3.3 + Firebase)
+- **브랜치**: `clean-main` (GitHub에 푸시 완료)
+- **포트**: 4000번 포트 사용 (모든 설정 완료)
+- **배포**: Vercel 배포 에러 수정 완료
 
-2. **뉴스레터 이메일 알림 기능**
-   - 구독 시 admin@innerspell.com으로 알림 전송 설정
-   - Mock 이메일 시스템 구현 (개발 환경)
-   - API 엔드포인트: `/api/newsletter`
+### 완료된 작업
+1. ✅ **Vercel 배포 문제 해결**
+   - Git submodule 에러 수정 (SuperClaude_Framework 제거)
+   - SWC 종속성 경고 해결
+   - Next.js 빌드 경고 모두 수정
 
-### 📁 주요 파일 위치
-- 블로그 메인: `/src/components/blog/BlogMain.tsx`
-- 블로그 상세: `/src/components/blog/BlogPostDetail.tsx`
-- 뉴스레터 액션: `/src/actions/newsletterActions.ts`
-- 뉴스레터 API: `/src/app/api/newsletter/route.ts`
-- Mock 이메일: `/src/lib/email-mock.ts`
+2. ✅ **Missing 함수 구현**
+   - `listFirebaseUsers()`: Firebase 사용자 목록 조회
+   - `changeUserRole()`: 사용자 역할 변경
+   - `updateUserProfile()`: 사용자 프로필 업데이트
 
-## ⚠️ 중요 환경 설정
+3. ✅ **UI 컴포넌트 수정**
+   - Cards 아이콘 → CreditCard로 교체
+   - 타로 카드 데이터 오타 수정 (swords-06)
 
-### 포트 설정 (절대 준수)
+4. ✅ **GitHub 푸시 완료**
+   - 모든 수정사항 커밋 및 푸시
+   - 깔끔한 히스토리 유지
+
+## 주요 파일 및 설정
+
+### 핵심 설정 파일
+```
+package.json - 포트 4000 설정 완료
+vercel.json - Vercel 배포 최적화 설정
+.env.local - Firebase 및 API 키 설정
+```
+
+### 주요 구현된 기능
+```
+src/actions/userActions.ts - 사용자 관리 함수들
+src/app/admin/users/page.tsx - 관리자 사용자 관리
+src/components/admin/UserManagement.tsx - 사용자 관리 컴포넌트
+```
+
+### 테스트 환경
+```
+tests/simple-chromium-open.js - Playwright 크로미움 테스트
+tests/ultimate-test-july22.js - 전체 기능 테스트
+```
+
+## 다음 세션에서 할 일
+
+### 1. 서버 시작 및 확인
 ```bash
-# 개발 서버는 반드시 포트 4000 사용
-npm run dev  # 자동으로 포트 4000에서 실행됨
+npm install  # 의존성 설치 확인
+npm run dev  # 포트 4000에서 서버 시작
 ```
 
-### 현재 브랜치
-```
-feature/blog-system
-```
-
-## 🔧 환경 구성
-
-### 필요한 패키지 (아직 설치 안됨)
+### 2. Playwright 테스트 실행
 ```bash
-# 실제 이메일 전송을 위해 필요 (현재는 Mock 사용 중)
-npm install nodemailer
-npm install --save-dev @types/nodemailer
+node tests/simple-chromium-open.js  # 크로미움으로 확인
 ```
 
-### 환경 변수 (.env.local) - 실제 이메일 전송 시 필요
+### 3. 우선순위 작업
+1. **Vercel 배포 상태 확인** - 배포가 성공했는지 확인
+2. **실제 Firebase Admin SDK 설정** - 현재는 시뮬레이션 모드
+3. **환경변수 보안 강화** - 실제 API 키들 설정
+4. **추가 기능 개발** - 사용자 요청사항에 따라
+
+### 4. 알려진 제한사항
+- Firebase Admin SDK: 개발 모드에서는 시뮬레이션 데이터 사용
+- AI API 키들: 현재 플레이스홀더 상태
+- 일부 기능: 실제 환경에서 추가 설정 필요
+
+## 중요 명령어
+
+### 개발 서버
+```bash
+npm run dev           # 포트 4000에서 서버 시작
+npm run build         # 프로덕션 빌드
+npm run typecheck     # 타입 체크
+```
+
+### Git 관리
+```bash
+git status           # 현재 상태 확인
+git log --oneline    # 커밋 히스토리
+git push origin clean-main  # GitHub 푸시
+```
+
+### 테스트
+```bash
+node tests/simple-chromium-open.js    # 크로미움 테스트
+node tests/ultimate-test-july22.js    # 종합 테스트
+```
+
+## 프로젝트 구조
+
+### 주요 디렉토리
+```
+src/
+├── app/                 # Next.js App Router 페이지들
+│   ├── admin/          # 관리자 페이지
+│   ├── community/      # 커뮤니티 기능
+│   ├── reading/        # 타로 리딩
+│   └── api/           # API 라우트
+├── components/         # 재사용 가능한 컴포넌트들
+├── actions/           # 서버 액션들
+├── data/             # 타로 카드 데이터
+└── lib/              # 유틸리티 및 설정
+```
+
+### 주요 기능별 파일
+```
+타로 리딩: src/app/reading/page.tsx
+커뮤니티: src/app/community/
+관리자: src/app/admin/
+사용자 관리: src/actions/userActions.ts
+Firebase 설정: src/lib/firebase/
+```
+
+## 환경 설정
+
+### 필수 환경변수 (.env.local)
 ```env
-EMAIL_SERVICE=gmail
-EMAIL_USER=your-email@gmail.com
-EMAIL_APP_PASSWORD=your-app-password
-SEND_WELCOME_EMAIL=true
+# Firebase 설정
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyDgZBb3PEMFe58TxXFyeEAh6pzpeG_P9lg
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=innerspell-an7ce.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=innerspell-an7ce
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=innerspell-an7ce.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=944680989471
+NEXT_PUBLIC_FIREBASE_APP_ID=1:944680989471:web:bc817b811a6033017f362a
+
+# 사이트 설정
+NEXT_PUBLIC_SITE_URL=http://localhost:4000
+
+# 관리자 이메일
+ADMIN_EMAILS=admin@innerspell.com,junsupark9999@gmail.com,ceo@innerspell.com
+
+# API 키들 (현재 플레이스홀더)
+OPENAI_API_KEY=your-openai-api-key-here
+GOOGLE_API_KEY=your-google-api-key-here
+GEMINI_API_KEY=your-gemini-api-key-here
+ANTHROPIC_API_KEY=your-anthropic-api-key-here
 ```
 
-## 📝 다음 세션 시작 시 확인사항
+### 포트 설정 확인
+- 개발 서버: http://localhost:4000
+- package.json에 포트 4000 설정 완료
+- 모든 테스트 스크립트도 포트 4000 사용
 
-1. **서버 상태 확인**
-   ```bash
-   # 개발 서버 실행 (포트 4000)
-   npm run dev
-   ```
+## 최근 수정사항 (2024-07-23)
 
-2. **블로그 포스트 확인**
-   - http://localhost:4000/blog 접속
-   - 모든 포스트(11개) 표시 확인
-   - 페이지네이션 동작 확인
+### 1. Vercel 배포 수정 (커밋: ccfd437, 6e0e577)
+- `vercel.json` 추가로 배포 설정 최적화
+- Git submodule 문제 해결
+- SWC 종속성 경고 수정
 
-3. **뉴스레터 기능 확인**
-   - 홈페이지 하단 Footer에서 뉴스레터 구독 테스트
-   - 서버 로그에서 Mock 이메일 전송 확인
+### 2. 함수 구현
+- `listFirebaseUsers()`: 시뮬레이션 모드로 사용자 목록 반환
+- `changeUserRole()`: 사용자 역할 변경 (시뮬레이션)
+- `updateUserProfile()`: 사용자 프로필 업데이트
 
-## 🚀 향후 작업 제안
+### 3. UI 수정
+- lucide-react의 Cards 아이콘을 CreditCard로 교체
+- 타로 카드 데이터 오타 수정
 
-1. **이메일 기능 완성**
-   - nodemailer 설치
-   - 실제 SMTP 설정
-   - 환경 변수 구성
+## 연락처 및 저장소
+- **GitHub**: https://github.com/hopetreehub/innerspell
+- **브랜치**: clean-main
+- **로컬 경로**: /mnt/e/project/test-studio-firebase
 
-2. **블로그 기능 강화**
-   - 검색 기능 추가
-   - 카테고리/태그 필터링
-   - 조회수 추가
+## 문제 해결 가이드
 
-3. **SEO 최적화**
-   - 동적 메타데이터 개선
-   - 구조화된 데이터 추가
-   - 사이트맵 생성
-
-4. **성능 최적화**
-   - 이미지 최적화
-   - 캐싱 전략 구현
-   - 로딩 성능 개선
-
-## 🧪 테스트 스크립트
-
+### 서버 시작 안 될 때
 ```bash
-# 블로그 전체 플로우 테스트
-node test-complete-crud-api.js
+# 의존성 재설치
+rm -rf node_modules package-lock.json
+npm install
 
-# 뉴스레터 구독 테스트
-node test-newsletter-full.js
+# 포트 충돌 확인
+lsof -i :4000
+kill -9 <PID>
 ```
 
-## 📌 주의사항
+### 빌드 에러 시
+```bash
+# 타입 체크
+npm run typecheck
 
-1. **포트 4000 필수 사용** - 다른 포트 절대 사용 금지
-2. **Mock Firebase Admin SDK** 사용 중 (개발 환경)
-3. **Git 커밋 전 테스트** 필수
-4. **Playwright로 모든 UI 변경사항 검증**
+# 린트 체크
+npm run lint
 
-## 💡 디버깅 팁
+# 캐시 정리
+rm -rf .next
+npm run build
+```
 
-- 서버 로그 확인: `tail -f dev_server.log`
-- Mock 이메일 로그: 서버 콘솔에서 "MOCK EMAIL" 검색
-- Firestore 데이터: Mock 환경에서는 메모리에만 저장됨
+### Git 이슈 시
+```bash
+# 현재 상태 확인
+git status
+git log --oneline -5
+
+# 충돌 해결 후
+git add .
+git commit -m "fix: resolve conflicts"
+git push origin clean-main
+```
 
 ---
-작성일: 2025-07-19
-프로젝트: test-studio-firebase
-포트: 4000 (필수)
+**📌 중요**: 다음 세션 시작 시 이 파일을 먼저 읽고 현재 상태를 파악한 후 작업을 시작하세요.
+
+**마지막 업데이트**: 2024-07-23 (Vercel 배포 에러 수정 완료)
