@@ -1,0 +1,25 @@
+
+> nextn@0.1.0 dev
+> next dev --hostname 0.0.0.0 --port 4000
+
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:4000
+   - Network:      http://0.0.0.0:4000
+   - Environments: .env.local, .env.development
+
+ ✓ Starting...
+ ✓ Ready in 22s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 571ms (153 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 16.5s (1458 modules)
+ HEAD / 200 in 18584ms
+ ✓ Compiled in 2.2s (527 modules)
+ GET / 200 in 511ms
+ ○ Compiling /blog ...
+ ✓ Compiled /blog in 2.4s (2604 modules)
+ GET /blog 200 in 3223ms
+ ○ Compiling /tarot ...
+ ✓ Compiled /tarot in 1908ms (2635 modules)
+ GET /tarot 200 in 2838ms
+ GET / 200 in 303ms

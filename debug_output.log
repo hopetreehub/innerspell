@@ -1,0 +1,362 @@
+[DEBUG] Invalid settings in userSettings source - key: hooks.UserPromptSubmit.0.hooks, error: [
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "hooks",
+      "UserPromptSubmit",
+      0,
+      "hooks"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "hooks",
+      "PreCompact",
+      0,
+      "hooks"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "hooks",
+      "Stop",
+      0,
+      "hooks"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "hooks",
+      "SubagentStop",
+      0,
+      "hooks"
+    ],
+    "message": "Required"
+  }
+]
+[DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+[DEBUG] Writing to temp file: C:\Users\PC2412\.claude.json.tmp.2100.1752941444147
+[DEBUG] Preserving file permissions: 100666
+[DEBUG] Temp file written successfully, size: 25147 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming C:\Users\PC2412\.claude.json.tmp.2100.1752941444147 to C:\Users\PC2412\.claude.json
+[DEBUG] File C:\Users\PC2412\.claude.json written atomically
+[DEBUG] Invalid settings in userSettings source - key: hooks.UserPromptSubmit.0.hooks, error: [
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "hooks",
+      "UserPromptSubmit",
+      0,
+      "hooks"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "hooks",
+      "PreCompact",
+      0,
+      "hooks"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "hooks",
+      "Stop",
+      0,
+      "hooks"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "array",
+    "received": "undefined",
+    "path": [
+      "hooks",
+      "SubagentStop",
+      0,
+      "hooks"
+    ],
+    "message": "Required"
+  }
+]
+[DEBUG] MCP server "filesystem": Starting connection attempt
+[DEBUG] MCP server "terminal": Starting connection attempt
+[DEBUG] MCP server "github": Starting connection attempt
+[DEBUG] Creating shell snapshot for bash (C:\Program Files\Git\bin\bash.exe)
+[DEBUG] Shell config file not found: C:\Users\PC2412\.bashrc
+[DEBUG] Writing to temp file: C:\Users\PC2412\.claude\todos\b6fbc78b-7ec5-4a5c-ada1-0d71d79e1673-agent-b6fbc78b-7ec5-4a5c-ada1-0d71d79e1673.json.tmp.2100.1752941444425
+[DEBUG] Temp file written successfully, size: 2 bytes
+[DEBUG] Renaming C:\Users\PC2412\.claude\todos\b6fbc78b-7ec5-4a5c-ada1-0d71d79e1673-agent-b6fbc78b-7ec5-4a5c-ada1-0d71d79e1673.json.tmp.2100.1752941444425 to C:\Users\PC2412\.claude\todos\b6fbc78b-7ec5-4a5c-ada1-0d71d79e1673-agent-b6fbc78b-7ec5-4a5c-ada1-0d71d79e1673.json
+[DEBUG] File C:\Users\PC2412\.claude\todos\b6fbc78b-7ec5-4a5c-ada1-0d71d79e1673-agent-b6fbc78b-7ec5-4a5c-ada1-0d71d79e1673.json written atomically
+[DEBUG] Shell snapshots directory does not exist, skipping cleanup
+[DEBUG] MCP server "github": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "github": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "github": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "github" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "github": Connection attempt completed in 253ms - status: failed
+[DEBUG] MCP server "terminal": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "terminal": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "terminal": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "terminal" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "terminal": Connection attempt completed in 270ms - status: failed
+[DEBUG] MCP server "filesystem": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "filesystem": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "filesystem": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "filesystem" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "filesystem": Connection attempt completed in 310ms - status: failed
+[DEBUG] MCP server "web-automation": Starting connection attempt
+[DEBUG] MCP server "web-fetch": Starting connection attempt
+[DEBUG] MCP server "brave-search": Starting connection attempt
+[DEBUG] MCP server "web-automation": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "web-automation": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "web-automation": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "web-automation" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "web-automation": Connection attempt completed in 85ms - status: failed
+[DEBUG] MCP server "web-fetch": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "web-fetch": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "web-fetch": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+[ERROR] MCP server "web-fetch" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "web-fetch": Connection attempt completed in 81ms - status: failed
+[DEBUG] MCP server "brave-search": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "brave-search": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "brave-search": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "brave-search" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "brave-search": Connection attempt completed in 83ms - status: failed
+[DEBUG] MCP server "memory": Starting connection attempt
+[DEBUG] MCP server "sequential-thinking": Starting connection attempt
+[DEBUG] MCP server "shrimp-task-manager": Starting connection attempt
+[DEBUG] MCP server "memory": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "memory": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "memory": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+[ERROR] MCP server "memory" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "memory": Connection attempt completed in 71ms - status: failed
+[DEBUG] MCP server "sequential-thinking": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "sequential-thinking": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "sequential-thinking": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "sequential-thinking" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "sequential-thinking": Connection attempt completed in 67ms - status: failed
+[DEBUG] MCP server "shrimp-task-manager": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "shrimp-task-manager": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "shrimp-task-manager": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+[ERROR] MCP server "shrimp-task-manager" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "shrimp-task-manager": Connection attempt completed in 63ms - status: failed
+[DEBUG] MCP server "analysis": Starting connection attempt
+[DEBUG] MCP server "google-drive": Starting connection attempt
+[DEBUG] MCP server "gmail": Starting connection attempt
+[DEBUG] MCP server "google-drive": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "google-drive": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "google-drive": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "google-drive" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "google-drive": Connection attempt completed in 81ms - status: failed
+[DEBUG] MCP server "analysis": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "analysis": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "analysis": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "analysis" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "analysis": Connection attempt completed in 100ms - status: failed
+[DEBUG] MCP server "gmail": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "gmail": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "gmail": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+[ERROR] MCP server "gmail" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "gmail": Connection attempt completed in 83ms - status: failed
+[DEBUG] MCP server "google-calendar": Starting connection attempt
+[DEBUG] MCP server "mcp-playwright-stealth": Starting connection attempt
+[DEBUG] MCP server "web-app-generator": Starting connection attempt
+[DEBUG] MCP server "google-calendar": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "google-calendar": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "google-calendar": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+[ERROR] MCP server "google-calendar" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "google-calendar": Connection attempt completed in 72ms - status: failed
+[DEBUG] MCP server "web-app-generator": Connection attempt completed in 129ms - status: connected
+[ERROR] MCP server "web-app-generator" Server stderr: Web App Generator MCP server running on stdio
+[DEBUG] MCP server "mcp-playwright-stealth": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "mcp-playwright-stealth": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "mcp-playwright-stealth": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+[ERROR] MCP server "mcp-playwright-stealth" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "mcp-playwright-stealth": Connection attempt completed in 2329ms - status: failed
+[DEBUG] MCP server "supabase-manager": Starting connection attempt
+[DEBUG] MCP server "superclaude-mcp": Starting connection attempt
+[DEBUG] MCP server "superclaude-mcp": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "superclaude-mcp": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "superclaude-mcp": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+[ERROR] MCP server "superclaude-mcp" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "superclaude-mcp": Connection attempt completed in 60ms - status: failed
+[DEBUG] MCP server "supabase-manager": Connection failed: McpError: MCP error -32000: Connection closed
+[DEBUG] MCP server "supabase-manager": Error message: MCP error -32000: Connection closed
+[DEBUG] MCP server "supabase-manager": Error stack: McpError: MCP error -32000: Connection closed
+    at NDA._onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:13174)
+    at _transport.onclose (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1270:12492)
+    at ChildProcess.<anonymous> (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:1272:1460)
+    at ChildProcess.emit (node:events:518:28)
+    at ChildProcess.emit (node:domain:489:12)
+    at CJ6.A.emit (file:///C:/Users/PC2412/.npm-global/node_modules/@anthropic-ai/claude-code/cli.js:438:144114)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+[ERROR] MCP server "supabase-manager" Connection failed: MCP error -32000: Connection closed
+[DEBUG] MCP server "supabase-manager": Connection attempt completed in 2161ms - status: failed
+Error: Input must be provided either through stdin or as a prompt argument when using --print
+[DEBUG] MCP server "web-app-generator": Sending SIGINT to MCP server process
+[DEBUG] MCP server "web-app-generator": MCP server process exited cleanly

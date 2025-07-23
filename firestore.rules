@@ -1,0 +1,103 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 사용자 프로필 컬렉션
+    match /users/{userId} {
+      // 모든 사람이 사용자 프로필 읽기 가능 (공개 정보)
+      allow read: if true;
+      // 본인만 프로필 수정 가능
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // 리딩 경험 컬렉션
+    match /reading-experiences/{experienceId} {
+      // 게시된 글만 읽기 가능
+      allow read: if resource.data.isPublished == true;
+      // 인증된 사용자가 본인 작성자로 글 작성 가능
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.authorId
+        && request.resource.data.isPublished is bool;
+      // 작성자만 수정/삭제 가능
+      allow update, delete: if request.auth != null 
+        && request.auth.uid == resource.data.authorId;
+    }
+    
+    // 리딩 경험 댓글 컬렉션
+    match /reading-comments/{commentId} {
+      // 모든 댓글 읽기 가능
+      allow read: if true;
+      // 인증된 사용자가 본인 작성자로 댓글 작성 가능
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.authorId;
+      // 작성자만 댓글 수정/삭제 가능
+      allow update, delete: if request.auth != null 
+        && request.auth.uid == resource.data.authorId;
+    }
+    
+    // 리딩 경험 좋아요 컬렉션
+    match /reading-likes/{likeId} {
+      // 좋아요 목록 읽기 가능
+      allow read: if true;
+      // 본인만 좋아요 추가/제거 가능
+      allow create, delete: if request.auth != null 
+        && request.auth.uid == request.resource.data.userId;
+      // 좋아요는 수정 불가
+      allow update: if false;
+    }
+    
+    // 댓글 좋아요 컬렉션
+    match /comment-likes/{likeId} {
+      // 댓글 좋아요 목록 읽기 가능
+      allow read: if true;
+      // 본인만 댓글 좋아요 추가/제거 가능
+      allow create, delete: if request.auth != null 
+        && request.auth.uid == request.resource.data.userId;
+      // 댓글 좋아요는 수정 불가
+      allow update: if false;
+    }
+    
+    // 북마크 컬렉션
+    match /bookmarks/{bookmarkId} {
+      // 본인 북마크만 읽기/쓰기 가능
+      allow read, write: if request.auth != null 
+        && request.auth.uid == request.resource.data.userId;
+    }
+    
+    // 팔로우 관계 컬렉션 (향후 확장용)
+    match /user-follows/{followId} {
+      allow read: if true;
+      allow create, delete: if request.auth != null 
+        && request.auth.uid == request.resource.data.followerId;
+      allow update: if false;
+    }
+    
+    // 관리자 전용 컬렉션들
+    match /admin/{document=**} {
+      allow read, write: if request.auth != null 
+        && request.auth.token.admin == true;
+    }
+    
+    // 시스템 통계 컬렉션 (읽기 전용)
+    match /stats/{statId} {
+      allow read: if true;
+      allow write: if false; // 시스템에서만 업데이트
+    }
+    
+    // 신고 컬렉션
+    match /reports/{reportId} {
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.reporterId;
+      allow read: if request.auth != null 
+        && (request.auth.uid == resource.data.reporterId 
+        || request.auth.token.admin == true);
+      allow update, delete: if request.auth != null 
+        && request.auth.token.admin == true;
+    }
+    
+    // 기본적으로 다른 모든 경로는 거부
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
