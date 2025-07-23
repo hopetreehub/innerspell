@@ -333,7 +333,7 @@ export const swordsCards: TarotCard[] = [
       upright: '평온한 전환과 더 나은 곳으로의 이동',
       reversed: '전환의 저항이나 내적 여정'
     },
-    meaningDetaile: {
+    meaningDetailed: {
       upright: '소드 6은 어려운 시기를 벗어나 더 평온한 곳으로 이동하는 것을 상징합니다. 과거의 문제들을 뒤로 하고 새로운 시작을 향해 나아가며, 도움을 받아 안전하게 전환됩니다.',
       reversed: '변화에 저항하거나 과거로 돌아가려는 경향을 나타냅니다. 외부 도움보다는 내적 변화에 집중하거나, 전환이 지연되어 답답함을 느낄 수 있습니다.'
     },

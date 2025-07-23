@@ -8,7 +8,7 @@ import {
   Plus,
   X,
   Hash,
-  Cards,
+  CreditCard,
   Save,
   Eye
 } from 'lucide-react';
@@ -247,7 +247,7 @@ export default function NewReadingSharePage() {
                 <div className="flex flex-wrap gap-2 mt-2">
                   {formData.cards.map(card => (
                     <Badge key={card} variant="secondary" className="pr-1">
-                      <Cards className="h-3 w-3 mr-1" />
+                      <CreditCard className="h-3 w-3 mr-1" />
                       {card}
                       <Button
                         type="button"

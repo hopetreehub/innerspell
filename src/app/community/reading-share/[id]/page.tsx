@@ -13,7 +13,7 @@ import {
   User,
   Calendar,
   Hash,
-  Cards,
+  CreditCard,
   Edit,
   Trash2,
   Flag
@@ -334,7 +334,7 @@ export default function ReadingShareDetailPage() {
           {/* 사용 카드 */}
           <div className="space-y-3">
             <h4 className="font-semibold flex items-center gap-2">
-              <Cards className="h-4 w-4" />
+              <CreditCard className="h-4 w-4" />
               사용된 카드
             </h4>
             <div className="flex flex-wrap gap-2">

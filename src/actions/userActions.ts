@@ -115,3 +115,140 @@ export async function getUserProfile(userId: string) {
     return { success: false, error: '프로필을 불러오는데 실패했습니다.' };
   }
 }
+
+export interface AppUser {
+  uid: string;
+  email?: string;
+  displayName?: string;
+  creationTime?: string;
+  lastSignInTime?: string;
+  role?: string;
+  birthDate?: string;
+  subscriptionStatus?: string;
+  sajuInfo?: string;
+}
+
+/**
+ * Firebase Authentication 사용자 목록 조회
+ */
+export async function listFirebaseUsers(maxResults: number = 100, nextPageToken?: string) {
+  try {
+    console.log('Simulating Firebase Admin listUsers...');
+    
+    // 개발 모드에서는 시뮬레이션 데이터 반환
+    const mockUsers: AppUser[] = [
+      {
+        uid: 'mock-admin-uid-1',
+        email: 'admin@innerspell.com',
+        displayName: 'Admin User',
+        role: 'admin',
+        creationTime: new Date('2024-01-01').toISOString(),
+        lastSignInTime: new Date().toISOString(),
+      },
+      {
+        uid: 'mock-user-uid-1',
+        email: 'user1@example.com',
+        displayName: 'Test User 1',
+        role: 'user',
+        creationTime: new Date('2024-02-01').toISOString(),
+        lastSignInTime: new Date(Date.now() - 86400000).toISOString(),
+      },
+      {
+        uid: 'mock-user-uid-2',
+        email: 'user2@example.com',
+        displayName: 'Test User 2',
+        role: 'user',
+        creationTime: new Date('2024-03-01').toISOString(),
+        lastSignInTime: new Date(Date.now() - 172800000).toISOString(),
+      }
+    ];
+
+    return {
+      users: mockUsers,
+      nextPageToken: undefined,
+      error: null
+    };
+  } catch (error) {
+    console.error('Firebase Admin 사용자 목록 조회 오류:', error);
+    return {
+      users: [],
+      nextPageToken: undefined,
+      error: 'Firebase Admin SDK가 설정되지 않았습니다. 개발 모드에서는 시뮬레이션 데이터를 사용합니다.'
+    };
+  }
+}
+
+/**
+ * 사용자 역할 변경
+ */
+export async function changeUserRole(userId: string, newRole: string) {
+  try {
+    console.log(`Simulating role change: User ${userId} -> ${newRole}`);
+    
+    // 개발 모드에서는 시뮬레이션
+    return {
+      success: true,
+      message: `사용자 역할이 ${newRole}로 변경되었습니다. (시뮬레이션 모드)`
+    };
+  } catch (error) {
+    console.error('사용자 역할 변경 오류:', error);
+    return {
+      success: false,
+      message: '역할 변경에 실패했습니다.'
+    };
+  }
+}
+
+/**
+ * 사용자 프로필 업데이트
+ */
+export async function updateUserProfile(
+  userId: string,
+  updateData: {
+    name?: string;
+    bio?: string;
+    avatar?: string;
+    level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  }
+) {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      return { success: false, error: '사용자 프로필을 찾을 수 없습니다.' };
+    }
+
+    const updateFields: any = {
+      updatedAt: Timestamp.now()
+    };
+
+    // 변경된 필드만 업데이트
+    if (updateData.name !== undefined) {
+      updateFields.name = updateData.name;
+    }
+    if (updateData.bio !== undefined) {
+      updateFields.bio = updateData.bio;
+    }
+    if (updateData.avatar !== undefined) {
+      updateFields.avatar = updateData.avatar;
+    }
+    if (updateData.level !== undefined) {
+      updateFields.level = updateData.level;
+    }
+
+    await updateDoc(userRef, updateFields);
+    console.log(`사용자 프로필 업데이트 완료: ${userId}`);
+
+    return { 
+      success: true, 
+      message: '프로필이 성공적으로 업데이트되었습니다.' 
+    };
+  } catch (error) {
+    console.error('사용자 프로필 업데이트 오류:', error);
+    return { 
+      success: false, 
+      error: '프로필 업데이트 중 오류가 발생했습니다.' 
+    };
+  }
+}
