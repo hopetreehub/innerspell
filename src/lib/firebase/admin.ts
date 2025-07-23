@@ -850,4 +850,5 @@ export function initAdmin() {
 // Export db alias for firestore compatibility
 const db = firestore;
 
-export { exportedAdmin as admin, firestore, db, FieldValue };
+const auth = exportedAdmin.auth();
+export { exportedAdmin as admin, firestore, db, FieldValue, auth };

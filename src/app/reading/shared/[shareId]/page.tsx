@@ -3,7 +3,7 @@ import { SharedTarotReadingView } from '@/components/reading/SharedTarotReadingV
 import { Metadata } from 'next';
 
 interface PageProps {
-  params: { shareId: string };
+  params: Promise<{ shareId: string }>;
 }
 
 async function getSharedReading(shareId: string) {
@@ -26,7 +26,8 @@ async function getSharedReading(shareId: string) {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const reading = await getSharedReading(params.shareId);
+  const { shareId } = await params;
+  const reading = await getSharedReading(shareId);
   
   if (!reading) {
     return {
@@ -47,7 +48,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function SharedReadingPage({ params }: PageProps) {
-  const reading = await getSharedReading(params.shareId);
+  const { shareId } = await params;
+  const reading = await getSharedReading(shareId);
 
   if (!reading) {
     notFound();

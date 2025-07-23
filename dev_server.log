@@ -8,18 +8,212 @@
    - Environments: .env.local, .env.development
 
  ✓ Starting...
- ✓ Ready in 22s
- ○ Compiling /middleware ...
- ✓ Compiled /middleware in 571ms (153 modules)
+ ✓ Ready in 19.5s
+ ✓ Compiled /middleware in 442ms (153 modules)
  ○ Compiling / ...
- ✓ Compiled / in 16.5s (1458 modules)
- HEAD / 200 in 18584ms
- ✓ Compiled in 2.2s (527 modules)
- GET / 200 in 511ms
- ○ Compiling /blog ...
- ✓ Compiled /blog in 2.4s (2604 modules)
- GET /blog 200 in 3223ms
+ ✓ Compiled / in 17s (1578 modules)
+ ✓ Compiled in 3.9s (527 modules)
+ GET / 200 in 3941ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 981ms (1067 modules)
+ GET /favicon.ico 200 in 1489ms
+ GET /favicon.ico 200 in 120ms
+ GET / 200 in 575ms
+ GET /favicon.ico 200 in 132ms
+ GET /favicon.ico 200 in 134ms
+ ○ Compiling /sign-in ...
+ ✓ Compiled /sign-in in 1756ms (1598 modules)
+ GET /sign-in 200 in 2096ms
+ GET / 200 in 192ms
+ GET /sign-in 200 in 152ms
+ GET / 200 in 137ms
+ GET / 200 in 612ms
+ GET /favicon.ico 200 in 143ms
+ GET /favicon.ico 200 in 112ms
+ GET / 200 in 211ms
+ GET /favicon.ico 200 in 144ms
+ GET / 200 in 327ms
+ GET /favicon.ico 200 in 218ms
+ GET /favicon.ico 200 in 153ms
+ GET / 200 in 271ms
+ GET /favicon.ico 200 in 119ms
+ GET /favicon.ico 200 in 115ms
+ ○ Compiling /reading ...
+ ✓ Compiled /reading in 8.1s (4976 modules)
+ GET /reading 200 in 10547ms
+ HEAD / 200 in 512ms
+ GET / 200 in 294ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1259ms (3804 modules)
+ GET /favicon.ico 200 in 1743ms
+ GET /favicon.ico 200 in 571ms
+ GET / 200 in 985ms
+ GET /favicon.ico 200 in 129ms
+ ○ Compiling /sign-in ...
+ ✓ Compiled /sign-in in 883ms (3815 modules)
+ GET /sign-in 200 in 1222ms
+ GET /favicon.ico 200 in 165ms
+ GET /favicon.ico 200 in 114ms
+ GET / 200 in 438ms
+ GET /favicon.ico 200 in 126ms
+ GET /favicon.ico 200 in 111ms
+ GET / 200 in 306ms
+ GET /favicon.ico 200 in 122ms
+ GET /favicon.ico 200 in 112ms
  ○ Compiling /tarot ...
- ✓ Compiled /tarot in 1908ms (2635 modules)
- GET /tarot 200 in 2838ms
- GET / 200 in 303ms
+ ✓ Compiled /tarot in 3.5s (5027 modules)
+ GET /tarot 200 in 4619ms
+ GET /favicon.ico 200 in 220ms
+ GET /favicon.ico 200 in 192ms
+ ○ Compiling /blog ...
+ ✓ Compiled /blog in 4.4s (6181 modules)
+ GET /blog 200 in 5481ms
+ GET /favicon.ico 200 in 183ms
+ GET /favicon.ico 200 in 141ms
+ ○ Compiling /encyclopedia ...
+ ✓ Compiled /encyclopedia in 2.2s (6212 modules)
+ GET /encyclopedia 200 in 3048ms
+ GET /favicon.ico 200 in 175ms
+ GET /favicon.ico 200 in 174ms
+ ○ Compiling /sign-in ...
+ ✓ Compiled /sign-in in 1338ms (4433 modules)
+ GET /sign-in 200 in 1991ms
+ GET /favicon.ico 200 in 235ms
+ GET /favicon.ico 200 in 128ms
+ GET / 200 in 402ms
+ GET /blog 200 in 613ms
+ GET /tarot 200 in 919ms
+ GET /encyclopedia 200 in 579ms
+ GET / 200 in 483ms
+ GET /favicon.ico 200 in 168ms
+ GET /favicon.ico 200 in 122ms
+ GET / 200 in 338ms
+ GET /favicon.ico 200 in 116ms
+ GET /favicon.ico 200 in 114ms
+ GET / 200 in 434ms
+ GET /favicon.ico 200 in 129ms
+ GET /favicon.ico 200 in 120ms
+ GET / 200 in 302ms
+ GET /favicon.ico 200 in 113ms
+ GET / 200 in 285ms
+ GET /favicon.ico 200 in 123ms
+ GET /favicon.ico 200 in 115ms
+ GET /reading 200 in 281ms
+ GET /favicon.ico 200 in 161ms
+ GET /favicon.ico 200 in 76ms
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:4000
+   - Network:      http://0.0.0.0:4000
+   - Environments: .env.local, .env.development
+   - Experiments (use with caution):
+     ✓ optimizeCss
+
+ ✓ Starting...
+ ⚠ Invalid next.config.js options detected: 
+ ⚠     Unrecognized key(s) in object: 'swcMinify'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ✓ Ready in 20.1s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1263ms (159 modules)
+ ○ Compiling /reading ...
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/@genkit-ai/core/lib/tracing.js
+Module not found: Can't resolve '@genkit-ai/firebase' in '/mnt/e/project/test-studio-firebase/node_modules/@genkit-ai/core/lib'
+
+Import trace for requested module:
+./node_modules/@genkit-ai/core/lib/tracing.js
+./node_modules/genkit/lib/tracing.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/@genkit-ai/core/lib/tracing.js
+Module not found: Can't resolve '@genkit-ai/firebase' in '/mnt/e/project/test-studio-firebase/node_modules/@genkit-ai/core/lib'
+
+Import trace for requested module:
+./node_modules/@genkit-ai/core/lib/tracing.js
+./node_modules/genkit/lib/tracing.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:4000
+   - Network:      http://0.0.0.0:4000
+   - Environments: .env.local, .env.development
+   - Experiments (use with caution):
+     ✓ optimizeCss
+
+ ✓ Starting...
+ ✓ Ready in 19.3s

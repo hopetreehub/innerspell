@@ -60,7 +60,6 @@
     "nodemailer": "^6.9.14",
     "openai": "^5.10.1",
     "patch-package": "^8.0.0",
-    "playwright": "^1.54.1",
     "puppeteer": "^24.14.0",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
@@ -79,6 +78,10 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^15.4.1",
     "@opentelemetry/exporter-jaeger": "^2.0.1",
+    "@playwright/test": "^1.54.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.15",
     "@types/react": "^18",
@@ -91,6 +94,8 @@
     "eslint": "^9.31.0",
     "eslint-config-next": "^15.4.1",
     "genkit-cli": "^1.8.0",
+    "jest-environment-jsdom": "^30.0.5",
+    "playwright": "^1.54.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

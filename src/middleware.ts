@@ -1,7 +1,42 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { rateLimit } from './middleware/rate-limit';
 
-export function middleware(request: NextRequest) {
+// Rate limit configurations
+const apiRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // 100 requests per 15 minutes
+});
+
+const authRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5 // 5 login attempts per 15 minutes
+});
+
+const aiRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10 // 10 AI requests per minute
+});
+
+export async function middleware(request: NextRequest) {
+  // Apply rate limiting first
+  const { pathname } = request.nextUrl;
+  
+  if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/dev-auth')) {
+    const rateLimitResponse = await authRateLimiter(request);
+    if (rateLimitResponse.status === 429) return rateLimitResponse;
+  }
+  
+  if (pathname.startsWith('/api/reading') || pathname.includes('tarot') || pathname.includes('dream')) {
+    const rateLimitResponse = await aiRateLimiter(request);
+    if (rateLimitResponse.status === 429) return rateLimitResponse;
+  }
+  
+  if (pathname.startsWith('/api/')) {
+    const rateLimitResponse = await apiRateLimiter(request);
+    if (rateLimitResponse.status === 429) return rateLimitResponse;
+  }
+  
   const response = NextResponse.next();
   
   // Security Headers

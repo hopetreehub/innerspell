@@ -25,11 +25,11 @@ firebase-debug.log
 .idea/
 
 # 테스트 및 로그
-/tests/
 /test-results/
 /coverage/
 *.log
 dev_server*.log
+build.log
 
 # 임시 파일
 *.tmp
@@ -37,12 +37,10 @@ dev_server*.log
 .DS_Store
 *.pem
 
-# 스크린샷 및 테스트 결과물
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.webp
+# 테스트 스크린샷만 제외 (로고와 UI 이미지는 포함)
+tests/screenshots/
+test-results/
+playwright-report/
 
 # Vercel
 .vercel

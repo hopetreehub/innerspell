@@ -1,6 +1,6 @@
 
 > nextn@0.1.0 dev
-> next dev --hostname 0.0.0.0 --port 4000 --port 4000
+> next dev --hostname 0.0.0.0 --port 4000
 
    ▲ Next.js 15.3.3
    - Local:        http://localhost:4000
@@ -8,52 +8,25 @@
    - Environments: .env.local, .env.development
 
  ✓ Starting...
- ✓ Ready in 20.3s
- ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1017ms (153 modules)
- ○ Compiling /blog ...
- ✓ Compiled /blog in 20.5s (2449 modules)
- GET /blog 200 in 22818ms
- ✓ Compiled in 2.5s (1089 modules)
- GET /blog 200 in 188ms
- GET /blog 200 in 149ms
- HEAD /blog 200 in 141ms
- GET /blog 200 in 158ms
- GET /blog 200 in 207ms
- ○ Compiling /favicon.ico ...
- ✓ Compiled /favicon.ico in 1991ms (1376 modules)
- GET /favicon.ico 200 in 2490ms
- GET /favicon.ico 200 in 93ms
- ○ Compiling /blog/[slug] ...
- ✓ Compiled /blog/[slug] in 1327ms (2494 modules)
- GET /blog/dream-symbols-meaning 200 in 5498ms
- GET /blog/meditation-spiritual-growth 200 in 14141ms
- GET /blog 200 in 212ms
- GET /blog 200 in 75ms
- GET /blog 200 in 150ms
- GET /blog 200 in 81ms
- GET /blog 200 in 136ms
- GET /blog 200 in 140ms
- GET /blog 200 in 161ms
- GET /blog 200 in 146ms
- GET /favicon.ico 200 in 126ms
- GET /favicon.ico 200 in 264ms
- GET /blog 200 in 147ms
- GET /blog 200 in 145ms
- GET /favicon.ico 200 in 138ms
- GET /favicon.ico 200 in 236ms
- GET /blog 200 in 143ms
- GET /blog 200 in 187ms
- GET /blog 200 in 148ms
- GET /favicon.ico 200 in 107ms
- GET /favicon.ico 200 in 212ms
- GET /blog 200 in 139ms
- GET /blog 200 in 147ms
- GET /blog 200 in 188ms
- GET /blog/dream-manifestation-techniques 200 in 178ms
- HEAD /blog 200 in 138ms
- GET /blog 200 in 146ms
- GET /blog 200 in -934ms
- GET /blog 200 in 141ms
- GET /blog?t=1752879662 200 in 195ms
+ ✓ Ready in 20.7s
+ ✓ Compiled /middleware in 337ms (153 modules)
+ ○ Compiling /community ...
+ ✓ Compiled /community in 16.1s (1555 modules)
+ GET /community 200 in 19730ms
+ ✓ Compiled in 3.5s (522 modules)
+ ○ Compiling / ...
+ ✓ Compiled /favicon.ico in 3.5s (1587 modules)
+ GET /favicon.ico 200 in 3492ms
+ GET /favicon.ico 200 in 175ms
+ GET / 200 in 4681ms
+ GET /favicon.ico 200 in 124ms
+ GET /favicon.ico 200 in 112ms
+ GET / 200 in 345ms
+ GET /favicon.ico 200 in 130ms
+ GET /favicon.ico 200 in 113ms
+ GET / 200 in 276ms
+ GET /favicon.ico 200 in 140ms
+ GET /favicon.ico 200 in 127ms
+ GET /community 200 in 266ms
+ GET /favicon.ico 200 in 110ms
 [?25h

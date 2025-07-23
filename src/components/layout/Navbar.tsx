@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -29,18 +28,22 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 max-w-screen-2xl items-center px-4 sm:px-6 lg:px-8">
-        {/* 로고 섹션 - 왼쪽 */}
-        <div className="flex items-center">
+      <div className="container flex h-16 max-w-screen-2xl items-center px-4 sm:px-6 lg:px-8 relative">
+        {/* 로고 섹션 - 데스크톱에서 전체의 1/4 위치 (25%) */}
+        <div className="flex-1 lg:flex-none lg:absolute lg:left-1/4 lg:transform lg:-translate-x-1/2">
           <Link href="/" className="flex items-center space-x-2">
             <Image src="/logo.png" alt="InnerSpell 로고" width={32} height={32} className="h-8 w-8" />
             <span className="font-headline text-2xl font-bold text-primary">InnerSpell</span>
           </Link>
         </div>
         
-        {/* 중앙 네비게이션 - 데스크톱 */}
-        <div className="hidden md:flex flex-1 justify-center">
-          <nav className="flex items-center space-x-8 text-sm font-medium">
+        {/* 스페이서 - 데스크톱에서만 */}
+        <div className="hidden lg:block flex-1"></div>
+        
+        {/* 메인 네비게이션 + 사용자 메뉴 - 오른쪽 끝으로 */}
+        <div className="flex items-center space-x-3 lg:space-x-6 ml-auto">
+          {/* 데스크톱 네비게이션 */}
+          <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium">
             {baseNavItems.map((item) => {
               const isExternal = item.href.startsWith('http');
               return (
@@ -56,17 +59,15 @@ export function Navbar() {
               );
             })}
           </nav>
-        </div>
-
-        {/* 우측 사용자 메뉴 */}
-        <div className="flex items-center space-x-3">
-          <div className="hidden md:flex items-center space-x-3">
+          
+          {/* 사용자 메뉴 - 데스크톱 */}
+          <div className="hidden lg:flex items-center space-x-3">
             <UserNav />
             <ThemeToggle />
           </div>
 
           {/* 모바일 메뉴 */}
-          <div className="md:hidden flex items-center space-x-2">
+          <div className="lg:hidden flex items-center space-x-2">
             <UserNav />
             <ThemeToggle />
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>

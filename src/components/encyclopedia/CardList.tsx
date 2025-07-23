@@ -159,9 +159,9 @@ export function CardList({ cards, sidebarData }: CardListProps) {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        <main className="w-full lg:w-2/3">
+        <section className="w-full lg:w-2/3">
             <CardGrid cards={cardsToDisplay} />
-        </main>
+        </section>
         
         <aside className="w-full lg:w-1/3 space-y-6 lg:sticky lg:top-20 self-start">
            <Card className="shadow-md border-primary/10">
