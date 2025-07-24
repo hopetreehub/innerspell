@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@delorenj/taskmaster": "^1.13.3",
+    "@genkit-ai/firebase": "^1.15.2",
     "@genkit-ai/googleai": "^1.8.0",
     "@genkit-ai/next": "^1.8.0",
     "@google/generative-ai": "^0.24.1",
@@ -73,7 +74,9 @@
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss-animate": "^1.0.7",
     "wav": "^1.0.2",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "critters": "^0.0.24",
+    "@opentelemetry/winston-transport": "^0.8.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^15.4.1",
