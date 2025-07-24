@@ -95,6 +95,19 @@ service cloud.firestore {
         && request.auth.token.admin == true;
     }
     
+    // 타로 리딩 저장 컬렉션 - 중요!
+    match /userReadings/{readingId} {
+      // 본인 리딩만 읽기 가능
+      allow read: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+      // 인증된 사용자가 본인 userId로 리딩 생성 가능
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.userId;
+      // 본인 리딩만 수정/삭제 가능
+      allow update, delete: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+    }
+    
     // 기본적으로 다른 모든 경로는 거부
     match /{document=**} {
       allow read, write: if false;

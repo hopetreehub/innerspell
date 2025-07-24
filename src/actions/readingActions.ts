@@ -13,6 +13,16 @@ export async function saveUserReading(
   input: SaveReadingInput
 ): Promise<{ success: boolean; readingId?: string; error?: string | object }> {
   try {
+    // Check if we're in mock mode (development without credentials)
+    const isMockMode = process.env.NODE_ENV === 'development' && !process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    if (process.env.NODE_ENV === 'production' && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      console.log("🎭 Mock 모드에서 리딩 저장 시도됨");
+      return { 
+        success: false, 
+        error: '현재 데모 모드로 운영 중입니다. 리딩 저장 기능은 실제 데이터베이스 연결 후 사용 가능합니다.' 
+      };
+    }
+
     // Validate the input using the centralized schema from types/index.ts
     const validationResult = SaveReadingInputSchema.safeParse(input);
     if (!validationResult.success) {
