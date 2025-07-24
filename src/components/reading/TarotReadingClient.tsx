@@ -462,20 +462,11 @@ export function TarotReadingClient() {
       toast({ title: '저장 완료', description: '리딩 기록이 성공적으로 저장되었습니다.' });
       setReadingJustSaved(true);
     } else {
-      let errorMessage = '리딩 저장 중 알 수 없는 오류가 발생했습니다.';
-      if (typeof result.error === 'string') {
-        errorMessage = result.error;
-      } else if (result.error && typeof result.error === 'object' && !Array.isArray(result.error)) {
-        // Format Zod errors for better readability in the toast.
-        const errorDetails = Object.entries(result.error)
-          .map(([key, value]) => {
-            const messages = Array.isArray(value) ? value.join(', ') : String(value);
-            // Example: "drawnCards: 최소 한 장의 카드가 필요합니다."
-            return `${key} 필드 오류: ${messages}`;
-          })
-          .join('; ');
-        errorMessage = `입력 데이터에 문제가 있습니다. ${errorDetails || '세부 정보 없음'}`;
-      }
+      // 클라이언트 함수는 항상 문자열 에러를 반환합니다
+      const errorMessage = result.error || '리딩 저장 중 알 수 없는 오류가 발생했습니다.';
+      
+      console.error('🚨 저장 실패:', result.error);
+      
       toast({ 
         variant: 'destructive', 
         title: '저장 실패', 
