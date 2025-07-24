@@ -166,21 +166,28 @@ export function SignInForm() {
       router.push(redirectUrl);
     } catch (error: any) {
       console.error("Google Sign-In Error:", error);
-      let errorMessage: React.ReactNode = `Google 로그인 중 알 수 없는 오류가 발생했습니다. (코드: ${error.code})`;
-       if (error.code === 'auth/popup-closed-by-user') {
+      let errorMessage: React.ReactNode;
+      
+      const errorCode = error?.code || 'unknown';
+      
+      if (errorCode === 'auth/popup-closed-by-user') {
         toast({ title: '로그인 취소', description: 'Google 로그인 창을 닫으셨습니다. 다시 시도하시려면 로그인 버튼을 클릭해주세요.', duration: 6000 });
         setLoading(false);
         return; // Don't show generic error for this case
-      } else if (error.code === 'auth/account-exists-with-different-credential') {
+      } else if (errorCode === 'auth/account-exists-with-different-credential') {
         errorMessage = '이미 다른 방식으로 가입된 이메일입니다. 다른 로그인 방식을 시도해주세요.';
-      } else if (error.code === 'auth/unauthorized-domain') {
-        errorMessage = '이 앱의 도메인이 Google 로그인에 대해 승인되지 않았습니다. Firebase 콘솔 설정을 확인해주세요.';
-      } else if (error.code === 'auth/popup-blocked') {
+      } else if (errorCode === 'auth/unauthorized-domain') {
+        errorMessage = '이 도메인이 Firebase에서 승인되지 않았습니다. 관리자가 Firebase Console에서 승인된 도메인에 현재 도메인을 추가해야 합니다.';
+      } else if (errorCode === 'auth/popup-blocked') {
         errorMessage = 'Google 로그인 팝업이 차단되었습니다. 브라우저의 팝업 차단 설정을 확인해주세요.';
-      } else if (error.code === 'auth/operation-not-allowed') {
+      } else if (errorCode === 'auth/operation-not-allowed') {
         errorMessage = 'Google 로그인이 Firebase 프로젝트에서 활성화되지 않았습니다. 관리자에게 문의하세요.';
+      } else if (errorCode === 'auth/network-request-failed') {
+        errorMessage = '네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인하고 다시 시도해주세요.';
+      } else if (errorCode === 'unknown' || !error?.code) {
+        errorMessage = 'Google 로그인 중 예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
       } else {
-        errorMessage = `Google 로그인 중 오류가 발생했습니다. (코드: ${error.code})`;
+        errorMessage = `Google 로그인 중 오류가 발생했습니다. (코드: ${errorCode})`;
       }
       form.setError("root.serverError", { type: "manual", message: errorMessage as string });
     } finally {
