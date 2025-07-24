@@ -45,6 +45,7 @@ import { tarotDeck as allCards } from '@/lib/tarot-data';
 import { generateTarotInterpretation } from '@/ai/flows/generate-tarot-interpretation';
 import { saveUserReading } from '@/actions/readingActions';
 import { saveUserReadingClient } from '@/lib/firebase/client-save';
+import { shareReadingClient } from '@/lib/firebase/client-share';
 import { useAuth } from '@/context/AuthContext';
 
 
@@ -540,22 +541,10 @@ export function TarotReadingClient() {
         timestamp: new Date().toISOString(),
       };
 
-      // Send to share API endpoint
-      const response = await fetch('/api/reading/share', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(shareData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create share link');
-      }
-
-      const result = await response.json();
+      // 클라이언트에서 직접 공유 링크 생성
+      const result = await shareReadingClient(shareData);
       
-      if (result.success) {
+      if (result.success && result.shareUrl) {
         // Copy the share URL to clipboard
         await navigator.clipboard.writeText(result.shareUrl);
         

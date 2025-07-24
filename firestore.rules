@@ -108,6 +108,16 @@ service cloud.firestore {
         && request.auth.uid == resource.data.userId;
     }
     
+    // 공유된 타로 리딩 컬렉션
+    match /sharedReadings/{shareId} {
+      // 누구나 읽기 가능 (공유 목적)
+      allow read: if true;
+      // 누구나 생성 가능 (익명 공유 허용)
+      allow create: if true;
+      // 수정/삭제 불가 (공유 후 변경 방지)
+      allow update, delete: if false;
+    }
+    
     // 기본적으로 다른 모든 경로는 거부
     match /{document=**} {
       allow read, write: if false;
