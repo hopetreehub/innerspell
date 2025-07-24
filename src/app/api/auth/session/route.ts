@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
     
     // 쿠키 설정
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.set('session', sessionCookie, {
       maxAge: expiresIn,
       httpOnly: true,
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 // 세션 검증 API
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('session');
     
     if (!sessionCookie) {
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
 
 // 로그아웃 API
 export async function DELETE(request: NextRequest) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   cookieStore.delete('session');
   
   return NextResponse.json({ success: true });

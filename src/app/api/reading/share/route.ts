@@ -3,6 +3,18 @@ import { db } from '@/lib/firebase/admin';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if we're in mock mode
+    if (process.env.NODE_ENV === 'production' && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      console.log("🎭 Mock 모드에서 리딩 공유 시도됨");
+      return NextResponse.json(
+        { 
+          error: '현재 데모 모드로 운영 중입니다. 공유 기능은 실제 데이터베이스 연결 후 사용 가능합니다.',
+          isMockMode: true 
+        },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const { question, spreadName, spreadNumCards, drawnCards, interpretationText, timestamp } = body;
 

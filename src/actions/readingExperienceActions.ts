@@ -499,7 +499,7 @@ export async function deleteReadingExperience(experienceId: string, userId: stri
     ]);
 
     // 관련 데이터 삭제
-    const deletePromises = [];
+    const deletePromises: Promise<void>[] = [];
     
     likesSnapshot.docs.forEach(doc => {
       deletePromises.push(deleteDoc(doc.ref));

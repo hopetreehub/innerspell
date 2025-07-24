@@ -20,7 +20,7 @@ export function rateLimit(config: Partial<RateLimitConfig> = {}) {
   const finalConfig = { ...defaultConfig, ...config };
   
   return async function rateLimitMiddleware(req: NextRequest) {
-    const headersList = headers();
+    const headersList = await headers();
     const forwarded = headersList.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : 'anonymous';
     

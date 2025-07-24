@@ -13,9 +13,13 @@ export async function saveUserReading(
   input: SaveReadingInput
 ): Promise<{ success: boolean; readingId?: string; error?: string | object }> {
   try {
-    // Check if we're in mock mode (development without credentials)
-    const isMockMode = process.env.NODE_ENV === 'development' && !process.env.GOOGLE_APPLICATION_CREDENTIALS;
-    if (process.env.NODE_ENV === 'production' && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    // Check if Firebase is properly configured
+    // In Vercel, we use FIREBASE_SERVICE_ACCOUNT_KEY instead of GOOGLE_APPLICATION_CREDENTIALS
+    const hasFirebaseCredentials = process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    const isMockMode = process.env.NODE_ENV === 'development' && !hasFirebaseCredentials;
+    
+    // Only reject if we're explicitly in mock mode
+    if (isMockMode) {
       console.log("🎭 Mock 모드에서 리딩 저장 시도됨");
       return { 
         success: false, 

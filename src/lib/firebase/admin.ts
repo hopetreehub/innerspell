@@ -1,7 +1,8 @@
 import admin from 'firebase-admin';
 
-// Development mode mock
-if (process.env.NODE_ENV === 'development' && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+// Development mode mock - only when no Firebase credentials are available
+const hasFirebaseCredentials = process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+if (process.env.NODE_ENV === 'development' && !hasFirebaseCredentials) {
   // In-memory storage for mock documents - use global to persist across hot reloads
   if (!(global as any).mockStorage) {
     (global as any).mockStorage = {};
@@ -809,35 +810,56 @@ if (process.env.NODE_ENV === 'development' && !process.env.GOOGLE_APPLICATION_CR
   // Production or when credentials are available
   if (!admin.apps.length) {
     try {
+      let credential;
+      
+      // Try using service account key from environment variable (Vercel)
+      if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+        try {
+          const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+          credential = admin.credential.cert(serviceAccount);
+          console.log('✅ Using Firebase service account from FIREBASE_SERVICE_ACCOUNT_KEY');
+        } catch (parseError) {
+          console.error('❌ Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:', parseError);
+          throw parseError;
+        }
+      } else {
+        // Fall back to application default credentials (local development)
+        credential = admin.credential.applicationDefault();
+        console.log('✅ Using Firebase application default credentials');
+      }
+      
       admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
+        credential: credential,
         projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'innerspell-an7ce',
       });
+      
+      console.log('🔥 Firebase Admin SDK initialized successfully');
     } catch (error) {
-      console.error('Failed to initialize Firebase Admin:', error);
+      console.error('❌ Failed to initialize Firebase Admin:', error);
       throw error;
     }
   }
 }
 
 // Get the appropriate instance based on environment
-const firestore = process.env.NODE_ENV === 'development' && !process.env.GOOGLE_APPLICATION_CREDENTIALS
+const useMock = process.env.NODE_ENV === 'development' && !hasFirebaseCredentials;
+const firestore = useMock
   ? (global as any).mockFirebaseAdmin?.firestore()
   : admin.firestore();
 
-const exportedAdmin = process.env.NODE_ENV === 'development' && !process.env.GOOGLE_APPLICATION_CREDENTIALS
+const exportedAdmin = useMock
   ? (global as any).mockFirebaseAdmin
   : admin;
 
 // Export FieldValue for use in server actions
-const FieldValue = process.env.NODE_ENV === 'development' && !process.env.GOOGLE_APPLICATION_CREDENTIALS
+const FieldValue = useMock
   ? (global as any).mockFirebaseAdmin?.firestore()?.FieldValue
   : admin.firestore.FieldValue;
 
 // Initialize admin function for API routes
 export function initAdmin() {
   // In development without credentials, this is a no-op as the mock is already initialized
-  if (process.env.NODE_ENV === 'development' && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  if (useMock) {
     return;
   }
   

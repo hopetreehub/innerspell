@@ -156,7 +156,7 @@ export default function ReadingSharePage() {
             exp.id === experienceId
               ? {
                   ...exp,
-                  likes: result.isLiked ? exp.likes + 1 : exp.likes - 1,
+                  likes: (result as any).isLiked ? exp.likes + 1 : exp.likes - 1,
                   // isLiked: result.isLiked
                 }
               : exp
