@@ -21,6 +21,10 @@ export async function createOrUpdateUserProfile(
 
     if (!userDoc.exists()) {
       // 새 사용자 프로필 생성
+      // ADMIN_EMAILS 환경변수에 있는 이메일은 자동으로 관리자 권한 부여
+      const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim());
+      const isAdmin = adminEmails.includes(userData.email);
+      
       const newUserProfile = {
         email: userData.email,
         name: userData.name,
@@ -30,12 +34,13 @@ export async function createOrUpdateUserProfile(
         followersCount: 0,
         followingCount: 0,
         postsCount: 0,
+        role: isAdmin ? 'admin' : 'user',
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       };
 
       await setDoc(userRef, newUserProfile);
-      console.log(`새 사용자 프로필 생성: ${userId}`);
+      console.log(`새 사용자 프로필 생성: ${userId} (role: ${newUserProfile.role})`);
       
       return { 
         success: true, 
@@ -83,9 +88,9 @@ export async function createOrUpdateUserProfile(
 }
 
 /**
- * 사용자 프로필 조회
+ * 사용자 프로필 조회 (UserProfile 타입 반환)
  */
-export async function getUserProfile(userId: string) {
+export async function getUserProfileData(userId: string) {
   try {
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
@@ -120,12 +125,51 @@ export interface AppUser {
   uid: string;
   email?: string;
   displayName?: string;
+  photoURL?: string;
   creationTime?: string;
   lastSignInTime?: string;
   role?: string;
   birthDate?: string;
   subscriptionStatus?: string;
   sajuInfo?: string;
+}
+
+/**
+ * Firebase Auth 사용자 정보를 AppUser로 변환 (관리자 권한 포함)
+ */
+export async function getUserProfile(userId: string): Promise<AppUser | null> {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    
+    if (!userDoc.exists()) {
+      return null;
+    }
+    
+    const data = userDoc.data();
+    
+    // ADMIN_EMAILS 환경변수에 있는 이메일은 자동으로 관리자 권한 부여
+    const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim());
+    const isAdmin = adminEmails.includes(data.email);
+    
+    const appUser: AppUser = {
+      uid: userId,
+      email: data.email || '',
+      displayName: data.name || data.email || '',
+      photoURL: data.avatar || '',
+      role: isAdmin ? 'admin' : (data.role || 'user'),
+      creationTime: data.createdAt?.toDate()?.toISOString() || new Date().toISOString(),
+      lastSignInTime: new Date().toISOString(),
+      birthDate: data.birthDate || '',
+      sajuInfo: data.sajuInfo || '',
+      subscriptionStatus: data.subscriptionStatus || 'free'
+    };
+    
+    return appUser;
+  } catch (error) {
+    console.error('getUserProfile 오류:', error);
+    return null;
+  }
 }
 
 /**
