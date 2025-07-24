@@ -9,11 +9,22 @@ export async function GET(request: NextRequest) {
   try {
     console.log('[DEBUG] Fetching AI provider configs...');
     
+    // Check Firebase Admin status first
+    const firebaseStatus = {
+      hasServiceAccountKey: !!process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      hasGoogleAppCredentials: !!process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      nodeEnv: process.env.NODE_ENV,
+      useRealAuth: process.env.NEXT_PUBLIC_USE_REAL_AUTH
+    };
+    
+    console.log('[DEBUG] Firebase status:', firebaseStatus);
+    
     const result = await getAllAIProviderConfigsForGenkit();
     
     if (!result.success) {
       return NextResponse.json({ 
         error: result.message,
+        firebaseStatus,
         success: false 
       }, { status: 500 });
     }
@@ -94,6 +105,7 @@ export async function GET(request: NextRequest) {
       activeModels: activeModels,
       promptConfig: promptConfig,
       aiInstanceStatus: aiInstanceStatus,
+      firebaseStatus,
       envVars: {
         hasOpenAI: !!process.env.OPENAI_API_KEY,
         hasGoogle: !!process.env.GOOGLE_API_KEY,
