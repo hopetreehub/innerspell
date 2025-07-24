@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getUserReadings } from '@/actions/readingActions';
+import { getUserReadingsClient, deleteUserReadingClient } from '@/lib/firebase/client-read';
 import { SavedReading } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,12 +46,9 @@ export function TarotReadingHistory() {
     
     setLoading(true);
     try {
-      const result = await getUserReadings(user.uid);
-      if (Array.isArray(result)) {
-        setReadings(result);
-      } else if (result && typeof result === 'object' && 'success' in result && result.success && 'readings' in result && Array.isArray(result.readings)) {
-        setReadings(result.readings);
-      }
+      // 클라이언트 사이드에서 직접 Firestore 조회
+      const result = await getUserReadingsClient(user.uid);
+      setReadings(result);
     } catch (error) {
       console.error('Failed to load readings:', error);
       toast({
@@ -64,12 +62,31 @@ export function TarotReadingHistory() {
   };
 
   const handleDelete = async (readingId: string) => {
-    // TODO: Implement delete functionality
-    toast({
-      title: '삭제 완료',
-      description: '타로리딩 기록이 삭제되었습니다.',
-    });
-    setReadings(readings.filter(r => r.id !== readingId));
+    if (!user) return;
+    
+    try {
+      const result = await deleteUserReadingClient(user.uid, readingId);
+      if (result.success) {
+        toast({
+          title: '삭제 완료',
+          description: '타로리딩 기록이 삭제되었습니다.',
+        });
+        setReadings(readings.filter(r => r.id !== readingId));
+      } else {
+        toast({
+          variant: 'destructive',
+          title: '삭제 실패',
+          description: result.error || '타로리딩 삭제 중 오류가 발생했습니다.',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to delete reading:', error);
+      toast({
+        variant: 'destructive',
+        title: '오류',
+        description: '타로리딩을 삭제할 수 없습니다.',
+      });
+    }
   };
 
   if (!user) {
@@ -124,7 +141,7 @@ export function TarotReadingHistory() {
                 <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    {reading.timestamp ? format(new Date(reading.timestamp), 'yyyy년 MM월 dd일', { locale: ko }) : '날짜 없음'}
+                    {reading.createdAt ? format(new Date(reading.createdAt), 'yyyy년 MM월 dd일', { locale: ko }) : '날짜 없음'}
                   </span>
                   <span className="flex items-center gap-1">
                     <Layers className="h-3 w-3" />

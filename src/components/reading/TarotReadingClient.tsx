@@ -44,6 +44,7 @@ import { tarotInterpretationStyles, tarotSpreads } from '@/types';
 import { tarotDeck as allCards } from '@/lib/tarot-data';
 import { generateTarotInterpretation } from '@/ai/flows/generate-tarot-interpretation';
 import { saveUserReading } from '@/actions/readingActions';
+import { saveUserReadingClient } from '@/lib/firebase/client-save';
 import { useAuth } from '@/context/AuthContext';
 
 
@@ -447,7 +448,8 @@ export function TarotReadingClient() {
       position: selectedSpread.positions?.[index] || `카드 ${index + 1}`,
     }));
 
-    const result = await saveUserReading({
+    // 클라이언트 사이드에서 직접 저장 (Firebase Admin SDK 없이)
+    const result = await saveUserReadingClient({
       userId: user.uid,
       question: question,
       spreadName: selectedSpread.name,
