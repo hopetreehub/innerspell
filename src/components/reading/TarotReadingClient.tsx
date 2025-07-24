@@ -442,39 +442,64 @@ export function TarotReadingClient() {
     }
 
     setIsSavingReading(true);
-    const drawnCardsToSave = selectedCardsForReading.map((card, index) => ({
-      id: card.id,
-      isReversed: !!card.isReversed,
-      position: selectedSpread.positions?.[index] || `카드 ${index + 1}`,
-    }));
+    
+    try {
+      const drawnCardsToSave = selectedCardsForReading.map((card, index) => ({
+        id: card.id,
+        isReversed: !!card.isReversed,
+        position: selectedSpread.positions?.[index] || `카드 ${index + 1}`,
+      }));
 
-    // 클라이언트 사이드에서 직접 저장 (Firebase Admin SDK 없이)
-    const result = await saveUserReadingClient({
-      userId: user.uid,
-      question: question,
-      spreadName: selectedSpread.name,
-      spreadNumCards: selectedSpread.numCards,
-      drawnCards: drawnCardsToSave,
-      interpretationText: interpretation,
-    });
+      console.log('📤 저장 요청 데이터:', {
+        userId: user.uid,
+        question: question.substring(0, 50) + '...',
+        spreadName: selectedSpread.name,
+        spreadNumCards: selectedSpread.numCards,
+        drawnCardsCount: drawnCardsToSave.length,
+        interpretationLength: interpretation.length
+      });
 
-    if (result.success) {
-      toast({ title: '저장 완료', description: '리딩 기록이 성공적으로 저장되었습니다.' });
-      setReadingJustSaved(true);
-    } else {
-      // 클라이언트 함수는 항상 문자열 에러를 반환합니다
-      const errorMessage = result.error || '리딩 저장 중 알 수 없는 오류가 발생했습니다.';
-      
-      console.error('🚨 저장 실패:', result.error);
-      
+      // 클라이언트 사이드에서 직접 저장 (Firebase Admin SDK 없이)
+      const result = await saveUserReadingClient({
+        userId: user.uid,
+        question: question,
+        spreadName: selectedSpread.name,
+        spreadNumCards: selectedSpread.numCards,
+        drawnCards: drawnCardsToSave,
+        interpretationText: interpretation,
+      });
+
+      if (!result) {
+        throw new Error('저장 함수가 결과를 반환하지 않았습니다.');
+      }
+
+      if (result.success) {
+        toast({ title: '저장 완료', description: '리딩 기록이 성공적으로 저장되었습니다.' });
+        setReadingJustSaved(true);
+      } else {
+        // 클라이언트 함수는 항상 문자열 에러를 반환합니다
+        const errorMessage = result.error || '리딩 저장 중 알 수 없는 오류가 발생했습니다.';
+        
+        console.error('🚨 저장 실패:', result.error);
+        
+        toast({ 
+          variant: 'destructive', 
+          title: '저장 실패', 
+          description: errorMessage,
+          duration: 9000, // Give more time to read detailed errors
+        });
+      }
+    } catch (error) {
+      console.error('🚨 저장 중 예외 발생:', error);
       toast({ 
         variant: 'destructive', 
-        title: '저장 실패', 
-        description: errorMessage,
-        duration: 9000, // Give more time to read detailed errors
+        title: '저장 오류', 
+        description: error instanceof Error ? error.message : '리딩 저장 중 예상치 못한 오류가 발생했습니다.',
+        duration: 9000,
       });
+    } finally {
+      setIsSavingReading(false);
     }
-    setIsSavingReading(false);
   };
 
   const handleShareReading = async () => {

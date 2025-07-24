@@ -11,6 +11,12 @@ import type { SaveReadingInput } from '@/types';
 export async function saveUserReadingClient(
   input: SaveReadingInput
 ): Promise<{ success: boolean; readingId?: string; error?: string }> {
+  // 함수가 항상 값을 반환하도록 보장
+  if (!input) {
+    console.error('❌ saveUserReadingClient: 입력값이 없습니다');
+    return { success: false, error: '입력 데이터가 제공되지 않았습니다.' };
+  }
+
   try {
     console.log('📝 저장 시도 - 입력 데이터:', {
       userId: input.userId,
