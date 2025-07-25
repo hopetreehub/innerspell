@@ -41,6 +41,21 @@ You should use the following configuration to guide your behavior.
 - 포트 3000번대는 절대 사용하지 않음
 - 모든 개발 및 테스트는 포트 4000에서만 진행
 
+### Vercel 배포 우선 원칙 (Vercel Deployment First Rule) - 절대 준수
+- **모든 작업과 확인은 Vercel 배포 기준으로 한다**
+- **ALL WORK MUST BE BASED ON VERCEL DEPLOYMENT**: Always prioritize Vercel deployment over local development
+- **필수 워크플로우**: 코드 수정 → Git 커밋 → Vercel 자동 배포 → Vercel에서 확인
+- **로컬 테스트 금지**: 로컬 개발 서버로 테스트하지 않고 반드시 Vercel에서 확인
+- **변경사항 확인**: 모든 UI/기능 변경은 Vercel 배포 후에만 확인하고 보고
+- **Git 커밋 필수**: 어떤 수정사항이든 반드시 Git 커밋하여 Vercel 배포로 확인
+- **배포 우선 검증**: Playwright나 다른 테스트도 Vercel 배포 URL 기준으로 실행
+
+### Git 커밋 의무화 원칙 (Mandatory Git Commit Rule)
+- **모든 변경사항은 즉시 Git 커밋해야 한다**
+- **NO LOCAL TESTING**: 로컬에서 테스트하지 말고 바로 커밋하여 Vercel에서 확인
+- **변경 → 커밋 → 배포 → 확인**: 이 순서를 절대 벗어나지 않음
+- **실시간 배포 검증**: 모든 기능과 UI는 실제 Vercel 환경에서만 확인
+
 ## Legend
 @include commands/shared/universal-constants.yml#Universal_Legend
 
