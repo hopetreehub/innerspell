@@ -29,36 +29,14 @@ export class ReadingExperienceService {
     lastDoc?: DocumentSnapshot
   ) {
     try {
-      let q = query(
-        collection(db, this.COLLECTION_NAME),
-        where('isPublished', '==', true)
-      );
-
-      // 태그 필터링
-      if (filterTag) {
-        q = query(q, where('tags', 'array-contains', filterTag));
-      }
-
-      // 정렬
-      switch (sortBy) {
-        case 'popular':
-          q = query(q, orderBy('views', 'desc'));
-          break;
-        case 'likes':
-          q = query(q, orderBy('likes', 'desc'));
-          break;
-        case 'comments':
-          q = query(q, orderBy('commentsCount', 'desc'));
-          break;
-        default: // latest
-          q = query(q, orderBy('createdAt', 'desc'));
-      }
+      // 인덱스 문제 해결을 위해 단순화된 쿼리 사용
+      let q = query(collection(db, this.COLLECTION_NAME));
 
       // 페이지네이션
       if (lastDoc) {
         q = query(q, startAfter(lastDoc));
       }
-      q = query(q, limit(this.PAGE_SIZE));
+      q = query(q, limit(this.PAGE_SIZE * 2)); // 필터링을 고려하여 더 많이 가져옴
 
       const querySnapshot = await getDocs(q);
       const experiences: ReadingExperience[] = [];
@@ -108,11 +86,39 @@ export class ReadingExperienceService {
         });
       });
 
+      // 클라이언트 사이드에서 필터링
+      let filteredExperiences = experiences.filter(exp => exp.isPublished);
+      
+      // 태그 필터링
+      if (filterTag) {
+        filteredExperiences = filteredExperiences.filter(exp => 
+          exp.tags.includes(filterTag)
+        );
+      }
+
+      // 정렬
+      switch (sortBy) {
+        case 'popular':
+          filteredExperiences.sort((a, b) => (b.views || 0) - (a.views || 0));
+          break;
+        case 'likes':
+          filteredExperiences.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+          break;
+        case 'comments':
+          filteredExperiences.sort((a, b) => (b.commentsCount || 0) - (a.commentsCount || 0));
+          break;
+        default: // latest
+          filteredExperiences.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      }
+
+      // 페이지 크기만큼 자르기
+      const paginatedExperiences = filteredExperiences.slice(0, this.PAGE_SIZE);
+
       return {
         success: true,
-        experiences,
+        experiences: paginatedExperiences,
         lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null,
-        hasMore: querySnapshot.docs.length === this.PAGE_SIZE
+        hasMore: filteredExperiences.length > this.PAGE_SIZE
       };
     } catch (error) {
       console.error('리딩 경험 목록 조회 오류:', error);
@@ -215,11 +221,9 @@ export class ReadingExperienceService {
    */
   static async getTagStats() {
     try {
-      // 모든 게시글의 태그를 가져와서 통계 계산
+      // 인덱스 문제 해결을 위해 단순화된 쿼리 사용
       const q = query(
         collection(db, this.COLLECTION_NAME),
-        where('isPublished', '==', true),
-        orderBy('createdAt', 'desc'),
         limit(200) // 최근 200개 게시글만 확인
       );
 
@@ -228,10 +232,13 @@ export class ReadingExperienceService {
 
       querySnapshot.docs.forEach(docSnapshot => {
         const data = docSnapshot.data();
-        const tags = data.tags || [];
-        tags.forEach((tag: string) => {
-          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-        });
+        // 공개된 게시글만 계산
+        if (data.isPublished) {
+          const tags = data.tags || [];
+          tags.forEach((tag: string) => {
+            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+          });
+        }
       });
 
       // 인기 순으로 정렬
@@ -259,47 +266,44 @@ export class ReadingExperienceService {
     try {
       const relatedExperiences: ReadingExperience[] = [];
 
-      // 1. 같은 태그를 가진 게시글
+      // 1. 같은 태그를 가진 게시글 - 인덱스 문제 해결을 위해 단순화
       if (tags.length > 0) {
         const tagQuery = query(
           collection(db, this.COLLECTION_NAME),
-          where('isPublished', '==', true),
-          where('tags', 'array-contains-any', tags.slice(0, 10)), // 최대 10개 태그
-          orderBy('views', 'desc'),
-          limit(limitCount * 2)
+          limit(50) // 더 많이 가져와서 클라이언트에서 필터링
         );
 
         const tagSnapshot = await getDocs(tagQuery);
         for (const docSnapshot of tagSnapshot.docs) {
           if (docSnapshot.id !== currentExperienceId) {
             const data = docSnapshot.data();
-            relatedExperiences.push({
-              id: docSnapshot.id,
-              title: data.title,
-              content: data.content,
-              authorId: data.authorId,
-              spreadType: data.spreadType,
-              cards: data.cards || [],
-              tags: data.tags || [],
-              likes: data.likes || 0,
-              commentsCount: data.commentsCount || 0,
-              views: data.views || 0,
-              isPublished: data.isPublished,
-              createdAt: data.createdAt.toDate(),
-              updatedAt: data.updatedAt.toDate()
-            });
+            // 공개된 게시글이고 같은 태그를 가진 경우만 추가
+            if (data.isPublished && data.tags && data.tags.some((tag: string) => tags.includes(tag))) {
+              relatedExperiences.push({
+                id: docSnapshot.id,
+                title: data.title,
+                content: data.content,
+                authorId: data.authorId,
+                spreadType: data.spreadType,
+                cards: data.cards || [],
+                tags: data.tags || [],
+                likes: data.likes || 0,
+                commentsCount: data.commentsCount || 0,
+                views: data.views || 0,
+                isPublished: data.isPublished,
+                createdAt: data.createdAt.toDate(),
+                updatedAt: data.updatedAt.toDate()
+              });
+            }
           }
         }
       }
 
-      // 2. 같은 스프레드 타입 게시글 (태그로 찾지 못한 경우)
+      // 2. 같은 스프레드 타입 게시글 (태그로 찾지 못한 경우) - 인덱스 문제 해결을 위해 단순화
       if (relatedExperiences.length < limitCount) {
         const spreadQuery = query(
           collection(db, this.COLLECTION_NAME),
-          where('isPublished', '==', true),
-          where('spreadType', '==', spreadType),
-          orderBy('views', 'desc'),
-          limit(limitCount)
+          limit(30)
         );
 
         const spreadSnapshot = await getDocs(spreadQuery);
@@ -307,21 +311,24 @@ export class ReadingExperienceService {
           if (docSnapshot.id !== currentExperienceId && 
               !relatedExperiences.find(exp => exp.id === docSnapshot.id)) {
             const data = docSnapshot.data();
-            relatedExperiences.push({
-              id: docSnapshot.id,
-              title: data.title,
-              content: data.content,
-              authorId: data.authorId,
-              spreadType: data.spreadType,
-              cards: data.cards || [],
-              tags: data.tags || [],
-              likes: data.likes || 0,
-              commentsCount: data.commentsCount || 0,
-              views: data.views || 0,
-              isPublished: data.isPublished,
-              createdAt: data.createdAt.toDate(),
-              updatedAt: data.updatedAt.toDate()
-            });
+            // 공개된 게시글이고 같은 스프레드 타입인 경우만 추가
+            if (data.isPublished && data.spreadType === spreadType) {
+              relatedExperiences.push({
+                id: docSnapshot.id,
+                title: data.title,
+                content: data.content,
+                authorId: data.authorId,
+                spreadType: data.spreadType,
+                cards: data.cards || [],
+                tags: data.tags || [],
+                likes: data.likes || 0,
+                commentsCount: data.commentsCount || 0,
+                views: data.views || 0,
+                isPublished: data.isPublished,
+                createdAt: data.createdAt.toDate(),
+                updatedAt: data.updatedAt.toDate()
+              });
+            }
           }
         }
       }
@@ -347,8 +354,6 @@ export class ReadingExperienceService {
       
       const q = query(
         collection(db, this.COLLECTION_NAME),
-        where('isPublished', '==', true),
-        orderBy('createdAt', 'desc'),
         limit(100) // 최근 100개에서 검색
       );
 
@@ -357,24 +362,27 @@ export class ReadingExperienceService {
 
       querySnapshot.docs.forEach(docSnapshot => {
         const data = docSnapshot.data();
-        allExperiences.push({
-          id: docSnapshot.id,
-          title: data.title,
-          content: data.content,
-          authorId: data.authorId,
-          spreadType: data.spreadType,
-          cards: data.cards || [],
-          tags: data.tags || [],
-          likes: data.likes || 0,
-          commentsCount: data.commentsCount || 0,
-          views: data.views || 0,
-          isPublished: data.isPublished,
-          createdAt: data.createdAt.toDate(),
-          updatedAt: data.updatedAt.toDate()
-        });
+        // 공개된 게시글만 추가
+        if (data.isPublished) {
+          allExperiences.push({
+            id: docSnapshot.id,
+            title: data.title,
+            content: data.content,
+            authorId: data.authorId,
+            spreadType: data.spreadType,
+            cards: data.cards || [],
+            tags: data.tags || [],
+            likes: data.likes || 0,
+            commentsCount: data.commentsCount || 0,
+            views: data.views || 0,
+            isPublished: data.isPublished,
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate()
+          });
+        }
       });
 
-      // 클라이언트 사이드에서 필터링
+      // 클라이언트 사이드에서 검색 필터링
       const filteredExperiences = allExperiences.filter(exp => 
         exp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         exp.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
