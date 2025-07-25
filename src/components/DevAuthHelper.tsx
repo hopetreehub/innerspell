@@ -1,62 +1,65 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase/client';
+import { useToast } from '@/hooks/use-toast';
+import { ShieldAlert } from 'lucide-react';
 
 export function DevAuthHelper() {
-  const { user, loading } = useAuth();
+  const { toast } = useToast();
   
-  useEffect(() => {
-    // Only run in development
-    if (process.env.NODE_ENV !== 'development') return;
-    
-    // Auto-login if not logged in
-    if (!loading && !user) {
-      console.log('[DEV] Auto-logging in with mock user...');
+  const handleAdminLogin = async () => {
+    try {
+      // Admin credentials for development
+      const email = 'admin@innerspell.com';
+      const password = 'admin123';
       
-      // Create a mock Firebase user
-      const mockFirebaseUser = {
-        uid: 'mock-test-user-id',
-        email: 'admin@innerspell.com',
-        displayName: 'Admin User',
-        photoURL: null,
-        emailVerified: true,
-        metadata: {
-          creationTime: new Date().toISOString(),
-          lastSignInTime: new Date().toISOString()
-        },
-        // Mock required Firebase User methods
-        getIdToken: async () => 'mock-token',
-        reload: async () => {},
-        delete: async () => {},
-        // Add other required properties
-        isAnonymous: false,
-        phoneNumber: null,
-        providerId: 'mock',
-        refreshToken: 'mock-refresh-token',
-        tenantId: null,
-        providerData: [],
-        getIdTokenResult: async () => ({
-          token: 'mock-token',
-          expirationTime: new Date(Date.now() + 3600000).toISOString(),
-          authTime: new Date().toISOString(),
-          issuedAtTime: new Date().toISOString(),
-          signInProvider: 'mock',
-          signInSecondFactor: null,
-          claims: {}
-        }),
-        toJSON: () => ({})
-      };
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
-      // Trigger auth state change by setting to window
-      if (typeof window !== 'undefined') {
-        (window as any).__mockFirebaseUser = mockFirebaseUser;
-        
-        // Force refresh
-        window.location.reload();
-      }
+      toast({
+        title: "✅ 관리자 로그인 성공",
+        description: `${userCredential.user.email}로 로그인되었습니다.`,
+      });
+      
+      // Reload to update auth state
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Admin login error:', error);
+      toast({
+        title: "❌ 로그인 실패",
+        description: error.message || "관리자 로그인 중 오류가 발생했습니다.",
+        variant: "destructive"
+      });
     }
-  }, [user, loading]);
+  };
   
-  return null;
+  // Only show in development mode
+  // Note: In production builds, this component won't be included at all
+  // For now, always show in local development
+  const isDevelopment = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  
+  if (!isDevelopment) {
+    return null;
+  }
+  
+  return (
+    <div className="mt-4 p-4 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
+      <div className="flex items-center gap-2 mb-2">
+        <ShieldAlert className="w-5 h-5 text-orange-600" />
+        <span className="text-sm font-semibold text-orange-700">개발 환경 도우미</span>
+      </div>
+      <Button 
+        onClick={handleAdminLogin}
+        variant="outline"
+        className="w-full bg-orange-100 hover:bg-orange-200 border-orange-300"
+      >
+        🔐 관리자로 로그인
+      </Button>
+      <p className="text-xs text-gray-600 mt-2 text-center">
+        이 버튼은 개발 환경에서만 표시됩니다
+      </p>
+    </div>
+  );
 }
