@@ -46,18 +46,25 @@ export async function getAllPostsServer(
   categoryFilter?: string
 ): Promise<BlogPost[]> {
   try {
-    // 임시: 항상 Mock 데이터 사용 (블로그 새글 표시를 위해)
-    console.log('🔧 임시 Mock 데이터 강제 사용 모드');
+    // 강제 Mock 데이터 사용 - 블로그 새글 표시 (2025-07-25 v2)
+    console.log('🚀 FORCE MOCK DATA MODE - 새 블로그 글 표시');
+    console.log('📅 Deployment timestamp:', new Date().toISOString());
+    
     const { mockPosts } = await import('@/lib/blog/posts');
     let posts = mockPosts.map(post => ({ ...post }));
+    
+    console.log(`📊 Raw mockPosts 수: ${posts.length}`);
+    console.log('🔍 처음 3개 포스트 ID:', posts.slice(0, 3).map(p => p.id));
     
     // 필터링 적용
     if (onlyPublished) {
       posts = posts.filter((post: BlogPost) => post.published);
+      console.log(`📝 published 필터 후: ${posts.length}개`);
     }
     
     if (categoryFilter && categoryFilter !== 'all') {
       posts = posts.filter((post: BlogPost) => post.category === categoryFilter);
+      console.log(`🏷️ 카테고리 필터 후: ${posts.length}개`);
     }
     
     // 정렬
@@ -67,8 +74,11 @@ export async function getAllPostsServer(
       return dateB.getTime() - dateA.getTime();
     });
     
-    console.log(`✅ Mock 데이터 강제 사용: ${posts.length}개 포스트 반환`);
-    return posts.slice(0, 20);
+    const finalPosts = posts.slice(0, 20);
+    console.log(`✅ 최종 반환: ${finalPosts.length}개 포스트`);
+    console.log('🎯 반환될 포스트 제목들:', finalPosts.slice(0, 3).map(p => p.title));
+    
+    return finalPosts;
 
     // Mock 환경에서는 Mock API 사용
     if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
