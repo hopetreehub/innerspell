@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { UserCircle, Edit3, ShieldCheck, BookHeart, Trash2, AlertTriangle, Search, Calendar, Sparkles, Star } from 'lucide-react';
+import { User, Edit3, ShieldCheck, BookHeart, Trash2, AlertTriangle, Search, Calendar, Sparkles, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
@@ -147,7 +147,7 @@ export default function ProfilePage() {
   return (
     <div className="max-w-3xl mx-auto space-y-8 py-10">
       <header className="text-center">
-        <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
+        <User className="mx-auto h-16 w-16 text-primary mb-4" />
         <h1 className="font-headline text-4xl sm:text-5xl font-bold text-primary">내 프로필</h1>
       </header>
 
@@ -285,7 +285,7 @@ export default function ProfilePage() {
                 className="w-full justify-start"
                 onClick={() => router.push('/admin?tab=user-management')}
               >
-                <UserCircle className="mr-2 h-5 w-5" />
+                <User className="mr-2 h-5 w-5" />
                 사용자 관리
               </Button>
             </div>
@@ -364,7 +364,7 @@ export default function ProfilePage() {
                 className="w-full justify-start"
                 onClick={() => router.push('/admin/users')}
               >
-                <UserCircle className="mr-2 h-5 w-5" />
+                <User className="mr-2 h-5 w-5" />
                 사용자 관리
               </Button>
             </div>

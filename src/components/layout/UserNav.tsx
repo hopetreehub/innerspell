@@ -16,7 +16,7 @@ import { useAuth } from '@/context/AuthContext';
 import { auth } from '@/lib/firebase/client';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { LogOut, UserCircle, Settings, LogIn, UserPlus, Shield } from 'lucide-react';
+import { LogOut, User, Settings, LogIn, UserPlus, Shield } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
@@ -100,7 +100,7 @@ export function UserNav() {
           <Avatar className="h-10 w-10 border border-primary/50">
             <AvatarImage src={user.photoURL || ''} alt={user.displayName || user.email || 'User'} />
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {user.displayName ? user.displayName.charAt(0).toUpperCase() : user.email ? user.email.charAt(0).toUpperCase() : <UserCircle />}
+              {user.displayName ? user.displayName.charAt(0).toUpperCase() : user.email ? user.email.charAt(0).toUpperCase() : 'U'}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -117,7 +117,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push('/profile')}>
-            <UserCircle className="mr-2 h-4 w-4" />
+            <User className="mr-2 h-4 w-4" />
             <span>프로필</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/settings')}>

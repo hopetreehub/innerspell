@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Spinner } from '@/components/ui/spinner';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
-import { MessageCircle, Loader2, Send, Trash2, Edit, AlertTriangle, UserCircle, Lock } from 'lucide-react';
+import { MessageCircle, Loader2, Send, Trash2, Edit, AlertTriangle, User, Lock } from 'lucide-react';
 import Link from 'next/link';
 
 import {
@@ -176,7 +176,7 @@ export function CommentSection({ postId, initialCommentCount, postAuthorId }: Co
               <div key={comment.id} className="flex items-start space-x-4">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src={comment.authorPhotoURL} alt={comment.authorName} />
-                  <AvatarFallback><UserCircle className="h-5 w-5"/></AvatarFallback>
+                  <AvatarFallback className="text-sm font-medium">{comment.authorName ? comment.authorName.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">

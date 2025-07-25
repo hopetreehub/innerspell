@@ -8,7 +8,7 @@ import { ko } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from '@/components/ui/pagination';
-import { MessageSquare, PlusCircle, MessageCircle, Eye, UserCircle } from 'lucide-react';
+import { MessageSquare, PlusCircle, MessageCircle, Eye, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PostWithComments } from '@/components/community/PostWithComments';
 

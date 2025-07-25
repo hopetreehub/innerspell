@@ -7,7 +7,8 @@ import { ThemeToggle } from './ThemeToggle';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
+import { Menu, Shield } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 const baseNavItems = [
   { href: '/', label: '홈' },
@@ -18,7 +19,12 @@ const baseNavItems = [
   { href: '/community', label: '커뮤니티' },
 ];
 
+const adminNavItems = [
+  { href: '/admin', label: '관리자 설정', icon: Shield },
+];
+
 export function Navbar() {
+  const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -58,6 +64,17 @@ export function Navbar() {
                 </Link>
               );
             })}
+            {/* 관리자 메뉴 추가 */}
+            {user?.role === 'admin' && adminNavItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="transition-colors hover:text-primary text-foreground/80 hover:scale-105 transform duration-200 relative after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-1/2 after:bg-primary after:transition-all after:duration-300 hover:after:w-full hover:after:left-0 flex items-center gap-1"
+              >
+                {item.icon && <item.icon className="h-4 w-4" />}
+                {item.label}
+              </Link>
+            ))}
           </nav>
           
           {/* 사용자 메뉴 - 데스크톱 */}
@@ -100,6 +117,23 @@ export function Navbar() {
                         </Link>
                      );
                   })}
+                  {/* 관리자 메뉴 추가 - 모바일 */}
+                  {user?.role === 'admin' && (
+                    <>
+                      <div className="h-px bg-border/40 my-2" />
+                      {adminNavItems.map((item) => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          className="flex items-center rounded-lg px-4 py-3 text-base font-medium text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-200 border border-transparent hover:border-border/40 gap-2"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.icon && <item.icon className="h-5 w-5" />}
+                          {item.label}
+                        </Link>
+                      ))}
+                    </>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>

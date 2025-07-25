@@ -431,16 +431,7 @@ export function TarotReadingClient() {
       return;
     }
 
-    // Check if we're in mock mode by detecting if the user has a mock ID pattern
-    if (user.uid && user.uid.startsWith('mock-')) {
-      toast({ 
-        variant: 'default', 
-        title: '데모 모드 안내', 
-        description: '현재 데모 모드로 운영 중입니다. 저장 기능은 실제 데이터베이스 연결 후 사용 가능합니다.',
-        duration: 5000
-      });
-      return;
-    }
+    // ✅ Real Firebase enabled - no need to check for mock mode anymore
 
     setIsSavingReading(true);
     
@@ -513,16 +504,7 @@ export function TarotReadingClient() {
       return;
     }
 
-    // Check if we're in mock mode by detecting if we have a mock user
-    if (user && user.uid && user.uid.startsWith('mock-')) {
-      toast({ 
-        variant: 'default', 
-        title: '데모 모드 안내', 
-        description: '현재 데모 모드로 운영 중입니다. 공유 기능은 실제 데이터베이스 연결 후 사용 가능핉니다.',
-        duration: 5000
-      });
-      return;
-    }
+    // ✅ Real Firebase enabled - no need to check for mock mode anymore
 
     setIsSharingReading(true);
 

@@ -25,7 +25,7 @@ import {
   Trash2, 
   Edit, 
   AlertTriangle, 
-  UserCircle, 
+  User, 
   Eye,
   ChevronDown,
   ChevronUp,
@@ -186,7 +186,7 @@ export function PostWithComments({ post }: PostWithCommentsProps) {
                 <div className="flex items-center gap-1">
                   <Avatar className="h-4 w-4">
                     <AvatarImage src={post.authorPhotoURL} alt={post.authorName} />
-                    <AvatarFallback><UserCircle className="h-3 w-3"/></AvatarFallback>
+                    <AvatarFallback className="text-xs font-medium">{post.authorName ? post.authorName.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
                   </Avatar>
                   <span>{post.authorName}</span>
                 </div>
@@ -228,7 +228,7 @@ export function PostWithComments({ post }: PostWithCommentsProps) {
                     <div key={comment.id} className="flex items-start space-x-3 p-3 bg-muted/20 rounded-lg">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={comment.authorPhotoURL} alt={comment.authorName} />
-                        <AvatarFallback><UserCircle className="h-4 w-4"/></AvatarFallback>
+                        <AvatarFallback className="text-xs font-medium">{comment.authorName ? comment.authorName.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center justify-between">

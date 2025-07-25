@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { GoogleAuthProvider, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth } from '@/lib/firebase/client';
-import * as mockAuth from '@/lib/firebase/mockAuth';
+// Mock Auth import removed - always use real Firebase
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -95,12 +95,8 @@ export function SignInForm() {
         return;
     }
     try {
-      // Use mock auth in development
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-        await mockAuth.signInWithEmailAndPassword(auth, values.email, values.password);
-      } else {
-        await signInWithEmailAndPassword(auth, values.email, values.password);
-      }
+      // Always use real Firebase
+      await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({ title: '로그인 성공', description: 'InnerSpell에 오신 것을 환영합니다!' });
       const redirectUrl = searchParams.get('redirect') || '/';
       router.push(redirectUrl);
@@ -155,12 +151,8 @@ export function SignInForm() {
     }
     const provider = new GoogleAuthProvider();
     try {
-      // Use mock auth in development
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-        await mockAuth.signInWithPopup(auth, provider);
-      } else {
-        await signInWithPopup(auth, provider);
-      }
+      // Always use real Firebase
+      await signInWithPopup(auth, provider);
       toast({ title: 'Google 로그인 성공', description: 'InnerSpell에 오신 것을 환영합니다!' });
       const redirectUrl = searchParams.get('redirect') || '/';
       router.push(redirectUrl);

@@ -1,6 +1,6 @@
 'use client';
 
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from './client';
 
 interface ShareReadingInput {
@@ -94,6 +94,73 @@ export async function shareReadingClient(
     return { 
       success: false, 
       error: '리딩 공유 중 알 수 없는 오류가 발생했습니다.' 
+    };
+  }
+}
+
+/**
+ * 클라이언트 사이드에서 직접 Firestore에서 공유 리딩 조회
+ */
+export async function getSharedReadingClient(
+  shareId: string
+): Promise<{ success: boolean; reading?: any; error?: string }> {
+  try {
+    if (!db) {
+      console.error('❌ Firebase db가 초기화되지 않음');
+      return { 
+        success: false, 
+        error: '데이터베이스 연결을 확인하는 중입니다.' 
+      };
+    }
+
+    if (!shareId) {
+      return { 
+        success: false, 
+        error: '공유 ID가 제공되지 않았습니다.' 
+      };
+    }
+
+    // Firestore에서 공유 리딩 조회
+    const docRef = doc(db, 'sharedReadings', shareId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return { 
+        success: false, 
+        error: '공유된 리딩을 찾을 수 없습니다. 링크가 만료되었거나 존재하지 않습니다.' 
+      };
+    }
+
+    const reading = docSnap.data();
+
+    // 만료 확인
+    if (reading.expiresAt && new Date(reading.expiresAt) < new Date()) {
+      return { 
+        success: false, 
+        error: '공유 링크가 만료되었습니다.' 
+      };
+    }
+
+    console.log('✅ 공유 리딩 조회 성공:', shareId);
+
+    return { 
+      success: true, 
+      reading 
+    };
+
+  } catch (error) {
+    console.error('❌ 공유 리딩 조회 중 오류:', error);
+    
+    if (error instanceof Error) {
+      return { 
+        success: false, 
+        error: error.message 
+      };
+    }
+    
+    return { 
+      success: false, 
+      error: '공유 리딩 조회 중 알 수 없는 오류가 발생했습니다.' 
     };
   }
 }

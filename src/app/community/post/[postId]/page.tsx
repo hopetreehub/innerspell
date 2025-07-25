@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Eye, MessageCircle, UserCircle, Calendar, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { Eye, MessageCircle, User, Calendar, Image as ImageIcon, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { CommentSection } from '@/components/community/CommentSection';
 import Link from 'next/link';
@@ -63,7 +63,7 @@ export default async function CommunityPostPage({ params }: Props) {
                 <div className="flex items-center gap-2">
                     <Avatar className="h-8 w-8">
                         <AvatarImage src={post.authorPhotoURL} alt={post.authorName} />
-                        <AvatarFallback><UserCircle className="h-5 w-5"/></AvatarFallback>
+                        <AvatarFallback className="text-sm font-medium">{post.authorName ? post.authorName.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
                     </Avatar>
                     <span>{post.authorName}</span>
                 </div>

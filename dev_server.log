@@ -1,14 +1,76 @@
 
 > nextn@0.1.0 dev
-> next dev --hostname 0.0.0.0 --port 4000 --port 4000
+> next dev --hostname 0.0.0.0 --port 4000
 
- ⨯ Failed to start server
-Error: listen EADDRINUSE: address already in use 0.0.0.0:4000
-    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:4000) {
-  code: 'EADDRINUSE',
-  errno: -98,
-  syscall: 'listen',
-  address: '0.0.0.0',
-  port: 4000
-}
-[?25h
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:4000
+   - Network:      http://0.0.0.0:4000
+   - Environments: .env.local, .env.development
+   - Experiments (use with caution):
+     ✓ optimizeCss
+
+ ✓ Starting...
+ ✓ Ready in 23.7s
+ ✓ Compiled /middleware in 1833ms
+ ✓ Compiled (159 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 19.6s (1578 modules)
+ ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
+ GET / 200 in 23814ms
+ ✓ Compiled in 4.1s (527 modules)
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /reading in 2.2s (1067 modules)
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ GET /favicon.ico 200 in 20409ms
+ GET /reading 200 in 22616ms
+ GET /reading 200 in 421ms
+ GET /favicon.ico 200 in 166ms
+ GET /favicon.ico 200 in 178ms
+ GET /reading 200 in 443ms
+ GET /favicon.ico 200 in 237ms
+ GET /favicon.ico 200 in 230ms
+ GET /reading 200 in 356ms
+ GET /favicon.ico 200 in 165ms
+ GET /reading 200 in 301ms
+ GET /favicon.ico 200 in 306ms
+ GET /favicon.ico 200 in 215ms
+ GET /reading 200 in 346ms
+ GET /favicon.ico 200 in 145ms
+ GET /favicon.ico 200 in 136ms
+ GET /reading 200 in 300ms
+ GET /favicon.ico 200 in -326ms
+ GET /favicon.ico 200 in -609ms

@@ -1,5 +1,6 @@
-// Mock Firebase Auth for development mode
-import { User as FirebaseUser } from 'firebase/auth';
+// 🚫 MOCK AUTH COMPLETELY DISABLED - ALWAYS USE REAL FIREBASE
+// This file is now disabled to force real Firebase usage
+throw new Error('Mock Auth is disabled. Use real Firebase instead.');
 
 // Mock user database
 const mockUsers = new Map<string, { email: string; password: string; uid: string; displayName?: string }>();

@@ -76,56 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     let isMounted = true;
     let unsubscribe: (() => void) | undefined;
 
-    // Development mode: Use mock auth from firebase client
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-      // Import mockAuth dynamically
-      import('@/lib/firebase/mockAuth')
-        .then((mockAuthModule) => {
-          if (!isMounted) return;
-          
-          unsubscribe = mockAuthModule.onAuthStateChanged((mockFirebaseUser: any) => {
-            if (!isMounted) return;
-            
-            if (mockFirebaseUser) {
-              setFirebaseUser(mockFirebaseUser);
-              const mockUser: AppUser = {
-                uid: mockFirebaseUser.uid,
-                email: mockFirebaseUser.email || '',
-                displayName: mockFirebaseUser.displayName || '',
-                photoURL: mockFirebaseUser.photoURL || '',
-                creationTime: mockFirebaseUser.metadata?.creationTime || new Date().toISOString(),
-                lastSignInTime: mockFirebaseUser.metadata?.lastSignInTime || new Date().toISOString(),
-                role: mockFirebaseUser.email === 'admin@innerspell.com' ? 'admin' : 'user',
-                birthDate: '',
-                sajuInfo: '',
-                subscriptionStatus: 'free',
-                // Mock getIdToken 메서드 추가
-                getIdToken: async () => 'mock-id-token',
-              } as AppUser & { getIdToken: () => Promise<string> };
-              setUser(mockUser);
-              console.log("AuthProvider: Mock user authenticated:", mockUser);
-            } else {
-              setUser(null);
-              setFirebaseUser(null);
-              console.log("AuthProvider: No mock user authenticated");
-            }
-            setLoading(false);
-          });
-        })
-        .catch((error) => {
-          console.error("AuthProvider: Failed to import mockAuth:", error);
-          if (isMounted) {
-            setLoading(false);
-          }
-        });
-      
-      return () => {
-        isMounted = false;
-        if (unsubscribe) {
-          unsubscribe();
-        }
-      };
-    }
+    // 🔥 ALWAYS USE REAL FIREBASE - Mock Auth completely removed
     
     if (!auth) {
       console.warn("AuthProvider: Firebase auth is not initialized. Skipping auth state listener.");
