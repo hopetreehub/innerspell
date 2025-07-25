@@ -95,36 +95,14 @@ export async function getReadingExperiences(
   filterTag?: string
 ) {
   try {
-    let q = query(
-      collection(db, 'reading-experiences'),
-      where('isPublished', '==', true)
-    );
-
-    // 태그 필터링
-    if (filterTag) {
-      q = query(q, where('tags', 'array-contains', filterTag));
-    }
-
-    // 정렬
-    switch (sortBy) {
-      case 'popular':
-        q = query(q, orderBy('views', 'desc'));
-        break;
-      case 'likes':
-        q = query(q, orderBy('likes', 'desc'));
-        break;
-      case 'comments':
-        q = query(q, orderBy('commentsCount', 'desc'));
-        break;
-      default: // latest
-        q = query(q, orderBy('createdAt', 'desc'));
-    }
+    // 인덱스 문제 해결을 위해 단순화된 쿼리 사용
+    let q = query(collection(db, 'reading-experiences'));
 
     // 페이지네이션
     if (lastDoc) {
       q = query(q, startAfter(lastDoc));
     }
-    q = query(q, limit(pageSize));
+    q = query(q, limit(pageSize * 2)); // 필터링을 고려하여 더 많이 가져옴
 
     const querySnapshot = await getDocs(q);
     const experiences: ReadingExperience[] = [];
@@ -174,11 +152,39 @@ export async function getReadingExperiences(
       });
     });
 
+    // 클라이언트 사이드에서 필터링
+    let filteredExperiences = experiences.filter(exp => exp.isPublished);
+    
+    // 태그 필터링
+    if (filterTag) {
+      filteredExperiences = filteredExperiences.filter(exp => 
+        exp.tags.includes(filterTag)
+      );
+    }
+
+    // 정렬
+    switch (sortBy) {
+      case 'popular':
+        filteredExperiences.sort((a, b) => (b.views || 0) - (a.views || 0));
+        break;
+      case 'likes':
+        filteredExperiences.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+        break;
+      case 'comments':
+        filteredExperiences.sort((a, b) => (b.commentsCount || 0) - (a.commentsCount || 0));
+        break;
+      default: // latest
+        filteredExperiences.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    }
+
+    // 페이지 크기만큼 자르기
+    const paginatedExperiences = filteredExperiences.slice(0, pageSize);
+
     return {
       success: true,
-      experiences,
+      experiences: paginatedExperiences,
       lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null,
-      hasMore: querySnapshot.docs.length === pageSize
+      hasMore: filteredExperiences.length > pageSize
     };
   } catch (error) {
     console.error('리딩 경험 목록 조회 오류:', error);
