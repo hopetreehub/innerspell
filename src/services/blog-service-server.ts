@@ -78,22 +78,28 @@ export async function getAllPostsServer(
     }
 
     // 간단한 쿼리로 시작 (인덱스 문제 해결을 위해)
+    console.log('🔍 Firestore에서 블로그 포스트 조회 시작...');
     const snapshot = await db.collection(POSTS_COLLECTION).get();
     let posts = snapshot.docs.map(doc => convertToPost(doc.data(), doc.id));
+    console.log(`📊 Firestore에서 가져온 포스트 수: ${posts.length}`);
 
     // Firestore에 데이터가 없으면 Mock 데이터 사용 (fallback)
     if (posts.length === 0) {
       console.log('🔄 Firestore에 블로그 데이터가 없어 Mock 데이터 사용');
       const { mockPosts } = await import('@/lib/blog/posts');
       posts = mockPosts.map(post => ({ ...post }));
+      console.log(`📋 Mock 데이터 로드 완료: ${posts.length}개 포스트`);
     }
 
     // 클라이언트 사이드에서 필터링 및 정렬
+    console.log(`🔍 필터링 전 포스트 수: ${posts.length}`);
     if (onlyPublished) {
       posts = posts.filter(post => post.published);
+      console.log(`📝 published 필터 후 포스트 수: ${posts.length}`);
     }
     if (categoryFilter && categoryFilter !== 'all') {
       posts = posts.filter(post => post.category === categoryFilter);
+      console.log(`🏷️ 카테고리 필터 후 포스트 수: ${posts.length}`);
     }
 
     // 날짜순 정렬
@@ -103,10 +109,38 @@ export async function getAllPostsServer(
       return dateB.getTime() - dateA.getTime();
     });
 
-    return posts.slice(0, 20); // 더 많은 포스트 반환
+    const finalPosts = posts.slice(0, 20); // 더 많은 포스트 반환
+    console.log(`✅ 최종 반환 포스트 수: ${finalPosts.length}`);
+    
+    return finalPosts;
   } catch (error) {
-    console.error('Error fetching posts:', error);
-    return [];
+    console.error('❌ Error fetching posts:', error);
+    
+    // 에러 발생 시에도 Mock 데이터 fallback
+    try {
+      console.log('🔄 에러 발생으로 Mock 데이터 fallback 사용');
+      const { mockPosts } = await import('@/lib/blog/posts');
+      let posts = mockPosts.map(post => ({ ...post }));
+      
+      if (onlyPublished) {
+        posts = posts.filter(post => post.published);
+      }
+      if (categoryFilter && categoryFilter !== 'all') {
+        posts = posts.filter(post => post.category === categoryFilter);
+      }
+      
+      posts.sort((a, b) => {
+        const dateA = new Date(a.publishedAt);
+        const dateB = new Date(b.publishedAt);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      console.log(`🆘 Fallback 포스트 수: ${posts.length}`);
+      return posts.slice(0, 20);
+    } catch (fallbackError) {
+      console.error('❌ Fallback 데이터 로드도 실패:', fallbackError);
+      return [];
+    }
   }
 }
 
