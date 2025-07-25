@@ -46,6 +46,30 @@ export async function getAllPostsServer(
   categoryFilter?: string
 ): Promise<BlogPost[]> {
   try {
+    // 임시: 항상 Mock 데이터 사용 (블로그 새글 표시를 위해)
+    console.log('🔧 임시 Mock 데이터 강제 사용 모드');
+    const { mockPosts } = await import('@/lib/blog/posts');
+    let posts = mockPosts.map(post => ({ ...post }));
+    
+    // 필터링 적용
+    if (onlyPublished) {
+      posts = posts.filter((post: BlogPost) => post.published);
+    }
+    
+    if (categoryFilter && categoryFilter !== 'all') {
+      posts = posts.filter((post: BlogPost) => post.category === categoryFilter);
+    }
+    
+    // 정렬
+    posts.sort((a: BlogPost, b: BlogPost) => {
+      const dateA = a.publishedAt instanceof Date ? a.publishedAt : new Date(a.publishedAt);
+      const dateB = b.publishedAt instanceof Date ? b.publishedAt : new Date(b.publishedAt);
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    console.log(`✅ Mock 데이터 강제 사용: ${posts.length}개 포스트 반환`);
+    return posts.slice(0, 20);
+
     // Mock 환경에서는 Mock API 사용
     if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
       let posts = Array.from(mockBlogPosts.values()).map(data => convertToPost(data, data.id));
