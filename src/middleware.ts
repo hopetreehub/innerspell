@@ -93,18 +93,20 @@ export async function middleware(request: NextRequest) {
     }
   }
   
-  // Content Security Policy (Firebase 도메인 추가)
+  // Content Security Policy (Firebase 도메인 추가 - v2 강제 업데이트)
   if (process.env.NODE_ENV === 'production') {
-    response.headers.set(
-      'Content-Security-Policy',
-      "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://*.firebaseapp.com; " +
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-      "img-src 'self' data: https: blob:; " +
-      "font-src 'self' https://fonts.gstatic.com; " +
-      "connect-src 'self' https://*.firebaseapp.com https://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com https://api.openai.com https://*.googleapis.com; " +
-      "frame-src 'self' https://innerspell-an7ce.firebaseapp.com https://*.firebaseapp.com;"
-    );
+    const cspPolicy = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://*.firebaseapp.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "img-src 'self' data: https: blob:",
+      "font-src 'self' https://fonts.gstatic.com",
+      "connect-src 'self' https://*.firebaseapp.com https://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com https://api.openai.com https://*.googleapis.com",
+      "frame-src 'self' https://innerspell-an7ce.firebaseapp.com https://*.firebaseapp.com"
+    ].join("; ");
+    
+    response.headers.set('Content-Security-Policy', cspPolicy);
+    console.log('CSP Policy Set:', cspPolicy); // 디버깅용
   }
   
   return response;
