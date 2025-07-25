@@ -77,23 +77,33 @@ export async function getAllPostsServer(
       return [];
     }
 
-    let query = db.collection(POSTS_COLLECTION);
+    // 간단한 쿼리로 시작 (인덱스 문제 해결을 위해)
+    const snapshot = await db.collection(POSTS_COLLECTION).get();
+    let posts = snapshot.docs.map(doc => convertToPost(doc.data(), doc.id));
 
-    // 필터 적용
+    // Firestore에 데이터가 없으면 Mock 데이터 사용 (fallback)
+    if (posts.length === 0) {
+      console.log('🔄 Firestore에 블로그 데이터가 없어 Mock 데이터 사용');
+      const { mockPosts } = await import('@/lib/blog/posts');
+      posts = mockPosts.map(post => ({ ...post }));
+    }
+
+    // 클라이언트 사이드에서 필터링 및 정렬
     if (onlyPublished) {
-      query = query.where('published', '==', true);
+      posts = posts.filter(post => post.published);
     }
     if (categoryFilter && categoryFilter !== 'all') {
-      query = query.where('category', '==', categoryFilter);
+      posts = posts.filter(post => post.category === categoryFilter);
     }
 
-    // 정렬 및 제한
-    query = query.orderBy('publishedAt', 'desc').limit(10);
+    // 날짜순 정렬
+    posts.sort((a, b) => {
+      const dateA = new Date(a.publishedAt);
+      const dateB = new Date(b.publishedAt);
+      return dateB.getTime() - dateA.getTime();
+    });
 
-    const snapshot = await query.get();
-    const posts = snapshot.docs.map(doc => convertToPost(doc.data(), doc.id));
-
-    return posts;
+    return posts.slice(0, 20); // 더 많은 포스트 반환
   } catch (error) {
     console.error('Error fetching posts:', error);
     return [];
