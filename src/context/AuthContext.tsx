@@ -82,10 +82,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log('🔥 AuthContext: onAuthStateChanged triggered with user:', currentFirebaseUser ? currentFirebaseUser.email : 'null');
       if (currentFirebaseUser) {
         setFirebaseUser(currentFirebaseUser);
-        let profile = await getUserProfile(currentFirebaseUser.uid);
+        console.log('🔥 AuthContext: Fetching user profile for UID:', currentFirebaseUser.uid);
+        let profile;
+        try {
+          profile = await getUserProfile(currentFirebaseUser.uid);
+          console.log('🔥 AuthContext: getUserProfile result:', profile);
+        } catch (error) {
+          console.error('🚨 AuthContext: getUserProfile error:', error);
+          profile = null;
+        }
         
         // If profile doesn't exist (e.g., new Google sign-in), create one with proper admin check
         if (!profile && currentFirebaseUser.email) {
+          console.log('🔥 AuthContext: No profile found, creating new profile for:', currentFirebaseUser.email);
           const { createOrUpdateUserProfile } = await import('@/actions/userActions');
           await createOrUpdateUserProfile(currentFirebaseUser.uid, {
             email: currentFirebaseUser.email,
@@ -94,7 +103,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
           
           // Re-fetch the profile after creation
+          console.log('🔥 AuthContext: Re-fetching profile after creation');
           profile = await getUserProfile(currentFirebaseUser.uid);
+          console.log('🔥 AuthContext: Re-fetched profile:', profile);
         }
         
         // If still no profile, create a default one 
