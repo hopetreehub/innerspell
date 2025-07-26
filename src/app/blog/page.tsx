@@ -46,9 +46,27 @@ export const metadata: Metadata = {
 };
 
 import { BlogMainWithPagination } from '@/components/blog/BlogMainWithPagination';
+import { mockPosts } from '@/lib/blog/posts';
+
+// 서버 사이드에서 직접 블로그 데이터 제공
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default function BlogPage() {
-  // 2025-07-26: Mock 데이터 강제 표시를 위한 업데이트
-  console.log('🚀 Blog 페이지 렌더링 - 새 블로그 글 표시 모드');
-  return <BlogMainWithPagination />;
+  // 2025-07-26: 서버 사이드 데이터 디버깅
+  console.log('🚀 Blog 페이지 서버 렌더링');
+  console.log(`📊 서버에서 mockPosts 수: ${mockPosts?.length || 0}`);
+  console.log('🎯 첫 3개 포스트 제목:', mockPosts?.slice(0, 3).map(p => p.title) || []);
+  
+  return (
+    <>
+      {/* 임시 디버그 정보 (숨김) */}
+      <div style={{ display: 'none' }}>
+        <p>Debug: Total posts = {mockPosts?.length || 0}</p>
+        <p>Debug: First post title = {mockPosts?.[0]?.title || 'No posts'}</p>
+        <p>Debug: Timestamp = {new Date().toISOString()}</p>
+      </div>
+      <BlogMainWithPagination />
+    </>
+  );
 }
