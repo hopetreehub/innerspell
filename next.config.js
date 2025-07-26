@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
+// 🚀 FORCE DEPLOY v1.0.0 - Blog Posts Fix
 const nextConfig = {
+  // Force rebuild timestamp
+  env: {
+    FORCE_REBUILD_TIME: new Date().toISOString(),
+    BLOG_POSTS_TARGET: '12',
+  },
   // TypeScript 빌드 에러 무시 (프로덕션 배포용)
   typescript: {
     ignoreBuildErrors: true,
