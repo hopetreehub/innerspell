@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { UserNav } from './UserNav';
@@ -27,6 +28,16 @@ export function Navbar() {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // 🔍 사용자 권한 상태 실시간 디버깅
+  React.useEffect(() => {
+    console.log('🔍 Navbar: User state changed:', {
+      email: user?.email || 'null',
+      role: user?.role || 'null',
+      hasUser: !!user,
+      isAdmin: user?.role === 'admin'
+    });
+  }, [user]);
 
   useEffect(() => {
     setMounted(true);
@@ -65,16 +76,21 @@ export function Navbar() {
               );
             })}
             {/* 관리자 메뉴 추가 */}
-            {user?.role === 'admin' && adminNavItems.map((item) => (
+            {user?.role === 'admin' && (
+              <>
+                {console.log('🔍 Navbar: Rendering admin menu for user:', user.email, 'role:', user.role)}
+                {adminNavItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
                 className="transition-colors hover:text-primary text-foreground/80 hover:scale-105 transform duration-200 relative after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-1/2 after:bg-primary after:transition-all after:duration-300 hover:after:w-full hover:after:left-0 flex items-center gap-1"
               >
-                {item.icon && <item.icon className="h-4 w-4" />}
-                {item.label}
-              </Link>
-            ))}
+                  {item.icon && <item.icon className="h-4 w-4" />}
+                  {item.label}
+                </Link>
+                ))}
+              </>
+            )}
           </nav>
           
           {/* 사용자 메뉴 - 데스크톱 */}
@@ -120,6 +136,7 @@ export function Navbar() {
                   {/* 관리자 메뉴 추가 - 모바일 */}
                   {user?.role === 'admin' && (
                     <>
+                      {console.log('🔍 Navbar Mobile: Rendering admin menu for user:', user.email, 'role:', user.role)}
                       <div className="h-px bg-border/40 my-2" />
                       {adminNavItems.map((item) => (
                         <Link
