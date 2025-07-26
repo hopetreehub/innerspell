@@ -4,12 +4,12 @@ import { Firestore, getFirestore } from "firebase/firestore";
 import { FirebaseStorage, getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.trim().replace(/\n/g, ''),
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN?.trim().replace(/\n/g, ''),
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim().replace(/\n/g, ''),
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET?.trim().replace(/\n/g, ''),
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID?.trim().replace(/\n/g, ''),
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID?.trim().replace(/\n/g, '')
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.trim().replace(/\n/g, '').replace(/"/g, ''),
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN?.trim().replace(/\n/g, '').replace(/"/g, ''),
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim().replace(/\n/g, '').replace(/"/g, ''),
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET?.trim().replace(/\n/g, '').replace(/"/g, ''),
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID?.trim().replace(/\n/g, '').replace(/"/g, ''),
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID?.trim().replace(/\n/g, '').replace(/"/g, '')
 };
 
 let app: FirebaseApp | null = null;
@@ -26,8 +26,15 @@ if (typeof window !== 'undefined') {
     hasApiKey: !!firebaseConfig.apiKey,
     authDomain: firebaseConfig.authDomain,
     projectId: firebaseConfig.projectId,
-    storageBucket: firebaseConfig.storageBucket
+    storageBucket: firebaseConfig.storageBucket,
+    messagingSenderId: firebaseConfig.messagingSenderId,
+    appId: firebaseConfig.appId
   });
+  
+  // Check for lingering special characters
+  if (firebaseConfig.projectId && (firebaseConfig.projectId.includes('\n') || firebaseConfig.projectId.includes('"'))) {
+    console.error('❌ Firebase projectId still contains special characters:', firebaseConfig.projectId);
+  }
 
   if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
     console.error('❌ Firebase configuration missing required fields');

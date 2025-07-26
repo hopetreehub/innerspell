@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setFirebaseUser(null);
     // Clear any localStorage items related to auth
     localStorage.removeItem('emailForSignIn');
-    localStorage.removeItem('mock-user-logged-in');
     localStorage.setItem('user-logged-out', 'true');
     // Notify other tabs about logout
     localStorage.setItem('auth-state-changed', 'logged-out');
@@ -43,14 +42,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = () => {
-    setIsLoggedOut(false);
-    localStorage.removeItem('user-logged-out');
-    localStorage.setItem('mock-user-logged-in', 'true');
-    // Notify other tabs about login
-    localStorage.setItem('auth-state-changed', 'logged-in');
-    console.log("AuthProvider: User logged in (dev mode)");
-    // Trigger refresh to re-create mock user
-    setRefreshTrigger(prev => prev + 1);
+    // This function is kept for interface compatibility but does nothing in production
+    console.log("AuthProvider: login() called - redirecting to sign-in page");
   };
 
   // Tab synchronization for auth state
@@ -60,8 +53,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const newState = e.newValue;
         if (newState === 'logged-out') {
           logout();
-        } else if (newState === 'logged-in') {
-          refreshUser();
         }
       }
     };
@@ -89,9 +80,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setFirebaseUser(currentFirebaseUser);
         let profile = await getUserProfile(currentFirebaseUser.uid);
         
-        // If profile doesn't exist (e.g., new Google sign-in), create a default one.
+        // If profile doesn't exist (e.g., new Google sign-in), create one with proper admin check
+        if (!profile && currentFirebaseUser.email) {
+          const { createOrUpdateUserProfile } = await import('@/actions/userActions');
+          await createOrUpdateUserProfile(currentFirebaseUser.uid, {
+            email: currentFirebaseUser.email,
+            name: currentFirebaseUser.displayName || currentFirebaseUser.email,
+            avatar: currentFirebaseUser.photoURL || undefined,
+          });
+          
+          // Re-fetch the profile after creation
+          profile = await getUserProfile(currentFirebaseUser.uid);
+        }
+        
+        // If still no profile, create a default one with admin check
         if (!profile) {
-          // Default role assignment should happen server-side
+          // Check if this email is in admin list (fallback when Firestore is not available)
+          const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim().replace(/\n/g, ''));
+          const isAdmin = adminEmails.includes(currentFirebaseUser.email || '');
+          
           const newAppUser: AppUser = {
             uid: currentFirebaseUser.uid,
             email: currentFirebaseUser.email || undefined,
@@ -99,12 +106,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             photoURL: currentFirebaseUser.photoURL || undefined,
             creationTime: currentFirebaseUser.metadata.creationTime,
             lastSignInTime: currentFirebaseUser.metadata.lastSignInTime,
-            role: 'user', // Default role, server-side will determine admin status
+            role: isAdmin ? 'admin' : 'user', // Set admin role if email matches
             birthDate: '',
             sajuInfo: '',
             subscriptionStatus: 'free',
           };
           profile = newAppUser;
+          
+          console.log(`🔥 AuthContext: Created fallback profile for ${currentFirebaseUser.email} with role: ${profile.role}`);
         }
 
         setUser(profile);

@@ -10,67 +10,61 @@
      ✓ optimizeCss
 
  ✓ Starting...
- ✓ Ready in 23.7s
- ✓ Compiled /middleware in 1833ms
+ ✓ Ready in 24.4s
+ ✓ Compiled /middleware in 1871ms
  ✓ Compiled (159 modules)
- ○ Compiling / ...
- ✓ Compiled / in 19.6s (1578 modules)
- ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
- GET / 200 in 23814ms
- ✓ Compiled in 4.1s (527 modules)
- ○ Compiling /favicon.ico ...
- ✓ Compiled /reading in 2.2s (1067 modules)
- ⚠ ./node_modules/handlebars/lib/index.js
-require.extensions is not supported by webpack. Use a loader instead.
-
-Import trace for requested module:
-./node_modules/handlebars/lib/index.js
-./node_modules/dotprompt/dist/index.js
-./node_modules/@genkit-ai/core/lib/registry.js
-./node_modules/genkit/lib/registry.js
-./node_modules/genkit/lib/genkit.js
-./node_modules/genkit/lib/index.mjs
-./src/ai/flows/generate-tarot-interpretation.ts
-
-./node_modules/handlebars/lib/index.js
-require.extensions is not supported by webpack. Use a loader instead.
-
-Import trace for requested module:
-./node_modules/handlebars/lib/index.js
-./node_modules/dotprompt/dist/index.js
-./node_modules/@genkit-ai/core/lib/registry.js
-./node_modules/genkit/lib/registry.js
-./node_modules/genkit/lib/genkit.js
-./node_modules/genkit/lib/index.mjs
-./src/ai/flows/generate-tarot-interpretation.ts
-
-./node_modules/handlebars/lib/index.js
-require.extensions is not supported by webpack. Use a loader instead.
-
-Import trace for requested module:
-./node_modules/handlebars/lib/index.js
-./node_modules/dotprompt/dist/index.js
-./node_modules/@genkit-ai/core/lib/registry.js
-./node_modules/genkit/lib/registry.js
-./node_modules/genkit/lib/genkit.js
-./node_modules/genkit/lib/index.mjs
-./src/ai/flows/generate-tarot-interpretation.ts
- GET /favicon.ico 200 in 20409ms
- GET /reading 200 in 22616ms
- GET /reading 200 in 421ms
- GET /favicon.ico 200 in 166ms
- GET /favicon.ico 200 in 178ms
- GET /reading 200 in 443ms
- GET /favicon.ico 200 in 237ms
- GET /favicon.ico 200 in 230ms
- GET /reading 200 in 356ms
- GET /favicon.ico 200 in 165ms
- GET /reading 200 in 301ms
- GET /favicon.ico 200 in 306ms
- GET /favicon.ico 200 in 215ms
- GET /reading 200 in 346ms
- GET /favicon.ico 200 in 145ms
- GET /favicon.ico 200 in 136ms
- GET /reading 200 in 300ms
- GET /favicon.ico 200 in -326ms
- GET /favicon.ico 200 in -609ms
+ ○ Compiling /api/blog/posts ...
+ ✓ Compiled /api/blog/posts in 1108ms (411 modules)
+✅ Using Firebase service account from FIREBASE_SERVICE_ACCOUNT_KEY
+🔥 Firebase Admin SDK initialized successfully
+ GET /api/blog/posts 200 in 10783ms
+🔥 Mock Firestore Server: Post created with ID: mock-post-1753484233451
+ POST /api/blog/posts 200 in -730ms
+   Reload env: .env.local
+ ✓ Compiled in 1287ms (570 modules)
+Error fetching posts: Error: 9 FAILED_PRECONDITION: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/innerspell-an7ce/firestore/indexes?create_composite=ClNwcm9qZWN0cy9pbm5lcnNwZWxsLWFuN2NlL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9ibG9nX3Bvc3RzL2luZGV4ZXMvXxABGg0KCXB1Ymxpc2hlZBABGg8KC3B1Ymxpc2hlZEF0EAIaDAoIX19uYW1lX18QAg
+    at getAllPostsServer (src/services/blog-service-server.ts:93:33)
+    at async GET (src/app/api/blog/posts/route.ts:24:18)
+  91 |     query = query.orderBy('publishedAt', 'desc').limit(10);
+  92 |
+> 93 |     const snapshot = await query.get();
+     |                                 ^
+  94 |     const posts = snapshot.docs.map(doc => convertToPost(doc.data(), doc.id));
+  95 |
+  96 |     return posts; {
+  code: 9,
+  details: 'The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/innerspell-an7ce/firestore/indexes?create_composite=ClNwcm9qZWN0cy9pbm5lcnNwZWxsLWFuN2NlL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9ibG9nX3Bvc3RzL2luZGV4ZXMvXxABGg0KCXB1Ymxpc2hlZBABGg8KC3B1Ymxpc2hlZEF0EAIaDAoIX19uYW1lX18QAg',
+  metadata: [Metadata]
+}
+ GET /api/blog/posts 200 in 8227ms
+Error fetching posts: Error: 9 FAILED_PRECONDITION: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/innerspell-an7ce/firestore/indexes?create_composite=ClNwcm9qZWN0cy9pbm5lcnNwZWxsLWFuN2NlL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9ibG9nX3Bvc3RzL2luZGV4ZXMvXxABGg0KCXB1Ymxpc2hlZBABGg8KC3B1Ymxpc2hlZEF0EAIaDAoIX19uYW1lX18QAg
+    at getAllPostsServer (src/services/blog-service-server.ts:93:33)
+    at async GET (src/app/api/blog/posts/route.ts:24:18)
+  91 |     query = query.orderBy('publishedAt', 'desc').limit(10);
+  92 |
+> 93 |     const snapshot = await query.get();
+     |                                 ^
+  94 |     const posts = snapshot.docs.map(doc => convertToPost(doc.data(), doc.id));
+  95 |
+  96 |     return posts; {
+  code: 9,
+  details: 'The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/innerspell-an7ce/firestore/indexes?create_composite=ClNwcm9qZWN0cy9pbm5lcnNwZWxsLWFuN2NlL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9ibG9nX3Bvc3RzL2luZGV4ZXMvXxABGg0KCXB1Ymxpc2hlZBABGg8KC3B1Ymxpc2hlZEF0EAIaDAoIX19uYW1lX18QAg',
+  metadata: [Metadata]
+}
+ GET /api/blog/posts 200 in 230ms
+Error fetching posts: Error: 9 FAILED_PRECONDITION: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/innerspell-an7ce/firestore/indexes?create_composite=ClNwcm9qZWN0cy9pbm5lcnNwZWxsLWFuN2NlL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9ibG9nX3Bvc3RzL2luZGV4ZXMvXxABGg0KCXB1Ymxpc2hlZBABGg8KC3B1Ymxpc2hlZEF0EAIaDAoIX19uYW1lX18QAg
+    at getAllPostsServer (src/services/blog-service-server.ts:93:33)
+    at async GET (src/app/api/blog/posts/route.ts:24:18)
+  91 |     query = query.orderBy('publishedAt', 'desc').limit(10);
+  92 |
+> 93 |     const snapshot = await query.get();
+     |                                 ^
+  94 |     const posts = snapshot.docs.map(doc => convertToPost(doc.data(), doc.id));
+  95 |
+  96 |     return posts; {
+  code: 9,
+  details: 'The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/innerspell-an7ce/firestore/indexes?create_composite=ClNwcm9qZWN0cy9pbm5lcnNwZWxsLWFuN2NlL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9ibG9nX3Bvc3RzL2luZGV4ZXMvXxABGg0KCXB1Ymxpc2hlZBABGg8KC3B1Ymxpc2hlZEF0EAIaDAoIX19uYW1lX18QAg',
+  metadata: [Metadata]
+}
+ GET /api/blog/posts?t=1753484405 200 in 246ms
+[?25h

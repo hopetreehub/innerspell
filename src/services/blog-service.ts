@@ -71,52 +71,7 @@ export async function getAllPosts(
       return { posts: [] };
     }
 
-    // Mock 환경에서는 Mock API 사용
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-      const snapshot = await (db as any).collection('blog_posts').getDocs();
-      let posts = snapshot.docs.map((doc: any) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          title: data.title || '',
-          excerpt: data.excerpt || '',
-          content: data.content || '',
-          category: data.category || 'tarot',
-          tags: data.tags || [],
-          author: data.author || 'InnerSpell Team',
-          authorId: data.authorId,
-          publishedAt: data.publishedAt instanceof Date ? data.publishedAt : new Date(data.publishedAt || Date.now()),
-          updatedAt: data.updatedAt instanceof Date ? data.updatedAt : new Date(data.updatedAt || Date.now()),
-          createdAt: data.createdAt instanceof Date ? data.createdAt : new Date(data.createdAt || Date.now()),
-          readingTime: data.readingTime || 5,
-          image: data.image || '/images/blog1.png',
-          featured: data.featured || false,
-          published: data.published || false,
-          views: data.views || 0,
-          likes: data.likes || 0,
-        } as BlogPost;
-      });
-      
-      // 필터링 적용
-      if (onlyPublished) {
-        posts = posts.filter((post: BlogPost) => post.published);
-      }
-      
-      if (categoryFilter && categoryFilter !== 'all') {
-        posts = posts.filter((post: BlogPost) => post.category === categoryFilter);
-      }
-      
-      // 정렬
-      posts.sort((a: BlogPost, b: BlogPost) => {
-        const dateA = a.publishedAt instanceof Date ? a.publishedAt : new Date(a.publishedAt);
-        const dateB = b.publishedAt instanceof Date ? b.publishedAt : new Date(b.publishedAt);
-        return dateB.getTime() - dateA.getTime();
-      });
-      
-      return { posts: posts.slice(0, 10) };
-    }
-
-    // 실제 Firestore 환경
+    // Firestore 환경
     let q = query(collection(db, POSTS_COLLECTION));
 
     // 필터 적용
@@ -152,35 +107,7 @@ export async function getPostById(postId: string): Promise<BlogPost | null> {
       return null;
     }
 
-    // Mock 환경에서는 Mock API 사용
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-      const doc = await (db as any).collection('blog-posts').doc(postId).get();
-      if (!doc.exists()) {
-        return null;
-      }
-      const data = doc.data();
-      return {
-        id: doc.id,
-        title: data.title || '',
-        excerpt: data.excerpt || '',
-        content: data.content || '',
-        category: data.category || 'tarot',
-        tags: data.tags || [],
-        author: data.author || 'InnerSpell Team',
-        authorId: data.authorId,
-        publishedAt: data.publishedAt instanceof Date ? data.publishedAt : new Date(data.publishedAt || Date.now()),
-        updatedAt: data.updatedAt instanceof Date ? data.updatedAt : new Date(data.updatedAt || Date.now()),
-        createdAt: data.createdAt instanceof Date ? data.createdAt : new Date(data.createdAt || Date.now()),
-        readingTime: data.readingTime || 5,
-        image: data.image || '/images/blog1.png',
-        featured: data.featured || false,
-        published: data.published || false,
-        views: data.views || 0,
-        likes: data.likes || 0,
-      } as BlogPost;
-    }
-
-    // 실제 Firestore 환경
+    // Firestore 환경
     const postDoc = await getDoc(doc(db, POSTS_COLLECTION, postId));
     
     if (!postDoc.exists()) {
@@ -212,14 +139,7 @@ export async function createPost(post: Omit<BlogPost, 'id' | 'createdAt' | 'upda
       likes: 0,
     };
 
-    // Mock 환경에서는 Mock API 사용
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-      const result = await (db as any).collection('blog-posts').add(postData);
-      console.log('🔥 Mock Firestore: Post created with ID:', result.id);
-      return result.id;
-    }
-
-    // 실제 Firestore 환경
+    // Firestore 환경
     const newPostRef = doc(collection(db, POSTS_COLLECTION));
     
     await setDoc(newPostRef, {
@@ -248,14 +168,7 @@ export async function updatePost(postId: string, updates: Partial<BlogPost>): Pr
       updatedAt: new Date(),
     };
 
-    // Mock 환경에서는 Mock API 사용
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-      await (db as any).collection('blog-posts').doc(postId).update(updateData);
-      console.log('🔥 Mock Firestore: Post updated with ID:', postId);
-      return;
-    }
-
-    // 실제 Firestore 환경
+    // Firestore 환경
     const postRef = doc(db, POSTS_COLLECTION, postId);
     
     const firestoreUpdateData: any = {
@@ -282,14 +195,7 @@ export async function deletePost(postId: string): Promise<void> {
       throw new Error('Firestore not initialized');
     }
 
-    // Mock 환경에서는 Mock API 사용
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-      await (db as any).collection('blog-posts').doc(postId).delete();
-      console.log('🔥 Mock Firestore: Post deleted with ID:', postId);
-      return;
-    }
-
-    // 실제 Firestore 환경
+    // Firestore 환경
     await deleteDoc(doc(db, POSTS_COLLECTION, postId));
   } catch (error) {
     console.error('Error deleting post:', error);

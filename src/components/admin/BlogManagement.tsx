@@ -22,6 +22,7 @@ import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useAuth } from '@/context/AuthContext';
+import { getApiHeaders } from '@/lib/csrf';
 
 export function BlogManagement() {
   const { user } = useAuth();
@@ -202,10 +203,9 @@ export function BlogManagement() {
       
       const response = await fetch(url, {
         method,
-        headers: {
+        headers: getApiHeaders({
           'Authorization': token ? `Bearer ${token}` : '',
-          'Content-Type': 'application/json',
-        },
+        }),
         body: JSON.stringify({
           ...newPost,
           publishedAt: newPost.publishedAt || new Date().toISOString(),

@@ -1,7 +1,6 @@
 'use server';
 
-import { doc, getDoc, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase/admin';
+import { db, FieldValue } from '@/lib/firebase/admin';
 import { UserProfile } from '@/types';
 
 /**
@@ -16,13 +15,13 @@ export async function createOrUpdateUserProfile(
   }
 ) {
   try {
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
 
-    if (!userDoc.exists()) {
+    if (!userDoc.exists) {
       // 새 사용자 프로필 생성
       // ADMIN_EMAILS 환경변수에 있는 이메일은 자동으로 관리자 권한 부여
-      const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim());
+      const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim().replace(/\n/g, ''));
       const isAdmin = adminEmails.includes(userData.email);
       
       const newUserProfile = {
@@ -35,11 +34,11 @@ export async function createOrUpdateUserProfile(
         followingCount: 0,
         postsCount: 0,
         role: isAdmin ? 'admin' : 'user',
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
+        createdAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp()
       };
 
-      await setDoc(userRef, newUserProfile);
+      await userRef.set(newUserProfile);
       console.log(`새 사용자 프로필 생성: ${userId} (role: ${newUserProfile.role})`);
       
       return { 
@@ -49,7 +48,7 @@ export async function createOrUpdateUserProfile(
     } else {
       // 기존 사용자 프로필 업데이트 (이메일, 이름, 아바타만)
       const updateData: any = {
-        updatedAt: Timestamp.now()
+        updatedAt: FieldValue.serverTimestamp()
       };
 
       // 변경된 필드만 업데이트
@@ -69,7 +68,7 @@ export async function createOrUpdateUserProfile(
 
       // 실제로 변경된 것이 있을 때만 업데이트
       if (Object.keys(updateData).length > 1) {
-        await updateDoc(userRef, updateData);
+        await userRef.update(updateData);
         console.log(`사용자 프로필 업데이트: ${userId}`);
       }
 
@@ -92,10 +91,10 @@ export async function createOrUpdateUserProfile(
  */
 export async function getUserProfileData(userId: string) {
   try {
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
 
-    if (!userDoc.exists()) {
+    if (!userDoc.exists) {
       return { success: false, error: '사용자 프로필을 찾을 수 없습니다.' };
     }
 
@@ -110,8 +109,8 @@ export async function getUserProfileData(userId: string) {
       followersCount: data.followersCount || 0,
       followingCount: data.followingCount || 0,
       postsCount: data.postsCount || 0,
-      createdAt: data.createdAt.toDate(),
-      updatedAt: data.updatedAt.toDate()
+      createdAt: data.createdAt?.toDate() || new Date(),
+      updatedAt: data.updatedAt?.toDate() || new Date()
     };
 
     return { success: true, profile };
@@ -139,17 +138,17 @@ export interface AppUser {
  */
 export async function getUserProfile(userId: string): Promise<AppUser | null> {
   try {
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
     
-    if (!userDoc.exists()) {
+    if (!userDoc.exists) {
       return null;
     }
     
     const data = userDoc.data();
     
     // ADMIN_EMAILS 환경변수에 있는 이메일은 자동으로 관리자 권한 부여
-    const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim());
+    const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim().replace(/\n/g, ''));
     const isAdmin = adminEmails.includes(data.email);
     
     const appUser: AppUser = {
@@ -259,7 +258,7 @@ export async function updateUserProfile(
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
 
-    if (!userDoc.exists()) {
+    if (!userDoc.exists) {
       return { success: false, error: '사용자 프로필을 찾을 수 없습니다.' };
     }
 

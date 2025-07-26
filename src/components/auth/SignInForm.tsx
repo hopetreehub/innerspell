@@ -22,6 +22,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, KeyRound, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { DevAuthHelper } from '@/components/DevAuthHelper';
 
 const formSchema = z.object({
   email: z.string().email({ message: '유효한 이메일 주소를 입력해주세요.' }),
@@ -320,41 +321,7 @@ export function SignInForm() {
           회원가입
         </Link>
       </p>
-      
-      {/* 개발 환경 로그인 버튼 */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mt-6 pt-6 border-t border-border">
-          <p className="text-center text-sm text-muted-foreground mb-4">
-            개발 환경 빠른 로그인
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={async () => {
-                form.setValue('email', 'admin@innerspell.com');
-                form.setValue('password', 'admin123');
-                await form.handleSubmit(onSubmit)();
-              }}
-              disabled={loading}
-            >
-              관리자로 로그인
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={async () => {
-                form.setValue('email', 'test@example.com');
-                form.setValue('password', 'test123');
-                await form.handleSubmit(onSubmit)();
-              }}
-              disabled={loading}
-            >
-              테스트 유저로 로그인
-            </Button>
-          </div>
-        </div>
-      )}
+      <DevAuthHelper />
     </>
   );
 }

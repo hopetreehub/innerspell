@@ -14,7 +14,8 @@ import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/hooks/use-toast';
 import type { SavedReading, SavedReadingCard } from '@/types';
-import { getUserReadings, deleteUserReading } from '@/actions/readingActions';
+// import { getUserReadings, deleteUserReading } from '@/actions/readingActions';
+import { getUserReadingsClient, deleteUserReadingClient } from '@/lib/firebase/client-read';
 import { updateUserProfile } from '@/actions/userActions';
 import Image from 'next/image';
 import {
@@ -67,7 +68,7 @@ export default function ProfilePage() {
     const fetchReadings = async (userId: string) => {
       setLoadingReadings(true);
       try {
-        const readings = await getUserReadings(userId);
+        const readings = await getUserReadingsClient(userId);
         setSavedReadings(readings);
       } catch (error: any) {
         toast({
@@ -123,7 +124,7 @@ export default function ProfilePage() {
   const handleDeleteReadingConfirm = async () => {
     if (!readingToDelete || !user) return;
     setIsDeletingReading(true);
-    const result = await deleteUserReading(user.uid, readingToDelete.id);
+    const result = await deleteUserReadingClient(user.uid, readingToDelete.id);
     if (result.success) {
       toast({ title: '삭제 성공', description: '리딩 기록이 삭제되었습니다.' });
       setSavedReadings(prev => prev.filter(r => r.id !== readingToDelete.id));

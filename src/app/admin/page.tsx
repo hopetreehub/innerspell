@@ -11,7 +11,7 @@ import { SystemManagement } from '@/components/admin/SystemManagement';
 import { AIProviderManagement } from '@/components/admin/AIProviderManagement';
 import { GEOGuidelinesManager } from '@/components/admin/GEOGuidelinesManager';
 import { BlogManagement } from '@/components/admin/BlogManagement';
-// import { TarotInstructionsManagement } from '@/components/admin/TarotInstructionsManagement';
+import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, Target, PenTool } from 'lucide-react';
@@ -118,17 +118,14 @@ export default function AdminDashboardPage() {
           <Card className="shadow-lg border-primary/10">
             <CardHeader>
               <CardTitle className="font-headline text-2xl text-primary flex items-center">
-                <BookOpen className="mr-2 h-6 w-6" /> 타로 카드 해석 지침
+                <BookOpen className="mr-2 h-6 w-6" /> 타로 해석 지침 관리
               </CardTitle>
               <CardDescription>
-                각 타로 카드에 대한 해석 지침을 관리하고 편집합니다.
+                스프레드별, 해석 스타일별 타로 지침을 체계적으로 관리합니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* <TarotInstructionsManagement /> */}
-              <div className="text-center text-muted-foreground">
-                타로 카드 해석 지침 관리는 현재 개발 중입니다.
-              </div>
+              <TarotGuidelineManagement />
             </CardContent>
           </Card>
         </TabsContent>

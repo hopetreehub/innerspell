@@ -21,7 +21,7 @@ interface ShareReadingInput {
  */
 export async function shareReadingClient(
   input: ShareReadingInput
-): Promise<{ success: boolean; shareUrl?: string; error?: string }> {
+): Promise<{ success: boolean; shareUrl?: string; error?: string; warning?: string }> {
   try {
     if (!db) {
       console.error('❌ Firebase db가 초기화되지 않음');
@@ -59,7 +59,32 @@ export async function shareReadingClient(
     };
 
     // Firestore에 저장
-    await setDoc(doc(db, 'sharedReadings', shareId), sharedReading);
+    try {
+      await setDoc(doc(db, 'sharedReadings', shareId), sharedReading);
+    } catch (firestoreError: any) {
+      // 권한 오류인 경우 로컬 스토리지에 임시 저장
+      if (firestoreError?.code === 'permission-denied') {
+        console.warn('⚠️ Firestore 권한 오류 - 로컬 스토리지에 임시 저장');
+        
+        // 로컬 스토리지에 저장
+        if (typeof window !== 'undefined') {
+          const localShares = JSON.parse(localStorage.getItem('localSharedReadings') || '{}');
+          localShares[shareId] = sharedReading;
+          localStorage.setItem('localSharedReadings', JSON.stringify(localShares));
+          
+          // 공유 URL은 동일하게 생성
+          const baseUrl = window.location.origin;
+          const shareUrl = `${baseUrl}/reading/shared/${shareId}`;
+          
+          return {
+            success: true,
+            shareUrl,
+            warning: 'Firestore 권한 문제로 임시 저장되었습니다. 링크는 현재 브라우저에서만 유효합니다.'
+          };
+        }
+      }
+      throw firestoreError;
+    }
 
     // 현재 도메인 기반으로 공유 URL 생성
     const baseUrl = typeof window !== 'undefined' 
@@ -118,6 +143,18 @@ export async function getSharedReadingClient(
         success: false, 
         error: '공유 ID가 제공되지 않았습니다.' 
       };
+    }
+
+    // 먼저 로컬 스토리지 확인
+    if (typeof window !== 'undefined') {
+      const localShares = JSON.parse(localStorage.getItem('localSharedReadings') || '{}');
+      if (localShares[shareId]) {
+        console.log('✅ 로컬 스토리지에서 공유 리딩 조회 성공:', shareId);
+        return {
+          success: true,
+          reading: localShares[shareId]
+        };
+      }
     }
 
     // Firestore에서 공유 리딩 조회

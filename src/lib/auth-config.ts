@@ -3,8 +3,8 @@
  */
 
 export const authConfig = {
-  // 실제 Firebase Auth 사용 여부
-  useRealAuth: process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'true' || process.env.NODE_ENV === 'production',
+  // 항상 실제 Firebase Auth 사용
+  useRealAuth: true,
   
   // 세션 설정
   session: {

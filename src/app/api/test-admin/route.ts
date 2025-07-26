@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // 이메일로 사용자 정보 확인
-    const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com,junsupark9999@gmail.com,ceo@innerspell.com').split(',');
+    const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com,junsupark9999@gmail.com,ceo@innerspell.com').split(',').map(email => email.trim().replace(/\n/g, ''));
     const isAdmin = adminEmails.includes(email.trim());
 
     return NextResponse.json({

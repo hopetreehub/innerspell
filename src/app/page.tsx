@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Star, Compass, BookOpen } from 'lucide-react';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { AuthDebug } from '@/components/AuthDebug';
 
 export const metadata: Metadata = {
   title: 'InnerSpell - AI 타로와 함께 내면 탐험',
@@ -56,7 +55,6 @@ const features = [
 export default function HomePage() {
   return (
     <div className="space-y-16 sm:space-y-24">
-      <AuthDebug />
       <HeroSection />
       
       <section className="py-16">
