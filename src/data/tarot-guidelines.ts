@@ -1439,6 +1439,228 @@ export const TAROT_GUIDELINES: TarotGuideline[] = [
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date()
+  },
+
+  // 상황-행동-결과 x 심리학적 융 접근법
+  {
+    id: 'situation-action-outcome-psychological-jungian',
+    spreadId: 'situation-action-outcome',
+    styleId: 'psychological-jungian',
+    name: '상황-행동-결과 - 융 심리학적 접근',
+    description: '개성화 과정과 무의식적 동향을 통한 의사결정 분석',
+    positionGuidelines: [
+      {
+        positionId: 'situation',
+        positionName: '상황',
+        interpretationFocus: '현재 상황의 무의식적 배경과 원형적 패턴 분석',
+        keyQuestions: [
+          '이 상황에 작용하는 무의식적 동력은 무엇인가?',
+          '어떤 원형적 에너지가 상황을 주도하고 있는가?',
+          '의식과 무의식 사이의 갈등이 상황에 어떻게 반영되는가?'
+        ],
+        styleSpecificNotes: '융의 원형 이론으로 상황의 심층 구조를 파악하고 무의식적 동기 분석',
+        timeframe: '현재 상황의 심리적 구조'
+      },
+      {
+        positionId: 'action',
+        positionName: '행동',
+        interpretationFocus: '개성화 과정에 부합하는 의식적 선택과 무의식의 통합',
+        keyQuestions: [
+          '개성화 과정에서 취해야 할 의식적 행동은?',
+          '그림자나 아니마/아니무스를 통합하는 행동은?',
+          '자기(Self)의 목소리에 따른 행동 방향은?'
+        ],
+        styleSpecificNotes: '개성화를 촉진하고 무의식적 내용을 의식화하는 행동 제시',
+        timeframe: '개성화 과정에서의 의식적 선택'
+      },
+      {
+        positionId: 'outcome',
+        positionName: '결과',
+        interpretationFocus: '심리적 성장과 개성화 진전의 결과',
+        keyQuestions: [
+          '이 행동이 개성화 과정에 미칠 영향은?',
+          '의식과 무의식의 새로운 균형은 어떻게 형성될 것인가?',
+          '자기실현에 어떤 진전이 있을 것인가?'
+        ],
+        styleSpecificNotes: '심리적 발달과 전인적 성장의 관점에서 결과를 예측',
+        timeframe: '심리적 성장의 장기적 결과'
+      }
+    ],
+    generalApproach: '융의 분석심리학을 바탕으로 상황-행동-결과를 개성화 과정의 한 단계로 이해하고, 무의식의 보상적 기능을 활용한 성장 방향 제시',
+    keyFocusAreas: [
+      '무의식적 동기와 원형적 패턴',
+      '개성화 과정과 의식적 선택',
+      '그림자와 아니마/아니무스 통합',
+      '자기(Self) 원형과의 연결',
+      '심리적 성장과 전인적 발달'
+    ],
+    interpretationTips: [
+      '상황의 무의식적 배경을 깊이 탐구하세요',
+      '개성화를 촉진하는 행동을 제안하세요',
+      '무의식의 보상적 메시지에 주목하세요',
+      '장기적 심리적 발달을 고려하세요',
+      '개인의 고유한 개성화 과정을 존중하세요'
+    ],
+    commonPitfalls: [
+      '복잡한 심리학 이론으로 상황을 과도하게 분석',
+      '개성화를 목표로 하는 성취 지향적 사고',
+      '무의식 내용을 의식적 기준으로 판단',
+      '개인의 발달 수준을 무시한 고차원 해석',
+      '즉각적 해결책 대신 장기적 관점만 제시'
+    ],
+    difficulty: 'advanced',
+    estimatedTime: 50,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 상황-행동-결과 x 토트 크로울리 전통
+  {
+    id: 'situation-action-outcome-thoth-crowley',
+    spreadId: 'situation-action-outcome',
+    styleId: 'thoth-crowley',
+    name: '상황-행동-결과 - 토트 크로울리 전통',
+    description: '텔레마 철학과 의지의 실현을 통한 마법적 의사결정',
+    positionGuidelines: [
+      {
+        positionId: 'situation',
+        positionName: '상황',
+        interpretationFocus: '카발라적 맥락에서 현재 상황의 에너지적 구조 분석',
+        keyQuestions: [
+          '이 상황이 생명나무의 어느 세피로트에 대응하는가?',
+          '현재 작용하는 행성과 별자리 영향은?',
+          '우주적 의지와 개인적 의지의 관계는?'
+        ],
+        styleSpecificNotes: '토트 타로의 점성술적 대응과 카발라적 의미를 통한 상황 분석',
+        timeframe: '현재의 에너지적 배치와 우주적 타이밍'
+      },
+      {
+        positionId: 'action',
+        positionName: '행동',
+        interpretationFocus: '참의지(True Will) 실현을 위한 마법적 행동',
+        keyQuestions: [
+          '참의지에 부합하는 행동은 무엇인가?',
+          '어떤 에너지를 호출하고 방향을 설정해야 하는가?',
+          '대사업(Great Work)에 기여하는 행동은?'
+        ],
+        styleSpecificNotes: 'Do what thou wilt의 원리에 따른 의지적 행동과 마법적 실천',
+        timeframe: '의지 실현의 현재적 행동'
+      },
+      {
+        positionId: 'outcome',
+        positionName: '결과',
+        interpretationFocus: '의지 실현의 결과와 우주적 조화의 성취',
+        keyQuestions: [
+          '이 행동이 참의지 실현에 미칠 영향은?',
+          '우주적 질서와의 조화는 어떻게 이루어질 것인가?',
+          '마법적 작업의 성과와 진전은?'
+        ],
+        styleSpecificNotes: '텔레마의 우주적 조화와 개인적 성취의 통합적 결과',
+        timeframe: '의지 실현의 장기적 성과'
+      }
+    ],
+    generalApproach: '크로울리의 텔레마 철학과 토트 타로의 에소테릭 체계를 통해 상황을 마법적 작업으로 접근하고 참의지 실현을 추구',
+    keyFocusAreas: [
+      '텔레마 철학과 참의지(True Will)',
+      '카발라 생명나무와 에너지 흐름',
+      '점성술적 대응과 우주적 타이밍',
+      '마법적 의지와 에너지 조작',
+      '대사업을 통한 영적 진화'
+    ],
+    interpretationTips: [
+      '토트 덱의 점성술적 대응을 정확히 활용하세요',
+      '참의지와 소망을 명확히 구분하세요',
+      '카발라적 에너지 흐름을 고려하세요',
+      '마법적 타이밍과 우주적 리듬을 반영하세요',
+      '에소테릭한 상징의 깊은 의미를 탐구하세요'
+    ],
+    commonPitfalls: [
+      '텔레마를 이기적 욕망 실현으로 오해',
+      '복잡한 카발라 이론에만 의존',
+      '마법적 사고를 비현실적 기대로 연결',
+      '개인적 발달 수준을 무시한 고차원 해석',
+      '실용적 행동 없는 이론적 접근'
+    ],
+    difficulty: 'advanced',
+    estimatedTime: 55,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 상황-행동-결과 x 원소와 계절 중심
+  {
+    id: 'situation-action-outcome-elemental-seasonal',
+    spreadId: 'situation-action-outcome',
+    styleId: 'elemental-seasonal',
+    name: '상황-행동-결과 - 원소와 계절 중심',
+    description: '자연의 리듬과 원소 에너지를 통한 의사결정과 실행',
+    positionGuidelines: [
+      {
+        positionId: 'situation',
+        positionName: '상황',
+        interpretationFocus: '현재 상황의 원소적 특성과 계절적 에너지 분석',
+        keyQuestions: [
+          '이 상황은 어떤 원소 에너지가 지배적인가?',
+          '현재 계절이 상황에 미치는 영향은?',
+          '자연의 순환에서 이 상황의 의미는?'
+        ],
+        styleSpecificNotes: '카드의 원소적 속성과 현재 계절의 에너지를 통한 상황 해석',
+        timeframe: '현재의 원소적 상태와 계절적 맥락'
+      },
+      {
+        positionId: 'action',
+        positionName: '행동',
+        interpretationFocus: '자연의 리듬에 맞는 조화로운 행동',
+        keyQuestions: [
+          '현재 계절에 가장 적합한 행동은?',
+          '어떤 원소 에너지를 활용해야 하는가?',
+          '자연의 순환과 조화를 이루는 행동은?'
+        ],
+        styleSpecificNotes: '계절적 타이밍과 원소적 균형을 고려한 행동 제시',
+        timeframe: '자연 리듬에 따른 최적 행동 시기'
+      },
+      {
+        positionId: 'outcome',
+        positionName: '결과',
+        interpretationFocus: '자연과의 조화를 통한 지속 가능한 결과',
+        keyQuestions: [
+          '이 행동이 자연의 순환에 미칠 영향은?',
+          '계절 변화에 따른 결과의 변화는?',
+          '원소적 균형이 어떻게 회복될 것인가?'
+        ],
+        styleSpecificNotes: '생태적 관점에서 장기적이고 지속 가능한 결과 예측',
+        timeframe: '자연 순환의 완성과 다음 주기'
+      }
+    ],
+    generalApproach: '자연의 사원소와 계절적 리듬을 기반으로 의사결정을 내리고, 생태적 지혜와 조화로운 삶을 추구하는 관점',
+    keyFocusAreas: [
+      '사원소 에너지와 계절적 타이밍',
+      '자연 순환과 개인적 리듬의 조화',
+      '생태적 의식과 지속 가능성',
+      '원소적 균형과 에너지 조율',
+      '환경과의 상호작용과 적응'
+    ],
+    interpretationTips: [
+      '현재 계절의 에너지 특성을 반영하세요',
+      '카드의 원소적 속성을 정확히 파악하세요',
+      '자연의 타이밍과 개인의 리듬을 연결하세요',
+      '생태적 관점에서 지속 가능한 해결책을 제안하세요',
+      '원소 간의 상호작용과 균형을 고려하세요'
+    ],
+    commonPitfalls: [
+      '계절을 기계적으로 적용하는 오류',
+      '원소를 단순화하여 해석하는 실수',
+      '개인적 특성을 무시한 일반적 자연 적용',
+      '실제 자연 경험 없는 이론적 접근',
+      '현실적 제약을 고려하지 않은 이상적 제안'
+    ],
+    difficulty: 'intermediate',
+    estimatedTime: 35,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
 ];
 
