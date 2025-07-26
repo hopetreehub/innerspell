@@ -995,6 +995,450 @@ export const TAROT_GUIDELINES: TarotGuideline[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
     isActive: true
+  },
+
+  // 삼위일체 스프레드 x 심리학적 융 접근법
+  {
+    id: 'past-present-future-psychological-jungian',
+    spreadId: 'past-present-future',
+    styleId: 'psychological-jungian',
+    name: '삼위일체 - 융 심리학적 접근',
+    description: '무의식의 원형과 개성화 과정을 통한 시간적 자기 발견',
+    positionGuidelines: [
+      {
+        positionId: 'past',
+        positionName: '과거',
+        interpretationFocus: '집단무의식에서 개인무의식으로 전이된 원형적 경험 분석',
+        keyQuestions: [
+          '어떤 원형적 패턴이 과거부터 작용해왔는가?',
+          '개성화 과정에서 이 경험이 갖는 의미는?',
+          '그림자 투영이나 아니마/아니무스 투영이 있었는가?'
+        ],
+        styleSpecificNotes: '융의 원형 이론과 개성화 과정의 관점에서 과거 경험을 재해석',
+        timeframe: '유년기부터 현재까지의 원형적 패턴'
+      },
+      {
+        positionId: 'present',
+        positionName: '현재',
+        interpretationFocus: '현재 의식과 무의식의 균형 상태, 개성화의 현단계 진단',
+        keyQuestions: [
+          '지금 어떤 무의식적 내용이 의식화를 요구하고 있는가?',
+          '페르소나와 그림자의 균형은 어떠한가?',
+          '현재 직면한 심리적 과제는 무엇인가?'
+        ],
+        styleSpecificNotes: '의식과 무의식의 대립과 통합 과정에 초점을 맞춘 현재 상황 분석',
+        timeframe: '현재의 심리적 상태와 무의식적 동향'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래',
+        interpretationFocus: '개성화 과정의 다음 단계와 자기실현의 방향성 제시',
+        keyQuestions: [
+          '개성화 과정에서 다음에 통합해야 할 요소는?',
+          '자기(Self) 원형과의 관계는 어떻게 발전할 것인가?',
+          '심리적 성장을 위해 필요한 태도 변화는?'
+        ],
+        styleSpecificNotes: '운명론적 예측보다는 심리적 발달의 자연스러운 과정으로 해석',
+        timeframe: '개성화 과정의 다음 발달 단계'
+      }
+    ],
+    generalApproach: '융의 분석심리학 이론을 바탕으로 개인의 심리적 발달과 무의식의 메시지를 해석하며, 치료적 관점에서 성장 방향을 제시',
+    keyFocusAreas: [
+      '집단무의식과 개인무의식의 상호작용',
+      '원형적 패턴과 개성화 과정',
+      '의식과 무의식의 균형과 통합',
+      '그림자와 페르소나의 인식',
+      '자기실현과 심리적 성장'
+    ],
+    interpretationTips: [
+      '카드의 상징을 융의 원형 이론으로 해석하세요',
+      '개성화 과정의 어느 단계에 있는지 파악하세요',
+      '무의식의 보상적 기능을 고려하세요',
+      '동시성(synchronicity)의 의미를 탐구하세요',
+      '심리적 대립물의 통합 가능성을 찾으세요'
+    ],
+    commonPitfalls: [
+      '지나치게 학술적이거나 이론적인 해석',
+      '개성화를 완성으로 보는 목표 지향적 사고',
+      '무의식 내용을 의식의 기준으로 판단하기',
+      '원형을 고정된 틀로 한정하여 해석',
+      '개인의 고유성을 무시한 일반화'
+    ],
+    difficulty: 'advanced',
+    estimatedTime: 45,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 삼위일체 스프레드 x 치료적 상담 접근법
+  {
+    id: 'past-present-future-therapeutic-counseling',
+    spreadId: 'past-present-future',
+    styleId: 'therapeutic-counseling',
+    name: '삼위일체 - 치료적 상담 접근',
+    description: '치유와 성장을 위한 시간적 관점의 상담적 타로 해석',
+    positionGuidelines: [
+      {
+        positionId: 'past',
+        positionName: '과거',
+        interpretationFocus: '치유가 필요한 과거 경험과 성장의 자원 발견',
+        keyQuestions: [
+          '과거에서 치유되지 않은 상처나 트라우마는 무엇인가?',
+          '어떤 강점과 자원이 과거에 형성되었는가?',
+          '과거 경험에서 배울 수 있는 지혜는 무엇인가?'
+        ],
+        styleSpecificNotes: '비판하지 않는 수용적 태도로 과거를 재해석하고 치유의 관점 제공',
+        timeframe: '치유가 필요한 과거 경험들'
+      },
+      {
+        positionId: 'present',
+        positionName: '현재',
+        interpretationFocus: '현재의 강점과 자원 활용, 치유의 기회 포착',
+        keyQuestions: [
+          '지금 활용할 수 있는 내적 자원과 강점은 무엇인가?',
+          '현재 상황에서 성장의 기회는 어디에 있는가?',
+          '치유와 회복을 위해 필요한 것은 무엇인가?'
+        ],
+        styleSpecificNotes: '문제보다는 해결책과 강점에 초점, 내담자의 역량 강화',
+        timeframe: '현재 활용 가능한 치유 자원'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래',
+        interpretationFocus: '희망적 미래상과 치유 후의 성장 모습 제시',
+        keyQuestions: [
+          '치유와 성장 후 어떤 모습이 될 것인가?',
+          '미래를 위해 지금 심어야 할 씨앗은 무엇인가?',
+          '지속적인 성장을 위한 방향성은?'
+        ],
+        styleSpecificNotes: '현실적이면서도 희망적인 미래상 제시, 작은 변화부터 시작',
+        timeframe: '치유와 성장 과정의 결과'
+      }
+    ],
+    generalApproach: '상담 이론을 바탕으로 내담자의 치유와 성장을 돕는 관점에서 해석하며, 강점 중심의 긍정적 접근을 통해 희망과 용기를 제공',
+    keyFocusAreas: [
+      '트라우마 치유와 회복력 강화',
+      '내적 자원과 강점 발견',
+      '자기효능감과 자존감 향상',
+      '관계 개선과 소통 능력',
+      '지속적 성장과 자기돌봄'
+    ],
+    interpretationTips: [
+      '내담자의 강점과 자원에 집중하세요',
+      '비판 없는 수용적 태도를 유지하세요',
+      '작은 변화와 진전을 인정하고 격려하세요',
+      '현실적이면서도 희망적인 관점을 제공하세요',
+      '내담자가 스스로 답을 찾도록 도우세요'
+    ],
+    commonPitfalls: [
+      '조급하게 해결책을 제시하려 하기',
+      '내담자의 감정을 무시하거나 성급하게 위로하기',
+      '전문가 역할을 넘어선 개입',
+      '부정적 측면만 강조하여 절망감 조성',
+      '일방적 조언이나 지시적 태도'
+    ],
+    difficulty: 'intermediate',
+    estimatedTime: 40,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 삼위일체 스프레드 x 원소와 계절 중심
+  {
+    id: 'past-present-future-elemental-seasonal',
+    spreadId: 'past-present-future',
+    styleId: 'elemental-seasonal',
+    name: '삼위일체 - 원소와 계절 중심 해석',
+    description: '자연의 순환과 원소 에너지를 통한 시간적 리듬 분석',
+    positionGuidelines: [
+      {
+        positionId: 'past',
+        positionName: '과거',
+        interpretationFocus: '과거에 지배적이었던 원소 에너지와 계절적 패턴 분석',
+        keyQuestions: [
+          '과거에 어떤 원소 에너지가 주도했는가? (불/물/공기/흙)',
+          '그 시기의 계절적 특성은 무엇이었는가?',
+          '자연의 순환에서 어떤 단계였는가?'
+        ],
+        styleSpecificNotes: '카드의 원소적 속성과 계절적 의미를 중시하여 과거의 에너지 패턴 파악',
+        timeframe: '과거의 원소적 주기와 계절적 패턴'
+      },
+      {
+        positionId: 'present',
+        positionName: '현재',
+        interpretationFocus: '현재 활성화된 원소 에너지와 계절적 시기의 의미',
+        keyQuestions: [
+          '지금 어떤 원소 에너지가 필요하고 활성화되어 있는가?',
+          '현재 계절이 주는 메시지와 기회는 무엇인가?',
+          '자연의 리듬과 개인의 리듬이 조화를 이루고 있는가?'
+        ],
+        styleSpecificNotes: '현재 시점의 계절적 에너지와 원소적 균형을 고려한 해석',
+        timeframe: '현재의 원소적 균형과 계절적 흐름'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래',
+        interpretationFocus: '다가올 원소적 전환과 계절적 변화의 예고',
+        keyQuestions: [
+          '어떤 원소 에너지로 전환이 필요한가?',
+          '다음 계절이 가져올 변화와 기회는?',
+          '자연의 순환에 맞춰 어떻게 흘러가야 하는가?'
+        ],
+        styleSpecificNotes: '자연의 순환에 따른 자연스러운 변화와 적응의 필요성 강조',
+        timeframe: '다가올 원소적 순환과 계절적 전환'
+      }
+    ],
+    generalApproach: '자연의 사원소(불, 물, 공기, 흙)와 계절의 순환을 기반으로 개인의 에너지 패턴을 해석하며, 자연과의 조화로운 삶을 추구',
+    keyFocusAreas: [
+      '사원소 에너지의 균형과 조화',
+      '계절적 리듬과 개인적 주기',
+      '자연과의 연결과 생태적 의식',
+      '순환과 변화의 자연스러운 수용',
+      '환경과 에너지의 상호작용'
+    ],
+    interpretationTips: [
+      '카드의 원소적 속성을 정확히 파악하세요',
+      '현재 계절의 에너지를 해석에 반영하세요',
+      '자연의 순환과 개인의 리듬을 연결하세요',
+      '원소 간의 상호작용과 균형을 고려하세요',
+      '생태적 관점에서 조화로운 삶을 제안하세요'
+    ],
+    commonPitfalls: [
+      '원소를 지나치게 단순화하여 해석',
+      '계절을 기계적으로 적용하는 오류',
+      '개인의 특성을 무시한 일반적 자연 해석',
+      '원소 간의 복잡한 상호작용 무시',
+      '실제 자연과의 연결 없는 이론적 접근'
+    ],
+    difficulty: 'intermediate',
+    estimatedTime: 35,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 정신-몸-영혼 x 토트 크로울리 전통
+  {
+    id: 'mind-body-spirit-thoth-crowley',
+    spreadId: 'mind-body-spirit',
+    styleId: 'thoth-crowley',
+    name: '정신-몸-영혼 - 토트 크로울리 전통',
+    description: '텔레마 철학과 카발라적 나무 구조를 통한 삼체 균형 분석',
+    positionGuidelines: [
+      {
+        positionId: 'mind',
+        positionName: '정신 (Mind)',
+        interpretationFocus: '티페렛 중심의 의식 상태와 카발라적 지성 분석',
+        keyQuestions: [
+          '현재 의식의 세피로트는 어느 위치에 있는가?',
+          '루아흐(중간 영혼)의 상태와 균형은?',
+          '아비스를 넘어서는 고등 지성과의 연결은?'
+        ],
+        styleSpecificNotes: '크로울리의 의식 발달 단계와 카발라 생명나무 대응으로 해석',
+        timeframe: '현재의 의식 진화 단계'
+      },
+      {
+        positionId: 'body',
+        positionName: '몸 (Body)',
+        interpretationFocus: '말쿠트(왕국)와 물질계 에너지의 현현과 점성술적 대응',
+        keyQuestions: [
+          '물질계에서의 의지 실현 상태는?',
+          '행성 에너지와 신체적 대응은 어떠한가?',
+          '네페쉬(동물 영혼)의 건강 상태는?'
+        ],
+        styleSpecificNotes: '토트 덱의 점성술적 대응과 행성 에너지를 통한 신체 해석',
+        timeframe: '현재의 물질적 현현 상태'
+      },
+      {
+        positionId: 'spirit',
+        positionName: '영혼 (Spirit)',
+        interpretationFocus: '케테르를 향한 영적 상승과 성스러운 수호천사와의 소통',
+        keyQuestions: [
+          '성스러운 수호천사(HGA)와의 연결 상태는?',
+          '네샤마(고등 영혼)의 활성화 정도는?',
+          '대사업(Great Work) 진행 상황은?'
+        ],
+        styleSpecificNotes: '텔레마 전통의 영적 실천과 의지 실현을 중심으로 해석',
+        timeframe: '영적 진화의 전체 여정'
+      }
+    ],
+    generalApproach: '크로울리의 텔레마 철학과 토트 타로의 깊이 있는 상징 체계를 통해 정신-몸-영혼의 통합적 발전 방향을 제시',
+    keyFocusAreas: [
+      '카발라 생명나무와 의식 진화',
+      '점성술적 대응과 행성 에너지',
+      '텔레마 철학과 참의지 실현',
+      '성스러운 수호천사와의 소통',
+      '대사업을 통한 전인적 발전'
+    ],
+    interpretationTips: [
+      '토트 덱의 점성술적 대응을 정확히 파악하세요',
+      '카발라 생명나무의 세피로트 위치를 고려하세요',
+      '텔레마의 핵심 원리 "Do what thou wilt"를 적용하세요',
+      '행성과 별자리의 영향을 해석에 반영하세요',
+      '에소테릭한 상징의 깊은 의미를 탐구하세요'
+    ],
+    commonPitfalls: [
+      '지나치게 복잡한 카발라 이론에만 의존',
+      '텔레마 철학을 도덕적 방임으로 오해',
+      '점성술적 대응을 기계적으로 적용',
+      '개인의 발달 수준을 무시한 고차원 해석',
+      '실용적 조언 없는 추상적 이론만 제시'
+    ],
+    difficulty: 'advanced',
+    estimatedTime: 50,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 정신-몸-영혼 x 치료적 상담 접근법
+  {
+    id: 'mind-body-spirit-therapeutic-counseling',
+    spreadId: 'mind-body-spirit',
+    styleId: 'therapeutic-counseling',
+    name: '정신-몸-영혼 - 치료적 상담 접근',
+    description: '홀리스틱 치료 관점에서 정신-신체-영성의 통합적 치유',
+    positionGuidelines: [
+      {
+        positionId: 'mind',
+        positionName: '정신 (Mind)',
+        interpretationFocus: '정신 건강과 인지적 자원 발견을 통한 치유',
+        keyQuestions: [
+          '현재 정신적 스트레스와 치유가 필요한 부분은?',
+          '인지적 강점과 대처 능력은 무엇인가?',
+          '정신적 회복력을 높이는 방법은?'
+        ],
+        styleSpecificNotes: '인지행동치료, 마음챙김 등 현대 심리치료 접근법 활용',
+        timeframe: '현재의 정신건강 상태'
+      },
+      {
+        positionId: 'body',
+        positionName: '몸 (Body)',
+        interpretationFocus: '신체적 증상과 치유, 자기돌봄을 통한 회복',
+        keyQuestions: [
+          '몸이 보내는 신호와 치유 메시지는?',
+          '신체적 자기돌봄에서 부족한 부분은?',
+          '몸과 마음의 연결을 강화하는 방법은?'
+        ],
+        styleSpecificNotes: '신체 기반 치료와 전인적 건강 접근법 반영',
+        timeframe: '현재의 신체건강과 자기돌봄'
+      },
+      {
+        positionId: 'spirit',
+        positionName: '영혼 (Spirit)',
+        interpretationFocus: '영적 자원과 의미, 목적의식을 통한 치유',
+        keyQuestions: [
+          '삶의 의미와 목적에서 치유가 필요한 부분은?',
+          '영적 자원과 지지체계는 무엇인가?',
+          '내면의 지혜와 직감을 어떻게 활용할 수 있나?'
+        ],
+        styleSpecificNotes: '영성 기반 치료와 의미요법적 접근 통합',
+        timeframe: '지속적인 영적 성장과 치유'
+      }
+    ],
+    generalApproach: '정신-신체-영성의 상호연결성을 인정하고 전인적 치유를 목표로 하는 통합적 상담 접근',
+    keyFocusAreas: [
+      '트라우마 인식 치료(trauma-informed care)',
+      '신체-마음 연결과 체화된 치유',
+      '영적 자원과 의미 중심 치료',
+      '회복력과 성장 후 스트레스',
+      '전인적 웰빙과 자기돌봄'
+    ],
+    interpretationTips: [
+      '정신-신체-영성의 상호연결성을 강조하세요',
+      '강점 기반 접근으로 치유 자원을 발견하세요',
+      '트라우마에 민감한 해석을 제공하세요',
+      '실용적이고 실행 가능한 치유 방법을 제안하세요',
+      '개인의 고유한 치유 여정을 존중하세요'
+    ],
+    commonPitfalls: [
+      '의료적 진단이나 처방을 시도하는 것',
+      '영적 차원을 종교적 교리로 한정하기',
+      '빠른 치유를 약속하는 비현실적 기대',
+      '개인의 치유 속도를 재촉하기',
+      '전문적 치료의 필요성을 간과하기'
+    ],
+    difficulty: 'intermediate',
+    estimatedTime: 45,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 정신-몸-영혼 x 원소와 계절 중심
+  {
+    id: 'mind-body-spirit-elemental-seasonal',
+    spreadId: 'mind-body-spirit',
+    styleId: 'elemental-seasonal',
+    name: '정신-몸-영혼 - 원소와 계절 중심',
+    description: '자연의 사원소를 통한 정신-신체-영성의 균형과 조화',
+    positionGuidelines: [
+      {
+        positionId: 'mind',
+        positionName: '정신 (Mind)',
+        interpretationFocus: '공기 원소와 사고, 소통의 자연적 흐름',
+        keyQuestions: [
+          '현재 정신적 에너지는 어떤 원소와 연결되어 있는가?',
+          '사고의 흐름이 자연스럽고 균형 잡혀 있는가?',
+          '계절적 변화가 정신상태에 미치는 영향은?'
+        ],
+        styleSpecificNotes: '공기 원소(사고, 소통)를 중심으로 하되 다른 원소와의 균형 고려',
+        timeframe: '현재의 정신적 계절과 원소적 균형'
+      },
+      {
+        positionId: 'body',
+        positionName: '몸 (Body)',
+        interpretationFocus: '흙 원소와 신체의 안정성, 자연과의 연결',
+        keyQuestions: [
+          '몸의 에너지는 어떤 원소적 특성을 보이는가?',
+          '자연의 리듬과 몸의 리듬이 조화를 이루고 있는가?',
+          '계절 변화에 따른 신체적 적응은 어떠한가?'
+        ],
+        styleSpecificNotes: '흙 원소(안정, 실용)를 기본으로 하되 계절적 원소 변화 반영',
+        timeframe: '현재의 신체적 계절 적응'
+      },
+      {
+        positionId: 'spirit',
+        positionName: '영혼 (Spirit)',
+        interpretationFocus: '불과 물 원소의 균형을 통한 영적 역동성',
+        keyQuestions: [
+          '영적 에너지에서 불(열정)과 물(직감)의 균형은?',
+          '자연과의 영적 연결과 교감은 어떠한가?',
+          '계절의 영적 메시지를 어떻게 받아들이고 있는가?'
+        ],
+        styleSpecificNotes: '불(열정, 창조)과 물(직감, 감정)의 균형을 중심으로 해석',
+        timeframe: '지속적인 영적 자연 연결'
+      }
+    ],
+    generalApproach: '사원소(불, 물, 공기, 흙)의 균형을 통해 정신-신체-영성의 자연스러운 조화를 추구하고 계절적 리듬과의 동조를 중시',
+    keyFocusAreas: [
+      '사원소의 개인적 균형과 조화',
+      '계절적 변화와 내적 적응',
+      '자연과의 깊은 연결과 교감',
+      '생태적 의식과 환경 감수성',
+      '원소적 치유와 에너지 조율'
+    ],
+    interpretationTips: [
+      '개인의 원소적 성향과 필요를 파악하세요',
+      '현재 계절의 원소적 특성을 반영하세요',
+      '원소 간의 상호보완과 균형을 강조하세요',
+      '자연과의 실질적 연결 방법을 제안하세요',
+      '원소적 불균형의 조화 방법을 안내하세요'
+    ],
+    commonPitfalls: [
+      '원소를 지나치게 단순하게 분류하기',
+      '개인차를 무시한 일반적 원소 적용',
+      '계절을 기계적으로 대입하는 오류',
+      '실제 자연 경험 없는 이론적 접근',
+      '원소 간의 복잡한 상호작용 무시'
+    ],
+    difficulty: 'intermediate',
+    estimatedTime: 40,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
 ];
 
