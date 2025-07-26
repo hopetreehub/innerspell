@@ -75,15 +75,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // Set a timeout to prevent infinite loading
-    const loadingTimeout = setTimeout(() => {
-      if (isMounted && loading) {
-        console.warn("AuthProvider: Auth loading timeout - setting loading to false");
-        setLoading(false);
-      }
-    }, 4000); // 4 seconds timeout
+    // 🔧 긴급 수정: 타임아웃 제거하여 정상 인증 플로우 복구
+    console.log('🔥 AuthContext: Setting up onAuthStateChanged listener');
 
     unsubscribe = onAuthStateChanged(auth, async (currentFirebaseUser) => {
+      console.log('🔥 AuthContext: onAuthStateChanged triggered with user:', currentFirebaseUser ? currentFirebaseUser.email : 'null');
       if (currentFirebaseUser) {
         setFirebaseUser(currentFirebaseUser);
         let profile = await getUserProfile(currentFirebaseUser.uid);
@@ -135,7 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       isMounted = false;
-      clearTimeout(loadingTimeout);
+      console.log('🔥 AuthContext: Cleanup - unsubscribing');
       if (unsubscribe) {
         unsubscribe();
       }
