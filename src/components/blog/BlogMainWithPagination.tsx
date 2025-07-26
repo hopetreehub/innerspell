@@ -362,9 +362,47 @@ export function BlogMainWithPagination() {
 
           {/* Sidebar - Right Side */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Featured Post in Sidebar - Only on first page */}
+            {/* Popular Posts - 인기 포스트를 위로 */}
+            <Card className="sticky top-4">
+              <CardHeader>
+                <h3 className="font-headline font-bold text-lg">인기 포스트</h3>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {popularPosts.map((post) => (
+                    <Link key={post.id} href={`/blog/${post.id}`}>
+                      <div className="flex gap-3 hover:bg-muted/50 p-2 rounded-lg transition-colors cursor-pointer">
+                        <div className="w-16 h-12 bg-gradient-to-r from-primary/10 to-accent/10 rounded flex-shrink-0 overflow-hidden">
+                          <Image
+                            src={post.image}
+                            alt={post.title}
+                            width={64}
+                            height={48}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium leading-tight line-clamp-2">
+                            {post.title}
+                          </h4>
+                          <span className="text-xs text-muted-foreground">
+                            {post.views} 조회
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Featured Post in Sidebar - Only on first page - 주요 포스트를 아래로 */}
             {currentPage === 1 && featuredPost && (
-              <Card className="sticky top-4">
+              <Card>
                 <CardHeader>
                   <h3 className="font-headline font-bold text-lg">주요 포스트</h3>
                 </CardHeader>
@@ -413,44 +451,6 @@ export function BlogMainWithPagination() {
                 </CardContent>
               </Card>
             )}
-            
-            {/* Popular Posts */}
-            <Card className={currentPage === 1 && featuredPost ? "" : "sticky top-4"}>
-              <CardHeader>
-                <h3 className="font-headline font-bold text-lg">인기 포스트</h3>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {popularPosts.map((post) => (
-                    <Link key={post.id} href={`/blog/${post.id}`}>
-                      <div className="flex gap-3 hover:bg-muted/50 p-2 rounded-lg transition-colors cursor-pointer">
-                        <div className="w-16 h-12 bg-gradient-to-r from-primary/10 to-accent/10 rounded flex-shrink-0 overflow-hidden">
-                          <Image
-                            src={post.image}
-                            alt={post.title}
-                            width={64}
-                            height={48}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium leading-tight line-clamp-2">
-                            {post.title}
-                          </h4>
-                          <span className="text-xs text-muted-foreground">
-                            {post.views} 조회
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
             </div>
           </div>
         )}
