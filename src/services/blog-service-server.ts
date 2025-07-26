@@ -143,10 +143,10 @@ export async function getAllPostsServer(
       return dateB.getTime() - dateA.getTime();
     });
 
-    const finalPosts = posts.slice(0, 20); // 더 많은 포스트 반환
-    console.log(`✅ 최종 반환 포스트 수: ${finalPosts.length}`);
+    const resultPosts = posts.slice(0, 20); // 더 많은 포스트 반환
+    console.log(`✅ 최종 반환 포스트 수: ${resultPosts.length}`);
     
-    return finalPosts;
+    return resultPosts;
   } catch (error) {
     console.error('❌ Error fetching posts:', error);
     
