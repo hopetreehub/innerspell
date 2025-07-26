@@ -101,12 +101,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           profile = await getUserProfile(currentFirebaseUser.uid);
         }
         
-        // If still no profile, create a default one with admin check
+        // If still no profile, create a default one 
         if (!profile) {
-          // Check if this email is in admin list (fallback when Firestore is not available)
-          const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim().replace(/\n/g, ''));
-          const isAdmin = adminEmails.includes(currentFirebaseUser.email || '');
-          
+          // 🛡️ 보안 개선: 관리자 권한은 서버에서만 검증
           const newAppUser: AppUser = {
             uid: currentFirebaseUser.uid,
             email: currentFirebaseUser.email || undefined,
@@ -114,14 +111,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             photoURL: currentFirebaseUser.photoURL || undefined,
             creationTime: currentFirebaseUser.metadata.creationTime,
             lastSignInTime: currentFirebaseUser.metadata.lastSignInTime,
-            role: isAdmin ? 'admin' : 'user', // Set admin role if email matches
+            role: 'user', // 기본값은 항상 user, 관리자 권한은 서버에서 설정
             birthDate: '',
             sajuInfo: '',
             subscriptionStatus: 'free',
           };
           profile = newAppUser;
           
-          console.log(`🔥 AuthContext: Created fallback profile for ${currentFirebaseUser.email} with role: ${profile.role}`);
+          console.log(`🔥 AuthContext: Created fallback profile for ${currentFirebaseUser.email} with role: user`);
         }
 
         setUser(profile);

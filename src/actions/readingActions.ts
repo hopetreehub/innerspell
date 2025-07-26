@@ -13,17 +13,25 @@ export async function saveUserReading(
   input: SaveReadingInput
 ): Promise<{ success: boolean; readingId?: string; error?: string | object }> {
   try {
-    // Check if Firebase is properly configured
-    // In Vercel, we use FIREBASE_SERVICE_ACCOUNT_KEY instead of GOOGLE_APPLICATION_CREDENTIALS
+    // 🔧 보안 강화: Firebase 설정 엄격 검증
     const hasFirebaseCredentials = process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-    const isMockMode = process.env.NODE_ENV === 'development' && !hasFirebaseCredentials;
     
-    // Only reject if we're explicitly in mock mode
-    if (isMockMode) {
-      console.log("🎭 Mock 모드에서 리딩 저장 시도됨");
+    if (!hasFirebaseCredentials) {
+      console.error("❌ Firebase 서비스 계정 키가 설정되지 않음");
       return { 
         success: false, 
-        error: '현재 데모 모드로 운영 중입니다. 리딩 저장 기능은 실제 데이터베이스 연결 후 사용 가능합니다.' 
+        error: '서버 설정 오류입니다. 관리자에게 문의해주세요.' 
+      };
+    }
+
+    // Firestore 연결 테스트
+    try {
+      await firestore.doc('test/connection').get();
+    } catch (connectionError) {
+      console.error("❌ Firestore 연결 실패:", connectionError);
+      return { 
+        success: false, 
+        error: '데이터베이스 연결에 실패했습니다. 잠시 후 다시 시도해주세요.' 
       };
     }
 

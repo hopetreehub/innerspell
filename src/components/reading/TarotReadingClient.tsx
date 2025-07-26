@@ -44,7 +44,6 @@ import { tarotInterpretationStyles, tarotSpreads } from '@/types';
 import { tarotDeck as allCards } from '@/lib/tarot-data';
 import { generateTarotInterpretation } from '@/ai/flows/generate-tarot-interpretation';
 import { saveUserReading } from '@/actions/readingActions';
-import { saveUserReadingClient } from '@/lib/firebase/client-save';
 import { shareReadingClient } from '@/lib/firebase/client-share';
 import { useAuth } from '@/context/AuthContext';
 
@@ -452,8 +451,8 @@ export function TarotReadingClient() {
         interpretationLength: interpretation.length
       });
 
-      // 클라이언트 사이드에서 직접 저장 (Firebase Admin SDK 없이)
-      const result = await saveUserReadingClient({
+      // 🔧 개선: 서버 액션 사용으로 보안 강화
+      const result = await saveUserReading({
         userId: user.uid,
         question: question,
         spreadName: selectedSpread.name,
@@ -467,19 +466,36 @@ export function TarotReadingClient() {
       }
 
       if (result.success) {
-        toast({ title: '저장 완료', description: '리딩 기록이 성공적으로 저장되었습니다.' });
+        toast({ 
+          title: '저장 완료', 
+          description: `리딩 기록이 성공적으로 저장되었습니다. (ID: ${result.readingId?.substring(0, 8) || 'unknown'})`,
+          duration: 5000
+        });
         setReadingJustSaved(true);
-      } else {
-        // 클라이언트 함수는 항상 문자열 에러를 반환합니다
-        const errorMessage = result.error || '리딩 저장 중 알 수 없는 오류가 발생했습니다.';
         
-        console.error('🚨 저장 실패:', result.error);
+        // 🎨 UX 개선: 5초 후 자동으로 새 리딩 준비 상태로 초기화
+        setTimeout(() => {
+          setReadingJustSaved(false);
+        }, 5000);
+      } else {
+        // 🔧 개선: 서버 액션 에러 처리 개선
+        let errorMessage = '리딩 저장 중 알 수 없는 오류가 발생했습니다.';
+        
+        if (typeof result.error === 'string') {
+          errorMessage = result.error;
+        } else if (typeof result.error === 'object' && result.error) {
+          // 유효성 검사 에러 객체 처리
+          const errorDetails = Object.values(result.error).flat().join(', ');
+          errorMessage = `입력 오류: ${errorDetails}`;
+        }
+        
+        console.error('🚨 서버 액션 저장 실패:', result.error);
         
         toast({ 
           variant: 'destructive', 
           title: '저장 실패', 
           description: errorMessage,
-          duration: 9000, // Give more time to read detailed errors
+          duration: 9000,
         });
       }
     } catch (error) {
@@ -1011,10 +1027,11 @@ export function TarotReadingClient() {
                   {isSharingReading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
                   {isSharingReading ? '공유 중...' : '리딩 공유'}
                 </Button>
-                {!user && (
+                {/* 🎯 개선: 모든 사용자에게 저장 버튼 표시 */}
+                {!readingJustSaved && (
                     <Button
                         variant="outline"
-                        onClick={() => {
+                        onClick={user ? handleSaveReading : () => {
                           toast({ 
                             title: '로그인 필요', 
                             description: '리딩을 저장하려면 로그인이 필요합니다.',
@@ -1025,23 +1042,16 @@ export function TarotReadingClient() {
                             )
                           });
                         }}
-                    >
-                        <Save className="mr-2 h-4 w-4" />
-                        리딩 저장
-                    </Button>
-                )}
-                {user && !readingJustSaved && (
-                    <Button
-                        variant="outline"
-                        onClick={handleSaveReading}
                         disabled={isSavingReading}
                     >
                         {isSavingReading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                         {isSavingReading ? '저장 중...' : '리딩 저장'}
+                        {!user && <span className="ml-1 text-xs text-muted-foreground">(로그인 필요)</span>}
                     </Button>
                 )}
-                 {readingJustSaved && (
+                {readingJustSaved && (
                   <Button variant="ghost" disabled className="text-green-600">
+                    <Save className="mr-2 h-4 w-4" />
                     저장 완료!
                   </Button>
                 )}
