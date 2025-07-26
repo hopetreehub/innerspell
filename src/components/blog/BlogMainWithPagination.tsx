@@ -109,6 +109,7 @@ export function BlogMainWithPagination() {
 
   const featuredPost = posts.find(post => post.featured);
   const popularPosts = posts
+    .filter(post => !post.featured) // featured 포스트 제외
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3);
 
@@ -414,7 +415,7 @@ export function BlogMainWithPagination() {
             )}
             
             {/* Popular Posts */}
-            <Card className="sticky top-4">
+            <Card className={currentPage === 1 && featuredPost ? "" : "sticky top-4"}>
               <CardHeader>
                 <h3 className="font-headline font-bold text-lg">인기 포스트</h3>
               </CardHeader>
