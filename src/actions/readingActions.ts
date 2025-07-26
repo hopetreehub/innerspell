@@ -15,6 +15,7 @@ export async function saveUserReading(
   try {
     // ✅ Firebase 기본 설정 확인 (운영 환경에서는 자동 설정됨)
     console.log('🔥 Firebase Admin 저장 시도 시작');
+    console.log('📤 저장 요청 데이터:', input);
     
     // Firebase Admin이 이미 초기화되어 있으므로 바로 진행
 
@@ -48,7 +49,21 @@ export async function saveUserReading(
     return { success: true, readingId: docRef.id };
 
   } catch (error) {
-    console.error('Error saving user reading to Firestore:', error);
+    console.error('🚨 서버 액션 저장 실패:', error instanceof Error ? error.message : error);
+    console.error('🚨 Full error object:', error);
+    
+    // Firebase specific error handling
+    if (error instanceof Error) {
+      if (error.message.includes('illegal characters')) {
+        console.error('🚨 Firebase 설정 오류: projectId에 불법 문자 포함');
+        return { success: false, error: 'Firebase 연결 설정 오류입니다. 관리자에게 문의하세요.' };
+      }
+      if (error.message.includes('permission')) {
+        console.error('🚨 Firebase 권한 오류');
+        return { success: false, error: 'Firebase 권한 오류입니다. 관리자에게 문의하세요.' };
+      }
+    }
+    
     return { success: false, error: error instanceof Error ? error.message : '리딩 저장 중 알 수 없는 오류가 발생했습니다.' };
   }
 }

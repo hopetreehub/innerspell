@@ -21,9 +21,17 @@ if (!admin.apps.length) {
       console.log('✅ Using Firebase application default credentials');
     }
     
+    // 🔧 긴급 수정: 환경변수에서 개행 문자 및 특수 문자 제거
+    const cleanProjectId = (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'innerspell-an7ce')
+      .trim()
+      .replace(/\n/g, '')
+      .replace(/"/g, '');
+    
+    console.log('🔍 Clean Project ID:', cleanProjectId);
+    
     admin.initializeApp({
       credential: credential,
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'innerspell-an7ce',
+      projectId: cleanProjectId,
     });
     
     console.log('🔥 Firebase Admin SDK initialized successfully');
