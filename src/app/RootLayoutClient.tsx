@@ -32,22 +32,24 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
     setIsMounted(true);
   }, []);
 
-  // Skip auth loading if it takes too long (both dev and prod)
-  const [forceSkipAuth, setForceSkipAuth] = useState(false);
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      console.warn('Auth loading timeout - skipping auth check');
-      setForceSkipAuth(true);
-    }, 5000); // Wait 5 seconds before forcing skip
-    return () => clearTimeout(timeout);
-  }, []);
+  // 🔧 긴급 수정: 타임아웃 제거하여 정상 인증 플로우 복구
+  // const [forceSkipAuth, setForceSkipAuth] = useState(false);
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     console.warn('Auth loading timeout - skipping auth check');
+  //     setForceSkipAuth(true);
+  //   }, 5000); // Wait 5 seconds before forcing skip
+  //   return () => clearTimeout(timeout);
+  // }, []);
+  
+  console.log('🔍 RootLayoutClient state:', { authLoading, isMounted });
 
   // Prevent hydration mismatch by always rendering the same structure
   return (
     <div suppressHydrationWarning>
       {!isMounted ? (
         <MainContent>{children}</MainContent>
-      ) : authLoading && !forceSkipAuth ? (
+      ) : authLoading ? (
         <div className="flex h-screen w-full items-center justify-center bg-background">
           <Spinner size="large" />
         </div>

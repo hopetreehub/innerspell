@@ -75,7 +75,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // 🔧 긴급 수정: 타임아웃 제거하여 정상 인증 플로우 복구
+    // 🔧 긴급 수정: 최대 10초 대기 후 강제 완료
+    const maxWaitTimeout = setTimeout(() => {
+      if (isMounted) {
+        console.warn('🚨 AuthContext: Max wait timeout reached - forcing loading to false');
+        setLoading(false);
+      }
+    }, 10000);
+
     console.log('🔥 AuthContext: Setting up onAuthStateChanged listener');
 
     unsubscribe = onAuthStateChanged(auth, async (currentFirebaseUser) => {
@@ -143,6 +150,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       isMounted = false;
       console.log('🔥 AuthContext: Cleanup - unsubscribing');
+      clearTimeout(maxWaitTimeout);
       if (unsubscribe) {
         unsubscribe();
       }
