@@ -363,11 +363,11 @@ export function BlogMainWithPagination() {
           {/* Sidebar - Right Side */}
           <div className="lg:col-span-1 space-y-6">
             {/* Popular Posts - 인기 포스트를 위로 */}
-            <Card className="sticky top-4">
-              <CardHeader>
+            <div className="sticky top-4 rounded-lg border bg-card text-card-foreground shadow-sm">
+              <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="font-headline font-bold text-lg">인기 포스트</h3>
-              </CardHeader>
-              <CardContent>
+              </div>
+              <div className="p-6 pt-0">
                 <div className="space-y-4">
                   {popularPosts.map((post) => (
                     <Link key={post.id} href={`/blog/${post.id}`}>
@@ -397,16 +397,16 @@ export function BlogMainWithPagination() {
                     </Link>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
             
             {/* Featured Post in Sidebar - Only on first page - 주요 포스트를 아래로 */}
             {currentPage === 1 && featuredPost && (
-              <Card>
-                <CardHeader>
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <div className="flex flex-col space-y-1.5 p-6">
                   <h3 className="font-headline font-bold text-lg">주요 포스트</h3>
-                </CardHeader>
-                <CardContent>
+                </div>
+                <div className="p-6 pt-0">
                   <Link href={`/blog/${featuredPost.id}`}>
                     <div className="hover:bg-muted/50 p-2 rounded-lg transition-colors cursor-pointer">
                       <div className="aspect-video bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg overflow-hidden mb-3">
@@ -448,8 +448,8 @@ export function BlogMainWithPagination() {
                       </div>
                     </div>
                   </Link>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )}
           </div>
           </div>
