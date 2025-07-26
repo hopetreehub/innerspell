@@ -147,16 +147,21 @@ export async function getUserProfile(userId: string): Promise<AppUser | null> {
     
     const data = userDoc.data();
     
-    // ADMIN_EMAILS 환경변수에 있는 이메일은 자동으로 관리자 권한 부여
+    // 🔧 긴급 수정: 관리자 권한 로직 수정
     const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim().replace(/\n/g, ''));
-    const isAdmin = adminEmails.includes(data.email);
+    const isEnvAdmin = adminEmails.includes(data.email);
+    
+    // 환경변수 관리자 OR 데이터베이스 관리자 역할 존중
+    const finalRole = isEnvAdmin ? 'admin' : (data.role || 'user');
+    
+    console.log(`🔍 권한 체크: ${data.email} - ENV_ADMIN: ${isEnvAdmin}, DB_ROLE: ${data.role}, FINAL: ${finalRole}`);
     
     const appUser: AppUser = {
       uid: userId,
       email: data.email || '',
       displayName: data.name || data.email || '',
       photoURL: data.avatar || '',
-      role: isAdmin ? 'admin' : (data.role || 'user'),
+      role: finalRole,
       creationTime: data.createdAt?.toDate()?.toISOString() || new Date().toISOString(),
       lastSignInTime: new Date().toISOString(),
       birthDate: data.birthDate || '',
