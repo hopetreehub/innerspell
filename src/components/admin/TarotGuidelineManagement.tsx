@@ -62,22 +62,80 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
     loadData();
   }, []);
 
+  // 캐시 버스팅 - 강제 새로고침 버튼
+  const handleForceRefresh = () => {
+    console.log('🔄 [TarotGuidelineManagement] Force refresh triggered');
+    // 로컬 스토리지 클리어
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('tarot-guidelines-cache');
+      sessionStorage.clear();
+    }
+    loadData();
+  };
+
   const loadData = async () => {
     try {
       setLoading(true);
+      console.log('🔄 [TarotGuidelineManagement] Loading tarot guidelines data...');
+      
       const result = await getAllTarotGuidelines();
+      console.log('📊 [TarotGuidelineManagement] Data loading result:', result);
       
       if (result.success && result.data) {
+        console.log('✅ [TarotGuidelineManagement] Data loaded successfully:', {
+          guidelines: result.data.guidelines.length,
+          spreads: result.data.spreads.length,
+          styles: result.data.styles.length,
+          combinations: result.data.combinations.length
+        });
+        
         setGuidelines(result.data.guidelines);
         setSpreads(result.data.spreads);
         setStyles(result.data.styles);
         setCombinations(result.data.combinations);
+        
+        // 데이터 로딩 성공 알림
+        if (result.data.guidelines.length > 0) {
+          toast.success(`타로 지침 데이터 로딩 완료! (${result.data.guidelines.length}개 지침)`);
+        }
       } else {
+        console.error('❌ [TarotGuidelineManagement] Data loading failed:', result.message);
         toast.error(result.message || '타로 지침 데이터를 불러오는데 실패했습니다.');
+        
+        // 폴백: 기본 데이터라도 로드하기
+        console.log('🔄 [TarotGuidelineManagement] Attempting fallback data loading...');
+        try {
+          const { TAROT_SPREADS, INTERPRETATION_STYLES } = await import('@/data/tarot-spreads');
+          const { TAROT_GUIDELINES } = await import('@/data/tarot-guidelines');
+          
+          setSpreads(TAROT_SPREADS);
+          setStyles(INTERPRETATION_STYLES);
+          setGuidelines(TAROT_GUIDELINES);
+          
+          toast.info('기본 타로 지침 데이터를 로드했습니다.');
+          console.log('✅ [TarotGuidelineManagement] Fallback data loaded');
+        } catch (fallbackError) {
+          console.error('❌ [TarotGuidelineManagement] Fallback also failed:', fallbackError);
+        }
       }
     } catch (error) {
-      console.error('Error loading tarot guidelines:', error);
+      console.error('❌ [TarotGuidelineManagement] Error loading tarot guidelines:', error);
       toast.error('타로 지침 데이터를 불러오는 중 오류가 발생했습니다.');
+      
+      // 폴백: 기본 데이터라도 로드하기
+      try {
+        const { TAROT_SPREADS, INTERPRETATION_STYLES } = await import('@/data/tarot-spreads');
+        const { TAROT_GUIDELINES } = await import('@/data/tarot-guidelines');
+        
+        setSpreads(TAROT_SPREADS);
+        setStyles(INTERPRETATION_STYLES);
+        setGuidelines(TAROT_GUIDELINES);
+        
+        toast.info('기본 타로 지침 데이터를 로드했습니다.');
+        console.log('✅ [TarotGuidelineManagement] Emergency fallback data loaded');
+      } catch (fallbackError) {
+        console.error('❌ [TarotGuidelineManagement] Emergency fallback failed:', fallbackError);
+      }
     } finally {
       setLoading(false);
     }
@@ -209,14 +267,50 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
         <TabsContent value="browser" className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">타로 지침 탐색</h3>
-            <Button 
-              onClick={handleCreateNew}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              새 지침 생성
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleForceRefresh}
+                variant="outline"
+                className="flex items-center gap-2"
+                disabled={loading}
+              >
+                <Settings className="h-4 w-4" />
+                강제 새로고침
+              </Button>
+              <Button 
+                onClick={handleCreateNew}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                새 지침 생성
+              </Button>
+            </div>
           </div>
+
+          {/* 디버그 정보 */}
+          <Card className="bg-gray-50 border-dashed">
+            <CardContent className="pt-4">
+              <div className="text-sm text-gray-600 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <strong>스프레드:</strong> {spreads.length}개
+                </div>
+                <div>
+                  <strong>스타일:</strong> {styles.length}개  
+                </div>
+                <div>
+                  <strong>지침:</strong> {guidelines.length}개
+                </div>
+                <div>
+                  <strong>상태:</strong> {loading ? '로딩중...' : '완료'}
+                </div>
+              </div>
+              {spreads.length === 0 && (
+                <div className="mt-2 text-xs text-red-600">
+                  ⚠️ 데이터가 로드되지 않았습니다. "강제 새로고침" 버튼을 클릭해보세요.
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* 스프레드 및 스타일 선택 */}
           <Card>
