@@ -32,15 +32,14 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
     setIsMounted(true);
   }, []);
 
-  // In development, skip auth loading if it takes too long
+  // Skip auth loading if it takes too long (both dev and prod)
   const [forceSkipAuth, setForceSkipAuth] = useState(false);
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      const timeout = setTimeout(() => {
-        setForceSkipAuth(true);
-      }, 3000); // Wait 3 seconds in dev mode
-      return () => clearTimeout(timeout);
-    }
+    const timeout = setTimeout(() => {
+      console.warn('Auth loading timeout - skipping auth check');
+      setForceSkipAuth(true);
+    }, 5000); // Wait 5 seconds before forcing skip
+    return () => clearTimeout(timeout);
   }, []);
 
   // Prevent hydration mismatch by always rendering the same structure

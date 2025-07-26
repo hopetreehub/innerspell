@@ -75,6 +75,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    // Set a timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      if (isMounted && loading) {
+        console.warn("AuthProvider: Auth loading timeout - setting loading to false");
+        setLoading(false);
+      }
+    }, 4000); // 4 seconds timeout
+
     unsubscribe = onAuthStateChanged(auth, async (currentFirebaseUser) => {
       if (currentFirebaseUser) {
         setFirebaseUser(currentFirebaseUser);
@@ -127,6 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       isMounted = false;
+      clearTimeout(loadingTimeout);
       if (unsubscribe) {
         unsubscribe();
       }

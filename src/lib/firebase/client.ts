@@ -38,6 +38,7 @@ if (typeof window !== 'undefined') {
 
   if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
     console.error('❌ Firebase configuration missing required fields');
+    console.warn('⚠️ App will run without Firebase authentication');
   } else {
     try {
       // Initialize Firebase app
