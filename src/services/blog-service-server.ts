@@ -114,7 +114,7 @@ export async function getAllPostsServer(
     // 간단한 쿼리로 시작 (인덱스 문제 해결을 위해)
     console.log('🔍 Firestore에서 블로그 포스트 조회 시작...');
     const snapshot = await db.collection(POSTS_COLLECTION).get();
-    let posts = snapshot.docs.map(doc => convertToPost(doc.data(), doc.id));
+    posts = snapshot.docs.map(doc => convertToPost(doc.data(), doc.id));
     console.log(`📊 Firestore에서 가져온 포스트 수: ${posts.length}`);
 
     // Firestore에 데이터가 없으면 Mock 데이터 사용 (fallback)
