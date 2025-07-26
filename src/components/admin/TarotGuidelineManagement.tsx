@@ -39,6 +39,7 @@ import {
   toggleGuidelineStatus,
   getGuidelineBySpreadAndStyle
 } from '@/actions/tarotGuidelineActions';
+import { TarotGuidelineForm } from './TarotGuidelineForm';
 
 interface TarotGuidelineManagementProps {
   className?: string;
@@ -54,6 +55,7 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
   const [selectedStyle, setSelectedStyle] = useState<string>('');
   const [selectedGuideline, setSelectedGuideline] = useState<TarotGuideline | null>(null);
   const [showGuidelineForm, setShowGuidelineForm] = useState(false);
+  const [editingGuideline, setEditingGuideline] = useState<TarotGuideline | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -151,6 +153,41 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
     getStyleName(guideline.styleId).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleCreateNew = () => {
+    setEditingGuideline(null);
+    setShowGuidelineForm(true);
+  };
+
+  const handleEditGuideline = (guideline: TarotGuideline) => {
+    setEditingGuideline(guideline);
+    setShowGuidelineForm(true);
+  };
+
+  const handleFormSave = () => {
+    setShowGuidelineForm(false);
+    setEditingGuideline(null);
+    loadData();
+  };
+
+  const handleFormCancel = () => {
+    setShowGuidelineForm(false);
+    setEditingGuideline(null);
+  };
+
+  if (showGuidelineForm) {
+    return (
+      <div className={className}>
+        <TarotGuidelineForm
+          spreads={spreads}
+          styles={styles}
+          guideline={editingGuideline}
+          onSave={handleFormSave}
+          onCancel={handleFormCancel}
+        />
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -173,7 +210,7 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">타로 지침 탐색</h3>
             <Button 
-              onClick={() => setShowGuidelineForm(true)}
+              onClick={handleCreateNew}
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
@@ -395,10 +432,7 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          setSelectedGuideline(guideline);
-                          setShowGuidelineForm(true);
-                        }}
+                        onClick={() => handleEditGuideline(guideline)}
                       >
                         <Edit3 className="h-4 w-4" />
                       </Button>
@@ -440,7 +474,7 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
                   <p className="text-muted-foreground text-center mb-4">
                     아직 타로 지침이 없습니다. 첫 번째 지침을 만들어보세요.
                   </p>
-                  <Button onClick={() => setShowGuidelineForm(true)}>
+                  <Button onClick={handleCreateNew}>
                     <Plus className="h-4 w-4 mr-2" />
                     지침 생성
                   </Button>
@@ -452,7 +486,16 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
 
         {/* 통계 및 분석 탭 */}
         <TabsContent value="analytics" className="space-y-4">
-          <h3 className="text-lg font-semibold">통계 및 분석</h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">통계 및 분석</h3>
+            <Button 
+              onClick={handleCreateNew}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              새 지침 생성
+            </Button>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
@@ -505,6 +548,65 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
               </CardContent>
             </Card>
           </div>
+
+          {/* 진행률 및 완성도 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>지침 완성도 현황</CardTitle>
+              <CardDescription>
+                전체 {spreads.length}개 스프레드 × {styles.length}개 해석 스타일 = {spreads.length * styles.length}개 조합 중 {guidelines.length}개 완성
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>전체 진행률</span>
+                    <span>{Math.round((guidelines.length / (spreads.length * styles.length)) * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-3">
+                    <div 
+                      className="bg-primary h-3 rounded-full transition-all duration-300" 
+                      style={{ width: `${(guidelines.length / (spreads.length * styles.length)) * 100}%` }}
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">{guidelines.length}</div>
+                    <div className="text-green-600">완성된 지침</div>
+                  </div>
+                  <div className="text-center p-3 bg-orange-50 rounded-lg">
+                    <div className="text-2xl font-bold text-orange-600">{(spreads.length * styles.length) - guidelines.length}</div>
+                    <div className="text-orange-600">미완성 조합</div>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <h4 className="font-medium mb-2">스프레드별 완성도</h4>
+                  <div className="space-y-2">
+                    {spreads.map(spread => {
+                      const spreadGuidelines = guidelines.filter(g => g.spreadId === spread.id);
+                      const completion = (spreadGuidelines.length / styles.length) * 100;
+                      return (
+                        <div key={spread.id} className="flex items-center gap-3">
+                          <span className="text-xs w-32 truncate">{spread.name}</span>
+                          <div className="flex-1 bg-muted rounded-full h-2">
+                            <div 
+                              className="bg-primary h-2 rounded-full" 
+                              style={{ width: `${completion}%` }}
+                            />
+                          </div>
+                          <span className="text-xs w-12 text-right">{spreadGuidelines.length}/{styles.length}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* 난이도별 분포 */}
           <Card>
