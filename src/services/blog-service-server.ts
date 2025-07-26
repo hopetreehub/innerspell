@@ -46,9 +46,10 @@ export async function getAllPostsServer(
   categoryFilter?: string
 ): Promise<BlogPost[]> {
   try {
-    // 강제 Mock 데이터 사용 - 블로그 새글 표시 (2025-07-25 v2)
-    console.log('🚀 FORCE MOCK DATA MODE - 새 블로그 글 표시');
+    // 강제 Mock 데이터 사용 - 블로그 새글 표시 (2025-07-26 v3)
+    console.log('🚀 FORCE MOCK DATA MODE - 12개 블로그 포스트 표시');
     console.log('📅 Deployment timestamp:', new Date().toISOString());
+    console.log('🔧 Version: 0.1.3 - Cache busted deployment');
     
     const { mockPosts } = await import('@/lib/blog/posts');
     let posts = mockPosts.map(post => ({ ...post }));
