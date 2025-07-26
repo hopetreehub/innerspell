@@ -29,9 +29,15 @@ const POSTS_PER_PAGE = 6;
 export function BlogMainWithPagination() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showSearch, setShowSearch] = useState(false);
   const [quickSearchQuery, setQuickSearchQuery] = useState('');
+
+  // 컴포넌트가 마운트되었는지 확인
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Mock 데이터 직접 사용 (API 우회)
   useEffect(() => {
@@ -187,6 +193,28 @@ export function BlogMainWithPagination() {
     return items;
   };
 
+  // Hydration 문제 방지: 컴포넌트가 마운트되기 전까지는 로딩 상태만 표시
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary mb-4">
+              InnerSpell 블로그
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
+              AI 시대 영적 성장과 자기계발을 위한 타로 카드 해석, 점술 지식, 꿈해몽 가이드, 
+              실전 성공 전략을 제공합니다.
+            </p>
+          </div>
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -257,7 +285,7 @@ export function BlogMainWithPagination() {
                         {post.category}
                       </Badge>
                       <Calendar className="w-4 h-4" />
-                      <span>{format(new Date(post.publishedAt), 'M월 d일', { locale: ko })}</span>
+                      <span>{new Date(post.publishedAt).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}</span>
                       <Clock className="w-4 h-4 ml-auto" />
                       <span>{post.readingTime}분</span>
                     </div>
