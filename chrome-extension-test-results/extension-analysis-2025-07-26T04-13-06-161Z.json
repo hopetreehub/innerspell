@@ -1,0 +1,87 @@
+{
+  "timestamp": "2025-07-26T04:13:13.893Z",
+  "summary": {
+    "totalTests": 2,
+    "headlessTests": [
+      {
+        "testName": "homepage-functionality",
+        "mode": "headless",
+        "passed": false,
+        "error": "\u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/타로 스튜디오/\u001b[39m\nReceived string:  \u001b[31m\"InnerSpell - AI 타로와 함께 내면 탐험\"\u001b[39m\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 5000ms\u001b[22m\n\u001b[2m    9 × unexpected value \"InnerSpell - AI 타로와 함께 내면 탐험\"\u001b[22m\n",
+        "consoleLogs": [
+          "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+          "[log] 🔥 Initializing REAL Firebase only",
+          "[log] Firebase config validation: {hasApiKey: true, authDomain: innerspell-an7ce.firebaseapp.com, projectId: innerspell-an7ce, storageBucket: innerspell-an7ce.firebasestorage.app, messagingSenderId: 944680989471}",
+          "[log] ✅ Real Firebase initialized successfully",
+          "[log] ✅ Auth, Firestore, and Storage ready"
+        ],
+        "extensionErrors": [],
+        "screenshot": "chrome-extension-test-results/homepage-functionality-headless-ERROR-2025-07-26T04-13-06-161Z.png",
+        "duration": 7628
+      }
+    ],
+    "nonHeadlessTests": [
+      {
+        "testName": "homepage-functionality",
+        "mode": "non-headless",
+        "passed": false,
+        "error": "browserType.launch: Pass userDataDir parameter to 'browserType.launchPersistentContext(userDataDir, options)' instead of specifying '--user-data-dir' argument",
+        "consoleLogs": [],
+        "extensionErrors": [],
+        "screenshot": "chrome-extension-test-results/homepage-functionality-non-headless-ERROR-2025-07-26T04-13-06-161Z.png",
+        "duration": 29
+      }
+    ],
+    "extensionErrorsFound": false,
+    "functionalDifference": {
+      "headlessFailures": 1,
+      "nonHeadlessFailures": 1,
+      "functionallyDifferent": false,
+      "extensionImpact": "none"
+    }
+  },
+  "testResults": [
+    {
+      "testName": "homepage-functionality",
+      "mode": "headless",
+      "passed": false,
+      "error": "\u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/타로 스튜디오/\u001b[39m\nReceived string:  \u001b[31m\"InnerSpell - AI 타로와 함께 내면 탐험\"\u001b[39m\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 5000ms\u001b[22m\n\u001b[2m    9 × unexpected value \"InnerSpell - AI 타로와 함께 내면 탐험\"\u001b[22m\n",
+      "consoleLogs": [
+        "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+        "[log] 🔥 Initializing REAL Firebase only",
+        "[log] Firebase config validation: {hasApiKey: true, authDomain: innerspell-an7ce.firebaseapp.com, projectId: innerspell-an7ce, storageBucket: innerspell-an7ce.firebasestorage.app, messagingSenderId: 944680989471}",
+        "[log] ✅ Real Firebase initialized successfully",
+        "[log] ✅ Auth, Firestore, and Storage ready"
+      ],
+      "extensionErrors": [],
+      "screenshot": "chrome-extension-test-results/homepage-functionality-headless-ERROR-2025-07-26T04-13-06-161Z.png",
+      "duration": 7628
+    },
+    {
+      "testName": "homepage-functionality",
+      "mode": "non-headless",
+      "passed": false,
+      "error": "browserType.launch: Pass userDataDir parameter to 'browserType.launchPersistentContext(userDataDir, options)' instead of specifying '--user-data-dir' argument",
+      "consoleLogs": [],
+      "extensionErrors": [],
+      "screenshot": "chrome-extension-test-results/homepage-functionality-non-headless-ERROR-2025-07-26T04-13-06-161Z.png",
+      "duration": 29
+    }
+  ],
+  "analysis": {
+    "totalExtensionErrors": 0,
+    "uniqueExtensionErrors": [],
+    "errorsByMode": {
+      "headless": 0,
+      "nonHeadless": 0
+    },
+    "commonExtensionPatterns": []
+  },
+  "recommendations": [
+    "Website functionality is identical between headless and extension-enabled environments",
+    "Browser extensions do not interfere with core website features",
+    "Consider testing in incognito mode to verify extension-free experience",
+    "Add Content Security Policy headers to minimize unwanted extension interference",
+    "Document extension-related console errors for support team awareness"
+  ]
+}

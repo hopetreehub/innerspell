@@ -57,6 +57,7 @@ export default function BlogPage() {
   console.log('🚀 Blog 페이지 서버 렌더링');
   console.log(`📊 서버에서 mockPosts 수: ${mockPosts?.length || 0}`);
   console.log('🎯 첫 3개 포스트 제목:', mockPosts?.slice(0, 3).map(p => p.title) || []);
+  console.log('🕐 Deployment timestamp:', new Date().toISOString());
   
   return (
     <>
