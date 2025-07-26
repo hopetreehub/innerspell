@@ -20,8 +20,10 @@ export async function createOrUpdateUserProfile(
 
     if (!userDoc.exists) {
       // 새 사용자 프로필 생성
-      // ADMIN_EMAILS 환경변수에 있는 이메일은 자동으로 관리자 권한 부여
-      const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com').split(',').map(email => email.trim().replace(/\n/g, ''));
+      // ADMIN_EMAILS 환경변수에 있는 이메일은 자동으로 관리자 권한 부여 - 따옴표 제거 추가
+      const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com')
+        .split(',')
+        .map(email => email.trim().replace(/\n/g, '').replace(/"/g, ''));
       const isAdmin = adminEmails.includes(userData.email);
       
       const newUserProfile = {
@@ -147,8 +149,10 @@ export async function getUserProfile(userId: string): Promise<AppUser | null> {
     
     const data = userDoc.data();
     
-    // 🔧 긴급 수정: 관리자 권한 로직 수정
-    const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com,junsupark9999@gmail.com').split(',').map(email => email.trim().replace(/\n/g, ''));
+    // 🔧 긴급 수정: 관리자 권한 로직 수정 - 따옴표 제거 추가
+    const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com,junsupark9999@gmail.com')
+      .split(',')
+      .map(email => email.trim().replace(/\n/g, '').replace(/"/g, ''));
     const isEnvAdmin = adminEmails.includes(data.email);
     
     // 환경변수 관리자 OR 데이터베이스 관리자 역할 존중
