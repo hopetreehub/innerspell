@@ -60,6 +60,7 @@ import {
   Save,
   Share2,
 } from 'lucide-react';
+import { ToastAction } from '@/components/ui/toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -944,6 +945,26 @@ export function TarotReadingClient() {
                     {isSharingReading ? '공유 중...' : '리딩 공유하기'}
                   </Button>
                 )}
+                {!user && stage === 'interpretation_ready' && (
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      toast({ 
+                        title: '로그인 필요', 
+                        description: '리딩을 저장하려면 로그인이 필요합니다.',
+                        action: (
+                          <Link href="/sign-in?redirect=/reading">
+                            <Button variant="outline" size="sm">로그인하기</Button>
+                          </Link>
+                        )
+                      });
+                    }}
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/80"
+                  >
+                    <Save className="mr-2 h-4 w-4" />
+                    이 리딩 저장하기
+                  </Button>
+                )}
                 {user && !readingJustSaved && stage === 'interpretation_ready' && (
                    <Button
                     variant="default"
@@ -990,6 +1011,25 @@ export function TarotReadingClient() {
                   {isSharingReading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
                   {isSharingReading ? '공유 중...' : '리딩 공유'}
                 </Button>
+                {!user && (
+                    <Button
+                        variant="outline"
+                        onClick={() => {
+                          toast({ 
+                            title: '로그인 필요', 
+                            description: '리딩을 저장하려면 로그인이 필요합니다.',
+                            action: (
+                              <Link href="/sign-in?redirect=/reading">
+                                <Button variant="outline" size="sm">로그인하기</Button>
+                              </Link>
+                            )
+                          });
+                        }}
+                    >
+                        <Save className="mr-2 h-4 w-4" />
+                        리딩 저장
+                    </Button>
+                )}
                 {user && !readingJustSaved && (
                     <Button
                         variant="outline"
