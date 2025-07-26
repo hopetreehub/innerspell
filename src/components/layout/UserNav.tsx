@@ -69,11 +69,16 @@ export function UserNav() {
     }
   };
 
+  // 🔍 디버깅 로그 추가
+  console.log('🔍 UserNav state:', { mounted, loading, user: user ? `${user.email} (${user.role})` : null });
+
   if (!mounted || loading) {
+    console.log('🔍 UserNav: Showing skeleton (mounted:', mounted, 'loading:', loading, ')');
     return <Skeleton className="h-10 w-10 rounded-full" />;
   }
 
   if (!user) {
+    console.log('🔍 UserNav: No user, showing login buttons');
     return (
       <div className="flex items-center space-x-2">
         {/* Always show regular login/signup buttons */}
@@ -93,6 +98,7 @@ export function UserNav() {
     );
   }
 
+  console.log('🔍 UserNav: User found, showing profile dropdown for:', user.email);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

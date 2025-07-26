@@ -122,12 +122,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
         setUser(profile);
+        console.log('🔥 AuthContext: User set to:', profile ? `${profile.email} (${profile.role})` : 'null');
 
       } else {
+        console.log('🔥 AuthContext: No Firebase user, setting to null');
         setUser(null);
         setFirebaseUser(null);
       }
       setLoading(false);
+      console.log('🔥 AuthContext: Loading set to false');
     });
 
     return () => {
