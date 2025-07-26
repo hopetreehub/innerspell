@@ -28,13 +28,22 @@ export async function POST(request: NextRequest) {
       path: '/',
     });
     
-    return NextResponse.json({ 
+    const response = NextResponse.json({ 
       success: true,
       user: {
         uid: decodedToken.uid,
         email: decodedToken.email,
-      }
+      },
+      timestamp: Date.now() // Cache busting
     });
+    
+    // EMERGENCY: No caching for auth responses
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('X-Auth-Response', 'no-cache');
+    
+    return response;
   } catch (error) {
     console.error('Session creation error:', error);
     return NextResponse.json(
@@ -57,15 +66,34 @@ export async function GET(request: NextRequest) {
     // 세션 쿠키 검증
     const decodedClaims = await auth.verifySessionCookie(sessionCookie.value, true);
     
-    return NextResponse.json({
+    const response = NextResponse.json({
       authenticated: true,
       user: {
         uid: decodedClaims.uid,
         email: decodedClaims.email,
-      }
+      },
+      timestamp: Date.now() // Cache busting
     });
+    
+    // EMERGENCY: No caching for auth responses
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('X-Auth-Response', 'no-cache');
+    
+    return response;
   } catch (error) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
+    const errorResponse = NextResponse.json({ 
+      authenticated: false, 
+      timestamp: Date.now() // Cache busting
+    }, { status: 401 });
+    
+    // EMERGENCY: No caching for auth errors
+    errorResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    errorResponse.headers.set('Pragma', 'no-cache');
+    errorResponse.headers.set('Expires', '0');
+    
+    return errorResponse;
   }
 }
 
@@ -74,5 +102,16 @@ export async function DELETE(request: NextRequest) {
   const cookieStore = await cookies();
   cookieStore.delete('session');
   
-  return NextResponse.json({ success: true });
+  const response = NextResponse.json({ 
+    success: true, 
+    timestamp: Date.now() // Cache busting
+  });
+  
+  // EMERGENCY: No caching for logout
+  response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  response.headers.set('Pragma', 'no-cache');
+  response.headers.set('Expires', '0');
+  response.headers.set('Clear-Site-Data', '"cache", "cookies", "storage"');
+  
+  return response;
 }

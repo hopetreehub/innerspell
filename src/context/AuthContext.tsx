@@ -33,12 +33,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoggedOut(true);
     setUser(null);
     setFirebaseUser(null);
+    
+    // EMERGENCY CACHE INVALIDATION ON LOGOUT
     // Clear any localStorage items related to auth
     localStorage.removeItem('emailForSignIn');
     localStorage.setItem('user-logged-out', 'true');
+    localStorage.setItem('cache-bust-timestamp', Date.now().toString());
+    
     // Notify other tabs about logout
     localStorage.setItem('auth-state-changed', 'logged-out');
-    console.log("AuthProvider: User logged out");
+    
+    // Force cache invalidation by adding timestamp to URL
+    const cacheBuster = `cb=${Date.now()}`;
+    if (typeof window !== 'undefined') {
+      // Clear browser cache for auth-related pages
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          names.forEach(name => {
+            if (name.includes('auth') || name.includes('admin')) {
+              caches.delete(name);
+            }
+          });
+        });
+      }
+      
+      // Trigger a hard refresh with cache busting
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('logout', 'true');
+      currentUrl.searchParams.set('cache_bust', Date.now().toString());
+      window.location.href = currentUrl.toString();
+    }
+    
+    console.log("AuthProvider: User logged out with cache invalidation");
   };
 
   const login = () => {
@@ -84,6 +110,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, 5000);
 
     console.log('🔥 AuthContext: Setting up onAuthStateChanged listener');
+    
+    // CACHE BUSTING: Add timestamp to prevent cached auth state
+    const cacheBustParam = new URLSearchParams(window.location.search).get('cache_bust');
+    if (cacheBustParam) {
+      console.log('🚀 Cache bust parameter detected:', cacheBustParam);
+    }
 
     unsubscribe = onAuthStateChanged(auth, async (currentFirebaseUser) => {
       console.log('🔥 AuthContext: onAuthStateChanged triggered with user:', currentFirebaseUser ? currentFirebaseUser.email : 'null');

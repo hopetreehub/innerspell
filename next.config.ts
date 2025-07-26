@@ -14,6 +14,71 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // EMERGENCY CACHE BUSTING CONFIGURATION
+  async headers() {
+    return [
+      {
+        // Apply aggressive no-cache headers to admin and auth routes
+        source: '/(admin|api/auth|api/dev-auth|sign-in|sign-up)/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+          {
+            key: 'Expires',
+            value: '0',
+          },
+          {
+            key: 'Surrogate-Control',
+            value: 'no-store',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'no-store',
+          },
+          {
+            key: 'Vercel-CDN-Cache-Control',
+            value: 'no-store',
+          },
+          {
+            key: 'X-Cache-Control',
+            value: 'no-cache',
+          },
+          {
+            key: 'Vary',
+            value: 'Cookie, Authorization, X-Requested-With, Accept, Accept-Encoding, Accept-Language',
+          },
+        ],
+      },
+      {
+        // Force cache invalidation for all API routes
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, max-age=0',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+          {
+            key: 'Expires',
+            value: '0',
+          },
+        ],
+      },
+    ];
+  },
+  // Generate unique build ID for cache busting
+  generateBuildId: async () => {
+    return `build-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  },
   images: {
     remotePatterns: [
       {

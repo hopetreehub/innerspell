@@ -48,12 +48,28 @@ export async function middleware(request: NextRequest) {
   // Check if this is a logout request
   const isLogoutPath = request.nextUrl.pathname === '/' && request.nextUrl.searchParams.get('logout') === 'true';
   
-  if (isLogoutPath) {
-    // Disable all caching for logout
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  // AGGRESSIVE CACHE BUSTING FOR AUTH-RELATED PATHS
+  const isAuthPath = pathname.startsWith('/admin') || 
+                     pathname.startsWith('/api/auth') || 
+                     pathname.startsWith('/api/dev-auth') || 
+                     pathname.startsWith('/sign-in') || 
+                     pathname.startsWith('/sign-up') || 
+                     isLogoutPath;
+  
+  if (isAuthPath || isLogoutPath) {
+    // EMERGENCY CACHE INVALIDATION - Multiple layers
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
     response.headers.set('Surrogate-Control', 'no-store');
+    response.headers.set('CDN-Cache-Control', 'no-store');
+    response.headers.set('Cloudflare-CDN-Cache-Control', 'no-store');
+    response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
+    response.headers.set('Last-Modified', new Date().toUTCString());
+    response.headers.set('ETag', `"${Date.now()}-${Math.random().toString(36)}"`);
+    
+    // Force browser to revalidate
+    response.headers.set('Vary', 'Cookie, Authorization, X-Requested-With, Accept, Accept-Encoding, Accept-Language');
   }
   
   // CSRF Protection for API routes

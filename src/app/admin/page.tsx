@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { cacheBuster, refreshAuthWithCacheBust } from '@/lib/cache-buster';
 import { AIPromptConfigForm } from '@/components/admin/AIPromptConfigForm';
 import { DreamInterpretationConfigForm } from '@/components/admin/DreamInterpretationConfigForm';
 import { UserManagement } from '@/components/admin/UserManagement';
@@ -29,6 +30,8 @@ export default function AdminDashboardPage() {
     if (!loading) {
       if (!user) {
         console.log('🚨 Admin Page: No user - redirecting to sign-in');
+        // EMERGENCY: Clear cache before redirect for login issues
+        cacheBuster.clearAuthLocalStorage();
         router.replace('/sign-in?redirect=/admin');
       } else if (user.role !== 'admin') {
         console.log(`🚨 Admin Page: User ${user.email} has role "${user.role}" - not admin, redirecting to home`);
@@ -39,10 +42,19 @@ export default function AdminDashboardPage() {
     }
   }, [user, loading, router]);
 
-  // URL 쿼리 파라미터에서 탭 확인
+  // URL 쿼리 파라미터에서 탭 확인 + 캐시 버스팅 처리
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
+    const cacheBust = urlParams.get('cache_bust');
+    const authRefresh = urlParams.get('auth_refresh');
+    
+    // 캐시 버스팅 파라미터 있으면 캐시 클리어
+    if (cacheBust || authRefresh) {
+      console.log('🚨 Cache busting parameters detected, clearing auth cache');
+      cacheBuster.clearAuthLocalStorage();
+    }
+    
     if (tab && ['ai-providers', 'tarot-instructions', 'tarot-ai-config', 'dream-ai-config', 'geo-guidelines', 'blog-management', 'user-management', 'system-management'].includes(tab)) {
       setActiveTab(tab);
     }
@@ -56,6 +68,18 @@ export default function AdminDashboardPage() {
         <div className="flex flex-col items-center gap-4">
           <p className="text-muted-foreground">관리자 권한을 확인하는 중...</p>
           <Spinner size="large" />
+          {/* EMERGENCY: 로딩이 너무 오래 걸리면 캐시 문제일 수 있음 */}
+          {loading && (
+            <button 
+              onClick={() => {
+                console.log('🚨 Manual cache refresh triggered');
+                refreshAuthWithCacheBust();
+              }}
+              className="mt-4 px-4 py-2 text-sm text-blue-600 underline hover:text-blue-800"
+            >
+              로딩에 문제가 있나요? 캐시 새로고침
+            </button>
+          )}
         </div>
       </div>
     );
