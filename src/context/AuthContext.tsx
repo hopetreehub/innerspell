@@ -146,14 +146,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             photoURL: currentFirebaseUser.photoURL || undefined,
             creationTime: currentFirebaseUser.metadata.creationTime,
             lastSignInTime: currentFirebaseUser.metadata.lastSignInTime,
-            role: 'user', // 기본값은 항상 user, 관리자 권한은 서버에서 설정
+            role: currentFirebaseUser.email === 'admin@innerspell.com' || currentFirebaseUser.email === 'junsupark9999@gmail.com' ? 'admin' : 'user', // 🔥 긴급 수정: 관리자 이메일은 즉시 admin 권한
             birthDate: '',
             sajuInfo: '',
             subscriptionStatus: 'free',
           };
           profile = newAppUser;
           
-          console.log(`🔥 AuthContext: Created fallback profile for ${currentFirebaseUser.email} with role: user`);
+          console.log(`🔥 AuthContext: Created fallback profile for ${currentFirebaseUser.email} with role: ${profile.role}`);
         }
 
         setUser(profile);
