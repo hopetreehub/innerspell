@@ -13,27 +13,10 @@ export async function saveUserReading(
   input: SaveReadingInput
 ): Promise<{ success: boolean; readingId?: string; error?: string | object }> {
   try {
-    // 🔧 보안 강화: Firebase 설정 엄격 검증
-    const hasFirebaseCredentials = process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    // ✅ Firebase 기본 설정 확인 (운영 환경에서는 자동 설정됨)
+    console.log('🔥 Firebase Admin 저장 시도 시작');
     
-    if (!hasFirebaseCredentials) {
-      console.error("❌ Firebase 서비스 계정 키가 설정되지 않음");
-      return { 
-        success: false, 
-        error: '서버 설정 오류입니다. 관리자에게 문의해주세요.' 
-      };
-    }
-
-    // Firestore 연결 테스트
-    try {
-      await firestore.doc('test/connection').get();
-    } catch (connectionError) {
-      console.error("❌ Firestore 연결 실패:", connectionError);
-      return { 
-        success: false, 
-        error: '데이터베이스 연결에 실패했습니다. 잠시 후 다시 시도해주세요.' 
-      };
-    }
+    // Firebase Admin이 이미 초기화되어 있으므로 바로 진행
 
     // Validate the input using the centralized schema from types/index.ts
     const validationResult = SaveReadingInputSchema.safeParse(input);
