@@ -61,11 +61,15 @@ export default function BlogPage() {
   
   return (
     <>
+      {/* 캐시 버스팅을 위한 메타 태그 */}
+      <meta name="cache-bust" content={`v0.1.3-${Date.now()}`} />
+      
       {/* 임시 디버그 정보 (숨김) */}
       <div style={{ display: 'none' }}>
         <p>Debug: Total posts = {mockPosts?.length || 0}</p>
         <p>Debug: First post title = {mockPosts?.[0]?.title || 'No posts'}</p>
         <p>Debug: Timestamp = {new Date().toISOString()}</p>
+        <p>Debug: Build timestamp = {process.env.NEXT_PUBLIC_BUILD_TIMESTAMP}</p>
       </div>
       <BlogMainWithPagination />
     </>
