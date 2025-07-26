@@ -451,7 +451,7 @@ export function BlogMainWithPagination() {
                 </CardContent>
               </Card>
             )}
-            </div>
+          </div>
           </div>
         )}
       </div>
