@@ -24,13 +24,17 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState('ai-providers');
 
   useEffect(() => {
+    console.log('🔍 Admin Page - Auth State Check:', { loading, user: user ? `${user.email} (${user.role})` : null });
+    
     if (!loading) {
       if (!user) {
-        // Not logged in, redirect to sign-in
+        console.log('🚨 Admin Page: No user - redirecting to sign-in');
         router.replace('/sign-in?redirect=/admin');
       } else if (user.role !== 'admin') {
-        // Not an admin, redirect to home
+        console.log(`🚨 Admin Page: User ${user.email} has role "${user.role}" - not admin, redirecting to home`);
         router.replace('/');
+      } else {
+        console.log(`✅ Admin Page: User ${user.email} has admin access`);
       }
     }
   }, [user, loading, router]);

@@ -155,6 +155,8 @@ export async function getUserProfile(userId: string): Promise<AppUser | null> {
     const finalRole = isEnvAdmin ? 'admin' : (data.role || 'user');
     
     console.log(`🔍 권한 체크: ${data.email} - ENV_ADMIN: ${isEnvAdmin}, DB_ROLE: ${data.role}, FINAL: ${finalRole}`);
+    console.log(`🔍 관리자 이메일 목록:`, adminEmails);
+    console.log(`🔍 현재 사용자 이메일: "${data.email}" (길이: ${data.email?.length})`);
     
     const appUser: AppUser = {
       uid: userId,

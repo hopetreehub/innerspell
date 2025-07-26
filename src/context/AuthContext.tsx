@@ -75,13 +75,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // 🔧 긴급 수정: 최대 10초 대기 후 강제 완료
+    // ⚡ 성능 최적화: 로딩 시간 단축 - 5초로 단축
     const maxWaitTimeout = setTimeout(() => {
       if (isMounted) {
         console.warn('🚨 AuthContext: Max wait timeout reached - forcing loading to false');
         setLoading(false);
       }
-    }, 10000);
+    }, 5000);
 
     console.log('🔥 AuthContext: Setting up onAuthStateChanged listener');
 
@@ -99,20 +99,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           profile = null;
         }
         
-        // If profile doesn't exist (e.g., new Google sign-in), create one with proper admin check
+        // ⚡ 성능 최적화: 프로필 생성 과정 간소화
         if (!profile && currentFirebaseUser.email) {
           console.log('🔥 AuthContext: No profile found, creating new profile for:', currentFirebaseUser.email);
-          const { createOrUpdateUserProfile } = await import('@/actions/userActions');
-          await createOrUpdateUserProfile(currentFirebaseUser.uid, {
-            email: currentFirebaseUser.email,
-            name: currentFirebaseUser.displayName || currentFirebaseUser.email,
-            avatar: currentFirebaseUser.photoURL || undefined,
-          });
           
-          // Re-fetch the profile after creation
-          console.log('🔥 AuthContext: Re-fetching profile after creation');
-          profile = await getUserProfile(currentFirebaseUser.uid);
-          console.log('🔥 AuthContext: Re-fetched profile:', profile);
+          // 바로 생성하지 말고 임시 프로필 먼저 생성하여 빠른 로딩
+          const tempProfile = {
+            uid: currentFirebaseUser.uid,
+            email: currentFirebaseUser.email,
+            displayName: currentFirebaseUser.displayName || currentFirebaseUser.email,
+            photoURL: currentFirebaseUser.photoURL || undefined,
+            role: currentFirebaseUser.email === 'admin@innerspell.com' || currentFirebaseUser.email === 'junsupark9999@gmail.com' ? 'admin' : 'user',
+            creationTime: currentFirebaseUser.metadata.creationTime,
+            lastSignInTime: currentFirebaseUser.metadata.lastSignInTime,
+            birthDate: '',
+            sajuInfo: '',
+            subscriptionStatus: 'free' as const,
+          };
+          
+          profile = tempProfile;
+          console.log('🔥 AuthContext: Created temp profile:', profile);
+          
+          // 백그라운드에서 실제 프로필 생성 (비동기)
+          setTimeout(async () => {
+            try {
+              const { createOrUpdateUserProfile } = await import('@/actions/userActions');
+              await createOrUpdateUserProfile(currentFirebaseUser.uid, {
+                email: currentFirebaseUser.email,
+                name: currentFirebaseUser.displayName || currentFirebaseUser.email,
+                avatar: currentFirebaseUser.photoURL || undefined,
+              });
+              console.log('🔥 AuthContext: Background profile creation completed');
+            } catch (error) {
+              console.error('🚨 Background profile creation failed:', error);
+            }
+          }, 100);
         }
         
         // If still no profile, create a default one 
