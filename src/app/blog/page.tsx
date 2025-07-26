@@ -48,5 +48,7 @@ export const metadata: Metadata = {
 import { BlogMainWithPagination } from '@/components/blog/BlogMainWithPagination';
 
 export default function BlogPage() {
+  // 2025-07-26: Mock 데이터 강제 표시를 위한 업데이트
+  console.log('🚀 Blog 페이지 렌더링 - 새 블로그 글 표시 모드');
   return <BlogMainWithPagination />;
 }
