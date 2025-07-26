@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Clock, User, Calendar, ArrowRight, Search } from 'lucide-react';
-import { mockPosts, type BlogPost } from '@/lib/blog/posts';
+import { type BlogPost } from '@/lib/blog/posts';
+// import { getAllPosts } from '@/services/blog-service'; // API 직접 호출로 대체
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {
@@ -21,16 +22,54 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { BlogSearch } from './BlogSearch';
-import { searchPosts } from '@/services/blog-service';
+// import { searchPosts } from '@/services/blog-service'; // API 직접 호출로 대체
 
 const POSTS_PER_PAGE = 6;
 
 export function BlogMainWithPagination() {
-  const [posts] = useState<BlogPost[]>(mockPosts);
-  const [isLoading] = useState(false);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [showSearch, setShowSearch] = useState(false);
   const [quickSearchQuery, setQuickSearchQuery] = useState('');
+
+  // Mock 데이터 직접 사용 (API 우회)
+  useEffect(() => {
+    const loadMockPosts = async () => {
+      try {
+        setIsLoading(true);
+        console.log('🚀 클라이언트에서 Mock 데이터 직접 로드...');
+        
+        // Mock 데이터 직접 import
+        const { mockPosts } = await import('@/lib/blog/posts');
+        console.log(`📊 Raw mockPosts 수: ${mockPosts.length}`);
+        
+        // published 필터링
+        const publishedPosts = mockPosts.filter(post => post.published);
+        console.log(`📝 published 필터 후: ${publishedPosts.length}개`);
+        
+        // 날짜순 정렬
+        const sortedPosts = publishedPosts.sort((a, b) => {
+          const dateA = new Date(a.publishedAt);
+          const dateB = new Date(b.publishedAt);
+          return dateB.getTime() - dateA.getTime();
+        });
+        
+        console.log('🎯 로드된 포스트 제목들:', sortedPosts.slice(0, 3).map(p => p.title));
+        console.log(`✅ ${sortedPosts.length}개 포스트 로드 완료`);
+        
+        setPosts(sortedPosts);
+      } catch (error) {
+        console.error('❌ Mock 데이터 로드 실패:', error);
+        setPosts([]); // 에러 시 빈 배열
+      } finally {
+        setIsLoading(false);
+        console.log('🔄 로딩 상태 false로 설정됨');
+      }
+    };
+
+    loadMockPosts();
+  }, []);
   
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
@@ -62,12 +101,10 @@ export function BlogMainWithPagination() {
     );
   }
 
-  const featuredPost = posts.find(post => post.featured && post.id === 'tarot-basics-2025');
-  const popularPosts = [
-    posts.find(p => p.id === 'tarot-basics-2025'),
-    posts.find(p => p.id === 'meditation-guide-2025'),
-    posts.find(p => p.id === 'dream-interpretation-basics')
-  ].filter(Boolean) as BlogPost[];
+  const featuredPost = posts.find(post => post.featured);
+  const popularPosts = posts
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 3);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
