@@ -118,7 +118,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           };
           
           profile = tempProfile;
-          console.log('🔥 AuthContext: Created temp profile:', profile);
+          console.log('🔥 AuthContext: Created temp profile for', currentFirebaseUser.email, 'with role:', tempProfile.role);
+          console.log('🔥 AuthContext: Profile details:', { email: profile.email, role: profile.role, uid: profile.uid });
           
           // 백그라운드에서 실제 프로필 생성 (비동기)
           setTimeout(async () => {
@@ -154,6 +155,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           profile = newAppUser;
           
           console.log(`🔥 AuthContext: Created fallback profile for ${currentFirebaseUser.email} with role: ${profile.role}`);
+          console.log('🔥 AuthContext: Fallback profile check - Is admin?', profile.role === 'admin');
+          
+          // 관리자 권한 재확인 로그
+          if (currentFirebaseUser.email === 'admin@innerspell.com' || currentFirebaseUser.email === 'junsupark9999@gmail.com') {
+            console.log('🎯 AuthContext: ADMIN EMAIL DETECTED - Should have admin role!');
+          }
         }
 
         setUser(profile);
