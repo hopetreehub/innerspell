@@ -18,16 +18,28 @@ const isFirebaseAdminAvailable = () => {
   return firestore !== null;
 };
 
+// 캐시 관리
+let guidelinesCache: TarotGuidelinesResponse | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5분 캐시
+
 // 모든 타로 지침 데이터 가져오기
-export async function getAllTarotGuidelines(): Promise<TarotGuidelinesResponse> {
+export async function getAllTarotGuidelines(forceRefresh = false): Promise<TarotGuidelinesResponse> {
   try {
     console.log('[tarotGuidelineActions] Fetching all tarot guidelines...');
+    
+    // 캐시 확인 (강제 새로고침이 아닌 경우)
+    if (!forceRefresh && guidelinesCache && (Date.now() - cacheTimestamp) < CACHE_DURATION) {
+      console.log('[tarotGuidelineActions] Returning cached data');
+      return guidelinesCache;
+    }
     
     let customGuidelines: TarotGuideline[] = [];
     
     // Firebase Admin이 사용 가능할 때만 Firestore에서 데이터 가져오기
     if (isFirebaseAdminAvailable() && firestore) {
       try {
+        console.log('[tarotGuidelineActions] Querying Firestore for custom guidelines...');
         const customGuidelinesSnapshot = await firestore.collection('tarotGuidelines').get();
         
         customGuidelinesSnapshot.docs.forEach(doc => {
@@ -46,15 +58,40 @@ export async function getAllTarotGuidelines(): Promise<TarotGuidelinesResponse> 
     // 시스템 기본 데이터와 커스텀 데이터 합치기
     const allGuidelines = [...TAROT_GUIDELINES, ...customGuidelines];
     
-    return {
+    // 중복 제거 (ID 기준)
+    const uniqueGuidelines = allGuidelines.filter((guideline, index, self) => 
+      index === self.findIndex(g => g.id === guideline.id)
+    );
+    
+    console.log('[tarotGuidelineActions] Total unique guidelines:', uniqueGuidelines.length);
+    
+    const response: TarotGuidelinesResponse = {
       success: true,
       data: {
         spreads: TAROT_SPREADS,
         styles: INTERPRETATION_STYLES,
-        guidelines: allGuidelines,
-        combinations: SPREAD_STYLE_COMBINATIONS
+        guidelines: uniqueGuidelines,
+        combinations: SPREAD_STYLE_COMBINATIONS,
+        stats: {
+          totalGuidelines: uniqueGuidelines.length,
+          systemGuidelines: TAROT_GUIDELINES.length,
+          customGuidelines: customGuidelines.length,
+          lastUpdated: new Date().toISOString()
+        }
       }
     };
+    
+    // 캐시 업데이트
+    guidelinesCache = response;
+    cacheTimestamp = Date.now();
+    
+    console.log('[tarotGuidelineActions] Successfully loaded and cached guidelines:', {
+      total: uniqueGuidelines.length,
+      system: TAROT_GUIDELINES.length,
+      custom: customGuidelines.length
+    });
+    
+    return response;
   } catch (error) {
     console.error('[tarotGuidelineActions] Error fetching tarot guidelines:', error);
     

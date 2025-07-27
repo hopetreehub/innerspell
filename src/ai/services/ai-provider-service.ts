@@ -43,31 +43,66 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
     
     console.log('[getActiveAIModels] Active models found:', activeModels);
     
-    // Always include default models as fallback (OpenAI first, then Gemini)
+    // Always include default models as fallback (prioritizing available API keys)
     if (activeModels.length === 0) {
-      console.log('[getActiveAIModels] No active models found, using defaults');
-      activeModels.push(
-        {
-          id: 'openai/gpt-3.5-turbo',
-          name: 'GPT-3.5 Turbo (OpenAI)',
-          provider: 'openai'
-        },
-        {
-          id: 'openai/gpt-4',
-          name: 'GPT-4 (OpenAI)',
-          provider: 'openai'
-        },
-        {
-          id: 'googleai/gemini-1.5-pro-latest',
-          name: 'Gemini 1.5 Pro (Google AI)',
-          provider: 'googleai'
-        },
-        {
-          id: 'googleai/gemini-1.5-flash-latest',
-          name: 'Gemini 1.5 Flash (Google AI)',
-          provider: 'googleai'
-        }
-      );
+      console.log('[getActiveAIModels] No active models found, using defaults with priority order');
+      
+      // Check environment variables to prioritize available services
+      const hasOpenAI = !!process.env.OPENAI_API_KEY;
+      const hasGemini = !!process.env.GEMINI_API_KEY || !!process.env.GOOGLE_API_KEY;
+      
+      console.log('[getActiveAIModels] Available API keys:', { hasOpenAI, hasGemini });
+      
+      // Priority order: 1) OpenAI (most reliable), 2) Gemini (cost-effective)
+      const defaultModels = [];
+      
+      if (hasOpenAI) {
+        defaultModels.push(
+          {
+            id: 'openai/gpt-4o-mini',
+            name: 'GPT-4o mini (OpenAI)',
+            provider: 'openai'
+          },
+          {
+            id: 'openai/gpt-4o',
+            name: 'GPT-4o (OpenAI)',
+            provider: 'openai'
+          }
+        );
+      }
+      
+      if (hasGemini) {
+        defaultModels.push(
+          {
+            id: 'googleai/gemini-1.5-flash-latest',
+            name: 'Gemini 1.5 Flash (Google AI)',
+            provider: 'googleai'
+          },
+          {
+            id: 'googleai/gemini-1.5-pro-latest',
+            name: 'Gemini 1.5 Pro (Google AI)',
+            provider: 'googleai'
+          }
+        );
+      }
+      
+      // If no API keys available, still provide defaults for UI
+      if (defaultModels.length === 0) {
+        defaultModels.push(
+          {
+            id: 'openai/gpt-4o-mini',
+            name: 'GPT-4o mini (OpenAI)',
+            provider: 'openai'
+          },
+          {
+            id: 'googleai/gemini-1.5-flash-latest',
+            name: 'Gemini 1.5 Flash (Google AI)',
+            provider: 'googleai'
+          }
+        );
+      }
+      
+      activeModels.push(...defaultModels);
     }
     
     console.log('[getActiveAIModels] Final models to return:', activeModels);
