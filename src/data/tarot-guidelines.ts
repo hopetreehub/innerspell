@@ -289,131 +289,6 @@ export const TAROT_GUIDELINES: TarotGuideline[] = [
     isActive: true
   },
 
-  // 관계 스프레드 x 치료적 상담 접근법
-  {
-    id: 'relationship-therapeutic-counseling',
-    spreadId: 'relationship-spread',
-    styleId: 'therapeutic-counseling',
-    name: '관계 스프레드 - 치료적 상담 접근',
-    description: '관계의 치유와 성장을 위한 상담 중심적 타로 해석',
-    positionGuidelines: [
-      {
-        positionId: 'you',
-        positionName: '당신',
-        interpretationFocus: '관계에서 나타나는 개인의 강점과 성장 가능성',
-        keyQuestions: [
-          '이 관계에서 당신의 강점은 무엇인가?',
-          '성장할 수 있는 영역은?',
-          '자기 돌봄이 필요한 부분은?'
-        ],
-        styleSpecificNotes: '강점 중심 접근으로 자존감과 자기 효능감 강화',
-        emotionalAspects: '안전한 감정 표현과 정서적 필요',
-        practicalAspects: '건강한 경계 설정과 자기 돌봄'
-      },
-      {
-        positionId: 'them',
-        positionName: '상대방',
-        interpretationFocus: '상대방에 대한 이해와 공감, 존중의 관점',
-        keyQuestions: [
-          '상대방의 관점에서 이해할 수 있는 부분은?',
-          '그들의 감정적 필요는 무엇일까?',
-          '어떤 배려가 도움이 될까?'
-        ],
-        styleSpecificNotes: '판단하지 않는 수용적 태도로 상대방 이해 촉진',
-        emotionalAspects: '상대방의 감정적 경험에 대한 공감',
-        practicalAspects: '상호 존중하는 소통 방법'
-      },
-      {
-        positionId: 'connection',
-        positionName: '연결고리',
-        interpretationFocus: '관계의 건강한 기반과 성장 동력',
-        keyQuestions: [
-          '이 관계에서 건강한 연결 요소는?',
-          '함께 성장할 수 있는 영역은?',
-          '상호 지지할 수 있는 방법은?'
-        ],
-        styleSpecificNotes: '관계의 긍정적 측면과 건설적 가능성에 집중',
-        emotionalAspects: '안전한 애착과 신뢰 형성',
-        practicalAspects: '협력과 상호 지지 방안'
-      },
-      {
-        positionId: 'challenges',
-        positionName: '도전과제',
-        interpretationFocus: '성장을 위한 기회로서의 도전과 해결 자원',
-        keyQuestions: [
-          '이 도전이 가져다줄 성장의 기회는?',
-          '극복을 위해 활용할 수 있는 자원은?',
-          '건설적으로 접근할 방법은?'
-        ],
-        styleSpecificNotes: '문제가 아닌 성장 기회로 재프레이밍',
-        emotionalAspects: '어려움을 다루는 건강한 대처 방식',
-        practicalAspects: '갈등 해결과 문제 해결 전략'
-      },
-      {
-        positionId: 'strengths',
-        positionName: '강점',
-        interpretationFocus: '관계의 자산과 활용 가능한 긍정적 요소들',
-        keyQuestions: [
-          '이 관계의 가장 큰 자산은?',
-          '어떻게 이 강점을 더 키워갈 수 있나?',
-          '이 강점이 다른 영역에 어떻게 도움이 될까?'
-        ],
-        styleSpecificNotes: '강점을 인식하고 활용하여 자신감과 희망 증진',
-        emotionalAspects: '긍정적 감정과 만족감 증대',
-        practicalAspects: '강점 기반 관계 발전 전략'
-      },
-      {
-        positionId: 'advice',
-        positionName: '조언',
-        interpretationFocus: '치유와 성장을 위한 구체적이고 실행 가능한 지혜',
-        keyQuestions: [
-          '지금 가장 필요한 치유는?',
-          '관계 개선을 위한 첫 걸음은?',
-          '어떤 실천이 도움이 될까?'
-        ],
-        styleSpecificNotes: '실행 가능하고 점진적인 변화에 초점',
-        emotionalAspects: '자기 돌봄과 치유적 활동',
-        practicalAspects: '구체적인 행동 계획과 실천 방법'
-      },
-      {
-        positionId: 'future',
-        positionName: '미래',
-        interpretationFocus: '희망적이고 건설적인 미래 비전과 가능성',
-        keyQuestions: [
-          '치유와 성장 후 가능한 관계의 모습은?',
-          '어떤 희망적 변화가 예상되나?',
-          '장기적으로 추구할 수 있는 목표는?'
-        ],
-        styleSpecificNotes: '희망과 가능성 중심의 미래 지향적 접근',
-        emotionalAspects: '희망, 기대, 긍정적 전망',
-        practicalAspects: '장기적 관계 목표와 비전'
-      }
-    ],
-    generalApproach: '관계의 문제보다는 치유와 성장 가능성에 초점을 맞춘 해결책 중심적 접근',
-    keyFocusAreas: [
-      '강점과 자원 발견 및 활용',
-      '안전한 감정 표현과 소통',
-      '건강한 경계와 자기 돌봄',
-      '상호 성장과 지지 체계'
-    ],
-    interpretationTips: [
-      '비판보다는 이해와 공감으로 접근',
-      '각자의 고유성과 자율성 존중',
-      '점진적이고 실현 가능한 변화 제안',
-      '희망과 가능성 중심의 미래 설계'
-    ],
-    commonPitfalls: [
-      '문제에만 집중하여 해결책 놓침',
-      '일방적 조언으로 자율성 침해',
-      '현실적 제약 무시한 이상적 제안',
-      '감정적 안전성 고려 부족'
-    ],
-    difficulty: 'intermediate',
-    estimatedTime: 35,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    isActive: true
-  },
 
   // 상황-행동-결과 스프레드 x 전통 RWS
   {
@@ -1661,6 +1536,1200 @@ export const TAROT_GUIDELINES: TarotGuideline[] = [
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date()
+  },
+
+  // 십자가 스프레드 x 전통 라이더-웨이트
+  {
+    id: 'cross-spread-traditional-rws',
+    spreadId: 'cross-spread',
+    styleId: 'traditional-rws',
+    name: '십자가 스프레드 - 전통 라이더-웨이트',
+    description: '웨이트 전통에 따른 5방향 종합 상황 분석',
+    positionGuidelines: [
+      {
+        positionId: 'center',
+        positionName: '중심 (현재 상황)',
+        interpretationFocus: '현재 상황의 핵심과 중심 에너지',
+        keyQuestions: ['현재 상황의 본질은 무엇인가?', '가장 중요한 요소는?'],
+        styleSpecificNotes: '전통적 카드 의미를 정확히 적용'
+      },
+      {
+        positionId: 'left',
+        positionName: '왼쪽 (과거/원인)',
+        interpretationFocus: '상황의 근본 원인과 과거 영향',
+        keyQuestions: ['무엇이 이 상황을 만들었는가?', '과거의 교훈은?'],
+        styleSpecificNotes: '시간적 인과관계 중심 해석'
+      },
+      {
+        positionId: 'right',
+        positionName: '오른쪽 (미래/결과)',
+        interpretationFocus: '현재 방향의 자연스러운 결과',
+        keyQuestions: ['현재 방향대로 가면 어떻게 될 것인가?'],
+        styleSpecificNotes: '전통적 예언 체계 적용'
+      },
+      {
+        positionId: 'top',
+        positionName: '위쪽 (의식적/목표)',
+        interpretationFocus: '의식적 목표와 높은 이상',
+        keyQuestions: ['의식적으로 추구하는 목표는?'],
+        styleSpecificNotes: '영적 차원과 높은 목적 강조'
+      },
+      {
+        positionId: 'bottom',
+        positionName: '아래쪽 (무의식/기반)',
+        interpretationFocus: '무의식적 동기와 숨겨진 기반',
+        keyQuestions: ['무의식적 동기는 무엇인가?'],
+        styleSpecificNotes: '숨겨진 영향과 기반 해석'
+      }
+    ],
+    generalApproach: '전통적 십자가 구조로 상황을 다면적으로 분석하고 균형잡힌 해석 제공',
+    keyFocusAreas: ['상황의 전체적 맥락', '과거-현재-미래 연결', '의식-무의식 균형'],
+    interpretationTips: ['중심 카드를 기준으로 다른 카드들과의 관계 파악', '십자가의 균형과 조화 확인'],
+    commonPitfalls: ['복잡성에 압도되어 핵심 놓치기', '포지션별 의미를 기계적으로 적용'],
+    difficulty: 'intermediate',
+    estimatedTime: 35,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 십자가 스프레드 x 심리학적 융 접근법
+  {
+    id: 'cross-spread-psychological-jungian',
+    spreadId: 'cross-spread',
+    styleId: 'psychological-jungian',
+    name: '십자가 스프레드 - 융 심리학적 접근',
+    description: '무의식의 구조와 개성화 과정을 통한 5차원 분석',
+    positionGuidelines: [
+      {
+        positionId: 'center',
+        positionName: '중심 (자기)',
+        interpretationFocus: '자기(Self) 원형과 개성화의 현재 상태',
+        keyQuestions: ['자기 원형이 어떻게 나타나고 있는가?'],
+        styleSpecificNotes: '융의 자기(Self) 개념 중심 해석'
+      },
+      {
+        positionId: 'left',
+        positionName: '왼쪽 (과거 콤플렉스)',
+        interpretationFocus: '과거에서 형성된 콤플렉스와 원형적 패턴',
+        keyQuestions: ['어떤 콤플렉스가 작용하고 있는가?'],
+        styleSpecificNotes: '개인적 무의식의 콤플렉스 분석'
+      },
+      {
+        positionId: 'right',
+        positionName: '오른쪽 (개성화 방향)',
+        interpretationFocus: '개성화 과정의 다음 단계',
+        keyQuestions: ['개성화를 위해 통합해야 할 요소는?'],
+        styleSpecificNotes: '개성화 과정의 전개 방향'
+      },
+      {
+        positionId: 'top',
+        positionName: '위쪽 (페르소나)',
+        interpretationFocus: '의식적 페르소나와 사회적 가면',
+        keyQuestions: ['현재 페르소나는 적절한가?'],
+        styleSpecificNotes: '페르소나의 기능과 한계 분석'
+      },
+      {
+        positionId: 'bottom',
+        positionName: '아래쪽 (그림자)',
+        interpretationFocus: '억압된 그림자와 무의식적 내용',
+        keyQuestions: ['어떤 그림자 요소가 통합을 기다리고 있는가?'],
+        styleSpecificNotes: '그림자의 건설적 통합 방안'
+      }
+    ],
+    generalApproach: '융의 분석심리학 구조로 개성화 과정의 현재 위치와 발전 방향 제시',
+    keyFocusAreas: ['개성화 과정', '의식-무의식 균형', '원형과 콤플렉스', '그림자 통합'],
+    interpretationTips: ['자기 원형을 중심으로 다른 요소들의 관계 파악', '개성화의 발달 단계 고려'],
+    commonPitfalls: ['심리학 용어의 기계적 적용', '개성화를 완성 목표로 오해'],
+    difficulty: 'advanced',
+    estimatedTime: 50,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 십자가 스프레드 x 토트 크로울리 전통
+  {
+    id: 'cross-spread-thoth-crowley',
+    spreadId: 'cross-spread',
+    styleId: 'thoth-crowley',
+    name: '십자가 스프레드 - 토트 크로울리 전통',
+    description: '카발라 생명나무와 텔레마 철학을 통한 5차원 에너지 분석',
+    positionGuidelines: [
+      {
+        positionId: 'center',
+        positionName: '중심 (티페렛)',
+        interpretationFocus: '균형과 조화의 중심, 아름다움의 구현',
+        keyQuestions: ['의지와 사랑의 균형은?', '참의지가 어떻게 나타나는가?'],
+        styleSpecificNotes: '티페렛의 조화와 균형 원리 적용'
+      },
+      {
+        positionId: 'left',
+        positionName: '왼쪽 (호드)',
+        interpretationFocus: '엄격함과 구조, 제한과 형태',
+        keyQuestions: ['어떤 구조와 제한이 작용하는가?'],
+        styleSpecificNotes: '호드 기둥의 형태 부여 원리'
+      },
+      {
+        positionId: 'right',
+        positionName: '오른쪽 (야킨)',
+        interpretationFocus: '자비와 확장, 창조적 힘',
+        keyQuestions: ['어떤 창조적 에너지가 활성화되어야 하는가?'],
+        styleSpecificNotes: '야킨 기둥의 확장 원리'
+      },
+      {
+        positionId: 'top',
+        positionName: '위쪽 (케테르)',
+        interpretationFocus: '최고의 이상과 근원적 의지',
+        keyQuestions: ['최고의 목적과 이상은?'],
+        styleSpecificNotes: '케테르의 순수 의지와 근원'
+      },
+      {
+        positionId: 'bottom',
+        positionName: '아래쪽 (말쿠트)',
+        interpretationFocus: '물질적 현현과 현실 세계',
+        keyQuestions: ['물질 세계에서 어떻게 현현되는가?'],
+        styleSpecificNotes: '말쿠트의 현실 구현 원리'
+      }
+    ],
+    generalApproach: '카발라 생명나무의 구조를 통해 에너지의 흐름과 균형을 분석하고 텔레마적 실현 방향 제시',
+    keyFocusAreas: ['카발라적 에너지 흐름', '텔레마 철학', '의지의 실현', '우주적 조화'],
+    interpretationTips: ['생명나무의 에너지 흐름 고려', '세피로트 간의 균형과 조화', '점성술적 대응 활용'],
+    commonPitfalls: ['카발라 이론의 기계적 적용', '복잡성에 압도되어 실용성 잃기'],
+    difficulty: 'advanced',
+    estimatedTime: 55,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 십자가 스프레드 x 직관적 현대 해석
+  {
+    id: 'cross-spread-intuitive-modern',
+    spreadId: 'cross-spread',
+    styleId: 'intuitive-modern',
+    name: '십자가 스프레드 - 직관적 현대 해석',
+    description: '현대적 삶의 맥락에서 직감적이고 창의적인 5방향 분석',
+    positionGuidelines: [
+      {
+        positionId: 'center',
+        positionName: '중심 (현재 에너지)',
+        interpretationFocus: '지금 이 순간의 핵심 에너지와 분위기',
+        keyQuestions: ['지금 가장 강하게 느껴지는 에너지는?', '카드가 주는 첫 인상은?'],
+        styleSpecificNotes: '직관적 느낌과 현대적 맥락 중시'
+      },
+      {
+        positionId: 'left',
+        positionName: '왼쪽 (뒤돌아봄)',
+        interpretationFocus: '놓아줘야 할 것, 과거의 패턴',
+        keyQuestions: ['무엇을 놓아줘야 하는가?', '반복되는 패턴은?'],
+        styleSpecificNotes: '현대적 자기성찰과 성장 관점'
+      },
+      {
+        positionId: 'right',
+        positionName: '오른쪽 (앞으로 나아감)',
+        interpretationFocus: '새로운 가능성과 창의적 방향',
+        keyQuestions: ['새롭게 시도할 수 있는 것은?', '창의적 해결책은?'],
+        styleSpecificNotes: '혁신과 창의성 강조'
+      },
+      {
+        positionId: 'top',
+        positionName: '위쪽 (이상과 영감)',
+        interpretationFocus: '영감과 비전, 높은 목표',
+        keyQuestions: ['어떤 비전이 나를 이끄는가?', '영감의 원천은?'],
+        styleSpecificNotes: '개인적 비전과 창조적 영감'
+      },
+      {
+        positionId: 'bottom',
+        positionName: '아래쪽 (실용적 기반)',
+        interpretationFocus: '현실적 기반과 실용적 자원',
+        keyQuestions: ['실제로 활용할 수 있는 자원은?', '현실적 제약은?'],
+        styleSpecificNotes: '현대적 라이프스타일과 실용성'
+      }
+    ],
+    generalApproach: '전통적 구조를 현대적 감각으로 재해석하고 개인의 직감과 창의성을 최대한 활용',
+    keyFocusAreas: ['직관적 통찰', '창의적 해결책', '현대적 삶의 적용', '개인적 성장'],
+    interpretationTips: ['첫 인상과 직감을 중시', '현대적 상황과 연결', '창의적 관점 제시'],
+    commonPitfalls: ['지나친 주관성으로 일관성 부족', '실용적 조언 없는 추상적 해석'],
+    difficulty: 'beginner',
+    estimatedTime: 25,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 십자가 스프레드 x 치료적 상담 접근법
+  {
+    id: 'cross-spread-therapeutic-counseling',
+    spreadId: 'cross-spread',
+    styleId: 'therapeutic-counseling',
+    name: '십자가 스프레드 - 치료적 상담 접근',
+    description: '치유와 회복을 위한 5방향 통합적 상담 분석',
+    positionGuidelines: [
+      {
+        positionId: 'center',
+        positionName: '중심 (현재 상태)',
+        interpretationFocus: '현재의 전반적 웰빙과 치유 필요 영역',
+        keyQuestions: ['현재 가장 주의가 필요한 영역은?', '치유의 우선순위는?'],
+        styleSpecificNotes: '강점 기반 접근으로 현재 상태 평가'
+      },
+      {
+        positionId: 'left',
+        positionName: '왼쪽 (치유할 과거)',
+        interpretationFocus: '치유가 필요한 과거 경험과 트라우마',
+        keyQuestions: ['어떤 과거 경험이 치유를 기다리고 있는가?'],
+        styleSpecificNotes: '트라우마 인식 치료 관점 적용'
+      },
+      {
+        positionId: 'right',
+        positionName: '오른쪽 (회복의 방향)',
+        interpretationFocus: '치유와 회복의 구체적 방향',
+        keyQuestions: ['어떤 회복과 성장이 가능한가?'],
+        styleSpecificNotes: '회복탄력성과 성장 후 스트레스 고려'
+      },
+      {
+        positionId: 'top',
+        positionName: '위쪽 (치유 자원)',
+        interpretationFocus: '활용 가능한 내적 외적 치유 자원',
+        keyQuestions: ['어떤 치유 자원을 활용할 수 있는가?'],
+        styleSpecificNotes: '강점과 자원 중심 접근'
+      },
+      {
+        positionId: 'bottom',
+        positionName: '아래쪽 (안전한 기반)',
+        interpretationFocus: '치유를 위한 안전한 기반과 지지체계',
+        keyQuestions: ['어떤 안전한 기반이 필요한가?'],
+        styleSpecificNotes: '안전감과 안정성 확보 중심'
+      }
+    ],
+    generalApproach: '치유 중심의 관점에서 과거-현재-미래를 통합하고 회복과 성장을 위한 실용적 방향 제시',
+    keyFocusAreas: ['트라우마 치유', '회복탄력성', '치유 자원', '안전한 기반', '통합적 웰빙'],
+    interpretationTips: ['강점과 자원에 집중', '안전감 우선 고려', '점진적 치유 과정 존중'],
+    commonPitfalls: ['빠른 치유 기대', '전문적 치료 영역 침범', '부정적 측면에만 집중'],
+    difficulty: 'intermediate',
+    estimatedTime: 45,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 십자가 스프레드 x 원소와 계절 중심
+  {
+    id: 'cross-spread-elemental-seasonal',
+    spreadId: 'cross-spread',
+    styleId: 'elemental-seasonal',
+    name: '십자가 스프레드 - 원소와 계절 중심',
+    description: '사원소의 균형과 계절적 리듬을 통한 5방향 조화 분석',
+    positionGuidelines: [
+      {
+        positionId: 'center',
+        positionName: '중심 (원소적 균형)',
+        interpretationFocus: '현재 사원소의 균형 상태와 조화',
+        keyQuestions: ['어떤 원소가 과도하거나 부족한가?', '균형 회복을 위해 필요한 것은?'],
+        styleSpecificNotes: '사원소의 전체적 균형과 조화 평가'
+      },
+      {
+        positionId: 'left',
+        positionName: '왼쪽 (흙 - 안정)',
+        interpretationFocus: '안정성과 실용성, 물질적 기반',
+        keyQuestions: ['현재 안정성과 실용적 기반은?'],
+        styleSpecificNotes: '흙 원소의 안정화와 근거 제공'
+      },
+      {
+        positionId: 'right',
+        positionName: '오른쪽 (불 - 열정)',
+        interpretationFocus: '열정과 창조성, 행동 에너지',
+        keyQuestions: ['어떤 열정과 행동 에너지가 필요한가?'],
+        styleSpecificNotes: '불 원소의 추진력과 창조성'
+      },
+      {
+        positionId: 'top',
+        positionName: '위쪽 (공기 - 사고)',
+        interpretationFocus: '사고와 소통, 정신적 명료성',
+        keyQuestions: ['사고의 명료성과 소통은?'],
+        styleSpecificNotes: '공기 원소의 지성과 소통'
+      },
+      {
+        positionId: 'bottom',
+        positionName: '아래쪽 (물 - 감정)',
+        interpretationFocus: '감정과 직감, 내면의 흐름',
+        keyQuestions: ['감정의 흐름과 직감은?'],
+        styleSpecificNotes: '물 원소의 감정과 직관'
+      }
+    ],
+    generalApproach: '사원소의 균형을 통해 전인적 조화를 추구하고 자연의 리듬과 동조하는 삶의 방향 제시',
+    keyFocusAreas: ['사원소 균형', '자연과의 조화', '계절적 적응', '에너지 조율', '전인적 웰빙'],
+    interpretationTips: ['사원소의 상호작용 관찰', '계절적 에너지 반영', '균형과 조화 추구'],
+    commonPitfalls: ['원소의 기계적 분류', '개인차 무시', '실제 자연과의 단절'],
+    difficulty: 'intermediate',
+    estimatedTime: 40,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 관계 스프레드 x 전통 라이더-웨이트
+  {
+    id: 'relationship-spread-traditional-rws',
+    spreadId: 'relationship-spread',
+    styleId: 'traditional-rws',
+    name: '관계 스프레드 - 전통 라이더-웨이트',
+    description: '전통적 웨이트 체계로 관계의 역학과 발전 방향 분석',
+    positionGuidelines: [
+      {
+        positionId: 'you',
+        positionName: '당신',
+        interpretationFocus: '관계에서 당신의 역할과 에너지 상태',
+        keyQuestions: ['관계에서 내가 가져오는 에너지는?', '내 역할과 기여는?'],
+        styleSpecificNotes: '전통적 카드 의미로 개인의 관계적 특성 분석'
+      },
+      {
+        positionId: 'them',
+        positionName: '상대방',
+        interpretationFocus: '상대방의 관계 내 역할과 에너지',
+        keyQuestions: ['상대방이 가져오는 에너지는?', '그들의 역할은?'],
+        styleSpecificNotes: '객관적이고 균형잡힌 상대방 이해'
+      },
+      {
+        positionId: 'connection',
+        positionName: '연결고리',
+        interpretationFocus: '두 사람을 연결하는 핵심 에너지',
+        keyQuestions: ['우리를 연결하는 본질적 끈은?'],
+        styleSpecificNotes: '관계의 영적이고 감정적 연결 분석'
+      },
+      {
+        positionId: 'challenges',
+        positionName: '도전과제',
+        interpretationFocus: '관계에서 극복해야 할 장애물',
+        keyQuestions: ['우리가 함께 극복해야 할 과제는?'],
+        styleSpecificNotes: '건설적 관점에서 도전을 성장 기회로 해석'
+      },
+      {
+        positionId: 'strengths',
+        positionName: '강점',
+        interpretationFocus: '관계의 장점과 강화할 요소',
+        keyQuestions: ['우리 관계의 가장 큰 강점은?'],
+        styleSpecificNotes: '관계의 긍정적 측면과 발전 가능성'
+      },
+      {
+        positionId: 'advice',
+        positionName: '조언',
+        interpretationFocus: '관계 개선을 위한 구체적 지혜',
+        keyQuestions: ['관계 발전을 위한 조언은?'],
+        styleSpecificNotes: '실용적이고 적용 가능한 관계 조언'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래',
+        interpretationFocus: '관계의 발전 방향과 잠재력',
+        keyQuestions: ['이 관계는 어떻게 발전할 것인가?'],
+        styleSpecificNotes: '희망적이면서도 현실적인 미래 전망'
+      }
+    ],
+    generalApproach: '전통적 타로 지혜로 관계의 복잡한 역학을 분석하고 조화로운 발전 방향 제시',
+    keyFocusAreas: ['관계 역학', '상호 이해', '소통 개선', '갈등 해결', '관계 발전'],
+    interpretationTips: ['양쪽 모두에게 공정한 해석', '건설적 관점 유지', '실용적 조언 제공'],
+    commonPitfalls: ['편향적 해석', '관계 파괴적 조언', '지나친 이상화'],
+    difficulty: 'advanced',
+    estimatedTime: 50,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 관계 스프레드 x 심리학적 융 접근법
+  {
+    id: 'relationship-spread-psychological-jungian',
+    spreadId: 'relationship-spread',
+    styleId: 'psychological-jungian',
+    name: '관계 스프레드 - 융 심리학적 접근',
+    description: '무의식적 투영과 원형적 패턴을 통한 관계 심층 분석',
+    positionGuidelines: [
+      {
+        positionId: 'you',
+        positionName: '당신 (의식적 태도)',
+        interpretationFocus: '관계에서 당신의 의식적 태도와 페르소나',
+        keyQuestions: ['관계에서 내 의식적 태도는?', '어떤 페르소나를 사용하는가?'],
+        styleSpecificNotes: '의식적 관계 태도와 무의식적 동기의 차이 분석'
+      },
+      {
+        positionId: 'them',
+        positionName: '상대방 (투영된 이미지)',
+        interpretationFocus: '상대방에 대한 투영과 실제 모습의 차이',
+        keyQuestions: ['상대방에게 무엇을 투영하고 있는가?'],
+        styleSpecificNotes: '아니마/아니무스 투영과 실제 상대방 구분'
+      },
+      {
+        positionId: 'connection',
+        positionName: '연결고리 (원형적 끌림)',
+        interpretationFocus: '무의식적 원형 차원의 연결',
+        keyQuestions: ['어떤 원형적 패턴이 우리를 끌어당기는가?'],
+        styleSpecificNotes: '집단무의식 차원의 원형적 매력'
+      },
+      {
+        positionId: 'challenges',
+        positionName: '도전과제 (그림자 갈등)',
+        interpretationFocus: '상호 그림자 투영과 갈등',
+        keyQuestions: ['서로의 그림자가 어떻게 충돌하는가?'],
+        styleSpecificNotes: '그림자 투영을 인식하고 통합하는 방안'
+      },
+      {
+        positionId: 'strengths',
+        positionName: '강점 (상호 보완)',
+        interpretationFocus: '심리적 상호 보완과 성장 잠재력',
+        keyQuestions: ['서로의 개성화를 어떻게 도울 수 있는가?'],
+        styleSpecificNotes: '상호 개성화 과정에서의 긍정적 기여'
+      },
+      {
+        positionId: 'advice',
+        positionName: '조언 (통합의 길)',
+        interpretationFocus: '무의식적 갈등의 의식화와 통합',
+        keyQuestions: ['투영을 거두고 진정한 만남을 위한 방법은?'],
+        styleSpecificNotes: '투영 인식과 진정한 관계로의 발전'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래 (개성화 여정)',
+        interpretationFocus: '관계를 통한 상호 개성화의 가능성',
+        keyQuestions: ['이 관계가 우리의 개성화에 어떻게 기여할 것인가?'],
+        styleSpecificNotes: '관계를 통한 심리적 성장과 자기실현'
+      }
+    ],
+    generalApproach: '융의 분석심리학으로 관계의 무의식적 역학을 이해하고 투영을 넘어선 진정한 만남 추구',
+    keyFocusAreas: ['무의식적 투영', '아니마/아니무스', '그림자 갈등', '원형적 매력', '상호 개성화'],
+    interpretationTips: ['투영과 실제 구분', '무의식적 동기 탐구', '개성화 관점에서 해석'],
+    commonPitfalls: ['심리학적 진단', '투영을 완전히 부정적으로 봄', '개성화를 관계 목표로 설정'],
+    difficulty: 'advanced',
+    estimatedTime: 55,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 관계 스프레드 x 토트 크로울리 전통
+  {
+    id: 'relationship-spread-thoth-crowley',
+    spreadId: 'relationship-spread',
+    styleId: 'thoth-crowley',
+    name: '관계 스프레드 - 토트 크로울리 전통',
+    description: '텔레마 철학과 카발라적 에너지 교류를 통한 관계 분석',
+    positionGuidelines: [
+      {
+        positionId: 'you',
+        positionName: '당신 (의지의 표현)',
+        interpretationFocus: '관계에서 당신의 참의지와 에너지 표현',
+        keyQuestions: ['관계에서 내 참의지는 어떻게 표현되는가?'],
+        styleSpecificNotes: '텔레마의 참의지 관점에서 관계 내 역할 분석'
+      },
+      {
+        positionId: 'them',
+        positionName: '상대방 (의지의 만남)',
+        interpretationFocus: '상대방의 의지와 에너지적 특성',
+        keyQuestions: ['상대방의 참의지는 무엇인가?'],
+        styleSpecificNotes: '상대방의 고유한 의지와 에너지 패턴 이해'
+      },
+      {
+        positionId: 'connection',
+        positionName: '연결고리 (에너지 교류)',
+        interpretationFocus: '두 의지 간의 에너지적 연결과 교류',
+        keyQuestions: ['우리의 에너지는 어떻게 상호작용하는가?'],
+        styleSpecificNotes: '카발라적 에너지 흐름과 점성술적 조화'
+      },
+      {
+        positionId: 'challenges',
+        positionName: '도전과제 (의지의 충돌)',
+        interpretationFocus: '서로 다른 의지 간의 갈등과 조화 방안',
+        keyQuestions: ['의지의 충돌을 어떻게 조화시킬 것인가?'],
+        styleSpecificNotes: '대립하는 에너지의 창조적 통합'
+      },
+      {
+        positionId: 'strengths',
+        positionName: '강점 (시너지 효과)',
+        interpretationFocus: '결합된 의지의 창조적 힘과 시너지',
+        keyQuestions: ['우리의 결합된 의지가 창조할 수 있는 것은?'],
+        styleSpecificNotes: '상호 보완적 에너지의 마법적 결합'
+      },
+      {
+        positionId: 'advice',
+        positionName: '조언 (조화의 공식)',
+        interpretationFocus: '의지의 조화와 창조적 협력을 위한 방법',
+        keyQuestions: ['진정한 조화를 위한 마법적 공식은?'],
+        styleSpecificNotes: '텔레마적 사랑과 의지의 실현 방안'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래 (대사업의 기여)',
+        interpretationFocus: '관계가 대사업에 기여하는 바',
+        keyQuestions: ['이 관계가 우주적 진화에 어떻게 기여할 것인가?'],
+        styleSpecificNotes: '개인적 관계를 넘어선 우주적 의미와 기여'
+      }
+    ],
+    generalApproach: '텔레마 철학의 사랑과 의지 개념으로 관계를 우주적 차원에서 이해하고 창조적 협력 추구',
+    keyFocusAreas: ['참의지의 만남', '에너지적 조화', '창조적 시너지', '우주적 기여', '마법적 협력'],
+    interpretationTips: ['참의지와 소망 구분', '에너지적 상호작용 분석', '우주적 관점 제시'],
+    commonPitfalls: ['텔레마를 개인적 욕망으로 축소', '과도한 이론화', '실용적 관계 조언 부족'],
+    difficulty: 'advanced',
+    estimatedTime: 60,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 관계 스프레드 x 직관적 현대 해석
+  {
+    id: 'relationship-spread-intuitive-modern',
+    spreadId: 'relationship-spread',
+    styleId: 'intuitive-modern',
+    name: '관계 스프레드 - 직관적 현대 해석',
+    description: '현대적 관계 관점과 직감적 통찰로 관계 역학 분석',
+    positionGuidelines: [
+      {
+        positionId: 'you',
+        positionName: '당신 (현재 에너지)',
+        interpretationFocus: '관계에서 당신이 가져오는 현재 에너지와 분위기',
+        keyQuestions: ['지금 관계에서 내가 주는 느낌은?', '내 에너지의 특징은?'],
+        styleSpecificNotes: '직관적 자기 인식과 현대적 개성 표현'
+      },
+      {
+        positionId: 'them',
+        positionName: '상대방 (상대의 바이브)',
+        interpretationFocus: '상대방의 에너지와 관계에서의 분위기',
+        keyQuestions: ['상대방에게서 느껴지는 바이브는?'],
+        styleSpecificNotes: '선입견 없는 직관적 상대방 이해'
+      },
+      {
+        positionId: 'connection',
+        positionName: '연결고리 (케미)',
+        interpretationFocus: '두 사람 사이의 화학적 반응과 케미',
+        keyQuestions: ['우리 사이의 특별한 케미는?', '무엇이 우리를 끌어당기는가?'],
+        styleSpecificNotes: '현대적 관계 언어로 연결감 표현'
+      },
+      {
+        positionId: 'challenges',
+        positionName: '도전과제 (현실적 이슈)',
+        interpretationFocus: '관계에서 직면하는 현실적 문제들',
+        keyQuestions: ['실제로 우리가 해결해야 할 이슈는?'],
+        styleSpecificNotes: '현대적 관계 문제와 솔직한 소통'
+      },
+      {
+        positionId: 'strengths',
+        positionName: '강점 (서로의 매력)',
+        interpretationFocus: '서로에게 끌리는 매력 포인트',
+        keyQuestions: ['서로에게서 가장 매력적인 부분은?'],
+        styleSpecificNotes: '긍정적 상호 인정과 애정 표현'
+      },
+      {
+        positionId: 'advice',
+        positionName: '조언 (관계 팁)',
+        interpretationFocus: '관계 개선을 위한 실용적 팁',
+        keyQuestions: ['관계를 더 좋게 만들 수 있는 현실적 방법은?'],
+        styleSpecificNotes: '일상에서 적용 가능한 관계 개선 방법'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래 (관계 전망)',
+        interpretationFocus: '관계의 자연스러운 발전 방향',
+        keyQuestions: ['이 관계는 어떤 방향으로 흘러갈까?'],
+        styleSpecificNotes: '희망적이고 열린 미래 가능성'
+      }
+    ],
+    generalApproach: '현대적 관계 감각과 직관적 통찰로 관계를 자연스럽고 건강하게 발전시키는 방향 제시',
+    keyFocusAreas: ['직관적 관계 이해', '현대적 소통', '자연스러운 발전', '실용적 개선', '긍정적 에너지'],
+    interpretationTips: ['직감과 첫 인상 중시', '현대적 관계 언어 사용', '실용적 조언 제공'],
+    commonPitfalls: ['지나친 주관성', '이론 없는 피상적 해석', '현실 도피적 조언'],
+    difficulty: 'beginner',
+    estimatedTime: 30,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 관계 스프레드 x 치료적 상담 접근법
+  {
+    id: 'relationship-spread-therapeutic-counseling',
+    spreadId: 'relationship-spread',
+    styleId: 'therapeutic-counseling',
+    name: '관계 스프레드 - 치료적 상담 접근',
+    description: '관계 치료 관점에서 건강한 관계 구축을 위한 분석',
+    positionGuidelines: [
+      {
+        positionId: 'you',
+        positionName: '당신 (관계 패턴)',
+        interpretationFocus: '당신의 관계 패턴과 애착 스타일',
+        keyQuestions: ['내 관계 패턴은?', '건강한 관계를 위해 필요한 성장은?'],
+        styleSpecificNotes: '애착 이론과 관계 패턴을 중심으로 분석'
+      },
+      {
+        positionId: 'them',
+        positionName: '상대방 (상대의 필요)',
+        interpretationFocus: '상대방의 관계적 필요와 취약점',
+        keyQuestions: ['상대방이 관계에서 필요로 하는 것은?'],
+        styleSpecificNotes: '공감과 이해 중심의 상대방 인식'
+      },
+      {
+        positionId: 'connection',
+        positionName: '연결고리 (안전한 유대)',
+        interpretationFocus: '안전하고 건강한 유대감의 기초',
+        keyQuestions: ['우리 사이의 안전한 연결은 어떻게 구축되는가?'],
+        styleSpecificNotes: '안전한 애착과 신뢰 기반 관계'
+      },
+      {
+        positionId: 'challenges',
+        positionName: '도전과제 (치유할 상처)',
+        interpretationFocus: '관계에 영향을 주는 과거 상처와 트라우마',
+        keyQuestions: ['치유가 필요한 관계적 상처는?'],
+        styleSpecificNotes: '트라우마 인식 관계 치료 접근'
+      },
+      {
+        positionId: 'strengths',
+        positionName: '강점 (회복력)',
+        interpretationFocus: '관계의 회복력과 치유 자원',
+        keyQuestions: ['우리 관계의 치유하는 힘은?'],
+        styleSpecificNotes: '상호 치유와 성장 가능성'
+      },
+      {
+        positionId: 'advice',
+        positionName: '조언 (소통 방법)',
+        interpretationFocus: '건강한 소통과 갈등 해결 방법',
+        keyQuestions: ['더 건강한 소통을 위한 방법은?'],
+        styleSpecificNotes: '비폭력 소통과 감정 코칭 기법'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래 (치유된 관계)',
+        interpretationFocus: '치유와 성장을 통한 관계의 발전',
+        keyQuestions: ['치유된 관계는 어떤 모습일 것인가?'],
+        styleSpecificNotes: '희망적이고 현실적인 관계 발전 방향'
+      }
+    ],
+    generalApproach: '관계 치료와 상담 이론을 바탕으로 건강하고 지속 가능한 관계 구축을 위한 구체적 방향 제시',
+    keyFocusAreas: ['안전한 애착', '건강한 소통', '갈등 해결', '상호 치유', '관계 성장'],
+    interpretationTips: ['안전감 우선 고려', '비판 없는 수용', '구체적 소통 방법 제시'],
+    commonPitfalls: ['관계 치료사 역할 과잉', '빠른 변화 기대', '개인 치료 영역 침범'],
+    difficulty: 'intermediate',
+    estimatedTime: 50,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 관계 스프레드 x 원소와 계절 중심
+  {
+    id: 'relationship-spread-elemental-seasonal',
+    spreadId: 'relationship-spread',
+    styleId: 'elemental-seasonal',
+    name: '관계 스프레드 - 원소와 계절 중심',
+    description: '자연의 원소와 계절적 리듬을 통한 관계의 조화 분석',
+    positionGuidelines: [
+      {
+        positionId: 'you',
+        positionName: '당신 (개인 원소)',
+        interpretationFocus: '당신의 주요 원소 에너지와 계절적 성향',
+        keyQuestions: ['내 주요 원소 에너지는?', '어떤 계절적 특성을 가지고 있나?'],
+        styleSpecificNotes: '개인의 원소적 성향과 자연적 리듬'
+      },
+      {
+        positionId: 'them',
+        positionName: '상대방 (상대 원소)',
+        interpretationFocus: '상대방의 원소 에너지와 자연적 특성',
+        keyQuestions: ['상대방의 원소적 특성은?'],
+        styleSpecificNotes: '상대방의 자연적 에너지와 계절적 성향'
+      },
+      {
+        positionId: 'connection',
+        positionName: '연결고리 (원소 조화)',
+        interpretationFocus: '두 원소 간의 자연스러운 조화와 균형',
+        keyQuestions: ['우리의 원소는 어떻게 조화를 이루는가?'],
+        styleSpecificNotes: '원소 간 상호 보완과 자연적 균형'
+      },
+      {
+        positionId: 'challenges',
+        positionName: '도전과제 (원소 갈등)',
+        interpretationFocus: '원소 간 불균형과 조화의 필요성',
+        keyQuestions: ['원소적 불균형을 어떻게 조화시킬 것인가?'],
+        styleSpecificNotes: '원소 간 갈등의 창조적 해결'
+      },
+      {
+        positionId: 'strengths',
+        positionName: '강점 (자연적 시너지)',
+        interpretationFocus: '원소의 결합이 만드는 자연적 시너지',
+        keyQuestions: ['우리 원소의 결합이 창조하는 힘은?'],
+        styleSpecificNotes: '원소적 결합의 창조적 잠재력'
+      },
+      {
+        positionId: 'advice',
+        positionName: '조언 (자연의 지혜)',
+        interpretationFocus: '자연의 지혜를 통한 관계 조화 방법',
+        keyQuestions: ['자연의 리듬에 맞춘 관계 발전 방법은?'],
+        styleSpecificNotes: '계절과 자연 주기를 활용한 관계 개선'
+      },
+      {
+        positionId: 'future',
+        positionName: '미래 (계절적 순환)',
+        interpretationFocus: '관계의 자연스러운 계절적 발전',
+        keyQuestions: ['우리 관계는 어떤 계절을 맞이할 것인가?'],
+        styleSpecificNotes: '자연의 순환에 따른 관계 발전'
+      }
+    ],
+    generalApproach: '자연의 원소와 계절적 지혜를 통해 관계의 자연스러운 조화와 지속 가능한 발전 추구',
+    keyFocusAreas: ['원소적 조화', '자연적 리듬', '계절적 적응', '생태적 관계', '자연의 지혜'],
+    interpretationTips: ['원소의 상호작용 관찰', '계절적 에너지 활용', '자연의 지혜 적용'],
+    commonPitfalls: ['원소의 기계적 적용', '개인차 무시', '자연과 단절된 해석'],
+    difficulty: 'intermediate',
+    estimatedTime: 45,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 켈틱 크로스 x 전통 라이더-웨이트
+  {
+    id: 'celtic-cross-traditional-rws',
+    spreadId: 'celtic-cross',
+    styleId: 'traditional-rws',
+    name: '켈틱 크로스 - 전통 라이더-웨이트',
+    description: '가장 포괄적인 전통 웨이트 체계의 10카드 완전 분석',
+    positionGuidelines: [
+      {
+        positionId: 'present',
+        positionName: '현재 상황',
+        interpretationFocus: '현재 상황의 핵심과 중심 에너지',
+        keyQuestions: ['지금 상황의 본질은?'],
+        styleSpecificNotes: '전통적 의미 정확히 적용'
+      },
+      {
+        positionId: 'challenge',
+        positionName: '도전/장애',
+        interpretationFocus: '극복해야 할 핵심 장애물',
+        keyQuestions: ['가장 큰 도전은?'],
+        styleSpecificNotes: '건설적 성장 기회로 해석'
+      },
+      {
+        positionId: 'distant-past',
+        positionName: '먼 과거',
+        interpretationFocus: '근본적 원인과 깊은 배경',
+        keyQuestions: ['근본 원인은?'],
+        styleSpecificNotes: '카르마적 배경 고려'
+      },
+      {
+        positionId: 'recent-past',
+        positionName: '가까운 과거',
+        interpretationFocus: '최근의 직접적 영향',
+        keyQuestions: ['최근 무엇이 영향을 주었나?'],
+        styleSpecificNotes: '현재와의 직접적 연결'
+      },
+      {
+        positionId: 'possible-outcome',
+        positionName: '가능한 결과',
+        interpretationFocus: '현재 방향의 자연스러운 결과',
+        keyQuestions: ['이대로 가면?'],
+        styleSpecificNotes: '조건부 미래 예측'
+      },
+      {
+        positionId: 'near-future',
+        positionName: '가까운 미래',
+        interpretationFocus: '임박한 전개 상황',
+        keyQuestions: ['곧 일어날 일은?'],
+        styleSpecificNotes: '단기적 전망'
+      },
+      {
+        positionId: 'your-approach',
+        positionName: '당신의 접근',
+        interpretationFocus: '취해야 할 태도와 접근법',
+        keyQuestions: ['어떤 태도로?'],
+        styleSpecificNotes: '실용적 행동 지침'
+      },
+      {
+        positionId: 'external-influences',
+        positionName: '외부 영향',
+        interpretationFocus: '환경과 타인의 영향',
+        keyQuestions: ['외부에서 오는 영향은?'],
+        styleSpecificNotes: '객관적 환경 요인'
+      },
+      {
+        positionId: 'hopes-fears',
+        positionName: '희망과 두려움',
+        interpretationFocus: '내면의 희망과 두려움',
+        keyQuestions: ['진정한 바람과 걱정은?'],
+        styleSpecificNotes: '무의식적 동기 분석'
+      },
+      {
+        positionId: 'final-outcome',
+        positionName: '최종 결과',
+        interpretationFocus: '모든 요소를 종합한 최종 결과',
+        keyQuestions: ['최종적으로는?'],
+        styleSpecificNotes: '통합적 결론'
+      }
+    ],
+    generalApproach: '전통적 켈틱 크로스의 완전한 체계로 상황을 다각도로 분석하고 포괄적 지혜 제공',
+    keyFocusAreas: ['종합적 상황 분석', '과거-현재-미래 통합', '내외부 요인 균형'],
+    interpretationTips: ['카드 간 상호관계 중시', '전체적 스토리 구성', '단계적 해석'],
+    commonPitfalls: ['정보 과부하', '포지션별 기계적 해석', '일관성 부족'],
+    difficulty: 'advanced',
+    estimatedTime: 60,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 켈틱 크로스 x 심리학적 융 접근법
+  {
+    id: 'celtic-cross-psychological-jungian',
+    spreadId: 'celtic-cross',
+    styleId: 'psychological-jungian',
+    name: '켈틱 크로스 - 융 심리학적 접근',
+    description: '개성화 과정의 완전한 지도를 통한 심층 심리 분석',
+    positionGuidelines: [
+      {
+        positionId: 'present',
+        positionName: '현재 자기(Self)',
+        interpretationFocus: '현재 개성화 과정의 중심',
+        keyQuestions: ['자기 원형이 어떻게 나타나는가?'],
+        styleSpecificNotes: '융의 자기(Self) 중심 해석'
+      },
+      {
+        positionId: 'challenge',
+        positionName: '그림자 과제',
+        interpretationFocus: '직면해야 할 그림자 요소',
+        keyQuestions: ['어떤 그림자가 통합을 기다리는가?'],
+        styleSpecificNotes: '그림자 통합의 기회'
+      },
+      {
+        positionId: 'distant-past',
+        positionName: '원형적 기반',
+        interpretationFocus: '집단무의식의 원형적 패턴',
+        keyQuestions: ['어떤 원형이 기반을 이루는가?'],
+        styleSpecificNotes: '깊은 무의식 구조'
+      },
+      {
+        positionId: 'recent-past',
+        positionName: '콤플렉스 활성화',
+        interpretationFocus: '최근 활성화된 콤플렉스',
+        keyQuestions: ['어떤 콤플렉스가 작용했나?'],
+        styleSpecificNotes: '개인무의식의 영향'
+      },
+      {
+        positionId: 'possible-outcome',
+        positionName: '개성화 전망',
+        interpretationFocus: '개성화 과정의 가능한 발전',
+        keyQuestions: ['개성화는 어떻게 진전될 것인가?'],
+        styleSpecificNotes: '심리적 성장의 방향'
+      },
+      {
+        positionId: 'near-future',
+        positionName: '의식화 과정',
+        interpretationFocus: '곧 의식화될 무의식 내용',
+        keyQuestions: ['무엇이 의식으로 떠오를 것인가?'],
+        styleSpecificNotes: '무의식의 의식화'
+      },
+      {
+        positionId: 'your-approach',
+        positionName: '개성화 태도',
+        interpretationFocus: '개성화를 위한 의식적 태도',
+        keyQuestions: ['어떤 태도로 개성화에 임할 것인가?'],
+        styleSpecificNotes: '능동적 상상과 성찰'
+      },
+      {
+        positionId: 'external-influences',
+        positionName: '집단 압력',
+        interpretationFocus: '사회와 집단의 영향',
+        keyQuestions: ['집단 압력은 어떻게 작용하는가?'],
+        styleSpecificNotes: '페르소나와 사회적 기대'
+      },
+      {
+        positionId: 'hopes-fears',
+        positionName: '아니마/아니무스',
+        interpretationFocus: '내면의 대극적 요소',
+        keyQuestions: ['아니마/아니무스가 어떻게 나타나는가?'],
+        styleSpecificNotes: '내적 대극의 통합'
+      },
+      {
+        positionId: 'final-outcome',
+        positionName: '전체성 실현',
+        interpretationFocus: '개성화를 통한 전체성 달성',
+        keyQuestions: ['전체성은 어떻게 실현될 것인가?'],
+        styleSpecificNotes: '자기실현의 최종 형태'
+      }
+    ],
+    generalApproach: '융의 분석심리학 체계로 개성화 과정을 완전히 지도화하고 무의식의 통합적 이해 제공',
+    keyFocusAreas: ['개성화 과정', '무의식 통합', '원형과 콤플렉스', '전체성 실현'],
+    interpretationTips: ['개성화 단계 추적', '무의식-의식 관계', '원형적 패턴 인식'],
+    commonPitfalls: ['과도한 이론화', '개성화 목표화', '개인성 무시'],
+    difficulty: 'advanced',
+    estimatedTime: 70,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 켈틱 크로스 x 토트 크로울리 전통
+  {
+    id: 'celtic-cross-thoth-crowley',
+    spreadId: 'celtic-cross',
+    styleId: 'thoth-crowley',
+    name: '켈틱 크로스 - 토트 크로울리 전통',
+    description: '텔레마 철학과 카발라 생명나무를 통한 우주적 차원의 완전 분석',
+    positionGuidelines: [
+      {
+        positionId: 'present',
+        positionName: '티페렛 (중심)',
+        interpretationFocus: '의지와 사랑의 균형, 아름다움의 현현',
+        keyQuestions: ['참의지가 어떻게 나타나는가?'],
+        styleSpecificNotes: '티페렛의 조화와 균형'
+      },
+      {
+        positionId: 'challenge',
+        positionName: '아비스 건너기',
+        interpretationFocus: '영적 발전을 위한 근본적 도전',
+        keyQuestions: ['어떤 영적 시험을 통과해야 하는가?'],
+        styleSpecificNotes: '영적 성장의 시험'
+      },
+      {
+        positionId: 'distant-past',
+        positionName: '케테르 (근원)',
+        interpretationFocus: '근원적 의지와 최초 충동',
+        keyQuestions: ['근원적 의지는 무엇인가?'],
+        styleSpecificNotes: '순수 의지의 근원'
+      },
+      {
+        positionId: 'recent-past',
+        positionName: '달의 경로',
+        interpretationFocus: '최근의 에너지 흐름과 변화',
+        keyQuestions: ['어떤 에너지적 변화가 있었나?'],
+        styleSpecificNotes: '생명나무상의 에너지 이동'
+      },
+      {
+        positionId: 'possible-outcome',
+        positionName: '대사업의 진전',
+        interpretationFocus: '대사업(Great Work)의 가능한 성취',
+        keyQuestions: ['대사업은 어떻게 진전될 것인가?'],
+        styleSpecificNotes: '영적 진화의 방향'
+      },
+      {
+        positionId: 'near-future',
+        positionName: '행성 운행',
+        interpretationFocus: '임박한 점성술적 영향',
+        keyQuestions: ['어떤 천체 에너지가 작용할 것인가?'],
+        styleSpecificNotes: '점성술적 타이밍'
+      },
+      {
+        positionId: 'your-approach',
+        positionName: '마법적 의지',
+        interpretationFocus: '의지를 실현하는 마법적 접근',
+        keyQuestions: ['어떤 마법적 실천이 필요한가?'],
+        styleSpecificNotes: '텔레마적 실천 방법'
+      },
+      {
+        positionId: 'external-influences',
+        positionName: '우주적 흐름',
+        interpretationFocus: '우주적 질서와 천체 영향',
+        keyQuestions: ['우주적 흐름은 어떠한가?'],
+        styleSpecificNotes: '거시적 에너지 패턴'
+      },
+      {
+        positionId: 'hopes-fears',
+        positionName: '성스러운 수호천사',
+        interpretationFocus: 'HGA와의 소통과 내적 갈등',
+        keyQuestions: ['성스러운 수호천사의 메시지는?'],
+        styleSpecificNotes: '고등 자아와의 관계'
+      },
+      {
+        positionId: 'final-outcome',
+        positionName: '말쿠트 실현',
+        interpretationFocus: '물질계에서의 의지 완전 실현',
+        keyQuestions: ['의지는 어떻게 완전히 실현될 것인가?'],
+        styleSpecificNotes: '영적 작업의 물질적 완성'
+      }
+    ],
+    generalApproach: '텔레마 철학과 카발라 체계로 개인의 의지를 우주적 차원에서 이해하고 대사업의 완성을 추구',
+    keyFocusAreas: ['참의지 실현', '카발라적 에너지', '점성술적 타이밍', '마법적 실천', '우주적 조화'],
+    interpretationTips: ['생명나무 에너지 흐름', '점성술적 대응', 'HGA와의 소통'],
+    commonPitfalls: ['과도한 복잡성', '실용성 부족', '개인 수준 무시'],
+    difficulty: 'advanced',
+    estimatedTime: 75,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 켈틱 크로스 x 직관적 현대 해석
+  {
+    id: 'celtic-cross-intuitive-modern',
+    spreadId: 'celtic-cross',
+    styleId: 'intuitive-modern',
+    name: '켈틱 크로스 - 직관적 현대 해석',
+    description: '현대적 직감과 개인적 통찰로 삶의 전체적 그림 그리기',
+    positionGuidelines: [
+      {
+        positionId: 'present',
+        positionName: '지금 이 순간',
+        interpretationFocus: '현재의 전체적 에너지와 분위기',
+        keyQuestions: ['지금 내 삶의 전체적 느낌은?'],
+        styleSpecificNotes: '직관적 현재 인식'
+      },
+      {
+        positionId: 'challenge',
+        positionName: '성장 포인트',
+        interpretationFocus: '성장을 위해 극복할 지점',
+        keyQuestions: ['어떤 부분에서 성장이 필요한가?'],
+        styleSpecificNotes: '긍정적 성장 관점'
+      },
+      {
+        positionId: 'distant-past',
+        positionName: '깊은 뿌리',
+        interpretationFocus: '나를 형성한 깊은 배경',
+        keyQuestions: ['나를 만든 깊은 영향은?'],
+        styleSpecificNotes: '개인사의 핵심 테마'
+      },
+      {
+        positionId: 'recent-past',
+        positionName: '최근 변화',
+        interpretationFocus: '최근 삶의 중요한 변화',
+        keyQuestions: ['최근 삶에서 중요한 변화는?'],
+        styleSpecificNotes: '직접적 경험과 연결'
+      },
+      {
+        positionId: 'possible-outcome',
+        positionName: '가능한 미래',
+        interpretationFocus: '현재 흐름이 이끄는 가능성',
+        keyQuestions: ['이대로 가면 어떤 미래가?'],
+        styleSpecificNotes: '희망적이고 열린 가능성'
+      },
+      {
+        positionId: 'near-future',
+        positionName: '다가올 기회',
+        interpretationFocus: '곧 다가올 새로운 기회',
+        keyQuestions: ['어떤 새로운 기회가 올까?'],
+        styleSpecificNotes: '구체적이고 실현 가능한 기회'
+      },
+      {
+        positionId: 'your-approach',
+        positionName: '내 스타일',
+        interpretationFocus: '나다운 접근 방식',
+        keyQuestions: ['가장 나다운 방법은?'],
+        styleSpecificNotes: '개성과 강점 활용'
+      },
+      {
+        positionId: 'external-influences',
+        positionName: '주변 환경',
+        interpretationFocus: '주변 사람과 환경의 영향',
+        keyQuestions: ['주변에서 오는 에너지는?'],
+        styleSpecificNotes: '현실적 환경 요인'
+      },
+      {
+        positionId: 'hopes-fears',
+        positionName: '속마음',
+        interpretationFocus: '진정한 바람과 우려',
+        keyQuestions: ['내 마음 깊은 곳의 진짜 생각은?'],
+        styleSpecificNotes: '솔직한 내면 탐색'
+      },
+      {
+        positionId: 'final-outcome',
+        positionName: '궁극적 방향',
+        interpretationFocus: '삶의 궁극적 발전 방향',
+        keyQuestions: ['내 삶은 궁극적으로 어디로?'],
+        styleSpecificNotes: '개인적 성취와 행복'
+      }
+    ],
+    generalApproach: '복잡한 전통 구조를 현대적 감각으로 해석하고 개인의 직감과 현실을 중시하는 통합적 접근',
+    keyFocusAreas: ['직관적 통찰', '개인적 성장', '현실적 적용', '창의적 해결', '전체적 조화'],
+    interpretationTips: ['첫 인상과 느낌 중시', '개인 경험과 연결', '실용적 조언'],
+    commonPitfalls: ['일관성 부족', '깊이 부족', '지나친 단순화'],
+    difficulty: 'intermediate',
+    estimatedTime: 45,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+
+  // 켈틱 크로스 x 치료적 상담 접근법
+  {
+    id: 'celtic-cross-therapeutic-counseling',
+    spreadId: 'celtic-cross',
+    styleId: 'therapeutic-counseling',
+    name: '켈틱 크로스 - 치료적 상담 접근',
+    description: '전인적 치유와 회복을 위한 포괄적 상담적 분석',
+    positionGuidelines: [
+      {
+        positionId: 'present',
+        positionName: '현재 웰빙 상태',
+        interpretationFocus: '전반적 정신건강과 웰빙 수준',
+        keyQuestions: ['현재 전체적인 웰빙 상태는?'],
+        styleSpecificNotes: '강점 기반 현재 상태 평가'
+      },
+      {
+        positionId: 'challenge',
+        positionName: '치유 과제',
+        interpretationFocus: '가장 우선적인 치유 영역',
+        keyQuestions: ['가장 치유가 필요한 부분은?'],
+        styleSpecificNotes: '치유 우선순위 설정'
+      },
+      {
+        positionId: 'distant-past',
+        positionName: '핵심 트라우마',
+        interpretationFocus: '근본적 상처와 트라우마',
+        keyQuestions: ['치유가 필요한 깊은 상처는?'],
+        styleSpecificNotes: '트라우마 인식 치료 접근'
+      },
+      {
+        positionId: 'recent-past',
+        positionName: '최근 스트레스',
+        interpretationFocus: '최근의 스트레스 요인',
+        keyQuestions: ['최근 스트레스 요인은?'],
+        styleSpecificNotes: '현재 영향을 주는 요인'
+      },
+      {
+        positionId: 'possible-outcome',
+        positionName: '회복 가능성',
+        interpretationFocus: '치유와 회복의 가능한 결과',
+        keyQuestions: ['어떤 회복이 가능한가?'],
+        styleSpecificNotes: '희망적 회복 전망'
+      },
+      {
+        positionId: 'near-future',
+        positionName: '치유 기회',
+        interpretationFocus: '곧 다가올 치유의 기회',
+        keyQuestions: ['어떤 치유 기회가 올까?'],
+        styleSpecificNotes: '구체적 치유 경로'
+      },
+      {
+        positionId: 'your-approach',
+        positionName: '자기돌봄 방법',
+        interpretationFocus: '효과적인 자기돌봄 전략',
+        keyQuestions: ['어떤 자기돌봄이 필요한가?'],
+        styleSpecificNotes: '실천 가능한 자기돌봄'
+      },
+      {
+        positionId: 'external-influences',
+        positionName: '지지체계',
+        interpretationFocus: '외부 지지와 치유 자원',
+        keyQuestions: ['어떤 외부 지지가 있는가?'],
+        styleSpecificNotes: '사회적 지지 자원'
+      },
+      {
+        positionId: 'hopes-fears',
+        positionName: '치유에 대한 감정',
+        interpretationFocus: '치유 과정에 대한 희망과 두려움',
+        keyQuestions: ['치유에 대한 진정한 마음은?'],
+        styleSpecificNotes: '치유 동기와 저항 탐색'
+      },
+      {
+        positionId: 'final-outcome',
+        positionName: '통합적 웰빙',
+        interpretationFocus: '완전한 치유와 전인적 웰빙',
+        keyQuestions: ['궁극적인 웰빙은 어떤 모습인가?'],
+        styleSpecificNotes: '전인적 치유의 완성'
+      }
+    ],
+    generalApproach: '트라우마 인식 치료와 강점 기반 접근으로 전인적 치유와 회복을 위한 포괄적 방향 제시',
+    keyFocusAreas: ['전인적 치유', '트라우마 회복', '자기돌봄', '지지체계', '통합적 웰빙'],
+    interpretationTips: ['안전감 우선', '강점 중심', '점진적 치유'],
+    commonPitfalls: ['전문 치료 영역 침범', '빠른 치유 압박', '부정적 집중'],
+    difficulty: 'advanced',
+    estimatedTime: 65,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
 ];
 
@@ -1852,5 +2921,166 @@ export const SPREAD_STYLE_COMBINATIONS: SpreadStyleCombination[] = [
       '영적 접근을 회피하는 사람',
       '즉각적인 해결책만을 원하는 사람'
     ]
+  },
+
+  // 켈틱 크로스 x 원소 계절 접근법
+  {
+    id: 'celtic-cross-elemental-seasonal',
+    spreadId: 'celtic-cross',
+    styleId: 'elemental-seasonal',
+    name: '켈틱 크로스 - 원소 계절 접근',
+    description: '사계절과 네 원소의 순환 리듬을 통한 심층적 생명 여정 탐구',
+    positionGuidelines: [
+      {
+        positionId: 'present-situation',
+        positionName: '현재 상황 (대지의 토대)',
+        interpretationFocus: '현재 경험하고 있는 원소적 에너지와 계절적 단계',
+        keyQuestions: [
+          '지금 내 삶에서 지배적인 원소 에너지는 무엇인가?',
+          '현재 나는 어떤 계절적 단계에 있는가?',
+          '이 에너지가 나에게 주는 메시지는 무엇인가?'
+        ],
+        styleSpecificNotes: '카드의 원소적 속성과 계절적 특성을 파악하여 현재 생명 에너지의 질과 방향 진단',
+        timeframe: '현재 진행 중인 원소적 주기'
+      },
+      {
+        positionId: 'challenge',
+        positionName: '도전과 장애물 (역풍의 원소)',
+        interpretationFocus: '현재 균형을 깨뜨리거나 성장을 방해하는 원소적 불균형',
+        keyQuestions: [
+          '어떤 원소 에너지가 과잉이거나 부족한가?',
+          '이 불균형이 어떤 계절적 패턴과 연결되는가?',
+          '자연의 순환에서 이 도전이 주는 의미는?'
+        ],
+        styleSpecificNotes: '원소 간 갈등이나 계절적 저항을 파악하여 자연스러운 해결 방향 모색',
+        timeframe: '현재 겪고 있는 원소적 갈등'
+      },
+      {
+        positionId: 'distant-past',
+        positionName: '먼 과거 (뿌리의 계절)',
+        interpretationFocus: '현재 상황의 원소적 뿌리와 계절적 기원',
+        keyQuestions: [
+          '이 상황의 씨앗이 뿌려진 계절은 언제였나?',
+          '과거 어떤 원소 경험이 지금까지 영향을 주는가?',
+          '조상이나 가족의 원소적 패턴은 무엇인가?'
+        ],
+        styleSpecificNotes: '원소의 순환 관점에서 과거의 에너지가 현재까지 어떻게 흘러왔는지 추적',
+        timeframe: '생명 주기의 근본적 원소 패턴'
+      },
+      {
+        positionId: 'recent-past',
+        positionName: '최근 과거 (전환의 바람)',
+        interpretationFocus: '현재로 이어진 최근의 원소적 변화와 계절적 전환',
+        keyQuestions: [
+          '최근 어떤 원소적 변화를 겪었는가?',
+          '지난 계절에서 현재로 무엇이 이어졌나?',
+          '이 전환기의 에너지적 의미는?'
+        ],
+        styleSpecificNotes: '계절 전환의 역학을 통해 최근 변화의 자연스러운 흐름 이해',
+        timeframe: '최근 1-3개월간의 원소적 변화'
+      },
+      {
+        positionId: 'possible-outcome',
+        positionName: '가능한 결과 (미래의 씨앗)',
+        interpretationFocus: '현재 원소적 흐름이 자연스럽게 이끌 수 있는 계절적 결과',
+        keyQuestions: [
+          '현재 에너지가 어떤 계절로 이끌고 있나?',
+          '이 원소적 흐름의 자연스러운 결실은?',
+          '어떤 새로운 순환이 시작될 것인가?'
+        ],
+        styleSpecificNotes: '자연 순환의 법칙에 따른 가능성 탐구, 강제하지 않는 자연스러운 발전',
+        timeframe: '향후 한 계절(3개월) 내 자연적 발전'
+      },
+      {
+        positionId: 'near-future',
+        positionName: '가까운 미래 (다가오는 바람)',
+        interpretationFocus: '곧 다가올 원소적 변화와 계절적 에너지 전환',
+        keyQuestions: [
+          '다음 단계에서 어떤 원소 에너지가 중요해질까?',
+          '어떤 계절적 변화에 준비해야 하나?',
+          '이 전환을 어떻게 자연스럽게 맞이할까?'
+        ],
+        styleSpecificNotes: '다가오는 원소적 변화를 미리 감지하고 조화롭게 적응하는 방법 제시',
+        timeframe: '향후 4-8주간의 원소적 전환'
+      },
+      {
+        positionId: 'your-approach',
+        positionName: '당신의 접근법 (내면의 원소)',
+        interpretationFocus: '현재 상황에서 자신이 취하고 있는 원소적 자세와 에너지',
+        keyQuestions: [
+          '나는 어떤 원소적 특성으로 상황에 접근하고 있나?',
+          '내 안의 계절적 리듬은 어떤 상태인가?',
+          '이 접근 방식이 자연의 흐름과 조화를 이루는가?'
+        ],
+        styleSpecificNotes: '개인의 원소적 성향과 현재 상황의 원소적 요구 사이의 조화 분석',
+        timeframe: '현재 취하고 있는 원소적 자세'
+      },
+      {
+        positionId: 'external-influences',
+        positionName: '외부 영향 (환경의 원소)',
+        interpretationFocus: '주변 환경과 타인들이 만들어내는 원소적 영향과 계절적 압력',
+        keyQuestions: [
+          '주변에서 어떤 원소 에너지가 나에게 영향을 주는가?',
+          '환경의 계절적 리듬이 나와 어떻게 상호작용하나?',
+          '이 외부 에너지들과 어떻게 조화를 이룰 수 있나?'
+        ],
+        styleSpecificNotes: '환경과 개인의 원소적 에너지 교류, 생태적 관점에서의 상호작용 이해',
+        timeframe: '현재 영향을 주는 환경적 원소'
+      },
+      {
+        positionId: 'hopes-fears',
+        positionName: '희망과 두려움 (감정의 물)',
+        interpretationFocus: '원소적 변화와 계절적 전환에 대한 깊은 감정과 직감',
+        keyQuestions: [
+          '어떤 계절적 변화를 가장 원하거나 두려워하나?',
+          '내 안의 원소적 갈망과 저항은 무엇인가?',
+          '이 감정들이 자연스러운 성장을 돕는가 방해하는가?'
+        ],
+        styleSpecificNotes: '감정과 직감의 물 원소적 지혜를 통해 진정한 욕구와 두려움의 뿌리 탐구',
+        timeframe: '내면 깊은 곳의 원소적 감정'
+      },
+      {
+        positionId: 'final-outcome',
+        positionName: '최종 결과 (완성의 불)',
+        interpretationFocus: '모든 원소가 조화롭게 통합된 최종적 변화와 성장의 완성',
+        keyQuestions: [
+          '이 전체 순환이 완성되었을 때 어떤 새로운 나를 만나게 될까?',
+          '모든 원소가 조화를 이룬 상태는 어떤 모습인가?',
+          '이 성장이 다음 큰 생명 주기에 어떻게 기여할까?'
+        ],
+        styleSpecificNotes: '원소들의 완전한 통합과 새로운 계절적 주기의 시작을 나타내는 변화의 완성',
+        timeframe: '전체 원소적 순환의 완성 (6-12개월)'
+      }
+    ],
+    generalApproach: '켈틱 크로스의 복잡한 구조를 네 원소(불, 물, 공기, 흙)와 사계절의 자연 순환으로 해석하여, 인생의 큰 흐름을 자연의 리듬과 조화시키는 심층적 접근. 각 위치를 원소와 계절의 특성으로 읽어내어 자연스러운 성장과 변화의 방향을 찾아가는 생태영성적 타로 리딩',
+    keyFocusAreas: [
+      '네 원소 에너지의 균형과 상호작용',
+      '계절적 순환과 생명 주기의 조화',
+      '자연 리듬과 개인 성장의 동조화',
+      '원소별 특성과 위치별 의미의 융합',
+      '생태적 관점에서의 전인적 치유',
+      '순환적 시간 인식과 지속가능한 변화'
+    ],
+    interpretationTips: [
+      '각 카드를 원소적 관점에서 먼저 분석한 후 위치의 의미와 결합',
+      '사계절의 특성을 카드 해석에 적극 반영 (봄=시작, 여름=성장, 가을=수확, 겨울=휴식)',
+      '원소 간 상호작용과 균형/불균형 패턴을 전체적으로 파악',
+      '자연의 순환 법칙에 맞는 조언과 타이밍 제시',
+      '강제적 변화보다는 자연스러운 흐름과 조화 강조',
+      '계절적 의식과 원소별 실천법을 구체적으로 제안'
+    ],
+    commonPitfalls: [
+      '원소와 계절을 단순히 상징으로만 취급',
+      '자연 순환의 실제 리듬을 무시한 해석',
+      '원소 균형보다는 특정 원소만 강조',
+      '계절감과 맞지 않는 타이밍 조언',
+      '생태적 감수성 없는 기계적 해석',
+      '개인의 자연적 리듬 무시'
+    ],
+    difficulty: 'advanced',
+    estimatedTime: 45,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    isActive: true
   }
 ];
