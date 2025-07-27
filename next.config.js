@@ -5,6 +5,7 @@ const nextConfig = {
   env: {
     FORCE_REBUILD_TIME: new Date().toISOString(),
     BLOG_POSTS_TARGET: '12',
+    PWA_ENABLED: 'true',
   },
   // TypeScript 빌드 에러 무시 (프로덕션 배포용)
   typescript: {
