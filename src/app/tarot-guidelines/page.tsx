@@ -1,27 +1,57 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { TAROT_GUIDELINES } from '@/data/tarot-guidelines';
-import { TAROT_SPREADS } from '@/data/tarot-spreads';
+import { useState, useMemo, useEffect } from 'react';
 import { TarotGuideline } from '@/types/tarot-guidelines';
 
+interface TarotSpread {
+  id: string;
+  name: string;
+}
+
+interface Style {
+  id: string;
+  name: string;
+}
+
 export default function TarotGuidelinesPage() {
+  const [guidelines, setGuidelines] = useState<TarotGuideline[]>([]);
+  const [spreads, setSpreads] = useState<TarotSpread[]>([]);
+  const [styles, setStyles] = useState<Style[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const [selectedSpread, setSelectedSpread] = useState<string>('');
   const [selectedStyle, setSelectedStyle] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const spreads = TAROT_SPREADS;
-  const styles = [
-    { id: 'traditional-rws', name: '전통 라이더-웨이트' },
-    { id: 'psychological-jungian', name: '심리학적 융 접근' },
-    { id: 'thoth-crowley', name: '토트 크로울리' },
-    { id: 'intuitive-modern', name: '직관적 현대' },
-    { id: 'therapeutic-counseling', name: '치료적 상담' },
-    { id: 'elemental-seasonal', name: '원소 계절' }
-  ];
+  // API에서 데이터 가져오기
+  useEffect(() => {
+    const fetchGuidelines = async () => {
+      try {
+        const response = await fetch('/api/tarot-guidelines');
+        if (!response.ok) {
+          throw new Error('Failed to fetch guidelines');
+        }
+        const data = await response.json();
+        
+        console.log('Fetched guidelines:', data.total); // 디버깅
+        
+        setGuidelines(data.guidelines || []);
+        setSpreads(data.spreads || []);
+        setStyles(data.styles || []);
+      } catch (err) {
+        console.error('Error fetching guidelines:', err);
+        setError('타로 지침을 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGuidelines();
+  }, []);
 
   const filteredGuidelines = useMemo(() => {
-    return TAROT_GUIDELINES.filter(guideline => {
+    return guidelines.filter(guideline => {
       const matchesSpread = !selectedSpread || guideline.spreadId === selectedSpread;
       const matchesStyle = !selectedStyle || guideline.styleId === selectedStyle;
       const matchesSearch = !searchTerm || 
@@ -30,7 +60,7 @@ export default function TarotGuidelinesPage() {
       
       return matchesSpread && matchesStyle && matchesSearch;
     });
-  }, [selectedSpread, selectedStyle, searchTerm]);
+  }, [guidelines, selectedSpread, selectedStyle, searchTerm]);
 
   const getSpreadName = (spreadId: string) => {
     return spreads.find(s => s.id === spreadId)?.name || spreadId;
@@ -39,6 +69,37 @@ export default function TarotGuidelinesPage() {
   const getStyleName = (styleId: string) => {
     return styles.find(s => s.id === styleId)?.name || styleId;
   };
+
+  // 로딩 상태
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+          <p className="mt-4 text-gray-600">타로 지침을 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">오류 발생</h2>
+          <p className="text-gray-600">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+          >
+            새로고침
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
@@ -49,11 +110,11 @@ export default function TarotGuidelinesPage() {
             타로 지침 가이드
           </h1>
           <p className="text-xl text-gray-600 mb-2">
-            6개 스프레드 × 6개 해석 스타일로 구성된 36개 전문 지침
+            6개 스프레드 × 6개 해석 스타일로 구성된 {guidelines.length}개 전문 지침
           </p>
           <div className="inline-flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full">
             <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-            총 {TAROT_GUIDELINES.length}개 지침 완성 (100%)
+            총 {guidelines.length}개 지침 완성 (100%)
           </div>
         </div>
 

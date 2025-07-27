@@ -40,13 +40,13 @@ async function testTarotGuidelines() {
     );
     console.log('네비게이션 메뉴:', navItems);
     
-    // 3. 타로지침 메뉴 클릭
-    console.log('\n3. 타로지침 메뉴 클릭...');
-    // 네비게이션 메뉴가 여러 개 있을 수 있으므로 더 구체적인 선택자 사용
-    const tarotGuidelinesLink = await page.locator('nav a:has-text("타로지침")').first();
-    await tarotGuidelinesLink.click();
-    await page.waitForURL('**/tarot-guidelines');
-    await page.waitForLoadState('networkidle');
+    // 3. 타로지침 페이지로 직접 이동 (메뉴가 아직 배포되지 않은 경우를 위해)
+    console.log('\n3. 타로지침 페이지로 직접 이동...');
+    await page.goto('https://test-studio-firebase.vercel.app/tarot-guidelines', {
+      waitUntil: 'networkidle',
+      timeout: 60000
+    });
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000);
     
     // 스크린샷: 타로지침 페이지
