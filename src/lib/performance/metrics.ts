@@ -194,6 +194,19 @@ export async function reportPerformanceMetrics(metrics: PerformanceMetrics[]) {
   if (process.env.NODE_ENV !== 'production') return;
   
   try {
+    // Google Analytics로 성능 데이터 전송
+    if (typeof window !== 'undefined' && window.gtag) {
+      metrics.forEach(metric => {
+        window.gtag('event', 'web_vitals', {
+          name: metric.name,
+          value: Math.round(metric.value),
+          metric_rating: metric.rating,
+          navigation_type: metric.navigationType,
+        });
+      });
+    }
+
+    // 자체 서버로도 전송
     await fetch('/api/analytics/performance', {
       method: 'POST',
       headers: {

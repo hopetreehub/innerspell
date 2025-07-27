@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { AuthErrorBoundary } from '@/components/auth/AuthErrorBoundary';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import PerformanceMonitor from '@/components/PerformanceMonitor';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -96,6 +97,9 @@ export default function RootLayout({
                 <Toaster />
                 <ServiceWorkerRegistration />
                 <PerformanceMonitor />
+                {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+                  <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+                )}
               </AuthProvider>
             </AuthErrorBoundary>
         </ThemeProvider>
