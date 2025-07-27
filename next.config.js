@@ -116,6 +116,30 @@ const nextConfig = {
           },
         ],
       },
+      // Service Worker 헤더 설정
+      {
+        source: '/sw.js',
+        headers: [
+          {
+            key: 'Service-Worker-Allowed',
+            value: '/'
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate'
+          },
+        ],
+      },
+      // Manifest 헤더 설정
+      {
+        source: '/manifest.json',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json'
+          },
+        ],
+      },
     ];
   },
   
