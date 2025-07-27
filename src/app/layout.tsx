@@ -8,6 +8,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { AuthErrorBoundary } from '@/components/auth/AuthErrorBoundary';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -94,6 +95,7 @@ export default function RootLayout({
                 <RootLayoutClient>{children}</RootLayoutClient>
                 <Toaster />
                 <ServiceWorkerRegistration />
+                <PerformanceMonitor />
               </AuthProvider>
             </AuthErrorBoundary>
         </ThemeProvider>

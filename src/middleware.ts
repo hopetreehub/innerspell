@@ -1,40 +1,34 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { rateLimit } from './middleware/rate-limit';
-
-// Rate limit configurations
-const apiRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // 100 requests per 15 minutes
-});
-
-const authRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5 // 5 login attempts per 15 minutes
-});
-
-const aiRateLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 10 // 10 AI requests per minute
-});
+import { csrfProtection, setCSRFToken } from './middleware/csrf';
+import { strictApiLimiter, authLimiter, aiRequestLimiter } from './middleware/advanced-rate-limit';
 
 export async function middleware(request: NextRequest) {
-  // Apply rate limiting first
+  // Apply advanced rate limiting first
   const { pathname } = request.nextUrl;
   
+  // Auth endpoints - strict limiting
   if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/dev-auth')) {
-    const rateLimitResponse = await authRateLimiter(request);
-    if (rateLimitResponse.status === 429) return rateLimitResponse;
+    const rateLimitResponse = await authLimiter(request);
+    if (rateLimitResponse.status === 429 || rateLimitResponse.status === 403) {
+      return rateLimitResponse;
+    }
   }
   
+  // AI endpoints - moderate limiting with user-based tracking
   if (pathname.startsWith('/api/reading') || pathname.includes('tarot') || pathname.includes('dream')) {
-    const rateLimitResponse = await aiRateLimiter(request);
-    if (rateLimitResponse.status === 429) return rateLimitResponse;
+    const rateLimitResponse = await aiRequestLimiter(request);
+    if (rateLimitResponse.status === 429 || rateLimitResponse.status === 403) {
+      return rateLimitResponse;
+    }
   }
   
+  // General API endpoints - standard limiting
   if (pathname.startsWith('/api/')) {
-    const rateLimitResponse = await apiRateLimiter(request);
-    if (rateLimitResponse.status === 429) return rateLimitResponse;
+    const rateLimitResponse = await strictApiLimiter(request);
+    if (rateLimitResponse.status === 429 || rateLimitResponse.status === 403) {
+      return rateLimitResponse;
+    }
   }
   
   const response = NextResponse.next();
@@ -72,41 +66,15 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Vary', 'Cookie, Authorization, X-Requested-With, Accept, Accept-Encoding, Accept-Language');
   }
   
-  // CSRF Protection for API routes
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    // Get or create CSRF token
-    const csrfToken = request.cookies.get('csrf-token')?.value || 
-      Math.random().toString(36).substring(2) + Date.now().toString(36);
-    
-    // Set CSRF cookie if not exists
-    if (!request.cookies.get('csrf-token')) {
-      response.cookies.set('csrf-token', csrfToken, {
-        httpOnly: true,
-        sameSite: 'strict',
-        secure: process.env.NODE_ENV === 'production',
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      });
-    }
-    
-    // For non-GET requests, verify CSRF token
-    if (request.method !== 'GET') {
-      const headerToken = request.headers.get('x-csrf-token');
-      
-      // Allow requests with valid CSRF token or with specific API secret
-      const apiSecret = request.headers.get('x-api-secret');
-      const validApiSecret = process.env.BLOG_API_SECRET_KEY === apiSecret;
-      
-      if (!validApiSecret && headerToken !== csrfToken) {
-        return new NextResponse(
-          JSON.stringify({ error: 'Invalid CSRF token' }),
-          { 
-            status: 403,
-            headers: { 'Content-Type': 'application/json' }
-          }
-        );
-      }
-    }
+  // Enhanced CSRF Protection
+  const csrfResponse = await csrfProtection(request);
+  if (csrfResponse) {
+    return csrfResponse;
+  }
+  
+  // Set CSRF token for all responses
+  if (!request.cookies.get('csrf-token')) {
+    setCSRFToken(response);
   }
   
   // Content Security Policy (Firebase 도메인 추가 - v2 강제 업데이트)

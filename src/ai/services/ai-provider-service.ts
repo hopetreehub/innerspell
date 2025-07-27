@@ -3,6 +3,7 @@
 import { getAllAIProviderConfigs } from '@/actions/aiProviderActions';
 import { AIProviderConfig } from '@/types/ai-providers';
 import { normalizeModelId, getProviderConfig } from '@/lib/ai-utils';
+import { getSecureApiKey } from '@/lib/security/encryption';
 
 /**
  * Get all active AI models from configured providers
@@ -48,8 +49,8 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
       console.log('[getActiveAIModels] No active models found, using defaults with priority order');
       
       // Check environment variables to prioritize available services
-      const hasOpenAI = !!process.env.OPENAI_API_KEY;
-      const hasGemini = !!process.env.GEMINI_API_KEY || !!process.env.GOOGLE_API_KEY;
+      const hasOpenAI = !!getSecureApiKey('OPENAI_API_KEY');
+      const hasGemini = !!getSecureApiKey('GEMINI_API_KEY') || !!getSecureApiKey('GOOGLE_API_KEY');
       
       console.log('[getActiveAIModels] Available API keys:', { hasOpenAI, hasGemini });
       
