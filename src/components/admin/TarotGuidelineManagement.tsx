@@ -78,64 +78,60 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
       setLoading(true);
       console.log('🔄 [TarotGuidelineManagement] Loading tarot guidelines data...');
       
-      const result = await getAllTarotGuidelines();
-      console.log('📊 [TarotGuidelineManagement] Data loading result:', result);
-      
-      if (result.success && result.data) {
-        console.log('✅ [TarotGuidelineManagement] Data loaded successfully:', {
-          guidelines: result.data.guidelines.length,
-          spreads: result.data.spreads.length,
-          styles: result.data.styles.length,
-          combinations: result.data.combinations.length
-        });
-        
-        setGuidelines(result.data.guidelines);
-        setSpreads(result.data.spreads);
-        setStyles(result.data.styles);
-        setCombinations(result.data.combinations);
-        
-        // 데이터 로딩 성공 알림
-        if (result.data.guidelines.length > 0) {
-          toast.success(`타로 지침 데이터 로딩 완료! (${result.data.guidelines.length}개 지침)`);
-        }
-      } else {
-        console.error('❌ [TarotGuidelineManagement] Data loading failed:', result.message);
-        toast.error(result.message || '타로 지침 데이터를 불러오는데 실패했습니다.');
-        
-        // 폴백: 기본 데이터라도 로드하기
-        console.log('🔄 [TarotGuidelineManagement] Attempting fallback data loading...');
-        try {
-          const { TAROT_SPREADS, INTERPRETATION_STYLES } = await import('@/data/tarot-spreads');
-          const { TAROT_GUIDELINES } = await import('@/data/tarot-guidelines');
-          
-          setSpreads(TAROT_SPREADS);
-          setStyles(INTERPRETATION_STYLES);
-          setGuidelines(TAROT_GUIDELINES);
-          
-          toast.info('기본 타로 지침 데이터를 로드했습니다.');
-          console.log('✅ [TarotGuidelineManagement] Fallback data loaded');
-        } catch (fallbackError) {
-          console.error('❌ [TarotGuidelineManagement] Fallback also failed:', fallbackError);
-        }
-      }
-    } catch (error) {
-      console.error('❌ [TarotGuidelineManagement] Error loading tarot guidelines:', error);
-      toast.error('타로 지침 데이터를 불러오는 중 오류가 발생했습니다.');
-      
-      // 폴백: 기본 데이터라도 로드하기
+      // 방법 1: 서버 액션 시도
       try {
-        const { TAROT_SPREADS, INTERPRETATION_STYLES } = await import('@/data/tarot-spreads');
-        const { TAROT_GUIDELINES } = await import('@/data/tarot-guidelines');
+        const result = await getAllTarotGuidelines();
+        console.log('📊 [TarotGuidelineManagement] Server action result:', result);
         
+        if (result.success && result.data) {
+          console.log('✅ [TarotGuidelineManagement] Server action success:', {
+            guidelines: result.data.guidelines.length,
+            spreads: result.data.spreads.length,
+            styles: result.data.styles.length,
+            combinations: result.data.combinations.length
+          });
+          
+          setGuidelines(result.data.guidelines);
+          setSpreads(result.data.spreads);
+          setStyles(result.data.styles);
+          setCombinations(result.data.combinations);
+          
+          toast.success(`타로 지침 로딩 완료! (${result.data.guidelines.length}개 지침)`);
+          return;
+        }
+      } catch (serverActionError) {
+        console.error('❌ [TarotGuidelineManagement] Server action failed:', serverActionError);
+      }
+      
+      // 방법 2: 직접 데이터 import 폴백
+      try {
+        console.log('🔄 [TarotGuidelineManagement] Using direct import fallback...');
+        const { TAROT_GUIDELINES } = await import('@/data/tarot-guidelines');
+        const { TAROT_SPREADS, INTERPRETATION_STYLES } = await import('@/data/tarot-spreads');
+        
+        console.log('✅ [TarotGuidelineManagement] Direct import success:', TAROT_GUIDELINES.length);
+        
+        setGuidelines(TAROT_GUIDELINES);
         setSpreads(TAROT_SPREADS);
         setStyles(INTERPRETATION_STYLES);
-        setGuidelines(TAROT_GUIDELINES);
+        setCombinations([]);
         
-        toast.info('기본 타로 지침 데이터를 로드했습니다.');
-        console.log('✅ [TarotGuidelineManagement] Emergency fallback data loaded');
-      } catch (fallbackError) {
-        console.error('❌ [TarotGuidelineManagement] Emergency fallback failed:', fallbackError);
+        toast.success(`타로 지침 로딩 완료! (${TAROT_GUIDELINES.length}개 지침) - 직접 로드`);
+        return;
+      } catch (directError) {
+        console.error('❌ [TarotGuidelineManagement] Direct import failed:', directError);
       }
+      
+      // 모든 방법 실패
+      toast.error('타로 지침 데이터를 불러올 수 없습니다.');
+      setGuidelines([]);
+      setSpreads([]);
+      setStyles([]);
+      setCombinations([]);
+      
+    } catch (error) {
+      console.error('❌ [TarotGuidelineManagement] Unexpected error:', error);
+      toast.error('예상치 못한 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
