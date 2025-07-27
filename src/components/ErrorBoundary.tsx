@@ -32,25 +32,98 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
     
-    // 에러 리포팅 (Firebase Analytics 또는 다른 서비스로 전송)
-    if (typeof window !== 'undefined') {
-      // 프로덕션 환경에서만 에러 리포팅
-      if (process.env.NODE_ENV === 'production') {
-        // Firebase Analytics나 Sentry 등으로 에러 전송
-        console.error('Production error:', {
-          error: error.message,
-          stack: error.stack,
-          componentStack: errorInfo.componentStack,
-          timestamp: new Date().toISOString(),
-        });
-      }
-    }
+    // 에러 분류 및 심각도 판단
+    const errorType = this.classifyError(error);
+    const severity = this.getErrorSeverity(error);
+    
+    // 에러 리포팅
+    this.reportError(error, errorInfo, errorType, severity);
 
     this.setState({
       hasError: true,
       error,
       errorInfo,
     });
+  }
+
+  private classifyError(error: Error): string {
+    if (error.name === 'ChunkLoadError') return 'chunk_load';
+    if (error.message.includes('Network')) return 'network';
+    if (error.message.includes('Firebase')) return 'firebase';
+    if (error.message.includes('Auth')) return 'authentication';
+    if (error.message.includes('permission')) return 'permission';
+    return 'unknown';
+  }
+
+  private getErrorSeverity(error: Error): 'low' | 'medium' | 'high' | 'critical' {
+    if (error.name === 'ChunkLoadError') return 'medium';
+    if (error.message.includes('Network')) return 'medium';
+    if (error.message.includes('Auth')) return 'high';
+    if (error.message.includes('Firebase')) return 'high';
+    if (error.stack?.includes('ReferenceError')) return 'critical';
+    return 'low';
+  }
+
+  private async reportError(
+    error: Error, 
+    errorInfo: React.ErrorInfo, 
+    errorType: string, 
+    severity: string
+  ) {
+    if (typeof window === 'undefined') return;
+    
+    const errorReport = {
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      errorType,
+      severity,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+      userId: this.getUserId(),
+      sessionId: this.getSessionId(),
+    };
+
+    // 개발 환경에서는 콘솔에만 출력
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Development error report:', errorReport);
+      return;
+    }
+
+    // 프로덕션 환경에서는 에러 리포팅 서비스로 전송
+    try {
+      await fetch('/api/errors/report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(errorReport),
+      });
+    } catch (reportingError) {
+      console.error('Failed to report error:', reportingError);
+    }
+  }
+
+  private getUserId(): string | null {
+    try {
+      return localStorage.getItem('userId') || null;
+    } catch {
+      return null;
+    }
+  }
+
+  private getSessionId(): string {
+    try {
+      let sessionId = sessionStorage.getItem('sessionId');
+      if (!sessionId) {
+        sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        sessionStorage.setItem('sessionId', sessionId);
+      }
+      return sessionId;
+    } catch {
+      return 'unknown';
+    }
   }
 
   resetError = () => {
