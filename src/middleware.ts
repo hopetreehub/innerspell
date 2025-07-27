@@ -66,15 +66,17 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Vary', 'Cookie, Authorization, X-Requested-With, Accept, Accept-Encoding, Accept-Language');
   }
   
-  // Enhanced CSRF Protection
-  const csrfResponse = await csrfProtection(request);
-  if (csrfResponse) {
-    return csrfResponse;
-  }
-  
-  // Set CSRF token for all responses
-  if (!request.cookies.get('csrf-token')) {
-    setCSRFToken(response);
+  // Enhanced CSRF Protection (disabled in development due to Edge runtime limitations)
+  if (process.env.NODE_ENV === 'production') {
+    const csrfResponse = await csrfProtection(request);
+    if (csrfResponse) {
+      return csrfResponse;
+    }
+    
+    // Set CSRF token for all responses
+    if (!request.cookies.get('csrf-token')) {
+      setCSRFToken(response);
+    }
   }
   
   // Content Security Policy (Firebase 도메인 추가 - v2 강제 업데이트)
