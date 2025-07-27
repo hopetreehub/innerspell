@@ -16,8 +16,9 @@ import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManag
 import { AdminDashboardStats } from '@/components/admin/AdminDashboardStats';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, Target, PenTool } from 'lucide-react';
+import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, Target, PenTool, Bell } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
+import { PushNotificationToggle } from '@/components/ui/push-notification-toggle';
 
 
 export default function AdminDashboardPage() {
@@ -56,7 +57,7 @@ export default function AdminDashboardPage() {
       cacheBuster.clearAuthLocalStorage();
     }
     
-    if (tab && ['ai-providers', 'tarot-instructions', 'tarot-ai-config', 'dream-ai-config', 'geo-guidelines', 'blog-management', 'user-management', 'system-management'].includes(tab)) {
+    if (tab && ['ai-providers', 'tarot-instructions', 'tarot-ai-config', 'dream-ai-config', 'geo-guidelines', 'blog-management', 'notifications', 'user-management', 'system-management'].includes(tab)) {
       setActiveTab(tab);
     }
   }, []);
@@ -105,7 +106,7 @@ export default function AdminDashboardPage() {
       <AdminDashboardStats />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 mb-6">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-9 mb-6">
           <TabsTrigger value="ai-providers" className="text-sm sm:text-base">
             <Bot className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> AI 공급자
           </TabsTrigger>
@@ -123,6 +124,9 @@ export default function AdminDashboardPage() {
           </TabsTrigger>
           <TabsTrigger value="blog-management" className="text-sm sm:text-base">
             <PenTool className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 블로그 관리
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="text-sm sm:text-base">
+            <Bell className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 알림 설정
           </TabsTrigger>
           <TabsTrigger value="user-management" className="text-sm sm:text-base">
             <Users className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 회원 관리
@@ -224,6 +228,22 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <BlogManagement />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <Card className="shadow-lg border-primary/10">
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl text-primary flex items-center">
+                <Bell className="mr-2 h-6 w-6" /> 푸시 알림 설정
+              </CardTitle>
+              <CardDescription>
+                관리자용 푸시 알림을 설정하고 테스트합니다.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              <PushNotificationToggle />
             </CardContent>
           </Card>
         </TabsContent>
