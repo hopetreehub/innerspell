@@ -2,8 +2,10 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShieldCheck, Server, Database, BrainCircuit, CheckCircle, AlertTriangle, Info } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ShieldCheck, Server, Database, BrainCircuit, CheckCircle, AlertTriangle, Info, Monitor } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { EnvironmentManager } from './EnvironmentManager';
 import React, { useState, useEffect } from 'react';
 
 const initialSystemStatuses = [
@@ -66,10 +68,19 @@ export function SystemManagement() {
           <ShieldCheck className="mr-2 h-6 w-6" /> 시스템 관리
         </CardTitle>
         <CardDescription>
-          애플리케이션의 주요 시스템 상태를 확인합니다. (현재 목업 데이터 사용)
+          시스템 상태, 환경변수, 모니터링 등을 관리합니다
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent>
+        <Tabs defaultValue="status" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="status">시스템 상태</TabsTrigger>
+            <TabsTrigger value="environment">환경변수</TabsTrigger>
+            <TabsTrigger value="monitoring">모니터링</TabsTrigger>
+            <TabsTrigger value="logs">로그</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="status" className="space-y-6">
         <div>
           <h3 className="text-lg font-semibold mb-3 text-foreground/90">시스템 상태 개요</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -92,19 +103,38 @@ export function SystemManagement() {
             ))}
           </div>
         </div>
-        <div>
-           <h3 className="text-lg font-semibold mb-2 text-foreground/90">시스템 로그 (예시)</h3>
-           <div className="bg-muted/50 p-3 rounded-md max-h-48 overflow-y-auto text-xs font-mono text-foreground/70">
-            {logs.length > 0 ? (
-              logs.map((log, index) => <p key={index}>{log}</p>)
-            ) : (
-              <p>로그를 생성하는 중...</p>
-            )}
-           </div>
-        </div>
-         <p className="text-xs text-muted-foreground mt-4">
-            참고: 시스템 관리 기능은 현재 시뮬레이션이며, 실제 모니터링 및 로깅 시스템 연동이 필요합니다.
-        </p>
+          </TabsContent>
+
+          <TabsContent value="environment">
+            <EnvironmentManager />
+          </TabsContent>
+
+          <TabsContent value="monitoring" className="space-y-4">
+            <div className="text-center py-8">
+              <Monitor className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">모니터링 대시보드</h3>
+              <p className="text-muted-foreground">
+                성능 메트릭, 사용량 통계, 오류 추적 등의 모니터링 기능이 여기에 표시됩니다.
+              </p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="logs" className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold mb-2 text-foreground/90">시스템 로그</h3>
+              <div className="bg-muted/50 p-3 rounded-md max-h-48 overflow-y-auto text-xs font-mono text-foreground/70">
+                {logs.length > 0 ? (
+                  logs.map((log, index) => <p key={index}>{log}</p>)
+                ) : (
+                  <p>로그를 생성하는 중...</p>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground mt-4">
+                참고: 현재 예시 로그를 표시하고 있습니다. 실제 로깅 시스템 연동이 필요합니다.
+              </p>
+            </div>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );

@@ -13,6 +13,7 @@ import { AIProviderManagement } from '@/components/admin/AIProviderManagement';
 import { GEOGuidelinesManager } from '@/components/admin/GEOGuidelinesManager';
 import { BlogManagement } from '@/components/admin/BlogManagement';
 import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
+import { AdminDashboardStats } from '@/components/admin/AdminDashboardStats';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, Target, PenTool } from 'lucide-react';
@@ -87,16 +88,21 @@ export default function AdminDashboardPage() {
 
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
       <header className="text-center">
-        <div className="inline-flex items-center justify-center bg-primary/10 p-3 rounded-full mb-4">
+        <div className="inline-flex items-center justify-center bg-gradient-to-br from-purple-500/10 to-blue-500/10 p-4 rounded-full mb-4">
           <ShieldCheck className="h-12 w-12 text-primary" />
         </div>
-        <h1 className="font-headline text-4xl font-bold text-primary">관리자 대시보드</h1>
-        <p className="mt-2 text-lg text-foreground/80">
-          애플리케이션의 다양한 설정을 관리합니다.
+        <h1 className="font-headline text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          InnerSpell 관리자 대시보드
+        </h1>
+        <p className="mt-2 text-lg text-foreground/80 max-w-2xl mx-auto">
+          AI 기반 타로 서비스의 모든 설정과 데이터를 관리합니다
         </p>
       </header>
+
+      {/* 대시보드 통계 */}
+      <AdminDashboardStats />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 mb-6">
