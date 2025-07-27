@@ -13,21 +13,35 @@ import {
 import { TAROT_SPREADS, INTERPRETATION_STYLES } from '@/data/tarot-spreads';
 import { TAROT_GUIDELINES, SPREAD_STYLE_COMBINATIONS } from '@/data/tarot-guidelines';
 
+// Firebase Admin이 사용할 수 없을 때의 폴백 처리
+const isFirebaseAdminAvailable = () => {
+  return firestore !== null;
+};
+
 // 모든 타로 지침 데이터 가져오기
 export async function getAllTarotGuidelines(): Promise<TarotGuidelinesResponse> {
   try {
     console.log('[tarotGuidelineActions] Fetching all tarot guidelines...');
     
-    // Firestore에서 커스텀 지침들 가져오기
-    const customGuidelinesSnapshot = await firestore.collection('tarotGuidelines').get();
-    const customGuidelines: TarotGuideline[] = [];
+    let customGuidelines: TarotGuideline[] = [];
     
-    customGuidelinesSnapshot.docs.forEach(doc => {
-      const data = doc.data() as TarotGuideline;
-      customGuidelines.push({ ...data, id: doc.id });
-    });
-    
-    console.log('[tarotGuidelineActions] Found custom guidelines:', customGuidelines.length);
+    // Firebase Admin이 사용 가능할 때만 Firestore에서 데이터 가져오기
+    if (isFirebaseAdminAvailable() && firestore) {
+      try {
+        const customGuidelinesSnapshot = await firestore.collection('tarotGuidelines').get();
+        
+        customGuidelinesSnapshot.docs.forEach(doc => {
+          const data = doc.data() as TarotGuideline;
+          customGuidelines.push({ ...data, id: doc.id });
+        });
+        
+        console.log('[tarotGuidelineActions] Found custom guidelines:', customGuidelines.length);
+      } catch (firestoreError) {
+        console.warn('[tarotGuidelineActions] Firestore access failed, using local data only:', firestoreError);
+      }
+    } else {
+      console.log('[tarotGuidelineActions] Firebase Admin not available, using local data only');
+    }
     
     // 시스템 기본 데이터와 커스텀 데이터 합치기
     const allGuidelines = [...TAROT_GUIDELINES, ...customGuidelines];
@@ -43,9 +57,17 @@ export async function getAllTarotGuidelines(): Promise<TarotGuidelinesResponse> 
     };
   } catch (error) {
     console.error('[tarotGuidelineActions] Error fetching tarot guidelines:', error);
+    
+    // 에러 발생 시 최소한 로컬 데이터라도 반환
     return {
-      success: false,
-      message: '타로 지침을 불러오는 중 오류가 발생했습니다.'
+      success: true,
+      data: {
+        spreads: TAROT_SPREADS,
+        styles: INTERPRETATION_STYLES,
+        guidelines: TAROT_GUIDELINES,
+        combinations: SPREAD_STYLE_COMBINATIONS
+      },
+      message: '로컬 데이터만 로드되었습니다. 일부 기능이 제한될 수 있습니다.'
     };
   }
 }
@@ -149,6 +171,15 @@ export async function saveTarotGuideline(
   request: SaveGuidelineRequest
 ): Promise<{ success: boolean; id?: string; message: string }> {
   try {
+    // Firebase Admin이 사용 가능한지 확인
+    if (!isFirebaseAdminAvailable() || !firestore) {
+      console.warn('[tarotGuidelineActions] Firebase Admin not available for saving');
+      return {
+        success: false,
+        message: 'Firebase Admin이 초기화되지 않았습니다. 데이터베이스 연결을 확인해주세요.'
+      };
+    }
+
     const guideline: Omit<TarotGuideline, 'id'> = {
       ...request.guideline,
       createdAt: new Date(),
@@ -168,7 +199,7 @@ export async function saveTarotGuideline(
     console.error('[tarotGuidelineActions] Error saving guideline:', error);
     return {
       success: false,
-      message: '타로 지침 저장 중 오류가 발생했습니다.'
+      message: `타로 지침 저장 중 오류가 발생했습니다: ${(error as Error).message}`
     };
   }
 }
@@ -178,6 +209,13 @@ export async function updateTarotGuideline(
   request: UpdateGuidelineRequest
 ): Promise<{ success: boolean; message: string }> {
   try {
+    if (!isFirebaseAdminAvailable() || !firestore) {
+      return {
+        success: false,
+        message: 'Firebase Admin이 초기화되지 않았습니다. 데이터베이스 연결을 확인해주세요.'
+      };
+    }
+
     const updates = {
       ...request.updates,
       updatedAt: new Date()
@@ -195,7 +233,7 @@ export async function updateTarotGuideline(
     console.error('[tarotGuidelineActions] Error updating guideline:', error);
     return {
       success: false,
-      message: '타로 지침 업데이트 중 오류가 발생했습니다.'
+      message: `타로 지침 업데이트 중 오류가 발생했습니다: ${(error as Error).message}`
     };
   }
 }
@@ -205,6 +243,13 @@ export async function deleteTarotGuideline(
   id: string
 ): Promise<{ success: boolean; message: string }> {
   try {
+    if (!isFirebaseAdminAvailable() || !firestore) {
+      return {
+        success: false,
+        message: 'Firebase Admin이 초기화되지 않았습니다. 데이터베이스 연결을 확인해주세요.'
+      };
+    }
+
     await firestore.collection('tarotGuidelines').doc(id).delete();
     
     console.log('[tarotGuidelineActions] Deleted guideline:', id);
@@ -217,7 +262,7 @@ export async function deleteTarotGuideline(
     console.error('[tarotGuidelineActions] Error deleting guideline:', error);
     return {
       success: false,
-      message: '타로 지침 삭제 중 오류가 발생했습니다.'
+      message: `타로 지침 삭제 중 오류가 발생했습니다: ${(error as Error).message}`
     };
   }
 }
@@ -228,6 +273,13 @@ export async function toggleGuidelineStatus(
   isActive: boolean
 ): Promise<{ success: boolean; message: string }> {
   try {
+    if (!isFirebaseAdminAvailable() || !firestore) {
+      return {
+        success: false,
+        message: 'Firebase Admin이 초기화되지 않았습니다. 데이터베이스 연결을 확인해주세요.'
+      };
+    }
+
     await firestore.collection('tarotGuidelines').doc(id).update({
       isActive,
       updatedAt: new Date()
@@ -243,7 +295,7 @@ export async function toggleGuidelineStatus(
     console.error('[tarotGuidelineActions] Error toggling guideline status:', error);
     return {
       success: false,
-      message: '타로 지침 상태 변경 중 오류가 발생했습니다.'
+      message: `타로 지침 상태 변경 중 오류가 발생했습니다: ${(error as Error).message}`
     };
   }
 }

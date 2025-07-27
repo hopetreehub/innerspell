@@ -43,6 +43,26 @@ import type {
 import { tarotInterpretationStyles, tarotSpreads } from '@/types';
 import { tarotDeck as allCards } from '@/lib/tarot-data';
 import { generateTarotInterpretation } from '@/ai/flows/generate-tarot-interpretation';
+
+// 🔧 클라이언트 스프레드 ID를 타로 지침 시스템 ID로 매핑
+const spreadIdMapping: Record<string, string> = {
+  'single-spark': 'single-card',
+  'trinity-view': 'past-present-future', 
+  'pentagram-insight': 'situation-action-outcome',
+  'seven-stars-path': 'relationship-spread',
+  'nine-realms-journey': 'cross-spread',
+  'celtic-cross-wisdom': 'celtic-cross'
+};
+
+// 🔧 클라이언트 해석 스타일을 타로 지침 시스템 ID로 매핑
+const styleIdMapping: Record<string, string> = {
+  '전통 RWS (라이더-웨이트-스미스)': 'traditional-rws',
+  '토트 기반 심층 분석': 'thoth-crowley',
+  '심리학적 원형 탐구': 'psychological-jungian',
+  '영적 성장과 자기 성찰': 'intuitive-modern',
+  '실질적 행동 지침': 'therapeutic-counseling',
+  '내면의 그림자 작업': 'elemental-seasonal'
+};
 import { saveUserReading } from '@/actions/readingActions';
 import { shareReadingClient } from '@/lib/firebase/client-share';
 import { useAuth } from '@/context/AuthContext';
@@ -385,11 +405,24 @@ export function TarotReadingClient() {
       .join('\n');
 
     try {
+      // 🔧 지침 시스템 ID 매핑
+      const mappedSpreadId = spreadIdMapping[selectedSpread.id] || selectedSpread.id;
+      const mappedStyleId = styleIdMapping[interpretationMethod] || interpretationMethod;
+      
+      console.log('[TAROT] Using guideline IDs:', {
+        clientSpreadId: selectedSpread.id,
+        mappedSpreadId,
+        clientStyleId: interpretationMethod,
+        mappedStyleId
+      });
+
       const result = await generateTarotInterpretation({
         question: `${question} (해석 스타일: ${interpretationMethod})`,
         cardSpread: selectedSpread.name,
         cardInterpretations: cardInterpretationsText,
         isGuestUser: !user,
+        spreadId: mappedSpreadId,
+        styleId: mappedStyleId,
       });
       setInterpretation(result.interpretation);
       setStage('interpretation_ready');

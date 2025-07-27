@@ -14,6 +14,7 @@ import {z} from 'genkit';
 import { getTarotPromptConfig } from '@/ai/services/prompt-service';
 import { getProviderConfig } from '@/lib/ai-utils';
 import { getProviderWithFallback } from '@/ai/services/ai-provider-fallback';
+import { getAllTarotGuidelines, getGuidelineBySpreadAndStyle } from '@/actions/tarotGuidelineActions';
 
 
 const GenerateTarotInterpretationInputSchema = z.object({
@@ -21,6 +22,8 @@ const GenerateTarotInterpretationInputSchema = z.object({
   cardSpread: z.string().describe('The selected tarot card spread (e.g., 1-card, 3-card, custom). Also includes card position names if defined for the spread.'),
   cardInterpretations: z.string().describe('The interpretation of each card in the spread, including its name, orientation (upright/reversed), and potentially its position in the spread. This is a single string containing all card details.'),
   isGuestUser: z.boolean().optional().describe('Whether the user is a guest (not logged in). If true, provide a shorter, teaser interpretation.'),
+  spreadId: z.string().optional().describe('The ID of the tarot spread being used for guideline lookup.'),
+  styleId: z.string().optional().describe('The ID of the interpretation style being used for guideline lookup.'),
 });
 export type GenerateTarotInterpretationInput = z.infer<typeof GenerateTarotInterpretationInputSchema>;
 
@@ -46,6 +49,49 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
     async (input: GenerateTarotInterpretationInput) => {
     
     try {
+      // 🔍 타로 지침 가져오기
+      let guidelineInstructions = '';
+      if (input.spreadId && input.styleId) {
+        try {
+          const guidelineResult = await getGuidelineBySpreadAndStyle(input.spreadId, input.styleId);
+          if (guidelineResult.success && guidelineResult.data) {
+            const guideline = guidelineResult.data;
+            
+            // 지침을 프롬프트에 통합할 형태로 변환
+            guidelineInstructions = `
+# 전문 타로 지침 (${guideline.name})
+
+## 전반적 접근법
+${guideline.generalApproach}
+
+## 핵심 포커스 영역
+${guideline.keyFocusAreas.map(area => `- ${area}`).join('\n')}
+
+## 포지션별 상세 지침
+${guideline.positionGuidelines.map(pos => `
+**${pos.positionName}**: ${pos.interpretationFocus}
+핵심 질문들: ${pos.keyQuestions.join(', ')}
+${pos.styleSpecificNotes ? `특이사항: ${pos.styleSpecificNotes}` : ''}
+`).join('\n')}
+
+## 해석 팁
+${guideline.interpretationTips.map(tip => `- ${tip}`).join('\n')}
+
+## 피해야 할 실수들
+${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
+
+예상 소요 시간: ${guideline.estimatedTime}분 | 난이도: ${guideline.difficulty}
+`;
+            
+            console.log('[TAROT] Using tarot guideline:', guideline.name);
+          } else {
+            console.log('[TAROT] No specific guideline found for', input.spreadId, input.styleId);
+          }
+        } catch (guidelineError) {
+          console.warn('[TAROT] Failed to load guideline:', guidelineError);
+        }
+      }
+      
       // Try to get the best available provider with automatic fallback
       let providerInfo;
       let model: string;
@@ -66,9 +112,9 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
         providerInfo = fallbackInfo;
         model = `${fallbackInfo.provider}/${fallbackInfo.model}`;
         
-        // Use default prompt template
+        // Use enhanced prompt template with guideline integration
         promptTemplate = `당신은 전문적인 타로 카드 해석사입니다. 
-사용자의 질문과 뽑힌 카드들을 바탕으로 깊이 있고 의미 있는 해석을 제공해주세요.
+${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\n' + guidelineInstructions + '\n\n위 지침을 바탕으로, ' : ''}사용자의 질문과 뽑힌 카드들을 바탕으로 깊이 있고 의미 있는 해석을 제공해주세요.
 
 질문: {{question}}
 카드 스프레드: {{cardSpread}}
@@ -79,10 +125,10 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
 질문에 대한 공감과 전체적인 흐름 소개
 
 ## 본론  
-각 카드의 의미와 위치별 해석
+각 카드의 의미와 위치별 해석${guidelineInstructions ? ' (위의 포지션별 지침을 참고하여)' : ''}
 
 ## 실행 가능한 조언과 격려
-구체적이고 실용적인 조언
+구체적이고 실용적인 조언${guidelineInstructions ? ' (위의 해석 팁을 활용하여)' : ''}
 
 ## 결론
 희망적이고 긍정적인 마무리`;

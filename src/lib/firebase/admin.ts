@@ -1,5 +1,8 @@
 import admin from 'firebase-admin';
 
+let adminInitialized = false;
+let initializationError: Error | null = null;
+
 // Production Firebase Admin initialization
 if (!admin.apps.length) {
   try {
@@ -17,35 +20,56 @@ if (!admin.apps.length) {
       }
     } else {
       // Fall back to application default credentials (local development)
-      credential = admin.credential.applicationDefault();
-      console.log('✅ Using Firebase application default credentials');
+      try {
+        credential = admin.credential.applicationDefault();
+        console.log('✅ Using Firebase application default credentials');
+      } catch (defaultError) {
+        console.log('⚠️ Application default credentials not available, skipping admin initialization');
+        initializationError = defaultError as Error;
+        adminInitialized = false;
+      }
     }
     
-    // 🔧 긴급 수정: 환경변수에서 개행 문자 및 특수 문자 제거
-    const cleanProjectId = (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'innerspell-an7ce')
-      .trim()
-      .replace(/\n/g, '')
-      .replace(/"/g, '');
-    
-    console.log('🔍 Clean Project ID:', cleanProjectId);
-    
-    admin.initializeApp({
-      credential: credential,
-      projectId: cleanProjectId,
-    });
-    
-    console.log('🔥 Firebase Admin SDK initialized successfully');
+    if (credential) {
+      // 🔧 환경변수에서 개행 문자 및 특수 문자 제거
+      const cleanProjectId = (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'innerspell-an7ce')
+        .trim()
+        .replace(/\n/g, '')
+        .replace(/"/g, '');
+      
+      console.log('🔍 Clean Project ID:', cleanProjectId);
+      
+      admin.initializeApp({
+        credential: credential,
+        projectId: cleanProjectId,
+      });
+      
+      adminInitialized = true;
+      console.log('🔥 Firebase Admin SDK initialized successfully');
+    }
   } catch (error) {
     console.error('❌ Failed to initialize Firebase Admin:', error);
-    throw error;
+    initializationError = error as Error;
+    adminInitialized = false;
   }
 }
 
-// Export real Firebase Admin components
-const firestore = admin.firestore();
-const db = firestore;
-const FieldValue = admin.firestore.FieldValue;
-const auth = admin.auth();
+// Safe Firebase Admin components with fallback
+let firestore: admin.firestore.Firestore | null = null;
+let db: admin.firestore.Firestore | null = null;
+let FieldValue: typeof admin.firestore.FieldValue | null = null;
+let auth: admin.auth.Auth | null = null;
+
+if (adminInitialized && admin.apps.length > 0) {
+  try {
+    firestore = admin.firestore();
+    db = firestore;
+    FieldValue = admin.firestore.FieldValue;
+    auth = admin.auth();
+  } catch (error) {
+    console.error('❌ Failed to access Firebase Admin services:', error);
+  }
+}
 
 // Initialize admin function for API routes
 export function initAdmin() {
