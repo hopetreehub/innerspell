@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-07-27T18:24:39.757Z",
+  "baseUrl": "https://test-studio-firebase.vercel.app",
+  "performanceMetrics": {
+    "mainPageLoad": 3324,
+    "tarotReadingLoad": 1045,
+    "navigation": {
+      "domContentLoaded": 0.09999999962747097,
+      "loadComplete": 0,
+      "totalLoadTime": null
+    }
+  },
+  "consoleErrors": [],
+  "testSummary": {
+    "mainPageLoaded": true,
+    "tarotGuidelinesLoaded": "Not tested",
+    "adminPageAccessible": true,
+    "mobileResponsive": true,
+    "tabletResponsive": true,
+    "javascriptErrors": 0
+  }
+}
