@@ -60,27 +60,8 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
   const [editingGuideline, setEditingGuideline] = useState<TarotGuideline | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 메모이제이션된 로딩 함수
-  const memoizedLoadData = useCallback(loadData, []);
-  
-  // 초기 데이터 로딩 최적화
-  useEffect(() => {
-    // 즉시 실행으로 더 빠른 로딩
-    memoizedLoadData();
-  }, [memoizedLoadData]);
-
-  // 캐시 버스팅 - 강제 새로고침 버튼
-  const handleForceRefresh = () => {
-    console.log('🔄 [TarotGuidelineManagement] Force refresh triggered');
-    // 로컬 스토리지 클리어
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('tarot-guidelines-cache');
-      sessionStorage.clear();
-    }
-    loadData();
-  };
-
-  const loadData = async () => {
+  // loadData 함수를 먼저 선언
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       console.log('⚡ [TarotGuidelineManagement] Optimized loading started...');
@@ -130,6 +111,23 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
       setLoading(false);
       toast.error('서버 데이터 로딩 실패, 기본 데이터 사용 중');
     }
+  }, []);
+  
+  // 초기 데이터 로딩 최적화
+  useEffect(() => {
+    // 즉시 실행으로 더 빠른 로딩
+    loadData();
+  }, [loadData]);
+
+  // 캐시 버스팅 - 강제 새로고침 버튼
+  const handleForceRefresh = () => {
+    console.log('🔄 [TarotGuidelineManagement] Force refresh triggered');
+    // 로컬 스토리지 클리어
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('tarot-guidelines-cache');
+      sessionStorage.clear();
+    }
+    loadData();
   };
 
   const handleSpreadStyleSelect = async () => {
