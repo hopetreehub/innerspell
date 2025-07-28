@@ -47,18 +47,18 @@ export const dynamicComponents = {
   
   // 사용자 컴포넌트들
   user: {
-    tarotReading: () => import('@/components/TarotReading'),
-    dreamInterpretation: () => import('@/components/DreamInterpretation'),
-    blogPost: () => import('@/components/BlogPost'),
-    profileSettings: () => import('@/components/ProfileSettings')
+    // tarotReading: () => import('@/components/TarotReading'), // TODO: 구현 필요
+    // dreamInterpretation: () => import('@/components/DreamInterpretation'), // TODO: 구현 필요
+    // blogPost: () => import('@/components/BlogPost'), // TODO: 구현 필요
+    // profileSettings: () => import('@/components/ProfileSettings') // TODO: 구현 필요
   },
   
   // UI 컴포넌트들
   ui: {
-    calendar: () => import('@/components/ui/calendar'),
-    colorPicker: () => import('@/components/ui/color-picker'),
-    fileUpload: () => import('@/components/ui/file-upload'),
-    richTextEditor: () => import('@/components/ui/rich-text-editor')
+    // calendar: () => import('@/components/ui/calendar'), // TODO: 구현 필요
+    // colorPicker: () => import('@/components/ui/color-picker'), // TODO: 구현 필요
+    // fileUpload: () => import('@/components/ui/file-upload'), // TODO: 구현 필요
+    // richTextEditor: () => import('@/components/ui/rich-text-editor') // TODO: 구현 필요
   }
 } as const;
 
@@ -142,15 +142,15 @@ export const routeBasedImports = {
     () => dynamicComponents.admin.aiPromptConfig(),
     () => dynamicComponents.admin.dreamConfig()
   ],
-  '/tarot': [
-    () => dynamicComponents.user.tarotReading()
-  ],
-  '/dream': [
-    () => dynamicComponents.user.dreamInterpretation()
-  ],
-  '/blog': [
-    () => dynamicComponents.user.blogPost()
-  ]
+  // '/tarot': [
+  //   () => dynamicComponents.user.tarotReading()
+  // ],
+  // '/dream': [
+  //   () => dynamicComponents.user.dreamInterpretation()
+  // ],
+  // '/blog': [
+  //   () => dynamicComponents.user.blogPost()
+  // ]
 } as const;
 
 // 인터랙션 기반 프리로딩
@@ -171,10 +171,11 @@ export function setupInteractionPreloading(): void {
     const target = event.target as HTMLElement;
     const preloadKey = target.dataset.preload;
     
-    if (preloadKey && dynamicComponents.user[preloadKey as keyof typeof dynamicComponents.user]) {
-      const importFn = dynamicComponents.user[preloadKey as keyof typeof dynamicComponents.user];
-      DynamicImportManager.preload(preloadKey, importFn);
-    }
+    // TODO: 사용자 컴포넌트 구현 후 활성화
+    // if (preloadKey && dynamicComponents.user[preloadKey as keyof typeof dynamicComponents.user]) {
+    //   const importFn = dynamicComponents.user[preloadKey as keyof typeof dynamicComponents.user];
+    //   DynamicImportManager.preload(preloadKey, importFn);
+    // }
   });
 }
 
