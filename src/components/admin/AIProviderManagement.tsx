@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Plus, Eye, EyeOff, TestTube, Trash2, Edit } from 'lucide-react';
+import { Settings, Plus, Eye, EyeOff, TestTube, Trash2, Edit, Activity, BarChart3, Zap, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { AIProviderConfig, AIProvider, AIFeatureMapping } from '@/types';
 import { 
@@ -30,6 +30,8 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
   const [editingProvider, setEditingProvider] = useState<AIProvider | null>(null);
   const [testingProvider, setTestingProvider] = useState<AIProvider | null>(null);
   const [showApiKeys, setShowApiKeys] = useState<Record<string, boolean>>({});
+  const [testingAllProviders, setTestingAllProviders] = useState(false);
+  const [testResults, setTestResults] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadData();
@@ -69,6 +71,8 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
       
       const result = await testAIProviderConnection(provider, providerConfig.apiKey, providerConfig.baseUrl);
       
+      setTestResults(prev => ({ ...prev, [provider]: result.success }));
+      
       if (result.success) {
         toast.success(result.message);
       } else {
@@ -76,9 +80,43 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
       }
     } catch (error) {
       toast.error('연결 테스트 중 오류가 발생했습니다.');
+      setTestResults(prev => ({ ...prev, [provider]: false }));
     } finally {
       setTestingProvider(null);
     }
+  };
+
+  const handleTestAllProviders = async () => {
+    setTestingAllProviders(true);
+    setTestResults({});
+    
+    const activeProviders = providers.filter(p => p.isActive);
+    
+    toast.info(`${activeProviders.length}개 활성 공급자 테스트 시작...`);
+    
+    for (const provider of activeProviders) {
+      try {
+        const result = await testAIProviderConnection(
+          provider.provider, 
+          provider.apiKey, 
+          provider.baseUrl
+        );
+        
+        setTestResults(prev => ({ ...prev, [provider.provider]: result.success }));
+        
+        if (!result.success) {
+          console.error(`${provider.provider} 테스트 실패:`, result.message);
+        }
+      } catch (error) {
+        console.error(`${provider.provider} 테스트 오류:`, error);
+        setTestResults(prev => ({ ...prev, [provider.provider]: false }));
+      }
+    }
+    
+    const successCount = Object.values(testResults).filter(r => r).length;
+    toast.success(`테스트 완료: ${successCount}/${activeProviders.length} 성공`);
+    
+    setTestingAllProviders(false);
   };
 
   const handleDeleteProvider = async (provider: AIProvider) => {
@@ -108,6 +146,8 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
     switch (provider) {
       case 'openai': return '🤖';
       case 'gemini': return '💎';
+      case 'googleai': return '🌟';
+      case 'anthropic': return '🧠';
       case 'grok': return '🚀';
       case 'openrouter': return '🔀';
       case 'huggingface': return '🤗';
@@ -119,6 +159,8 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
     switch (provider) {
       case 'openai': return 'bg-green-500';
       case 'gemini': return 'bg-blue-500';
+      case 'googleai': return 'bg-indigo-500';
+      case 'anthropic': return 'bg-violet-500';
       case 'grok': return 'bg-purple-500';
       case 'openrouter': return 'bg-orange-500';
       case 'huggingface': return 'bg-yellow-500';
@@ -136,25 +178,105 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
 
   return (
     <div className={className}>
+      {/* 통계 카드 */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Activity className="h-4 w-4 text-green-500" />
+              활성 공급자
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{providers.filter(p => p.isActive).length}</div>
+            <p className="text-xs text-muted-foreground">전체 {providers.length}개 중</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Zap className="h-4 w-4 text-blue-500" />
+              사용 가능 모델
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {providers.reduce((acc, p) => acc + p.models.length, 0)}
+            </div>
+            <p className="text-xs text-muted-foreground">여러 공급자 통합</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-purple-500" />
+              기능 매핑
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{featureMappings.length}</div>
+            <p className="text-xs text-muted-foreground">설정된 매핑</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-yellow-500" />
+              주의 필요
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {providers.filter(p => !p.isActive && p.apiKey).length}
+            </div>
+            <p className="text-xs text-muted-foreground">비활성 공급자</p>
+          </CardContent>
+        </Card>
+      </div>
+
       <Tabs defaultValue="providers" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="providers">AI 공급자</TabsTrigger>
           <TabsTrigger value="mappings">기능 매핑</TabsTrigger>
+          <TabsTrigger value="usage">사용 통계</TabsTrigger>
         </TabsList>
 
         <TabsContent value="providers" className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">AI 공급자 설정</h3>
-            <Button 
-              onClick={() => {
-                setEditingProvider(null);
-                setShowConfigForm(true);
-              }}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              공급자 추가
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline"
+                onClick={handleTestAllProviders}
+                disabled={providers.length === 0 || testingAllProviders}
+                className="flex items-center gap-2"
+              >
+                {testingAllProviders ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                    테스트 중...
+                  </>
+                ) : (
+                  <>
+                    <TestTube className="h-4 w-4" />
+                    모두 테스트
+                  </>
+                )}
+              </Button>
+              <Button 
+                onClick={() => {
+                  setEditingProvider(null);
+                  setShowConfigForm(true);
+                }}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                공급자 추가
+              </Button>
+            </div>
           </div>
 
           <div className="grid gap-4">
@@ -177,11 +299,19 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
                       <Badge variant={provider.isActive ? 'default' : 'secondary'}>
                         {provider.isActive ? '활성' : '비활성'}
                       </Badge>
+                      {testResults[provider.provider] !== undefined && (
+                        <Badge 
+                          variant={testResults[provider.provider] ? 'outline' : 'destructive'} 
+                          className={testResults[provider.provider] ? 'text-green-600 border-green-600' : ''}
+                        >
+                          {testResults[provider.provider] ? '✓ 연결됨' : '✗ 실패'}
+                        </Badge>
+                      )}
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleTestConnection(provider.provider)}
-                        disabled={testingProvider === provider.provider}
+                        disabled={testingProvider === provider.provider || testingAllProviders}
                       >
                         <TestTube className="h-4 w-4 mr-1" />
                         {testingProvider === provider.provider ? '테스트 중...' : '테스트'}
@@ -209,10 +339,12 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">API 키:</span>
+                    <div className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
+                      <span className="text-sm font-medium flex items-center gap-1">
+                        <span className="text-xs">🔑</span> API 키
+                      </span>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-mono">
+                        <span className="text-sm font-mono bg-background px-2 py-1 rounded border">
                           {showApiKeys[provider.provider] 
                             ? provider.maskedApiKey || '••••••••••••••••' 
                             : '••••••••••••••••'
@@ -240,8 +372,15 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">모델:</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium flex items-center gap-1">
+                          <span className="text-xs">🤖</span> 모델
+                        </span>
+                        <Badge variant="secondary" className="text-xs">
+                          {provider.models.length}개 활성
+                        </Badge>
+                      </div>
                       <div className="flex flex-wrap gap-1">
                         {provider.models.slice(0, 3).map((model) => (
                           <Badge key={model.id} variant="outline" className="text-xs">
@@ -275,16 +414,17 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
             ))}
 
             {providers.length === 0 && (
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-8">
-                  <Settings className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">AI 공급자가 설정되지 않았습니다</h3>
-                  <p className="text-muted-foreground text-center mb-4">
-                    AI 기능을 사용하려면 첫 번째 AI 공급자를 추가하세요
+              <Card className="border-dashed bg-muted/20">
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Settings className="h-16 w-16 text-muted-foreground mb-4 animate-pulse" />
+                  <h3 className="text-xl font-bold mb-2">AI 공급자가 설정되지 않았습니다</h3>
+                  <p className="text-muted-foreground text-center mb-6 max-w-md">
+                    타로 해석, 꿈 해석 등 AI 기능을 사용하려면 AI 공급자를 추가해주세요.
+                    OpenAI, Gemini, Claude 등 다양한 AI 서비스를 지원합니다.
                   </p>
-                  <Button onClick={() => setShowConfigForm(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    공급자 추가
+                  <Button size="lg" onClick={() => setShowConfigForm(true)} className="gap-2">
+                    <Plus className="h-5 w-5" />
+                    첫 번째 공급자 추가하기
                   </Button>
                 </CardContent>
               </Card>
@@ -351,6 +491,35 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
                 </CardContent>
               </Card>
             )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="usage" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">사용 통계</h3>
+            <Button variant="outline" size="sm">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              상세 리포트
+            </Button>
+          </div>
+
+          <div className="grid gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>현재 개발 중</CardTitle>
+                <CardDescription>
+                  사용 통계 기능은 현재 개발 중입니다
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <BarChart3 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">
+                    AI 공급자별 사용량, 비용, 성공률 등의 통계가 여기에 표시됩니다.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
       </Tabs>

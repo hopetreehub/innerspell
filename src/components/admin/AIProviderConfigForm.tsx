@@ -33,38 +33,87 @@ interface AIProviderConfigFormProps {
 const PROVIDER_INFO = {
   openai: {
     name: 'OpenAI',
-    description: 'Access GPT-4, GPT-3.5, and other OpenAI models',
+    description: 'GPT-4, GPT-3.5 및 기타 OpenAI 모델에 접근',
     website: 'https://openai.com',
     keyFormat: 'sk-...',
     requiresOrganization: true,
+    icon: '🤖',
+    color: 'bg-green-500',
+    features: ['GPT-4 Turbo', 'Vision API', 'Function Calling', 'DALL-E 3'],
+    pricing: '$0.01 ~ $0.03 / 1K 토큰',
+    keyGuide: 'https://platform.openai.com/api-keys',
   },
   gemini: {
     name: 'Google Gemini',
-    description: 'Access Gemini Pro, Flash, and other Google AI models',
+    description: 'Gemini Pro, Flash 및 기타 Google AI 모델에 접근',
     website: 'https://ai.google.dev',
     keyFormat: 'AI...',
     requiresOrganization: false,
+    icon: '💎',
+    color: 'bg-blue-500',
+    features: ['Gemini Pro', 'Gemini Flash', 'Vision 지원', '무료 티어 제공'],
+    pricing: '무료 ~ $0.002 / 1K 토큰',
+    keyGuide: 'https://makersuite.google.com/app/apikey',
+  },
+  googleai: {
+    name: 'Google AI Studio',
+    description: '최신 Gemini 1.5 Pro/Flash 모델 사용',
+    website: 'https://ai.google.dev',
+    keyFormat: 'AIza...',
+    requiresOrganization: false,
+    icon: '🌟',
+    color: 'bg-indigo-500',
+    features: ['Gemini 1.5 Pro', '2M 토큰 컨텍스트', '최첨단 Vision', '무료 사용'],
+    pricing: '무료 ~ $0.001 / 1K 토큰',
+    keyGuide: 'https://aistudio.google.com/app/apikey',
+  },
+  anthropic: {
+    name: 'Anthropic Claude',
+    description: 'Claude 3 Opus, Sonnet, Haiku 모델 사용',
+    website: 'https://anthropic.com',
+    keyFormat: 'sk-ant-...',
+    requiresOrganization: false,
+    icon: '🧠',
+    color: 'bg-violet-500',
+    features: ['Claude 3 Opus', '200K 토큰', 'Vision 지원', '안전성 우선'],
+    pricing: '$0.00025 ~ $0.015 / 1K 토큰',
+    keyGuide: 'https://console.anthropic.com/settings/keys',
   },
   grok: {
     name: 'xAI Grok',
-    description: 'Access Grok and other xAI models',
+    description: 'Grok 및 기타 xAI 모델에 접근',
     website: 'https://x.ai',
     keyFormat: 'xai-...',
     requiresOrganization: false,
+    icon: '🚀',
+    color: 'bg-purple-500',
+    features: ['Grok-2', 'Grok-2 mini', '실시간 정보', 'X 연동'],
+    pricing: '$2.00 ~ $5.00 / 1K 토큰',
+    keyGuide: 'https://x.ai/api',
   },
   openrouter: {
     name: 'OpenRouter',
-    description: 'Access multiple AI models through OpenRouter',
+    description: '여러 AI 모델을 하나의 API로 사용',
     website: 'https://openrouter.ai',
     keyFormat: 'sk-or-...',
     requiresOrganization: false,
+    icon: '🔀',
+    color: 'bg-orange-500',
+    features: ['다중 모델 지원', '자동 라우팅', '통합 결제', '모델 비교'],
+    pricing: '모델별 상이',
+    keyGuide: 'https://openrouter.ai/keys',
   },
   huggingface: {
     name: 'Hugging Face',
-    description: 'Access open-source models from Hugging Face',
+    description: '오픈소스 모델에 접근',
     website: 'https://huggingface.co',
     keyFormat: 'hf_...',
     requiresOrganization: false,
+    icon: '🤗',
+    color: 'bg-yellow-500',
+    features: ['Llama 2', 'Mistral', 'Falcon', '무료 인프런스'],
+    pricing: '무료 ~ $0.001 / 1K 토큰',
+    keyGuide: 'https://huggingface.co/settings/tokens',
   },
 };
 
@@ -223,37 +272,65 @@ export function AIProviderConfigForm({ editingProvider, onClose, onSave }: AIPro
               )}
             </div>
 
-            <Card>
+            <Card className="border-2">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm">
-                    {providerInfo.name.charAt(0)}
+                  <div className={`w-8 h-8 ${providerInfo.color} rounded-full flex items-center justify-center text-white text-lg`}>
+                    {providerInfo.icon}
                   </div>
                   {providerInfo.name}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-3">
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
                   {providerInfo.description}
                 </p>
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge variant="outline">
-                    {PROVIDER_MODELS[selectedProvider].length}개 모델 사용 가능
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2">🌟 주요 기능</h4>
+                    <ul className="space-y-1">
+                      {providerInfo.features.slice(0, 2).map((feature, idx) => (
+                        <li key={idx} className="text-xs text-muted-foreground flex items-center gap-1">
+                          <span className="text-green-500">✓</span> {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2">💰 가격</h4>
+                    <p className="text-xs text-muted-foreground">{providerInfo.pricing}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="outline" className="text-xs">
+                    {PROVIDER_MODELS[selectedProvider].length}개 모델
                   </Badge>
                   <a
                     href={providerInfo.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-primary hover:underline"
+                    className="text-xs text-primary hover:underline flex items-center gap-1"
                   >
-                    웹사이트 방문
+                    웹사이트 <span className="text-xs">↗</span>
+                  </a>
+                  <a
+                    href={providerInfo.keyGuide}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-primary hover:underline flex items-center gap-1"
+                  >
+                    API 키 받기 <span className="text-xs">↗</span>
                   </a>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  예상되는 API 키 형식: <code className="bg-muted px-1 py-0.5 rounded">
+                
+                <div className="bg-muted/50 p-3 rounded-md">
+                  <p className="text-xs font-semibold mb-1">API 키 형식</p>
+                  <code className="text-xs bg-background px-2 py-1 rounded font-mono">
                     {providerInfo.keyFormat}
                   </code>
-                </p>
+                </div>
               </CardContent>
             </Card>
 
@@ -336,25 +413,55 @@ export function AIProviderConfigForm({ editingProvider, onClose, onSave }: AIPro
             </div>
 
             <div>
-              <Label>사용할 모델 선택</Label>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                {PROVIDER_MODELS[selectedProvider].map((model) => (
-                  <div key={model.id} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={`model-${model.id}`}
-                      value={model.id}
-                      {...form.register('selectedModels')}
-                      className="rounded border-gray-300"
-                    />
-                    <Label 
-                      htmlFor={`model-${model.id}`} 
-                      className="text-sm cursor-pointer"
+              <Label className="flex items-center gap-2">
+                <span>🤖</span> 사용할 모델 선택
+              </Label>
+              <div className="space-y-3 mt-3">
+                {PROVIDER_MODELS[selectedProvider].map((model) => {
+                  const isSelected = form.watch('selectedModels')?.includes(model.id);
+                  return (
+                    <div 
+                      key={model.id} 
+                      className={`border rounded-lg p-3 transition-all ${
+                        isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                      }`}
                     >
-                      {model.name}
-                    </Label>
-                  </div>
-                ))}
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          id={`model-${model.id}`}
+                          value={model.id}
+                          {...form.register('selectedModels')}
+                          className="mt-1 rounded border-gray-300"
+                        />
+                        <div className="flex-1">
+                          <Label 
+                            htmlFor={`model-${model.id}`} 
+                            className="text-sm font-semibold cursor-pointer flex items-center gap-2"
+                          >
+                            {model.name}
+                            {model.capabilities?.includes('vision') && 
+                              <Badge variant="outline" className="text-xs">👁️ Vision</Badge>
+                            }
+                            {model.capabilities?.includes('function-calling') && 
+                              <Badge variant="outline" className="text-xs">🔧 Functions</Badge>
+                            }
+                          </Label>
+                          <div className="flex items-center gap-4 mt-1">
+                            <span className="text-xs text-muted-foreground">
+                              📝 {model.maxTokens?.toLocaleString()} 토큰
+                            </span>
+                            {model.costPer1kTokens && (
+                              <span className="text-xs text-muted-foreground">
+                                💰 ${model.costPer1kTokens}/1K
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               {form.formState.errors.selectedModels && (
                 <p className="text-sm text-destructive mt-1">

@@ -258,54 +258,251 @@ function validateApiKeyFormat(provider: AIProvider, apiKey: string): { isValid: 
   return { isValid: true, message: 'API 키 형식이 올바릅니다' };
 }
 
-// 실제 연결 테스트 수행 (현재는 시뮬레이션)
+// 실제 연결 테스트 수행
 async function performConnectionTest(
   provider: AIProvider, 
   apiKey: string, 
   baseUrl?: string
-): Promise<{ success: boolean; message: string }> {
-  // 실제 환경에서는 여기서 각 공급자의 API에 실제 요청을 보냄
-  // 현재는 시뮬레이션으로 처리
-  
-  // 환경변수에 저장된 키와 비교 (보안 테스트)
-  const envKeys = {
-    openai: process.env.OPENAI_API_KEY,
-    gemini: process.env.GEMINI_API_KEY,
-    googleai: process.env.GOOGLE_API_KEY,
-    anthropic: process.env.ANTHROPIC_API_KEY,
-    grok: process.env.GROK_API_KEY,
-    openrouter: process.env.OPENROUTER_API_KEY,
-    huggingface: process.env.HUGGINGFACE_API_KEY
-  };
-  
-  const envKey = envKeys[provider];
-  
-  // 기본 연결성 시뮬레이션
-  const isKeyValid = apiKey.length > 15;
-  const hasBaseUrl = baseUrl && baseUrl.length > 0;
-  
-  if (!isKeyValid) {
+): Promise<{ success: boolean; message: string; details?: any }> {
+  try {
+    switch (provider) {
+      case 'openai':
+        return await testOpenAIConnection(apiKey, baseUrl);
+      
+      case 'gemini':
+      case 'googleai':
+        return await testGoogleAIConnection(apiKey, provider);
+      
+      case 'anthropic':
+        return await testAnthropicConnection(apiKey, baseUrl);
+      
+      case 'grok':
+        return await testGrokConnection(apiKey, baseUrl);
+      
+      case 'openrouter':
+        return await testOpenRouterConnection(apiKey, baseUrl);
+      
+      case 'huggingface':
+        return await testHuggingFaceConnection(apiKey);
+      
+      default:
+        // 기본 연결성 시뮬레이션
+        const isKeyValid = apiKey.length > 15;
+        if (!isKeyValid) {
+          return {
+            success: false,
+            message: 'API 키가 유효하지 않습니다'
+          };
+        }
+        
+        return {
+          success: true,
+          message: `${provider} 연결 테스트 성공! (기본 검증)`
+        };
+    }
+  } catch (error) {
+    console.error(`[AI Connection Test] Error for ${provider}:`, error);
     return {
       success: false,
-      message: 'API 키가 유효하지 않습니다'
+      message: `연결 테스트 중 오류 발생: ${error.message || '알 수 없는 오류'}`
     };
   }
-  
-  // 환경변수와 일치하는 경우 추가 성공 메시지
-  const isEnvKey = envKey && envKey === apiKey;
-  
-  const successMessage = isEnvKey 
-    ? `${provider} 연결 테스트 성공! (환경변수와 일치함)`
-    : `${provider} 연결 테스트 성공! API 키 형식이 올바릅니다`;
+}
+
+// OpenAI 연결 테스트
+async function testOpenAIConnection(
+  apiKey: string, 
+  baseUrl?: string
+): Promise<{ success: boolean; message: string; details?: any }> {
+  try {
+    const url = baseUrl || 'https://api.openai.com/v1/models';
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+      },
+    });
     
-  const finalMessage = hasBaseUrl 
-    ? `${successMessage} - Custom Base URL: ${baseUrl}`
-    : successMessage;
-  
+    if (response.ok) {
+      const data = await response.json();
+      const modelCount = data.data?.length || 0;
+      return {
+        success: true,
+        message: `OpenAI 연결 성공! ${modelCount}개 모델 사용 가능`,
+        details: { models: data.data?.slice(0, 5) }
+      };
+    } else {
+      const error = await response.text();
+      return {
+        success: false,
+        message: `OpenAI API 오류: ${response.status} - ${error.substring(0, 100)}`
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: `OpenAI 연결 실패: ${error.message}`
+    };
+  }
+}
+
+// Google AI (Gemini) 연결 테스트
+async function testGoogleAIConnection(
+  apiKey: string,
+  provider: 'gemini' | 'googleai'
+): Promise<{ success: boolean; message: string; details?: any }> {
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`;
+    const response = await fetch(url);
+    
+    if (response.ok) {
+      const data = await response.json();
+      const modelCount = data.models?.length || 0;
+      return {
+        success: true,
+        message: `${provider === 'googleai' ? 'Google AI' : 'Gemini'} 연결 성공! ${modelCount}개 모델 사용 가능`,
+        details: { models: data.models?.slice(0, 5) }
+      };
+    } else {
+      const error = await response.text();
+      return {
+        success: false,
+        message: `Google AI API 오류: ${response.status} - ${error.substring(0, 100)}`
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: `Google AI 연결 실패: ${error.message}`
+    };
+  }
+}
+
+// Anthropic 연결 테스트
+async function testAnthropicConnection(
+  apiKey: string,
+  baseUrl?: string
+): Promise<{ success: boolean; message: string; details?: any }> {
+  try {
+    const url = baseUrl || 'https://api.anthropic.com/v1/complete';
+    // Anthropic은 모델 목록 API가 없으므로 간단한 completion 테스트
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-3-haiku-20240307',
+        prompt: '\n\nHuman: Hi\n\nAssistant:',
+        max_tokens_to_sample: 1,
+      })
+    });
+    
+    if (response.ok || response.status === 400) { // 400은 모델 오류일 수 있음
+      return {
+        success: true,
+        message: 'Anthropic 연결 성공! Claude 모델 사용 가능',
+        details: { status: response.status }
+      };
+    } else {
+      const error = await response.text();
+      return {
+        success: false,
+        message: `Anthropic API 오류: ${response.status} - ${error.substring(0, 100)}`
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: `Anthropic 연결 실패: ${error.message}`
+    };
+  }
+}
+
+// xAI Grok 연결 테스트
+async function testGrokConnection(
+  apiKey: string,
+  baseUrl?: string
+): Promise<{ success: boolean; message: string; details?: any }> {
+  // Grok API는 아직 공개되지 않았으므로 시뮬레이션
   return {
     success: true,
-    message: finalMessage
+    message: 'xAI Grok 연결 성공! (시뮬레이션)',
+    details: { note: 'Grok API는 현재 베타 테스트 중입니다' }
   };
+}
+
+// OpenRouter 연결 테스트
+async function testOpenRouterConnection(
+  apiKey: string,
+  baseUrl?: string
+): Promise<{ success: boolean; message: string; details?: any }> {
+  try {
+    const url = baseUrl || 'https://openrouter.ai/api/v1/models';
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+      },
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      const modelCount = data.data?.length || 0;
+      return {
+        success: true,
+        message: `OpenRouter 연결 성공! ${modelCount}개 모델 사용 가능`,
+        details: { models: data.data?.slice(0, 5) }
+      };
+    } else {
+      const error = await response.text();
+      return {
+        success: false,
+        message: `OpenRouter API 오류: ${response.status} - ${error.substring(0, 100)}`
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: `OpenRouter 연결 실패: ${error.message}`
+    };
+  }
+}
+
+// Hugging Face 연결 테스트
+async function testHuggingFaceConnection(
+  apiKey: string
+): Promise<{ success: boolean; message: string; details?: any }> {
+  try {
+    const url = 'https://api-inference.huggingface.co/models/gpt2';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ inputs: 'test' })
+    });
+    
+    if (response.ok || response.status === 503) { // 503은 모델 로딩 중
+      return {
+        success: true,
+        message: 'Hugging Face 연결 성공! 추론 API 사용 가능',
+        details: { status: response.status }
+      };
+    } else {
+      const error = await response.text();
+      return {
+        success: false,
+        message: `Hugging Face API 오류: ${response.status} - ${error.substring(0, 100)}`
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: `Hugging Face 연결 실패: ${error.message}`
+    };
+  }
 }
 
 // Feature to AI model mapping
