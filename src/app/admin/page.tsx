@@ -10,7 +10,6 @@ import { DreamInterpretationConfigForm } from '@/components/admin/DreamInterpret
 import { UserManagement } from '@/components/admin/UserManagement';
 import { SystemManagement } from '@/components/admin/SystemManagement';
 import { AIProviderManagement } from '@/components/admin/AIProviderManagement';
-import { GEOGuidelinesManager } from '@/components/admin/GEOGuidelinesManager';
 import { BlogManagement } from '@/components/admin/BlogManagement';
 import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
 import { AdminDashboardStats } from '@/components/admin/AdminDashboardStats';
@@ -106,7 +105,7 @@ export default function AdminDashboardPage() {
       <AdminDashboardStats />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-9 mb-6">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 mb-6">
           <TabsTrigger value="ai-providers" className="text-sm sm:text-base">
             <Bot className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> AI 공급자
           </TabsTrigger>
@@ -118,9 +117,6 @@ export default function AdminDashboardPage() {
           </TabsTrigger>
           <TabsTrigger value="dream-ai-config" className="text-sm sm:text-base">
             <MoonStar className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 꿈해몽 AI
-          </TabsTrigger>
-          <TabsTrigger value="geo-guidelines" className="text-sm sm:text-base">
-            <Target className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> GEO 가이드
           </TabsTrigger>
           <TabsTrigger value="blog-management" className="text-sm sm:text-base">
             <PenTool className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 블로그 관리
@@ -200,21 +196,6 @@ export default function AdminDashboardPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="geo-guidelines">
-          <Card className="shadow-lg border-primary/10">
-            <CardHeader>
-              <CardTitle className="font-headline text-2xl text-primary flex items-center">
-                <Target className="mr-2 h-6 w-6" /> GEO (생성형 엔진 최적화) 가이드라인
-              </CardTitle>
-              <CardDescription>
-                AI 검색 엔진에서 콘텐츠가 인용되도록 최적화하는 블로그 작성 가이드라인을 관리합니다.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <GEOGuidelinesManager />
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="blog-management">
           <Card className="shadow-lg border-primary/10">

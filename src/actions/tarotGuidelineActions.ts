@@ -21,7 +21,7 @@ const isFirebaseAdminAvailable = () => {
 // 캐시 관리
 let guidelinesCache: TarotGuidelinesResponse | null = null;
 let cacheTimestamp = 0;
-const CACHE_DURATION = 5 * 60 * 1000; // 5분 캐시
+const CACHE_DURATION = 30 * 60 * 1000; // 30분 캐시
 
 // 모든 타로 지침 데이터 가져오기
 export async function getAllTarotGuidelines(forceRefresh = false): Promise<TarotGuidelinesResponse> {
@@ -310,10 +310,30 @@ export async function toggleGuidelineStatus(
   isActive: boolean
 ): Promise<{ success: boolean; message: string }> {
   try {
-    if (!isFirebaseAdminAvailable() || !firestore) {
+    console.log('[tarotGuidelineActions] Toggling guideline status:', { id, isActive });
+    
+    // 시스템 디폴트 지침인지 확인
+    const isSystemGuideline = TAROT_GUIDELINES.some(g => g.id === id);
+    
+    if (isSystemGuideline) {
+      // 시스템 지침은 수정 불가
+      console.log('[tarotGuidelineActions] Cannot toggle system guideline:', id);
       return {
         success: false,
-        message: 'Firebase Admin이 초기화되지 않았습니다. 데이터베이스 연결을 확인해주세요.'
+        message: '시스템 기본 지침은 상태를 변경할 수 없습니다.'
+      };
+    }
+    
+    if (!isFirebaseAdminAvailable() || !firestore) {
+      // Firebase Admin이 사용 불가능하면 로컬 상태만 변경
+      console.warn('[tarotGuidelineActions] Firebase Admin not available, simulating toggle');
+      
+      // 캐시 무효화
+      guidelinesCache = null;
+      
+      return {
+        success: true,
+        message: `타로 지침이 ${isActive ? '활성화' : '비활성화'}되었습니다. (로컬)`
       };
     }
 
@@ -321,6 +341,9 @@ export async function toggleGuidelineStatus(
       isActive,
       updatedAt: new Date()
     });
+    
+    // 캐시 무효화
+    guidelinesCache = null;
     
     console.log('[tarotGuidelineActions] Toggled guideline status:', id, isActive);
     

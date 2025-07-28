@@ -18,6 +18,11 @@ import { encrypt, decrypt } from '@/lib/encryption';
 import { writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
 
+// 캐시 관리
+let providersCache: (AIProviderConfig & { maskedApiKey?: string })[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 10 * 60 * 1000; // 10분 캐시
+
 // Helper function to mask API key
 function maskApiKey(apiKey: string): string {
   if (!apiKey || apiKey.length < 8) return '••••••••••••••••';
@@ -63,6 +68,9 @@ export async function saveAIProviderConfig(
     // Also save to environment file for persistence
     await saveToEnvironmentFile(provider, apiKey);
 
+    // 캐시 무효화
+    providersCache = null;
+    
     console.log(`[DEV MOCK] Saved AI provider config:`, { provider, modelsCount: models.length });
 
     return { success: true, message: `${provider} 설정이 성공적으로 저장되었습니다. (환경변수에도 저장됨)` };
@@ -97,12 +105,19 @@ export async function getAIProviderConfig(
   }
 }
 
-export async function getAllAIProviderConfigs(): Promise<{
+export async function getAllAIProviderConfigs(forceRefresh = false): Promise<{
   success: boolean;
   data?: (AIProviderConfig & { maskedApiKey?: string })[];
   message?: string;
 }> {
   try {
+    // 캐시 확인
+    if (!forceRefresh && providersCache && (Date.now() - cacheTimestamp) < CACHE_DURATION) {
+      console.log('[aiProviderActions] Returning cached providers');
+      return { success: true, data: providersCache };
+    }
+    
+    console.log('[aiProviderActions] Fetching providers from Firestore...');
     const snapshot = await firestore.collection('aiProviderConfigs').get();
     const configs: (AIProviderConfig & { maskedApiKey?: string })[] = [];
 
@@ -119,6 +134,11 @@ export async function getAllAIProviderConfigs(): Promise<{
       };
       configs.push(decryptedConfig);
     }
+    
+    // 캐시 업데이트
+    providersCache = configs;
+    cacheTimestamp = Date.now();
+    console.log('[aiProviderActions] Cached', configs.length, 'providers');
 
     return { success: true, data: configs };
   } catch (error) {
@@ -169,6 +189,9 @@ export async function deleteAIProviderConfig(
   try {
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     await docRef.delete();
+    
+    // 캐시 무효화
+    providersCache = null;
 
     console.log(`[DEV MOCK] Deleted AI provider config:`, provider);
 
