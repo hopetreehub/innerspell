@@ -14,9 +14,10 @@ import { BlogManagement } from '@/components/admin/BlogManagement';
 import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
 import { AdminDashboardStats } from '@/components/admin/AdminDashboardStats';
 import { UsageStatsCharts } from '@/components/admin/UsageStatsCharts';
+import { RealTimeMonitoringDashboard } from '@/components/admin/RealTimeMonitoringDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, Target, PenTool, Bell, BarChart } from 'lucide-react';
+import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, Target, PenTool, Bell, BarChart, Activity } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { PushNotificationToggle } from '@/components/ui/push-notification-toggle';
 
@@ -57,7 +58,7 @@ export default function AdminDashboardPage() {
       cacheBuster.clearAuthLocalStorage();
     }
     
-    if (tab && ['stats', 'ai-providers', 'tarot-instructions', 'tarot-ai-config', 'dream-ai-config', 'blog-management', 'notifications', 'user-management', 'system-management'].includes(tab)) {
+    if (tab && ['stats', 'live-monitoring', 'ai-providers', 'tarot-instructions', 'tarot-ai-config', 'dream-ai-config', 'blog-management', 'notifications', 'user-management', 'system-management'].includes(tab)) {
       setActiveTab(tab);
     }
   }, []);
@@ -106,9 +107,12 @@ export default function AdminDashboardPage() {
       <AdminDashboardStats />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-9 mb-6">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-10 mb-6">
           <TabsTrigger value="stats" className="text-sm sm:text-base">
             <BarChart className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 통계
+          </TabsTrigger>
+          <TabsTrigger value="live-monitoring" className="text-sm sm:text-base">
+            <Activity className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 실시간
           </TabsTrigger>
           <TabsTrigger value="ai-providers" className="text-sm sm:text-base">
             <Bot className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> AI 공급자
@@ -148,6 +152,22 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <UsageStatsCharts />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="live-monitoring">
+          <Card className="shadow-lg border-primary/10">
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl text-primary flex items-center">
+                <Activity className="mr-2 h-6 w-6" /> 실시간 모니터링
+              </CardTitle>
+              <CardDescription>
+                사용자 활동, 시스템 성능, 실시간 이벤트를 모니터링합니다.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RealTimeMonitoringDashboard />
             </CardContent>
           </Card>
         </TabsContent>
