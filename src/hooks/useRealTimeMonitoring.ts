@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 
 interface ActiveUser {
   lastSeen: string;
@@ -49,7 +49,7 @@ export function useRealTimeMonitoring() {
     lastUpdate: null
   });
 
-  const { getAuthToken } = useAuth();
+  const { firebaseUser } = useAuth();
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttempts = useRef(0);
@@ -57,7 +57,7 @@ export function useRealTimeMonitoring() {
 
   const connect = async () => {
     try {
-      const token = await getAuthToken();
+      const token = firebaseUser ? await firebaseUser.getIdToken() : null;
       if (!token) {
         setState(prev => ({ ...prev, error: '인증 토큰이 없습니다.' }));
         return;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 
 interface TrackingEvent {
   type: 'tarot_reading' | 'dream_interpretation' | 'page_view' | 'error' | 'user_action';

@@ -21,7 +21,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, TrendingUp, Users, Activity, BarChart3 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 
 interface StatsData {
   summary: {
@@ -54,7 +54,7 @@ export function UsageStatsCharts() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user, getAuthToken } = useAuth();
+  const { user, firebaseUser } = useAuth();
 
   useEffect(() => {
     fetchStats();
@@ -62,11 +62,11 @@ export function UsageStatsCharts() {
 
   const fetchStats = async () => {
     try {
-      const token = await getAuthToken();
+      const token = firebaseUser ? await firebaseUser.getIdToken() : null;
       const response = await fetch('/api/admin/stats', {
-        headers: {
+        headers: token ? {
           'Authorization': `Bearer ${token}`
-        }
+        } : {}
       });
 
       if (!response.ok) {
