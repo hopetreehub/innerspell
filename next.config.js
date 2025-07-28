@@ -24,14 +24,11 @@ const nextConfig = {
   // 번들 최적화 - middleware 명시적 비활성화
   experimental: {
     optimizeCss: true,
-    skipMiddlewareUrlNormalize: true,
-    skipTrailingSlashRedirect: true,
   },
   
-  // Middleware 완전 비활성화
-  async middleware() {
-    return [];
-  },
+  // Middleware URL 정규화 비활성화
+  skipMiddlewareUrlNormalize: true,
+  skipTrailingSlashRedirect: true,
   
   // 빌드 최적화 (Next.js 15에서는 기본값)
   
