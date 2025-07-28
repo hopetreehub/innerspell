@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import webpush from 'web-push';
 
+export const runtime = 'nodejs';
+
 // Configure web-push with VAPID keys
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(
