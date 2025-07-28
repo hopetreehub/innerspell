@@ -45,6 +45,10 @@ export async function getCommunityPosts(
       console.log('[DEBUG] Mock storage state:', (global as any).mockStorage);
     }
     
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
+    
     const postsRef = firestore.collection('communityPosts');
     const queryByCategory = postsRef.where('category', '==', category);
     
@@ -90,6 +94,9 @@ export async function getCommunityPosts(
 
 export async function getCommunityPostById(postId: string): Promise<CommunityPost | null> {
   try {
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = firestore.collection('communityPosts').doc(postId);
     const doc = await docRef.get();
 
@@ -98,9 +105,11 @@ export async function getCommunityPostById(postId: string): Promise<CommunityPos
     }
     
     // Atomically increment view count, but don't let it block the response
-    docRef.update({ viewCount: FieldValue.increment(1) }).catch((err: any) => {
-      console.error(`Failed to increment view count for post ${postId}:`, err);
-    });
+    if (FieldValue) {
+      docRef.update({ viewCount: FieldValue.increment(1) }).catch((err: any) => {
+        console.error(`Failed to increment view count for post ${postId}:`, err);
+      });
+    }
 
     return mapDocToCommunityPost(doc);
   } catch (error) {
@@ -133,15 +142,21 @@ export async function createFreeDiscussionPost(
       category: 'free-discussion' as CommunityPostCategory,
       viewCount: 0,
       commentCount: 0,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
+      createdAt: FieldValue?.serverTimestamp() || new Date(),
+      updatedAt: FieldValue?.serverTimestamp() || new Date(),
     };
 
     console.log('[DEBUG] Saving post data:', newPostData);
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = await firestore.collection('communityPosts').add(newPostData);
     console.log('[DEBUG] Post created with ID:', docRef.id);
     
     // Verify post was saved
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const verification = await firestore.collection('communityPosts').doc(docRef.id).get();
     console.log('[DEBUG] Post verification - exists:', verification.exists);
     
@@ -158,6 +173,9 @@ export async function deleteCommunityPost(
   userId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = firestore.collection('communityPosts').doc(postId);
     const doc = await docRef.get();
 
@@ -202,10 +220,13 @@ export async function createCommunityPost(
       category: category || 'free-discussion',
       viewCount: 0,
       commentCount: 0,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
+      createdAt: FieldValue?.serverTimestamp() || new Date(),
+      updatedAt: FieldValue?.serverTimestamp() || new Date(),
     };
 
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = await firestore.collection('communityPosts').add(newPostData);
     return { success: true, postId: docRef.id };
 
@@ -240,10 +261,13 @@ export async function createReadingSharePost(
       category: 'reading-share' as CommunityPostCategory,
       viewCount: 0,
       commentCount: 0,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
+      createdAt: FieldValue?.serverTimestamp() || new Date(),
+      updatedAt: FieldValue?.serverTimestamp() || new Date(),
     };
 
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = await firestore.collection('communityPosts').add(newPostData);
     return { success: true, postId: docRef.id };
 

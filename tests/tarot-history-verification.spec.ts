@@ -1,265 +1,184 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-/**
- * 타로 리딩 히스토리 기능 검증 테스트
- * Vercel 배포 환경에서 애플리케이션 상태를 확인합니다.
- */
+const BASE_URL = 'http://localhost:4000';
 
-test.describe('타로 리딩 히스토리 기능 검증', () => {
+test.describe('Tarot Reading History Feature Verification', () => {
+  
+  test('1. Homepage loads successfully', async ({ page }) => {
+    // Go to homepage
+    await page.goto(BASE_URL);
+    
+    // Wait for page to load
+    await page.waitForLoadState('networkidle');
+    
+    // Take screenshot
+    await page.screenshot({ path: 'test-results/01-homepage.png', fullPage: true });
+    
+    // Verify basic elements
+    await expect(page).toHaveTitle(/Tarot|타로/i);
+    
+    console.log('✅ Homepage loaded successfully');
+  });
 
-  test('애플리케이션 접근성 및 기본 구조 확인', async ({ page }) => {
-    console.log('🔍 애플리케이션 기본 구조 확인 시작');
+  test('2. Profile page access test', async ({ page }) => {
+    // Go to profile page
+    await page.goto(`${BASE_URL}/profile`);
     
-    // 홈페이지 접근
-    await page.goto('/');
-    await page.waitForLoadState('networkidle', { timeout: 15000 });
+    // Wait for page to load
+    await page.waitForLoadState('networkidle');
     
-    console.log(`현재 URL: ${page.url()}`);
+    // Take screenshot
+    await page.screenshot({ path: 'test-results/02-profile-page.png', fullPage: true });
     
-    // 페이지 제목 확인 (Vercel SSO가 아닌 경우)
-    const title = await page.title();
-    console.log(`페이지 제목: ${title}`);
+    // Check if we're redirected to login or if profile loads
+    const currentUrl = page.url();
+    console.log('Current URL:', currentUrl);
     
-    // 스크린샷 촬영
-    await page.screenshot({ 
-      path: 'tests/screenshots/verification-01-homepage.png',
-      fullPage: true 
-    });
+    // Check for reading history component or login form
+    const hasReadingHistory = await page.locator('[data-testid="reading-history"], .reading-history, [class*="reading"], [class*="history"]').count() > 0;
+    const hasLoginForm = await page.locator('form, [type="email"], [type="password"], .login, .signin').count() > 0;
     
-    // 만약 InnerSpell 앱이 로드되었다면
-    if (!page.url().includes('vercel.com')) {
-      console.log('✅ InnerSpell 애플리케이션 정상 로드됨');
-      
-      // 네비게이션 메뉴 확인
-      const nav = await page.locator('nav, header').first();
-      if (await nav.isVisible()) {
-        console.log('✅ 네비게이션 메뉴 확인됨');
-      }
-      
-      // 메인 콘텐츠 확인
-      const main = await page.locator('main, [role="main"]').first();
-      if (await main.isVisible()) {
-        console.log('✅ 메인 콘텐츠 영역 확인됨');
-      }
+    if (hasReadingHistory) {
+      console.log('✅ Profile page with reading history component found');
+    } else if (hasLoginForm) {
+      console.log('ℹ️ Login required for profile access');
     } else {
-      console.log('⚠️ Vercel SSO 페이지로 리다이렉트됨');
+      console.log('⚠️ Profile page loaded but no specific components detected');
     }
-    
-    console.log('✅ 기본 구조 확인 완료');
   });
 
-  test('타로 관련 페이지 접근성 확인', async ({ page }) => {
-    console.log('🎴 타로 관련 페이지 접근성 확인 시작');
+  test('3. ReadingHistoryDashboard component verification', async ({ page }) => {
+    await page.goto(`${BASE_URL}/profile`);
+    await page.waitForLoadState('networkidle');
     
-    const tarotRoutes = ['/tarot', '/reading', '/profile', '/sign-in'];
-    
-    for (const route of tarotRoutes) {
-      console.log(`📍 ${route} 페이지 확인 중...`);
-      
-      await page.goto(route);
-      await page.waitForLoadState('networkidle', { timeout: 10000 });
-      
-      const currentUrl = page.url();
-      const title = await page.title();
-      
-      console.log(`  URL: ${currentUrl}`);
-      console.log(`  제목: ${title}`);
-      
-      // 스크린샷 촬영
-      await page.screenshot({ 
-        path: `tests/screenshots/verification-${route.replace('/', '')}-page.png`,
-        fullPage: true 
-      });
-      
-      // 페이지가 로드되었는지 확인
-      if (!currentUrl.includes('vercel.com')) {
-        console.log(`  ✅ ${route} 페이지 정상 로드`);
-      } else {
-        console.log(`  ⚠️ ${route} 페이지 SSO 리다이렉트`);
-      }
-    }
-    
-    console.log('✅ 타로 관련 페이지 접근성 확인 완료');
-  });
-
-  test('ReadingHistoryDashboard 컴포넌트 존재 확인', async ({ page }) => {
-    console.log('📊 ReadingHistoryDashboard 컴포넌트 확인 시작');
-    
-    // 소스 코드에서 컴포넌트 확인
-    const componentExists = await page.evaluate(() => {
-      // 페이지 소스에서 타로 히스토리 관련 요소 확인
-      const bodyText = document.body.innerText || '';
-      const htmlContent = document.documentElement.innerHTML || '';
-      
-      return {
-        hasHistoryText: bodyText.includes('타로 리딩 히스토리') || bodyText.includes('Reading History'),
-        hasDashboardText: bodyText.includes('대시보드') || bodyText.includes('Dashboard'),
-        hasTabsInHTML: htmlContent.includes('role="tablist"') || htmlContent.includes('tabs'),
-        hasAnalyticsText: bodyText.includes('분석') || bodyText.includes('Analytics'),
-        hasPatternsText: bodyText.includes('패턴') || bodyText.includes('Pattern'),
-        pageContent: bodyText.substring(0, 500) // 첫 500자만 로그용
-      };
-    });
-    
-    console.log('🔍 컴포넌트 존재 확인 결과:', componentExists);
-    
-    // 스크린샷 촬영
-    await page.screenshot({ 
-      path: 'tests/screenshots/verification-component-check.png',
-      fullPage: true 
-    });
-    
-    console.log('✅ ReadingHistoryDashboard 컴포넌트 확인 완료');
-  });
-
-  test('API 엔드포인트 상태 확인', async ({ page }) => {
-    console.log('🔌 API 엔드포인트 상태 확인 시작');
-    
-    const endpoints = [
-      { url: '/api/reading/history', expected: [401, 200] },
-      { url: '/api/reading/analytics', expected: [401, 200] },
-      { url: '/api/health', expected: [200] }
+    // Look for ReadingHistoryDashboard component indicators
+    const dashboardSelectors = [
+      '[data-testid="reading-history-dashboard"]',
+      '.reading-history-dashboard',
+      '[class*="ReadingHistory"]',
+      'div:has-text("Reading History")',
+      'div:has-text("타로 리딩 히스토리")',
+      'div:has-text("히스토리")',
+      '[data-component="ReadingHistoryDashboard"]'
     ];
     
-    for (const endpoint of endpoints) {
-      try {
-        const response = await page.request.get(endpoint.url);
-        const status = response.status();
-        
-        if (endpoint.expected.includes(status)) {
-          console.log(`✅ ${endpoint.url}: ${status} (예상된 응답)`);
-        } else {
-          console.log(`⚠️ ${endpoint.url}: ${status} (예상 외 응답)`);
-        }
-        
-        // 응답 헤더 확인
-        const contentType = response.headers()['content-type'];
-        if (contentType) {
-          console.log(`  Content-Type: ${contentType}`);
-        }
-        
-      } catch (error) {
-        console.log(`❌ ${endpoint.url}: 오류 - ${error}`);
+    let componentFound = false;
+    for (const selector of dashboardSelectors) {
+      const element = await page.locator(selector).first();
+      if (await element.count() > 0) {
+        componentFound = true;
+        console.log(`✅ ReadingHistoryDashboard component found with selector: ${selector}`);
+        break;
       }
     }
     
-    console.log('✅ API 엔드포인트 상태 확인 완료');
-  });
-
-  test('화면 반응성 및 레이아웃 확인', async ({ page }) => {
-    console.log('📱 화면 반응성 확인 시작');
+    // Take screenshot of profile page
+    await page.screenshot({ path: 'test-results/03-reading-history-dashboard.png', fullPage: true });
     
-    const viewports = [
-      { width: 1920, height: 1080, name: 'desktop' },
-      { width: 768, height: 1024, name: 'tablet' },
-      { width: 375, height: 667, name: 'mobile' }
-    ];
-    
-    for (const viewport of viewports) {
-      console.log(`📐 ${viewport.name} 뷰포트 테스트 (${viewport.width}x${viewport.height})`);
-      
-      await page.setViewportSize(viewport);
-      await page.goto('/');
-      await page.waitForLoadState('networkidle', { timeout: 10000 });
-      
-      // 스크린샷 촬영
-      await page.screenshot({ 
-        path: `tests/screenshots/verification-${viewport.name}.png`,
-        fullPage: true 
-      });
-      
-      // 기본 레이아웃 요소 확인
-      const layoutCheck = await page.evaluate(() => {
-        const body = document.body;
-        const header = document.querySelector('header, nav');
-        const main = document.querySelector('main, [role="main"]');
-        const footer = document.querySelector('footer');
-        
-        return {
-          bodyVisible: body && body.offsetHeight > 0,
-          headerVisible: header && header.offsetHeight > 0,
-          mainVisible: main && main.offsetHeight > 0,
-          footerVisible: footer && footer.offsetHeight > 0,
-          totalHeight: body ? body.scrollHeight : 0
-        };
-      });
-      
-      console.log(`  레이아웃 확인:`, layoutCheck);
-      console.log(`  ✅ ${viewport.name} 뷰포트 확인 완료`);
+    if (!componentFound) {
+      console.log('⚠️  ReadingHistoryDashboard component not visually detected');
     }
-    
-    console.log('✅ 화면 반응성 확인 완료');
   });
 
-  test('최종 애플리케이션 상태 종합 점검', async ({ page }) => {
-    console.log('🎯 최종 애플리케이션 상태 종합 점검 시작');
+  test('4. API endpoints status check', async ({ page }) => {
+    // Test reading history API
+    const historyResponse = await page.request.get(`${BASE_URL}/api/reading/history`);
+    console.log(`📊 /api/reading/history status: ${historyResponse.status()}`);
     
-    await page.goto('/');
-    await page.waitForLoadState('networkidle', { timeout: 15000 });
-    
-    // 종합적인 앱 상태 확인
-    const appStatus = await page.evaluate(() => {
-      const performanceEntries = performance.getEntriesByType('navigation');
-      const navigation = performanceEntries[0] as PerformanceNavigationTiming;
-      
-      return {
-        // 페이지 정보
-        url: window.location.href,
-        title: document.title,
-        readyState: document.readyState,
-        
-        // DOM 정보
-        hasReactRoot: !!document.querySelector('#__next, [data-reactroot]'),
-        totalElements: document.querySelectorAll('*').length,
-        scriptsCount: document.querySelectorAll('script').length,
-        stylesCount: document.querySelectorAll('link[rel="stylesheet"], style').length,
-        
-        // 성능 정보
-        loadTime: navigation ? Math.round(navigation.loadEventEnd - navigation.fetchStart) : 0,
-        domContentLoaded: navigation ? Math.round(navigation.domContentLoadedEventEnd - navigation.fetchStart) : 0,
-        
-        // 콘텐츠 확인
-        bodyText: document.body ? document.body.innerText.substring(0, 200) : '',
-        
-        // 오류 확인
-        hasConsoleErrors: window.console && console.error.toString !== Function.prototype.toString
-      };
-    });
-    
-    console.log('📊 애플리케이션 최종 상태:', appStatus);
-    
-    // 최종 스크린샷
-    await page.screenshot({ 
-      path: 'tests/screenshots/verification-final-status.png',
-      fullPage: true 
-    });
-    
-    // 테스트 결과 요약
-    const isWorkingApp = !appStatus.url.includes('vercel.com') && appStatus.hasReactRoot;
-    
-    if (isWorkingApp) {
-      console.log('🎉 InnerSpell 애플리케이션이 정상적으로 작동하고 있습니다!');
-      console.log(`   - 로딩 시간: ${appStatus.loadTime}ms`);
-      console.log(`   - DOM 요소 수: ${appStatus.totalElements}`);
-      console.log(`   - React 앱 확인: ${appStatus.hasReactRoot}`);
+    if (historyResponse.status() === 200) {
+      const historyData = await historyResponse.json();
+      console.log('✅ Reading history API working, data:', JSON.stringify(historyData, null, 2).slice(0, 200));
+    } else if (historyResponse.status() === 401) {
+      console.log('🔒 Reading history API requires authentication');
     } else {
-      console.log('⚠️ 애플리케이션이 Vercel SSO로 보호되어 있거나 다른 이슈가 있습니다.');
-      console.log(`   - 현재 URL: ${appStatus.url}`);
-      console.log(`   - 페이지 제목: ${appStatus.title}`);
+      console.log('❌ Reading history API error');
     }
     
-    console.log(`
-    📋 타로 리딩 히스토리 기능 검증 완료:
-    ✅ 애플리케이션 접근성 확인
-    ✅ 타로 관련 페이지 확인  
-    ✅ 컴포넌트 존재 확인
-    ✅ API 엔드포인트 확인
-    ✅ 화면 반응성 확인
-    ✅ 최종 상태 점검 완료
+    // Test analytics API
+    const analyticsResponse = await page.request.get(`${BASE_URL}/api/reading/analytics`);
+    console.log(`📊 /api/reading/analytics status: ${analyticsResponse.status()}`);
     
-    ${isWorkingApp ? '🎉' : '⚠️'} 검증 결과: ${isWorkingApp ? '정상 작동' : '접근 제한됨'}
-    `);
-    
-    console.log('✅ 최종 종합 점검 완료');
+    if (analyticsResponse.status() === 200) {
+      const analyticsData = await analyticsResponse.json();
+      console.log('✅ Analytics API working, data:', JSON.stringify(analyticsData, null, 2).slice(0, 200));
+    } else if (analyticsResponse.status() === 401) {
+      console.log('🔒 Analytics API requires authentication');
+    } else {
+      console.log('❌ Analytics API error');
+    }
   });
+
+  test('5. Mobile responsiveness test', async ({ page }) => {
+    // Test mobile viewport (iPhone 12)
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${BASE_URL}/profile`);
+    await page.waitForLoadState('networkidle');
+    
+    await page.screenshot({ path: 'test-results/05-mobile-profile.png', fullPage: true });
+    console.log('📱 Mobile viewport screenshot taken');
+    
+    // Test tablet viewport (iPad)
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await page.goto(`${BASE_URL}/profile`);
+    await page.waitForLoadState('networkidle');
+    
+    await page.screenshot({ path: 'test-results/05-tablet-profile.png', fullPage: true });
+    console.log('📱 Tablet viewport screenshot taken');
+    
+    // Test desktop viewport
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto(`${BASE_URL}/profile`);
+    await page.waitForLoadState('networkidle');
+    
+    await page.screenshot({ path: 'test-results/05-desktop-profile.png', fullPage: true });
+    console.log('🖥️  Desktop viewport screenshot taken');
+  });
+
+  test('6. Navigation and routing test', async ({ page }) => {
+    // Start from homepage
+    await page.goto(BASE_URL);
+    await page.waitForLoadState('networkidle');
+    
+    // Look for navigation links
+    const navLinks = await page.locator('nav a, header a, [href="/profile"]').all();
+    console.log(`Found ${navLinks.length} navigation links`);
+    
+    // Try to find profile link
+    const profileLink = await page.locator('[href="/profile"], a:has-text("Profile"), a:has-text("프로필")').first();
+    
+    if (await profileLink.count() > 0) {
+      await profileLink.click();
+      await page.waitForLoadState('networkidle');
+      console.log('✅ Successfully navigated to profile via link');
+    } else {
+      console.log('⚠️ No profile navigation link found');
+    }
+    
+    await page.screenshot({ path: 'test-results/06-navigation-test.png', fullPage: true });
+  });
+
+  test('7. Component structure analysis', async ({ page }) => {
+    await page.goto(`${BASE_URL}/profile`);
+    await page.waitForLoadState('networkidle');
+    
+    // Analyze page structure
+    const headings = await page.locator('h1, h2, h3').allTextContents();
+    console.log('📋 Page headings:', headings);
+    
+    const buttons = await page.locator('button').allTextContents();
+    console.log('🔘 Buttons found:', buttons.slice(0, 10)); // First 10 buttons
+    
+    const forms = await page.locator('form').count();
+    console.log('📝 Forms found:', forms);
+    
+    const cards = await page.locator('[class*="card"], .card, [data-testid*="card"]').count();
+    console.log('🎴 Card components found:', cards);
+    
+    // Look for data visualization elements (charts, graphs)
+    const charts = await page.locator('[class*="chart"], [class*="graph"], canvas, svg').count();
+    console.log('📊 Chart/visualization elements found:', charts);
+    
+    await page.screenshot({ path: 'test-results/07-component-analysis.png', fullPage: true });
+  });
+
 });

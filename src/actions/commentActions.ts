@@ -30,6 +30,9 @@ function mapDocToCommunityComment(doc: FirebaseFirestore.DocumentSnapshot): Comm
 // Get all comments for a specific post
 export async function getCommentsForPost(postId: string): Promise<CommunityComment[]> {
   try {
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const snapshot = await firestore
       .collection('communityPosts')
       .doc(postId)
@@ -113,6 +116,9 @@ export async function deleteComment(
       return { success: false, error: '댓글을 삭제할 권한이 없습니다.' };
     }
 
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     await firestore.runTransaction(async (transaction: any) => {
       transaction.delete(commentRef);
       transaction.update(postRef, {
@@ -140,6 +146,9 @@ export async function updateComment(
       return { success: false, error: validationResult.error.flatten().fieldErrors };
     }
 
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const commentRef = firestore.collection('communityPosts').doc(postId).collection('comments').doc(commentId);
     const doc = await commentRef.get();
 

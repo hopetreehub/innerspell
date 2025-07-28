@@ -1,9 +1,13 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { SignInForm } from '@/components/auth/SignInForm';
 import { auth } from '@/lib/firebase/client';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 // Mock the auth module
 jest.mock('@/lib/firebase/client');
+jest.mock('firebase/auth', () => ({
+  signInWithEmailAndPassword: jest.fn(),
+}));
 
 describe('SignInForm', () => {
   beforeEach(() => {
@@ -49,7 +53,7 @@ describe('SignInForm', () => {
   });
 
   it('handles successful login', async () => {
-    const mockSignIn = auth.signInWithEmailAndPassword as jest.Mock;
+    const mockSignIn = signInWithEmailAndPassword as jest.Mock;
     mockSignIn.mockResolvedValue({ user: { uid: '123' } });
     
     render(<SignInForm />);
@@ -63,12 +67,12 @@ describe('SignInForm', () => {
     fireEvent.click(submitButton);
     
     await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith(auth, 'test@example.com', 'password123');
+      expect(mockSignIn).toHaveBeenCalledWith(expect.anything(), 'test@example.com', 'password123');
     });
   });
 
   it('handles login error', async () => {
-    const mockSignIn = auth.signInWithEmailAndPassword as jest.Mock;
+    const mockSignIn = signInWithEmailAndPassword as jest.Mock;
     mockSignIn.mockRejectedValue(new Error('Invalid credentials'));
     
     render(<SignInForm />);

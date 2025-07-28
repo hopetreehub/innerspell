@@ -20,7 +20,7 @@ import {
   Timestamp,
   DocumentSnapshot
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase/admin';
+import { firestore as db } from '@/lib/firebase/admin';
 import { 
   ReadingExperience, 
   ReadingExperienceFormData, 
@@ -41,6 +41,9 @@ export async function createReadingExperience(
     const validatedData = ReadingExperienceFormSchema.parse(formData);
     
     // 사용자 정보 조회
+    if (!db) {
+      throw new Error('Firestore is not initialized');
+    }
     const userDoc = await getDoc(doc(db, 'users', userId));
     if (!userDoc.exists()) {
       throw new Error('사용자를 찾을 수 없습니다.');
@@ -65,9 +68,15 @@ export async function createReadingExperience(
     };
 
     // Firestore에 저장
+    if (!db) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = await addDoc(collection(db, 'reading-experiences'), experienceData);
     
     // 사용자 게시글 수 증가
+    if (!db) {
+      throw new Error('Firestore is not initialized');
+    }
     await runTransaction(db, async (transaction) => {
       const userRef = doc(db, 'users', userId);
       transaction.update(userRef, {

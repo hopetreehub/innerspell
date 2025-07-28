@@ -75,6 +75,9 @@ export async function saveAIProviderConfig(
     };
 
     // Save to Firestore - using unified collection name
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     await docRef.set(providerConfig);
 
@@ -97,6 +100,9 @@ export async function getAIProviderConfig(
   provider: AIProvider
 ): Promise<{ success: boolean; data?: AIProviderConfig; message?: string }> {
   try {
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     const doc = await docRef.get();
 
@@ -224,6 +230,9 @@ export async function deleteAIProviderConfig(
   provider: AIProvider
 ): Promise<{ success: boolean; message: string }> {
   try {
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     await docRef.delete();
     
@@ -267,9 +276,10 @@ export async function testAIProviderConnection(
     return testResult;
   } catch (error) {
     console.error('Error testing AI provider connection:', error);
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return { 
       success: false, 
-      message: `${provider} 연결 테스트 중 오류가 발생했습니다: ${error.message || '알 수 없는 오류'}` 
+      message: `${provider} 연결 테스트 중 오류가 발생했습니다: ${errorMessage}` 
     };
   }
 }
@@ -375,9 +385,10 @@ async function performConnectionTest(
     }
   } catch (error) {
     console.error(`[AI Connection Test] Error for ${provider}:`, error);
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return {
       success: false,
-      message: `연결 테스트 중 오류 발생: ${error.message || '알 수 없는 오류'}`
+      message: `연결 테스트 중 오류 발생: ${errorMessage}`
     };
   }
 }
@@ -411,9 +422,10 @@ async function testOpenAIConnection(
       };
     }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return {
       success: false,
-      message: `OpenAI 연결 실패: ${error.message}`
+      message: `OpenAI 연결 실패: ${errorMessage}`
     };
   }
 }
@@ -443,9 +455,10 @@ async function testGoogleAIConnection(
       };
     }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return {
       success: false,
-      message: `Google AI 연결 실패: ${error.message}`
+      message: `Google AI 연결 실패: ${errorMessage}`
     };
   }
 }
@@ -486,9 +499,10 @@ async function testAnthropicConnection(
       };
     }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return {
       success: false,
-      message: `Anthropic 연결 실패: ${error.message}`
+      message: `Anthropic 연결 실패: ${errorMessage}`
     };
   }
 }
@@ -535,9 +549,10 @@ async function testOpenRouterConnection(
       };
     }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return {
       success: false,
-      message: `OpenRouter 연결 실패: ${error.message}`
+      message: `OpenRouter 연결 실패: ${errorMessage}`
     };
   }
 }
@@ -571,9 +586,10 @@ async function testHuggingFaceConnection(
       };
     }
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return {
       success: false,
-      message: `Hugging Face 연결 실패: ${error.message}`
+      message: `Hugging Face 연결 실패: ${errorMessage}`
     };
   }
 }
@@ -583,6 +599,9 @@ export async function saveAIFeatureMapping(
   mappings: AIFeatureMapping[]
 ): Promise<{ success: boolean; message: string }> {
   try {
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     await docRef.set({ mappings, updatedAt: new Date() });
 
@@ -601,6 +620,9 @@ export async function getAIFeatureMappings(): Promise<{
   message?: string;
 }> {
   try {
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     const doc = await docRef.get();
 
@@ -699,12 +721,15 @@ export async function getAIConfiguration(): Promise<{
     }
 
     // Get global settings
+    if (!firestore) {
+      throw new Error('Firestore is not initialized');
+    }
     const globalDoc = await firestore.collection('aiConfiguration').doc('globalSettings').get();
     const globalSettings = globalDoc.exists ? globalDoc.data() : {
       defaultTemperature: 0.7,
       defaultMaxTokens: 1000,
       enableFallback: true,
-    };
+    } as { defaultTemperature: number; defaultMaxTokens: number; enableFallback: boolean; fallbackProvider?: AIProvider };
 
     const configuration: AIConfiguration = {
       providers: providersResult.data || [],
