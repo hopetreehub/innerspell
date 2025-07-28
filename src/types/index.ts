@@ -432,8 +432,8 @@ export const PROVIDER_MODELS: Record<AIProvider, AIModel[]> = {
     { id: 'gemini-pro-vision', name: 'Gemini Pro Vision', provider: 'gemini', maxTokens: 16384, costPer1kTokens: 0.002, capabilities: ['text', 'vision', 'function-calling'], isActive: true },
   ],
   googleai: [
-    { id: 'gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro', provider: 'googleai', maxTokens: 2097152, costPer1kTokens: 0.001, capabilities: ['text', 'vision', 'function-calling'], isActive: true },
-    { id: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash', provider: 'googleai', maxTokens: 1048576, costPer1kTokens: 0.0001, capabilities: ['text', 'vision', 'function-calling'], isActive: true },
+    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', provider: 'googleai', maxTokens: 2097152, costPer1kTokens: 0.001, capabilities: ['text', 'vision', 'function-calling'], isActive: true },
+    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', provider: 'googleai', maxTokens: 1048576, costPer1kTokens: 0.0001, capabilities: ['text', 'vision', 'function-calling'], isActive: true },
     { id: 'gemini-pro', name: 'Gemini Pro', provider: 'googleai', maxTokens: 32768, costPer1kTokens: 0.001, capabilities: ['text', 'function-calling'], isActive: true },
   ],
   anthropic: [

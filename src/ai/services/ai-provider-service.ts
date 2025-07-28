@@ -75,12 +75,12 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
       if (hasGemini) {
         defaultModels.push(
           {
-            id: 'googleai/gemini-1.5-flash-latest',
+            id: 'googleai/gemini-1.5-flash',
             name: 'Gemini 1.5 Flash (Google AI)',
             provider: 'googleai'
           },
           {
-            id: 'googleai/gemini-1.5-pro-latest',
+            id: 'googleai/gemini-1.5-pro',
             name: 'Gemini 1.5 Pro (Google AI)',
             provider: 'googleai'
           }

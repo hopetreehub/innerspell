@@ -15,7 +15,7 @@ import { getActiveAIModels } from '@/ai/services/ai-provider-service';
 // --- TAROT INTERPRETATION CONFIG ---
 
 // Default model is now determined dynamically from AI provider configs
-const DEFAULT_TAROT_MODEL = 'googleai/gemini-1.5-pro-latest'; // Fallback only
+const DEFAULT_TAROT_MODEL = 'googleai/gemini-1.5-pro'; // Fallback only
 const DEFAULT_TAROT_PROMPT_TEMPLATE = `[SYSTEM INSTRUCTIONS START]
 You are a compassionate, insightful, and wise tarot reader. Your primary goal is to provide a hopeful, empowering, and positive interpretation based on the user's unique situation and the cards drawn. You must synthesize the provided information into a coherent, flowing narrative.
 
