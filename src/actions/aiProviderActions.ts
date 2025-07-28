@@ -18,6 +18,17 @@ import { encrypt, decrypt } from '@/lib/encryption';
 import { writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
 
+// Helper function to mask API key
+function maskApiKey(apiKey: string): string {
+  if (!apiKey || apiKey.length < 8) return '••••••••••••••••';
+  
+  const firstChars = apiKey.slice(0, 3);
+  const lastChars = apiKey.slice(-3);
+  const maskedMiddle = '•'.repeat(Math.min(apiKey.length - 6, 16));
+  
+  return `${firstChars}${maskedMiddle}${lastChars}`;
+}
+
 export async function saveAIProviderConfig(
   formData: AIProviderFormData
 ): Promise<{ success: boolean; message: string }> {
@@ -88,21 +99,23 @@ export async function getAIProviderConfig(
 
 export async function getAllAIProviderConfigs(): Promise<{
   success: boolean;
-  data?: AIProviderConfig[];
+  data?: (AIProviderConfig & { maskedApiKey?: string })[];
   message?: string;
 }> {
   try {
     const snapshot = await firestore.collection('aiProviderConfigs').get();
-    const configs: AIProviderConfig[] = [];
+    const configs: (AIProviderConfig & { maskedApiKey?: string })[] = [];
 
     // Use docs array instead of forEach for better compatibility with mock
     const docs = snapshot.docs || [];
     for (const doc of docs) {
       const data = doc.data() as AIProviderConfig;
-      // Decrypt API key for display (mask it for security)
+      // Decrypt API key and create masked version
+      const decryptedKey = decrypt(data.apiKey);
       const decryptedConfig = {
         ...data,
-        apiKey: decrypt(data.apiKey).replace(/./g, '*'), // Mask the API key
+        apiKey: decryptedKey, // Send actual decrypted key
+        maskedApiKey: maskApiKey(decryptedKey), // Also send masked version
       };
       configs.push(decryptedConfig);
     }

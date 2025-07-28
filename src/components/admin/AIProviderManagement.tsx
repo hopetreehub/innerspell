@@ -22,7 +22,7 @@ interface AIProviderManagementProps {
 }
 
 export function AIProviderManagement({ className }: AIProviderManagementProps) {
-  const [providers, setProviders] = useState<Array<AIProviderConfig & { maskedApiKey: string }>>([]);
+  const [providers, setProviders] = useState<Array<AIProviderConfig & { maskedApiKey?: string }>>([]);
   const [featureMappings, setFeatureMappings] = useState<AIFeatureMapping[]>([]);
   const [loading, setLoading] = useState(true);
   const [showConfigForm, setShowConfigForm] = useState(false);
@@ -45,11 +45,8 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
         getAIFeatureMappings()
       ]);
       
-      if (providerConfigs.success) {
-        setProviders(providerConfigs.data?.map(config => ({
-          ...config,
-          maskedApiKey: config.apiKey
-        })) || []);
+      if (providerConfigs.success && providerConfigs.data) {
+        setProviders(providerConfigs.data);
       }
       
       if (mappings.success) {
@@ -346,8 +343,8 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-mono bg-background px-2 py-1 rounded border">
                           {showApiKeys[provider.provider] 
-                            ? provider.maskedApiKey || '••••••••••••••••' 
-                            : '••••••••••••••••'
+                            ? provider.apiKey 
+                            : (provider.maskedApiKey || '••••••••••••••••')
                           }
                         </span>
                         <Button
