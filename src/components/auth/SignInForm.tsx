@@ -97,10 +97,21 @@ export function SignInForm() {
     }
     try {
       // Always use real Firebase
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      console.log('🎉 Firebase 로그인 성공:', userCredential.user.email);
+      
       toast({ title: '로그인 성공', description: 'InnerSpell에 오신 것을 환영합니다!' });
-      const redirectUrl = searchParams.get('redirect') || '/';
-      router.push(redirectUrl);
+      
+      // 관리자 계정인지 확인
+      const isAdmin = userCredential.user.email === 'admin@innerspell.com';
+      const redirectUrl = searchParams.get('redirect') || (isAdmin ? '/admin' : '/');
+      
+      console.log('🔄 페이지 리다이렉션:', redirectUrl);
+      
+      // 짧은 딜레이 후 리다이렉션 (AuthContext 업데이트 대기)
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 1000);
     } catch (error: any) {
       console.error("Sign-In Error:", error);
       let errorMessage: React.ReactNode = `로그인 중 알 수 없는 오류가 발생했습니다. (코드: ${error.code})`;
@@ -153,10 +164,21 @@ export function SignInForm() {
     const provider = new GoogleAuthProvider();
     try {
       // Always use real Firebase
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      console.log('🎉 Google 로그인 성공:', result.user.email);
+      
       toast({ title: 'Google 로그인 성공', description: 'InnerSpell에 오신 것을 환영합니다!' });
-      const redirectUrl = searchParams.get('redirect') || '/';
-      router.push(redirectUrl);
+      
+      // 관리자 계정인지 확인
+      const isAdmin = result.user.email === 'admin@innerspell.com';
+      const redirectUrl = searchParams.get('redirect') || (isAdmin ? '/admin' : '/');
+      
+      console.log('🔄 페이지 리다이렉션:', redirectUrl);
+      
+      // 짧은 딜레이 후 리다이렉션 (AuthContext 업데이트 대기)
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 1000);
     } catch (error: any) {
       console.error("Google Sign-In Error:", error);
       let errorMessage: React.ReactNode;

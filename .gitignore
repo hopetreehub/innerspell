@@ -44,3 +44,10 @@ playwright-report/
 
 # Vercel
 .vercel
+
+# Firebase service account keys
+firebase-service-account-key.json
+*.json
+!package*.json
+!tsconfig*.json
+!firebase.json
