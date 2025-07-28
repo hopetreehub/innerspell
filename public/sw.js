@@ -1,5 +1,7 @@
-// InnerSpell Service Worker
-const CACHE_NAME = 'innerspell-v1';
+// InnerSpell Service Worker - Performance Optimized
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = `innerspell-cache-${CACHE_VERSION}`;
+
 const urlsToCache = [
   '/',
   '/offline',
@@ -17,6 +19,30 @@ const STATIC_RESOURCES = [
   '/images/2road.png',
   '/images/3wisdom.png',
 ];
+
+// 캐시 전략 정의
+const CACHE_STRATEGIES = {
+  // 정적 리소스 - 캐시 우선 (1년)
+  static: {
+    pattern: /\/_next\/static\/|\/images\/|\/icons\/|\.(?:css|js|woff2?|ttf|otf|png|jpg|jpeg|webp|avif|svg)$/,
+    strategy: 'cache-first',
+    maxAge: 365 * 24 * 60 * 60 // 1년
+  },
+  
+  // API 응답 - 네트워크 우선 (5분)
+  api: {
+    pattern: /\/api\//,
+    strategy: 'network-first',
+    maxAge: 5 * 60 // 5분
+  },
+  
+  // 페이지 - Stale While Revalidate (1시간)
+  pages: {
+    pattern: /^https?:\/\/[^\/]+\/(?!api\/|_next\/)/,
+    strategy: 'stale-while-revalidate',
+    maxAge: 60 * 60 // 1시간
+  }
+};
 
 // 설치 이벤트 - 캐시 초기화
 self.addEventListener('install', (event) => {
@@ -49,89 +75,96 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 페치 이벤트 - 네트워크 요청 가로채기
+// 페치 이벤트 - 네트워크 요청 가로채기 (최적화된 버전)
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
 
-  // API 요청은 항상 네트워크 우선
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(request)
-        .catch(() => {
-          // API 요청 실패 시 오프라인 응답
-          return new Response(
-            JSON.stringify({ 
-              error: '오프라인 상태입니다. 인터넷 연결을 확인해주세요.' 
-            }),
-            { 
-              headers: { 'Content-Type': 'application/json' },
-              status: 503
-            }
-          );
-        })
-    );
+  // GET 요청만 캐싱
+  if (request.method !== 'GET') {
     return;
   }
 
-  // 정적 리소스는 캐시 우선
-  if (request.destination === 'image' || 
-      request.destination === 'script' || 
-      request.destination === 'style' ||
-      request.destination === 'font') {
-    event.respondWith(
-      caches.match(request)
-        .then((response) => {
-          if (response) {
-            // 캐시에서 찾음
-            return response;
-          }
-          // 네트워크에서 가져오고 캐시에 저장
-          return fetch(request).then((response) => {
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(request, responseToCache);
-              });
-            return response;
-          });
-        })
-    );
-    return;
+  // 캐시 전략 결정
+  let strategy = null;
+  for (const [name, config] of Object.entries(CACHE_STRATEGIES)) {
+    if (config.pattern.test(request.url)) {
+      strategy = config;
+      break;
+    }
   }
 
-  // HTML 페이지는 네트워크 우선, 실패 시 캐시
+  if (!strategy) {
+    return; // 캐싱하지 않음
+  }
+
   event.respondWith(
-    fetch(request)
-      .then((response) => {
-        // 성공적인 응답을 캐시에 저장
-        if (response && response.status === 200 && response.type === 'basic') {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(request, responseToCache);
-            });
-        }
-        return response;
-      })
-      .catch(() => {
-        // 네트워크 실패 시 캐시에서 가져오기
-        return caches.match(request)
-          .then((response) => {
-            if (response) {
-              return response;
-            }
-            // 캐시에도 없으면 오프라인 페이지 표시
-            if (request.destination === 'document') {
-              return caches.match('/offline');
-            }
-          });
-      })
+    handleRequest(request, strategy)
   );
 });
+
+// 요청 처리 함수 (최적화된 캐시 전략)
+async function handleRequest(request, strategy) {
+  const cache = await caches.open(CACHE_NAME);
+  const cachedResponse = await cache.match(request);
+
+  switch (strategy.strategy) {
+    case 'cache-first':
+      return cachedResponse || fetchAndCache(request, cache, strategy);
+    
+    case 'network-first':
+      try {
+        return await fetchAndCache(request, cache, strategy);
+      } catch (error) {
+        return cachedResponse || createOfflineResponse();
+      }
+    
+    case 'stale-while-revalidate':
+      // 캐시된 응답 반환하면서 백그라운드에서 업데이트
+      if (cachedResponse) {
+        fetchAndCache(request, cache, strategy); // 백그라운드 업데이트
+        return cachedResponse;
+      }
+      return fetchAndCache(request, cache, strategy);
+    
+    default:
+      return fetch(request);
+  }
+}
+
+// 네트워크에서 가져와 캐시에 저장
+async function fetchAndCache(request, cache, strategy) {
+  try {
+    const response = await fetch(request);
+    
+    if (response.ok) {
+      // 응답 복제 (Stream은 한번만 읽을 수 있음)
+      const responseToCache = response.clone();
+      await cache.put(request, responseToCache);
+    }
+    
+    return response;
+  } catch (error) {
+    console.error('[Service Worker] Network error:', error);
+    throw error;
+  }
+}
+
+// 오프라인 응답 생성
+function createOfflineResponse() {
+  return new Response(
+    JSON.stringify({
+      error: '오프라인 상태입니다. 인터넷 연결을 확인해주세요.',
+      timestamp: Date.now()
+    }),
+    {
+      status: 503,
+      statusText: 'Service Unavailable',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+}
 
 // 백그라운드 동기화
 self.addEventListener('sync', (event) => {
@@ -198,7 +231,7 @@ async function syncReadings() {
   }
 }
 
-// 캐시 버전 관리
+// 캐시 버전 관리 및 정리
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
@@ -209,4 +242,45 @@ self.addEventListener('message', (event) => {
       console.log('[Service Worker] Cache cleared');
     });
   }
+
+  if (event.data && event.data.type === 'CLEAN_EXPIRED_CACHE') {
+    event.waitUntil(cleanExpiredCache());
+  }
 });
+
+// 만료된 캐시 정리
+async function cleanExpiredCache() {
+  const cache = await caches.open(CACHE_NAME);
+  const requests = await cache.keys();
+  
+  const now = Date.now();
+  let cleanedCount = 0;
+  
+  for (const request of requests) {
+    const response = await cache.match(request);
+    if (response) {
+      const cacheControl = response.headers.get('cache-control');
+      const dateHeader = response.headers.get('date');
+      
+      if (cacheControl && dateHeader) {
+        const maxAgeMatch = cacheControl.match(/max-age=(\d+)/);
+        if (maxAgeMatch) {
+          const maxAge = parseInt(maxAgeMatch[1]);
+          const responseDate = new Date(dateHeader).getTime();
+          
+          if (now - responseDate > maxAge * 1000) {
+            await cache.delete(request);
+            cleanedCount++;
+          }
+        }
+      }
+    }
+  }
+  
+  console.log(`[Service Worker] Cleaned ${cleanedCount} expired cache entries`);
+}
+
+// 정기적 캐시 정리 (24시간마다)
+setInterval(() => {
+  cleanExpiredCache();
+}, 24 * 60 * 60 * 1000);

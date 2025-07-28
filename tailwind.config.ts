@@ -11,9 +11,33 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Alegreya', 'Noto Sans KR', 'serif'],
-        headline: ['Belleza', 'Noto Sans KR', 'sans-serif'],
-        code: ['monospace'],
+        body: [
+          'Pretendard',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Apple SD Gothic Neo',
+          'Malgun Gothic',
+          'system-ui',
+          'sans-serif'
+        ],
+        heading: [
+          'Pretendard',
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Apple SD Gothic Neo',
+          'Malgun Gothic',
+          'system-ui',
+          'sans-serif'
+        ],
+        mono: [
+          'JetBrains Mono',
+          'Monaco',
+          'Consolas',
+          'Liberation Mono',
+          'Courier New',
+          'monospace'
+        ],
       },
       colors: {
         background: 'hsl(var(--background))',

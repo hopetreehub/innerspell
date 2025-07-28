@@ -47,6 +47,31 @@ const nextConfig = {
             chunks: 'all',
             test: /node_modules/,
             priority: 20,
+            maxSize: 244000, // 244KB 제한
+          },
+          // AI 관련 라이브러리 분리
+          ai: {
+            name: 'ai-libs',
+            chunks: 'all',
+            test: /node_modules\/(openai|@google\/generative-ai|@genkit-ai)/,
+            priority: 25,
+            maxSize: 512000, // 512KB 제한
+          },
+          // 차트 라이브러리 분리
+          charts: {
+            name: 'charts',
+            chunks: 'all',
+            test: /node_modules\/recharts/,
+            priority: 23,
+            maxSize: 256000, // 256KB 제한
+          },
+          // UI 라이브러리 분리
+          radixUI: {
+            name: 'radix-ui',
+            chunks: 'all',
+            test: /node_modules\/@radix-ui/,
+            priority: 22,
+            maxSize: 200000, // 200KB 제한
           },
           // 공통 컴포넌트
           common: {
