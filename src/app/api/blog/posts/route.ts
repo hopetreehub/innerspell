@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllPostsServer, createPostServer } from '@/services/blog-service-server';
 
+export const runtime = 'nodejs';
+
 // 관리자 권한 확인 (Mock 버전)
 async function verifyAdmin(request: NextRequest): Promise<{ isAdmin: boolean; userId?: string }> {
   // 로컬 환경에서는 항상 admin으로 처리 (개발 및 테스트용)

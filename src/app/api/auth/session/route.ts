@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/firebase/admin';
 import { cookies } from 'next/headers';
 
+export const runtime = 'nodejs';
+
 // 세션 쿠키 생성 API
 export async function POST(request: NextRequest) {
   try {

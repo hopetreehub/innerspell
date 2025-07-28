@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const runtime = 'nodejs';
 import { getAllAIProviderConfigs, saveAIProviderConfig } from '@/actions/aiProviderActions';
 
 export async function GET(request: NextRequest) {

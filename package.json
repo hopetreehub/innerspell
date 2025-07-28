@@ -6,7 +6,7 @@
     "dev": "next dev --hostname 0.0.0.0 --port 4000",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
-    "prebuild": "echo '🚀 Starting fresh build...' && rm -rf .next",
+    "prebuild": "echo '🚀 Starting fresh build - clearing all cache...' && rm -rf .next && rm -rf .vercel/cache && rm -rf node_modules/.cache",
     "build": "echo '📦 Building with 12 blog posts...' && next build",
     "postbuild": "echo '✅ Build completed successfully!'",
     "start": "next start",

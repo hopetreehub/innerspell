@@ -1,11 +1,12 @@
 /** @type {import('next').NextConfig} */
 // 🚀 FORCE DEPLOY v1.0.0 - Blog Posts Fix
 const nextConfig = {
-  // Force rebuild timestamp
+  // Force rebuild timestamp - Middleware cache bust
   env: {
     FORCE_REBUILD_TIME: new Date().toISOString(),
     BLOG_POSTS_TARGET: '12',
     PWA_ENABLED: 'true',
+    MIDDLEWARE_CACHE_BUST: '2025-07-28-cache-clear',
   },
   // TypeScript 빌드 에러 무시 (프로덕션 배포용)
   typescript: {
@@ -20,9 +21,16 @@ const nextConfig = {
     domains: ['firebasestorage.googleapis.com', 'innerspell-an7ce.firebasestorage.app'],
   },
   
-  // 번들 최적화
+  // 번들 최적화 - middleware 명시적 비활성화
   experimental: {
     optimizeCss: true,
+    skipMiddlewareUrlNormalize: true,
+    skipTrailingSlashRedirect: true,
+  },
+  
+  // Middleware 완전 비활성화
+  async middleware() {
+    return [];
   },
   
   // 빌드 최적화 (Next.js 15에서는 기본값)
