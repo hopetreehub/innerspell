@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { csrfProtection, setCSRFToken } from './middleware/csrf';
-import { strictApiLimiter, authLimiter, aiRequestLimiter } from './middleware/advanced-rate-limit';
+import { strictApiLimiter, authLimiter, aiRequestLimiter } from './middleware/simple-rate-limit';
 
 export async function middleware(request: NextRequest) {
   // Apply advanced rate limiting first
@@ -66,7 +66,9 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Vary', 'Cookie, Authorization, X-Requested-With, Accept, Accept-Encoding, Accept-Language');
   }
   
-  // Enhanced CSRF Protection (disabled in development due to Edge runtime limitations)
+  // CSRF Protection temporarily disabled for Edge Runtime debugging
+  // TODO: Re-enable after fixing Edge Runtime compatibility
+  /*
   if (process.env.NODE_ENV === 'production') {
     const csrfResponse = await csrfProtection(request);
     if (csrfResponse) {
@@ -78,6 +80,7 @@ export async function middleware(request: NextRequest) {
       setCSRFToken(response);
     }
   }
+  */
   
   // Content Security Policy (Firebase 도메인 추가 - v2 강제 업데이트)
   if (process.env.NODE_ENV === 'production') {
@@ -92,7 +95,6 @@ export async function middleware(request: NextRequest) {
     ].join("; ");
     
     response.headers.set('Content-Security-Policy', cspPolicy);
-    console.log('CSP Policy Set:', cspPolicy); // 디버깅용
   }
   
   return response;
