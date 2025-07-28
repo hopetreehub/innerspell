@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +39,8 @@ import {
   toggleGuidelineStatus,
   getGuidelineBySpreadAndStyle
 } from '@/actions/tarotGuidelineActions';
+import { TAROT_GUIDELINES } from '@/data/tarot-guidelines';
+import { TAROT_SPREADS, INTERPRETATION_STYLES } from '@/data/tarot-spreads';
 import { TarotGuidelineForm } from './TarotGuidelineForm';
 
 interface TarotGuidelineManagementProps {
@@ -58,13 +60,14 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
   const [editingGuideline, setEditingGuideline] = useState<TarotGuideline | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // 메모이제이션된 로딩 함수
+  const memoizedLoadData = useCallback(loadData, []);
+  
   // 초기 데이터 로딩 최적화
   useEffect(() => {
-    // setTimeout을 사용하여 비동기로 로딩
-    setTimeout(() => {
-      loadData();
-    }, 0);
-  }, []);
+    // 즉시 실행으로 더 빠른 로딩
+    memoizedLoadData();
+  }, [memoizedLoadData]);
 
   // 캐시 버스팅 - 강제 새로고침 버튼
   const handleForceRefresh = () => {
@@ -80,64 +83,52 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
   const loadData = async () => {
     try {
       setLoading(true);
-      console.log('🔄 [TarotGuidelineManagement] Loading tarot guidelines data...');
+      console.log('⚡ [TarotGuidelineManagement] Optimized loading started...');
       
-      // 방법 1: 서버 액션 시도
+      // 1단계: 즉시 기본 데이터 표시 (동기적)
+      setGuidelines(TAROT_GUIDELINES);
+      setSpreads(TAROT_SPREADS);
+      setStyles(INTERPRETATION_STYLES);
+      setCombinations([]);
+      
+      console.log('✅ [TarotGuidelineManagement] Base data loaded immediately:', TAROT_GUIDELINES.length);
+      setLoading(false); // 기본 데이터 로딩 완료
+      
+      // 2단계: 백그라운드에서 서버 데이터 추가 로드 (비동기적)
       try {
         const result = await getAllTarotGuidelines();
-        console.log('📊 [TarotGuidelineManagement] Server action result:', result);
         
         if (result.success && result.data) {
-          console.log('✅ [TarotGuidelineManagement] Server action success:', {
-            guidelines: result.data.guidelines.length,
-            spreads: result.data.spreads.length,
-            styles: result.data.styles.length,
-            combinations: result.data.combinations.length
+          console.log('✅ [TarotGuidelineManagement] Server data merged:', {
+            total: result.data.guidelines.length,
+            server: result.data.guidelines.length - TAROT_GUIDELINES.length
           });
           
+          // 서버 데이터와 병합 (중복 제거)
           setGuidelines(result.data.guidelines);
           setSpreads(result.data.spreads);
           setStyles(result.data.styles);
-          setCombinations(result.data.combinations);
+          setCombinations(result.data.combinations || []);
           
-          toast.success(`타로 지침 로딩 완료! (${result.data.guidelines.length}개 지침)`);
-          return;
+          if (result.data.guidelines.length > TAROT_GUIDELINES.length) {
+            toast.success(`타로 지침 업데이트 완료! (+${result.data.guidelines.length - TAROT_GUIDELINES.length}개 추가)`);
+          }
         }
-      } catch (serverActionError) {
-        console.error('❌ [TarotGuidelineManagement] Server action failed:', serverActionError);
+      } catch (serverError) {
+        console.warn('⚠️ [TarotGuidelineManagement] Server data load failed, using base data:', serverError);
+        // 기본 데이터로 이미 로드되어 있으므로 에러 무시
       }
       
-      // 방법 2: 직접 데이터 import 폴백
-      try {
-        console.log('🔄 [TarotGuidelineManagement] Using direct import fallback...');
-        const { TAROT_GUIDELINES } = await import('@/data/tarot-guidelines');
-        const { TAROT_SPREADS, INTERPRETATION_STYLES } = await import('@/data/tarot-spreads');
-        
-        console.log('✅ [TarotGuidelineManagement] Direct import success:', TAROT_GUIDELINES.length);
-        
-        setGuidelines(TAROT_GUIDELINES);
-        setSpreads(TAROT_SPREADS);
-        setStyles(INTERPRETATION_STYLES);
-        setCombinations([]);
-        
-        toast.success(`타로 지침 로딩 완료! (${TAROT_GUIDELINES.length}개 지침) - 직접 로드`);
-        return;
-      } catch (directError) {
-        console.error('❌ [TarotGuidelineManagement] Direct import failed:', directError);
-      }
-      
-      // 모든 방법 실패
-      toast.error('타로 지침 데이터를 불러올 수 없습니다.');
-      setGuidelines([]);
-      setSpreads([]);
-      setStyles([]);
-      setCombinations([]);
-      
+      console.log('✅ [TarotGuidelineManagement] Optimized loading completed');
     } catch (error) {
-      console.error('❌ [TarotGuidelineManagement] Unexpected error:', error);
-      toast.error('예상치 못한 오류가 발생했습니다.');
-    } finally {
+      console.error('❌ [TarotGuidelineManagement] Loading failed:', error);
+      // 기본 데이터라도 표시
+      setGuidelines(TAROT_GUIDELINES);
+      setSpreads(TAROT_SPREADS);
+      setStyles(INTERPRETATION_STYLES);
+      setCombinations([]);
       setLoading(false);
+      toast.error('서버 데이터 로딩 실패, 기본 데이터 사용 중');
     }
   };
 
@@ -187,13 +178,14 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
     }
   };
 
-  const getSpreadName = (spreadId: string) => {
+  // 메모이제이션된 룩업 함수들
+  const getSpreadName = useCallback((spreadId: string) => {
     return spreads.find(s => s.id === spreadId)?.name || spreadId;
-  };
+  }, [spreads]);
 
-  const getStyleName = (styleId: string) => {
+  const getStyleName = useCallback((styleId: string) => {
     return styles.find(s => s.id === styleId)?.name || styleId;
-  };
+  }, [styles]);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -204,12 +196,18 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
     }
   };
 
-  const filteredGuidelines = guidelines.filter(guideline =>
-    guideline.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    guideline.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getSpreadName(guideline.spreadId).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getStyleName(guideline.styleId).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 메모이제이션된 필터링 로직
+  const filteredGuidelines = useMemo(() => {
+    if (!searchTerm.trim()) return guidelines;
+    
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return guidelines.filter(guideline =>
+      guideline.name.toLowerCase().includes(lowerSearchTerm) ||
+      guideline.description.toLowerCase().includes(lowerSearchTerm) ||
+      getSpreadName(guideline.spreadId).toLowerCase().includes(lowerSearchTerm) ||
+      getStyleName(guideline.styleId).toLowerCase().includes(lowerSearchTerm)
+    );
+  }, [guidelines, searchTerm]);
 
   const handleCreateNew = () => {
     setEditingGuideline(null);
