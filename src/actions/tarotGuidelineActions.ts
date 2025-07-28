@@ -13,6 +13,19 @@ import {
 import { TAROT_SPREADS, INTERPRETATION_STYLES } from '@/data/tarot-spreads';
 import { TAROT_GUIDELINES, SPREAD_STYLE_COMBINATIONS } from '@/data/tarot-guidelines';
 
+// 브라우저 캐시 사용 (클라이언트에서만)
+let cacheTarotGuidelines: ((data: any) => Promise<void>) | null = null;
+let getCachedTarotGuidelines: (() => Promise<any>) | null = null;
+
+if (typeof window !== 'undefined') {
+  import('../lib/cache').then(({ cacheTarotGuidelines: cache, getCachedTarotGuidelines: get }) => {
+    cacheTarotGuidelines = cache;
+    getCachedTarotGuidelines = get;
+  }).catch(() => {
+    // 캐시 모듈 로드 실패 시 무시
+  });
+}
+
 // Firebase Admin이 사용할 수 없을 때의 폴백 처리
 const isFirebaseAdminAvailable = () => {
   return firestore !== null;
@@ -21,16 +34,29 @@ const isFirebaseAdminAvailable = () => {
 // 캐시 관리
 let guidelinesCache: TarotGuidelinesResponse | null = null;
 let cacheTimestamp = 0;
-const CACHE_DURATION = 30 * 60 * 1000; // 30분 캐시
+const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2시간 캐시
 
 // 모든 타로 지침 데이터 가져오기
 export async function getAllTarotGuidelines(forceRefresh = false): Promise<TarotGuidelinesResponse> {
   try {
     console.log('[tarotGuidelineActions] Fetching all tarot guidelines...');
     
-    // 캐시 확인 (강제 새로고침이 아닌 경우)
+    // 브라우저 캐시 확인 (클라이언트에서만)
+    if (!forceRefresh && getCachedTarotGuidelines) {
+      try {
+        const browserCached = await getCachedTarotGuidelines();
+        if (browserCached) {
+          console.log('[tarotGuidelineActions] Returning browser cached guidelines');
+          return browserCached;
+        }
+      } catch (error) {
+        console.warn('[tarotGuidelineActions] Browser cache failed:', error);
+      }
+    }
+    
+    // 메모리 캐시 확인 (강제 새로고침이 아닌 경우)
     if (!forceRefresh && guidelinesCache && (Date.now() - cacheTimestamp) < CACHE_DURATION) {
-      console.log('[tarotGuidelineActions] Returning cached data');
+      console.log('[tarotGuidelineActions] Returning memory cached data');
       return guidelinesCache;
     }
     
@@ -81,9 +107,19 @@ export async function getAllTarotGuidelines(forceRefresh = false): Promise<Tarot
       }
     };
     
-    // 캐시 업데이트
+    // 메모리 캐시 업데이트
     guidelinesCache = response;
     cacheTimestamp = Date.now();
+    
+    // 브라우저 캐시 업데이트 (클라이언트에서만)
+    if (cacheTarotGuidelines) {
+      try {
+        await cacheTarotGuidelines(response);
+        console.log('[tarotGuidelineActions] Updated browser cache with guidelines');
+      } catch (error) {
+        console.warn('[tarotGuidelineActions] Failed to update browser cache:', error);
+      }
+    }
     
     console.log('[tarotGuidelineActions] Successfully loaded and cached guidelines:', {
       total: uniqueGuidelines.length,

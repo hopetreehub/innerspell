@@ -18,10 +18,23 @@ import { encrypt, decrypt } from '@/lib/encryption';
 import { writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
 
+// 브라우저 캐시 사용 (클라이언트에서만)
+let cacheAIProviders: ((data: any) => Promise<void>) | null = null;
+let getCachedAIProviders: (() => Promise<any>) | null = null;
+
+if (typeof window !== 'undefined') {
+  import('../lib/cache').then(({ cacheAIProviders: cache, getCachedAIProviders: get }) => {
+    cacheAIProviders = cache;
+    getCachedAIProviders = get;
+  }).catch(() => {
+    // 캐시 모듈 로드 실패 시 무시
+  });
+}
+
 // 캐시 관리
 let providersCache: (AIProviderConfig & { maskedApiKey?: string })[] | null = null;
 let cacheTimestamp = 0;
-const CACHE_DURATION = 10 * 60 * 1000; // 10분 캐시
+const CACHE_DURATION = 60 * 60 * 1000; // 1시간 캐시
 
 // Helper function to mask API key
 function maskApiKey(apiKey: string): string {
@@ -111,9 +124,22 @@ export async function getAllAIProviderConfigs(forceRefresh = false): Promise<{
   message?: string;
 }> {
   try {
-    // 캐시 확인
+    // 브라우저 캐시 확인 (클라이언트에서만)
+    if (!forceRefresh && getCachedAIProviders) {
+      try {
+        const browserCached = await getCachedAIProviders();
+        if (browserCached) {
+          console.log('[aiProviderActions] Returning browser cached providers');
+          return { success: true, data: browserCached };
+        }
+      } catch (error) {
+        console.warn('[aiProviderActions] Browser cache failed:', error);
+      }
+    }
+    
+    // 메모리 캐시 확인
     if (!forceRefresh && providersCache && (Date.now() - cacheTimestamp) < CACHE_DURATION) {
-      console.log('[aiProviderActions] Returning cached providers');
+      console.log('[aiProviderActions] Returning memory cached providers');
       return { success: true, data: providersCache };
     }
     
@@ -135,9 +161,20 @@ export async function getAllAIProviderConfigs(forceRefresh = false): Promise<{
       configs.push(decryptedConfig);
     }
     
-    // 캐시 업데이트
+    // 메모리 캐시 업데이트
     providersCache = configs;
     cacheTimestamp = Date.now();
+    
+    // 브라우저 캐시 업데이트 (클라이언트에서만)
+    if (cacheAIProviders) {
+      try {
+        await cacheAIProviders(configs);
+        console.log('[aiProviderActions] Updated browser cache with', configs.length, 'providers');
+      } catch (error) {
+        console.warn('[aiProviderActions] Failed to update browser cache:', error);
+      }
+    }
+    
     console.log('[aiProviderActions] Cached', configs.length, 'providers');
 
     return { success: true, data: configs };

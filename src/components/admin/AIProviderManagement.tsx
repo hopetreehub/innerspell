@@ -33,8 +33,12 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
   const [testingAllProviders, setTestingAllProviders] = useState(false);
   const [testResults, setTestResults] = useState<Record<string, boolean>>({});
 
+  // 초기 데이터 로딩 최적화
   useEffect(() => {
-    loadData();
+    // setTimeout을 사용하여 비동기로 로딩
+    setTimeout(() => {
+      loadData();
+    }, 0);
   }, []);
 
   const loadData = async () => {

@@ -58,8 +58,12 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
   const [editingGuideline, setEditingGuideline] = useState<TarotGuideline | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // 초기 데이터 로딩 최적화
   useEffect(() => {
-    loadData();
+    // setTimeout을 사용하여 비동기로 로딩
+    setTimeout(() => {
+      loadData();
+    }, 0);
   }, []);
 
   // 캐시 버스팅 - 강제 새로고침 버튼
