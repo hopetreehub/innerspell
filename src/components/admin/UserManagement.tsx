@@ -24,9 +24,14 @@ import {
   ChevronLeft,
   ChevronRight,
   MoreVertical,
-  Download
+  Download,
+  BarChart3,
+  TrendingUp,
+  Activity,
+  Zap
 } from "lucide-react";
 import { listFirebaseUsers, changeUserRole, type AppUser } from '@/actions/userActions';
+import { getAllUsageStats, getUserUsageDetails, getUsageStatsSummary, type UsageStats, type DetailedUsageRecord } from '@/actions/usageStatsActions';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -88,6 +93,14 @@ export function UserManagement() {
   const [isUpdatingRole, setIsUpdatingRole] = useState(false);
   const [userDetailDialog, setUserDetailDialog] = useState<AppUser | null>(null);
 
+  // 사용 통계 상태
+  const [usageStats, setUsageStats] = useState<UsageStats[]>([]);
+  const [usageStatsLoading, setUsageStatsLoading] = useState(false);
+  const [selectedUserUsage, setSelectedUserUsage] = useState<DetailedUsageRecord[] | null>(null);
+  const [usageDetailDialog, setUsageDetailDialog] = useState<string | null>(null);
+  const [usageSummary, setUsageSummary] = useState<any>(null);
+  const [showUsageStats, setShowUsageStats] = useState(false);
+
   // 사용자 목록 가져오기
   async function fetchUsers() {
     setLoading(true);
@@ -115,6 +128,61 @@ export function UserManagement() {
       title: '새로고침 완료',
       description: '사용자 목록이 업데이트되었습니다.',
     });
+  }
+
+  // 사용 통계 가져오기
+  async function fetchUsageStats() {
+    setUsageStatsLoading(true);
+    try {
+      const [statsResult, summaryResult] = await Promise.all([
+        getAllUsageStats(),
+        getUsageStatsSummary()
+      ]);
+      
+      if (statsResult.success && statsResult.data) {
+        setUsageStats(statsResult.data);
+      }
+      
+      if (summaryResult.success && summaryResult.data) {
+        setUsageSummary(summaryResult.data);
+      }
+      
+      toast({
+        title: '사용 통계 로드 완료',
+        description: `${statsResult.data?.length || 0}명의 사용자 통계를 불러왔습니다.`,
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: '사용 통계 로드 실패',
+        description: '사용 통계를 불러오는 중 오류가 발생했습니다.',
+      });
+    } finally {
+      setUsageStatsLoading(false);
+    }
+  }
+
+  // 사용자의 상세 사용 기록 보기
+  async function viewUserUsageDetails(userId: string) {
+    try {
+      const result = await getUserUsageDetails(userId, 100);
+      if (result.success && result.data) {
+        setSelectedUserUsage(result.data);
+        setUsageDetailDialog(userId);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: '사용 기록 로드 실패',
+          description: result.message || '사용 기록을 불러오는 중 오류가 발생했습니다.',
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: '사용 기록 로드 실패',
+        description: '사용 기록을 불러오는 중 오류가 발생했습니다.',
+      });
+    }
   }
 
   // 초기 로딩
@@ -315,7 +383,7 @@ export function UserManagement() {
   return (
     <div className="space-y-6">
       {/* 통계 카드 */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">전체 사용자</CardTitle>
@@ -356,7 +424,183 @@ export function UserManagement() {
             <p className="text-xs text-muted-foreground">지난 7일</p>
           </CardContent>
         </Card>
+
+        <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => {
+          setShowUsageStats(!showUsageStats);
+          if (!showUsageStats && usageStats.length === 0) {
+            fetchUsageStats();
+          }
+        }}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">사용 통계</CardTitle>
+            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-600">
+              {usageSummary ? usageSummary.totalUsage : '-'}
+            </div>
+            <p className="text-xs text-muted-foreground">총 사용 횟수</p>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* 사용 통계 섹션 */}
+      {showUsageStats && (
+        <Card className="shadow-lg border-primary/10">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="font-headline text-2xl text-primary flex items-center">
+                  <BarChart3 className="mr-2 h-6 w-6" /> 사용자 사용 통계
+                </CardTitle>
+                <CardDescription>
+                  사용자들의 타로 리딩 및 꿈해몽 사용 횟수를 확인합니다.
+                </CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={fetchUsageStats}
+                disabled={usageStatsLoading}
+              >
+                {usageStatsLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                )}
+                새로고침
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {usageSummary && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">타로 리딩</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-purple-600">
+                      {usageSummary.totalTarotReadings}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">꿈해몽</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {usageSummary.totalDreamInterpretations}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">오늘 활성</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-600">
+                      {usageSummary.activeUsersToday}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">이번 주 활성</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-orange-600">
+                      {usageSummary.activeUsersThisWeek}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {usageStatsLoading ? (
+              <div className="flex justify-center items-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : usageStats.length > 0 ? (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">사용자별 사용 횟수</h3>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>사용자</TableHead>
+                        <TableHead className="text-center">타로 리딩</TableHead>
+                        <TableHead className="text-center">꿈해몽</TableHead>
+                        <TableHead className="text-center">총 사용</TableHead>
+                        <TableHead className="text-center">마지막 타로</TableHead>
+                        <TableHead className="text-center">마지막 꿈해뫽</TableHead>
+                        <TableHead className="text-center">상세</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {usageStats.slice(0, 20).map((stat) => (
+                        <TableRow key={stat.userId}>
+                          <TableCell>
+                            <div className="font-medium">
+                              {stat.email || `사용자 ${stat.userId.slice(0, 8)}...`}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+                              {stat.tarotReadings}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                              {stat.dreamInterpretations}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="default">
+                              {stat.totalUsage}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center text-sm text-muted-foreground">
+                            {stat.lastTarotReading 
+                              ? new Date(stat.lastTarotReading).toLocaleDateString('ko-KR')
+                              : '-'
+                            }
+                          </TableCell>
+                          <TableCell className="text-center text-sm text-muted-foreground">
+                            {stat.lastDreamInterpretation 
+                              ? new Date(stat.lastDreamInterpretation).toLocaleDateString('ko-KR')
+                              : '-'
+                            }
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => viewUserUsageDetails(stat.userId)}
+                            >
+                              <Activity className="h-4 w-4 mr-1" />
+                              보기
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {usageStats.length > 20 && (
+                  <p className="text-sm text-muted-foreground text-center">
+                    상위 20명만 표시됩니다. 전체 {usageStats.length}명의 데이터가 있습니다.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                사용 통계 데이터가 없습니다.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* 메인 사용자 관리 카드 */}
       <Card className="shadow-lg border-primary/10">
@@ -764,6 +1008,128 @@ export function UserManagement() {
                   </div>
                 )}
               </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* 사용자 상세 사용 기록 다이얼로그 */}
+      <Dialog open={!!usageDetailDialog} onOpenChange={() => {
+        setUsageDetailDialog(null);
+        setSelectedUserUsage(null);
+      }}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <Activity className="mr-2 h-5 w-5" />
+              사용자 상세 사용 기록
+            </DialogTitle>
+            <DialogDescription>
+              {usageDetailDialog && (
+                <span>
+                  사용자 ID: {usageDetailDialog.slice(0, 12)}...
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedUserUsage ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">총 사용 횟수</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{selectedUserUsage.length}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">타로 리딩</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-purple-600">
+                      {selectedUserUsage.filter(r => r.type === 'tarot').length}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">꿈해몽</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {selectedUserUsage.filter(r => r.type === 'dream').length}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-semibold">최근 사용 기록</h4>
+                <div className="max-h-96 overflow-y-auto border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>사용일시</TableHead>
+                        <TableHead>유형</TableHead>
+                        <TableHead>내용</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {selectedUserUsage.map((record) => (
+                        <TableRow key={record.id}>
+                          <TableCell className="text-sm">
+                            {new Date(record.timestamp).toLocaleString('ko-KR')}
+                          </TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant="secondary" 
+                              className={record.type === 'tarot' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}
+                            >
+                              {record.type === 'tarot' ? '타로' : '꿈해뫽'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="max-w-md">
+                            <div className="text-sm">
+                              {record.type === 'tarot' ? (
+                                <div>
+                                  {record.details?.question && (
+                                    <div className="mb-1">
+                                      <span className="font-medium">질문:</span> 
+                                      <span className="text-muted-foreground"> {record.details.question.slice(0, 50)}...</span>
+                                    </div>
+                                  )}
+                                  {record.details?.spread && (
+                                    <div>
+                                      <span className="font-medium">스프레드:</span> 
+                                      <span className="text-muted-foreground"> {record.details.spread}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div>
+                                  {record.details?.dreamContent && (
+                                    <div>
+                                      <span className="font-medium">꿈 내용:</span> 
+                                      <span className="text-muted-foreground"> {record.details.dreamContent.slice(0, 50)}...</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center items-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           )}
         </DialogContent>

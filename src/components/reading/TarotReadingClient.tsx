@@ -43,6 +43,8 @@ import type {
 import { tarotInterpretationStyles, tarotSpreads } from '@/types';
 import { tarotDeck as allCards } from '@/lib/tarot-data';
 import { generateTarotInterpretation } from '@/ai/flows/generate-tarot-interpretation';
+import { recordTarotUsage } from '@/actions/usageStatsActions';
+import { useAuth } from '@/context/AuthContext';
 
 // 🔧 클라이언트 스프레드 ID를 타로 지침 시스템 ID로 매핑
 const spreadIdMapping: Record<string, string> = {
@@ -426,6 +428,20 @@ export function TarotReadingClient() {
       });
       setInterpretation(result.interpretation);
       setStage('interpretation_ready');
+      
+      // 사용 기록 저장 (로그인한 사용자만)
+      if (user) {
+        try {
+          await recordTarotUsage(user.uid, {
+            question: question,
+            spread: selectedSpread.name,
+            interpretation: result.interpretation.substring(0, 200) // 첫 200자만 저장
+          });
+          console.log('[TAROT] Usage recorded for user:', user.uid);
+        } catch (error) {
+          console.warn('[TAROT] Failed to record usage:', error);
+        }
+      }
     } catch (error) {
       console.error('해석 생성 오류:', error);
       toast({

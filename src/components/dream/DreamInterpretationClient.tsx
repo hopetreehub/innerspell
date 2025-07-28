@@ -16,6 +16,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
+import { recordDreamUsage } from '@/actions/usageStatsActions';
 import Link from 'next/link';
 
 type Step = 'initial' | 'generating_questions' | 'clarifying' | 'interpreting' | 'done';
@@ -117,6 +118,19 @@ export function DreamInterpretationClient() {
       });
       setInterpretation(result.interpretation);
       setStep('done');
+      
+      // 사용 기록 저장 (로그인한 사용자만)
+      if (user) {
+        try {
+          await recordDreamUsage(user.uid, {
+            dreamContent: initialDescription.substring(0, 200), // 첫 200자만 저장
+            interpretation: result.interpretation.substring(0, 200) // 첫 200자만 저장
+          });
+          console.log('[DREAM] Usage recorded for user:', user.uid);
+        } catch (error) {
+          console.warn('[DREAM] Failed to record usage:', error);
+        }
+      }
     } catch (error) {
       console.error('꿈 해석 생성 오류:', error);
       toast({
