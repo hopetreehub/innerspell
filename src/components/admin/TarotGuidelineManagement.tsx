@@ -42,6 +42,8 @@ import {
 import { TAROT_GUIDELINES } from '@/data/tarot-guidelines';
 import { TAROT_SPREADS, INTERPRETATION_STYLES } from '@/data/tarot-spreads';
 import { TarotGuidelineForm } from './TarotGuidelineForm';
+import { TarotGuidelineCard } from './TarotGuidelineCard';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface TarotGuidelineManagementProps {
   className?: string;
@@ -59,6 +61,7 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
   const [showGuidelineForm, setShowGuidelineForm] = useState(false);
   const [editingGuideline, setEditingGuideline] = useState<TarotGuideline | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   // loadData 함수를 먼저 선언
   const loadData = useCallback(async () => {
@@ -194,18 +197,18 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
     }
   };
 
-  // 메모이제이션된 필터링 로직
+  // 메모이제이션된 필터링 로직 (디바운스된 검색어 사용)
   const filteredGuidelines = useMemo(() => {
-    if (!searchTerm.trim()) return guidelines;
+    if (!debouncedSearchTerm.trim()) return guidelines;
     
-    const lowerSearchTerm = searchTerm.toLowerCase();
+    const lowerSearchTerm = debouncedSearchTerm.toLowerCase();
     return guidelines.filter(guideline =>
       guideline.name.toLowerCase().includes(lowerSearchTerm) ||
       guideline.description.toLowerCase().includes(lowerSearchTerm) ||
       getSpreadName(guideline.spreadId).toLowerCase().includes(lowerSearchTerm) ||
       getStyleName(guideline.styleId).toLowerCase().includes(lowerSearchTerm)
     );
-  }, [guidelines, searchTerm]);
+  }, [guidelines, debouncedSearchTerm, getSpreadName, getStyleName]);
 
   const handleCreateNew = () => {
     setEditingGuideline(null);
@@ -493,67 +496,16 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
 
           <div className="grid gap-4">
             {filteredGuidelines.map((guideline) => (
-              <Card key={guideline.id} className="relative">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col">
-                        <CardTitle className="text-lg">{guideline.name}</CardTitle>
-                        <CardDescription className="flex items-center gap-2">
-                          {getSpreadName(guideline.spreadId)} × {getStyleName(guideline.styleId)}
-                          <Badge className={`${getDifficultyColor(guideline.difficulty)} text-white text-xs`}>
-                            {guideline.difficulty}
-                          </Badge>
-                        </CardDescription>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleToggleStatus(guideline.id, guideline.isActive)}
-                      >
-                        {guideline.isActive ? (
-                          <Eye className="h-4 w-4" />
-                        ) : (
-                          <EyeOff className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditGuideline(guideline)}
-                      >
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteGuideline(guideline.id)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-3">{guideline.description}</p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {guideline.estimatedTime}분
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="h-3 w-3" />
-                      {guideline.positionGuidelines.length}개 포지션
-                    </span>
-                    <Badge variant={guideline.isActive ? 'default' : 'secondary'}>
-                      {guideline.isActive ? '활성' : '비활성'}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
+              <TarotGuidelineCard
+                key={guideline.id}
+                guideline={guideline}
+                getSpreadName={getSpreadName}
+                getStyleName={getStyleName}
+                getDifficultyColor={getDifficultyColor}
+                onToggleStatus={handleToggleStatus}
+                onEdit={handleEditGuideline}
+                onDelete={handleDeleteGuideline}
+              />
             ))}
 
             {filteredGuidelines.length === 0 && (

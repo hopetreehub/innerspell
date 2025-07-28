@@ -34,7 +34,7 @@ const isFirebaseAdminAvailable = () => {
 // 캐시 관리
 let guidelinesCache: TarotGuidelinesResponse | null = null;
 let cacheTimestamp = 0;
-const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2시간 캐시
+const CACHE_DURATION = 10 * 60 * 1000; // 10분 캐시 (관리자 페이지는 짧은 캐시가 필요)
 
 // 모든 타로 지침 데이터 가져오기
 export async function getAllTarotGuidelines(forceRefresh = false): Promise<TarotGuidelinesResponse> {

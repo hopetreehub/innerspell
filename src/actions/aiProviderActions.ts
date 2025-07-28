@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
 // 캐시 관리
 let providersCache: (AIProviderConfig & { maskedApiKey?: string })[] | null = null;
 let cacheTimestamp = 0;
-const CACHE_DURATION = 60 * 60 * 1000; // 1시간 캐시
+const CACHE_DURATION = 5 * 60 * 1000; // 5분 캐시 (관리자 페이지는 짧은 캐시가 필요)
 
 // Helper function to mask API key
 function maskApiKey(apiKey: string): string {

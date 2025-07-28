@@ -16,6 +16,7 @@ import {
 } from '@/actions/aiProviderActions';
 import { AIProviderConfigForm } from './AIProviderConfigForm';
 import { AIFeatureMappingForm } from './AIFeatureMappingForm';
+import { AIProviderCard } from './AIProviderCard';
 
 interface AIProviderManagementProps {
   className?: string;
@@ -35,10 +36,8 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
 
   // 초기 데이터 로딩 최적화
   useEffect(() => {
-    // setTimeout을 사용하여 비동기로 로딩
-    setTimeout(() => {
-      loadData();
-    }, 0);
+    // 즉시 실행으로 더 빠른 로딩
+    loadData();
   }, []);
 
   const loadData = async () => {
@@ -95,7 +94,8 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
     
     toast.info(`${activeProviders.length}개 활성 공급자 테스트 시작...`);
     
-    for (const provider of activeProviders) {
+    // 병렬 처리로 성능 개선
+    const testPromises = activeProviders.map(async (provider) => {
       try {
         const result = await testAIProviderConnection(
           provider.provider, 
@@ -103,18 +103,27 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
           provider.baseUrl
         );
         
-        setTestResults(prev => ({ ...prev, [provider.provider]: result.success }));
-        
-        if (!result.success) {
-          console.error(`${provider.provider} 테스트 실패:`, result.message);
-        }
+        return { provider: provider.provider, success: result.success, message: result.message };
       } catch (error) {
         console.error(`${provider.provider} 테스트 오류:`, error);
-        setTestResults(prev => ({ ...prev, [provider.provider]: false }));
+        return { provider: provider.provider, success: false, message: '테스트 실패' };
       }
-    }
+    });
     
-    const successCount = Object.values(testResults).filter(r => r).length;
+    const results = await Promise.all(testPromises);
+    
+    // 결과 업데이트
+    const newTestResults: Record<string, boolean> = {};
+    results.forEach(result => {
+      newTestResults[result.provider] = result.success;
+      if (!result.success) {
+        console.error(`${result.provider} 테스트 실패:`, result.message);
+      }
+    });
+    
+    setTestResults(newTestResults);
+    
+    const successCount = results.filter(r => r.success).length;
     toast.success(`테스트 완료: ${successCount}/${activeProviders.length} 성공`);
     
     setTestingAllProviders(false);
@@ -282,136 +291,22 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
 
           <div className="grid gap-4">
             {providers.map((provider) => (
-              <Card key={provider.provider} className="relative">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full ${getProviderColor(provider.provider)} flex items-center justify-center text-white font-bold`}>
-                        {getProviderIcon(provider.provider)}
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg capitalize">{provider.provider}</CardTitle>
-                        <CardDescription>
-                          {provider.models.length}개 모델 • {provider.isActive ? '활성' : '비활성'}
-                        </CardDescription>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={provider.isActive ? 'default' : 'secondary'}>
-                        {provider.isActive ? '활성' : '비활성'}
-                      </Badge>
-                      {testResults[provider.provider] !== undefined && (
-                        <Badge 
-                          variant={testResults[provider.provider] ? 'outline' : 'destructive'} 
-                          className={testResults[provider.provider] ? 'text-green-600 border-green-600' : ''}
-                        >
-                          {testResults[provider.provider] ? '✓ 연결됨' : '✗ 실패'}
-                        </Badge>
-                      )}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleTestConnection(provider.provider)}
-                        disabled={testingProvider === provider.provider || testingAllProviders}
-                      >
-                        <TestTube className="h-4 w-4 mr-1" />
-                        {testingProvider === provider.provider ? '테스트 중...' : '테스트'}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditingProvider(provider.provider);
-                          setShowConfigForm(true);
-                        }}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteProvider(provider.provider)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
-                      <span className="text-sm font-medium flex items-center gap-1">
-                        <span className="text-xs">🔑</span> API 키
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-mono bg-background px-2 py-1 rounded border">
-                          {showApiKeys[provider.provider] 
-                            ? provider.apiKey 
-                            : (provider.maskedApiKey || '••••••••••••••••')
-                          }
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleApiKeyVisibility(provider.provider)}
-                          className="h-6 w-6 p-0"
-                        >
-                          {showApiKeys[provider.provider] ? (
-                            <EyeOff className="h-3 w-3" />
-                          ) : (
-                            <Eye className="h-3 w-3" />
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    {provider.baseUrl && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Base URL:</span>
-                        <span className="text-sm text-muted-foreground">{provider.baseUrl}</span>
-                      </div>
-                    )}
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium flex items-center gap-1">
-                          <span className="text-xs">🤖</span> 모델
-                        </span>
-                        <Badge variant="secondary" className="text-xs">
-                          {provider.models.length}개 활성
-                        </Badge>
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {provider.models.slice(0, 3).map((model) => (
-                          <Badge key={model.id} variant="outline" className="text-xs">
-                            {model.name}
-                          </Badge>
-                        ))}
-                        {provider.models.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{provider.models.length - 3}개 더
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-
-                    {(provider as any).organizationId && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">조직:</span>
-                        <span className="text-sm text-muted-foreground">{(provider as any).organizationId}</span>
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">마지막 업데이트:</span>
-                      <span className="text-sm text-muted-foreground">
-                        {provider.updatedAt ? new Date(provider.updatedAt).toLocaleDateString() : '없음'}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <AIProviderCard
+                key={provider.provider}
+                provider={provider}
+                showApiKey={showApiKeys[provider.provider] || false}
+                testResult={testResults[provider.provider]}
+                isTesting={testingProvider === provider.provider || testingAllProviders}
+                onToggleApiKey={() => toggleApiKeyVisibility(provider.provider)}
+                onTest={() => handleTestConnection(provider.provider)}
+                onEdit={() => {
+                  setEditingProvider(provider.provider);
+                  setShowConfigForm(true);
+                }}
+                onDelete={() => handleDeleteProvider(provider.provider)}
+                getProviderIcon={getProviderIcon}
+                getProviderColor={getProviderColor}
+              />
             ))}
 
             {providers.length === 0 && (
