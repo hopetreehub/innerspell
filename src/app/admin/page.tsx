@@ -56,7 +56,7 @@ export default function AdminDashboardPage() {
       cacheBuster.clearAuthLocalStorage();
     }
     
-    if (tab && ['ai-providers', 'tarot-instructions', 'tarot-ai-config', 'dream-ai-config', 'geo-guidelines', 'blog-management', 'notifications', 'user-management', 'system-management'].includes(tab)) {
+    if (tab && ['ai-providers', 'tarot-instructions', 'tarot-ai-config', 'dream-ai-config', 'blog-management', 'notifications', 'user-management', 'system-management'].includes(tab)) {
       setActiveTab(tab);
     }
   }, []);
