@@ -13,6 +13,32 @@ interface RateLimitBucket {
 const rateLimitStore = new Map<string, RateLimitBucket>();
 const blacklist = new Set<string>();
 
+// Edge Runtime doesn't support setInterval - cleanup will happen on each request
+// Cleanup function for old entries
+function cleanupOldEntries() {
+  const now = Date.now();
+  const maxEntries = 1000; // Limit store size
+  
+  // If store is getting too large, cleanup oldest entries
+  if (rateLimitStore.size > maxEntries) {
+    const entries = Array.from(rateLimitStore.entries());
+    entries.sort((a, b) => a[1].lastReset - b[1].lastReset);
+    
+    // Remove oldest 20% of entries
+    const toRemove = Math.floor(entries.length * 0.2);
+    for (let i = 0; i < toRemove; i++) {
+      rateLimitStore.delete(entries[i][0]);
+    }
+  }
+  
+  // Remove entries older than 3 windows
+  for (const [key, bucket] of rateLimitStore.entries()) {
+    if (now - bucket.lastReset > bucket.windowMs * 3) {
+      rateLimitStore.delete(key);
+    }
+  }
+}
+
 export interface AdvancedRateLimitOptions {
   windowMs: number;
   max: number;
@@ -57,6 +83,11 @@ export function advancedRateLimit(options: AdvancedRateLimitOptions) {
   return async function rateLimitMiddleware(request: NextRequest): Promise<NextResponse> {
     const identifier = keyGenerator(request);
     
+    // Periodic cleanup (1% chance on each request)
+    if (Math.random() < 0.01) {
+      cleanupOldEntries();
+    }
+    
     // Check if identifier is blacklisted
     if (blacklist.has(identifier)) {
       return NextResponse.json(
@@ -69,19 +100,27 @@ export function advancedRateLimit(options: AdvancedRateLimitOptions) {
     const now = Date.now();
     
     // Check if blocked
-    if (bucket?.blocked && bucket.blockUntil && bucket.blockUntil > now) {
-      return NextResponse.json(
-        { 
-          error: 'Access denied. You have been temporarily blocked.',
-          retryAfter: Math.ceil((bucket.blockUntil - now) / 1000)
-        },
-        { 
-          status: 403,
-          headers: {
-            'Retry-After': Math.ceil((bucket.blockUntil - now) / 1000).toString()
+    if (bucket?.blocked && bucket.blockUntil) {
+      if (bucket.blockUntil > now) {
+        return NextResponse.json(
+          { 
+            error: 'Access denied. You have been temporarily blocked.',
+            retryAfter: Math.ceil((bucket.blockUntil - now) / 1000)
+          },
+          { 
+            status: 403,
+            headers: {
+              'Retry-After': Math.ceil((bucket.blockUntil - now) / 1000).toString()
+            }
           }
-        }
-      );
+        );
+      } else {
+        // Block period expired - cleanup
+        bucket.blocked = false;
+        bucket.blockUntil = undefined;
+        blacklist.delete(identifier);
+        violationCount.delete(identifier);
+      }
     }
     
     // Reset bucket if window expired
@@ -110,11 +149,8 @@ export function advancedRateLimit(options: AdvancedRateLimitOptions) {
         bucket.blockUntil = now + blockDuration;
         blacklist.add(identifier);
         
-        // Remove from blacklist after block duration
-        setTimeout(() => {
-          blacklist.delete(identifier);
-          violationCount.delete(identifier);
-        }, blockDuration);
+        // Edge Runtime doesn't support setTimeout
+        // Blacklist cleanup will happen when checking blockUntil
       }
       
       // Call handler if provided
@@ -171,16 +207,6 @@ export function advancedRateLimit(options: AdvancedRateLimitOptions) {
     return response;
   };
 }
-
-// Cleanup old entries every 10 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, bucket] of rateLimitStore.entries()) {
-    if (now - bucket.lastReset > bucket.windowMs * 3) { // Remove if inactive for 3 windows
-      rateLimitStore.delete(key);
-    }
-  }
-}, 10 * 60 * 1000);
 
 // Export specialized rate limiters
 export const strictApiLimiter = advancedRateLimit({
