@@ -4,7 +4,7 @@ import {
   getAllUsageStats, 
   getUsageStatsSummary,
   getUserUsageDetails 
-} from '@/lib/actions/usageStatsActions';
+} from '@/actions/usageStatsActions';
 import { subDays, startOfWeek, startOfMonth, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 

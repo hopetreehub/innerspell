@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { ReadingPattern, ReadingAnalytics } from '@/types/tarot';
-import { db } from '@/lib/firebase/server';
+import { db } from '@/lib/firebase/admin';
 
 /**
  * 사용자 리딩 패턴 및 심화 분석 API

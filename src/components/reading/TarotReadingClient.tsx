@@ -67,7 +67,6 @@ const styleIdMapping: Record<string, string> = {
 };
 import { saveUserReading } from '@/actions/readingActions';
 import { shareReadingClient } from '@/lib/firebase/client-share';
-import { useAuth } from '@/context/AuthContext';
 
 
 import Image from 'next/image';

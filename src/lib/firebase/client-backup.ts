@@ -60,13 +60,14 @@ if (typeof window !== 'undefined') {
           );
         }
       }
-  } else {
-    // This warning is crucial for developers to identify configuration issues.
-    console.warn(
-      "Firebase configuration is missing or incomplete. " +
-      "Please check your .env file and ensure all NEXT_PUBLIC_FIREBASE_* variables are set correctly. " +
-      "Authentication features will be disabled."
-    );
+    } else {
+      // This warning is crucial for developers to identify configuration issues.
+      console.warn(
+        "Firebase configuration is missing or incomplete. " +
+        "Please check your .env file and ensure all NEXT_PUBLIC_FIREBASE_* variables are set correctly. " +
+        "Authentication features will be disabled."
+      );
+    }
   }
 }
 

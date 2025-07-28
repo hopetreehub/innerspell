@@ -6,7 +6,7 @@ import {
   ReadingAnalytics,
   EnhancedTarotReading 
 } from '@/types/tarot';
-import { db } from '@/lib/firebase/server';
+import { db } from '@/lib/firebase/admin';
 
 /**
  * 사용자 리딩 히스토리 조회 API
