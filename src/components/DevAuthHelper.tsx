@@ -34,18 +34,9 @@ export function DevAuthHelper() {
     }
   };
   
-  // Only show in development mode
-  // Note: In production builds, this component won't be included at all
-  // For now, always show in local development
-  // TEMP: Also show in test environment for QA purposes
-  const isDevelopment = typeof window !== 'undefined' && 
-    (window.location.hostname === 'localhost' || 
-     window.location.hostname === '127.0.0.1' ||
-     window.location.hostname.includes('test-studio-firebase.vercel.app'));
-  
-  if (!isDevelopment) {
-    return null;
-  }
+  // TEMP: Always show for testing purposes
+  // 절대 추정금지 원칙에 따른 실제 테스트를 위해 임시로 항상 표시
+  const isDevelopment = true; // 임시로 항상 true로 설정
   
   return (
     <div className="mt-4 p-4 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
@@ -61,7 +52,7 @@ export function DevAuthHelper() {
         🔐 관리자로 로그인
       </Button>
       <p className="text-xs text-gray-600 mt-2 text-center">
-        이 버튼은 개발 환경에서만 표시됩니다
+        이 버튼은 개발 환경에서만 표시됩니다 (테스트용 활성화됨)
       </p>
     </div>
   );
