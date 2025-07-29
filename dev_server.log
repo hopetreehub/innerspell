@@ -1,4 +1,80 @@
 
 > nextn@1.0.0 dev
-> next dev --hostname 0.0.0.0 --port 4000 --port 4000
+> next dev --hostname 0.0.0.0 --port 4000
 
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:4000
+   - Network:      http://0.0.0.0:4000
+   - Environments: .env.local, .env.development
+
+ ✓ Starting...
+ ⚠ Duplicate page detected. src/app/robots.ts and src/app/robots.txt/route.ts resolve to /robots.txt
+ ⚠ Duplicate page detected. src/app/sitemap.ts and src/app/sitemap.xml/route.ts resolve to /sitemap.xml
+ ⚠ Duplicate page detected. src/app/robots.ts and src/app/robots.txt/route.ts resolve to /robots.txt
+ ⚠ Duplicate page detected. src/app/sitemap.ts and src/app/sitemap.xml/route.ts resolve to /sitemap.xml
+ ✓ Ready in 21.3s
+ ○ Compiling / ...
+ ✓ Compiled / in 24s (8267 modules)
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+ HEAD / 200 in 27357ms
+ ✓ Compiled in 4.7s (2849 modules)
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+ GET / 200 in 549ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.1s (8254 modules)
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+ GET /images/1ai.webp 404 in 3975ms
+ ⨯ The requested resource isn't a valid image for /images/1ai.webp received text/html; charset=utf-8
+ GET /fonts/Pretendard-Regular.woff2 404 in 4044ms
+ GET /fonts/Pretendard-SemiBold.woff2 404 in 3871ms
+ GET /fonts/Pretendard-Medium.woff2 404 in 4034ms
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 RootLayoutClient state: { authLoading: true, isMounted: false }
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+🔍 UserNav state: { mounted: false, loading: true, user: null }
+🔍 UserNav: Showing skeleton (mounted: false loading: true )
+ GET /fonts/Pretendard-Regular.woff 404 in 312ms
+ GET /fonts/Pretendard-SemiBold.woff 404 in 261ms
+ GET /fonts/Pretendard-Medium.woff 404 in 259ms
+ ○ Compiling /api/analytics/performance ...
+ ✓ Compiled /api/analytics/performance in 1236ms (8276 modules)
+ POST /api/analytics/performance 400 in 1901ms
+ POST /api/analytics/performance 400 in 1903ms
+[?25h

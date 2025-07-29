@@ -1,0 +1,103 @@
+[2025-07-29T19:38:44.766Z] [info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[2025-07-29T19:38:44.927Z] [log] 🔥 Initializing REAL Firebase only
+[2025-07-29T19:38:44.928Z] [log] Firebase config validation: {hasApiKey: true, authDomain: innerspell-an7ce.firebaseapp.com, projectId: innerspell-an7ce, storageBucket: innerspell-an7ce.firebasestorage.app, messagingSenderId: 944680989471}
+[2025-07-29T19:38:44.931Z] [log] ✅ Real Firebase initialized successfully
+[2025-07-29T19:38:44.931Z] [log] ✅ Auth, Firestore, and Storage ready
+[2025-07-29T19:38:45.089Z] [log] 🔍 RootLayoutClient state: {authLoading: true, isMounted: false}
+[2025-07-29T19:38:45.089Z] [log] 🔍 RootLayoutClient state: {authLoading: true, isMounted: false}
+[2025-07-29T19:38:45.106Z] [log] 🔍 UserNav state: {mounted: false, loading: true, user: null}
+[2025-07-29T19:38:45.106Z] [log] 🔍 UserNav: Showing skeleton (mounted: false loading: true )
+[2025-07-29T19:38:45.107Z] [log] 🔍 UserNav state: {mounted: false, loading: true, user: null}
+[2025-07-29T19:38:45.107Z] [log] 🔍 UserNav: Showing skeleton (mounted: false loading: true )
+[2025-07-29T19:38:45.118Z] [log] 🔍 UserNav state: {mounted: false, loading: true, user: null}
+[2025-07-29T19:38:45.118Z] [log] 🔍 UserNav: Showing skeleton (mounted: false loading: true )
+[2025-07-29T19:38:45.119Z] [log] 🔍 UserNav state: {mounted: false, loading: true, user: null}
+[2025-07-29T19:38:45.119Z] [log] 🔍 UserNav: Showing skeleton (mounted: false loading: true )
+[2025-07-29T19:38:45.163Z] [log] 🔍 Navbar: User state changed: {email: null, role: null, hasUser: false, isAdmin: false}
+[2025-07-29T19:38:45.164Z] [log] 🔥 AuthContext: Setting up onAuthStateChanged listener
+[2025-07-29T19:38:45.169Z] [log] 🔍 RootLayoutClient state: {authLoading: true, isMounted: true}
+[2025-07-29T19:38:45.169Z] [log] 🔍 RootLayoutClient state: {authLoading: true, isMounted: true}
+[2025-07-29T19:38:45.227Z] [log] Font loaded: Inter 400 normal
+[2025-07-29T19:38:45.228Z] [log] Font loaded: Inter 500 normal
+[2025-07-29T19:38:45.228Z] [log] Font loaded: Inter 600 normal
+[2025-07-29T19:38:45.228Z] [log] 🔥 AuthContext: onAuthStateChanged triggered with user: null
+[2025-07-29T19:38:45.228Z] [log] 🔥 AuthContext: No Firebase user, setting to null
+[2025-07-29T19:38:45.228Z] [log] 🔥 AuthContext: Loading set to false
+[2025-07-29T19:38:45.232Z] [log] 🔍 RootLayoutClient state: {authLoading: false, isMounted: true}
+[2025-07-29T19:38:45.232Z] [log] 🔍 RootLayoutClient state: {authLoading: false, isMounted: true}
+[2025-07-29T19:38:45.238Z] [log] 🔍 UserNav state: {mounted: false, loading: false, user: null}
+[2025-07-29T19:38:45.238Z] [log] 🔍 UserNav: Showing skeleton (mounted: false loading: false )
+[2025-07-29T19:38:45.238Z] [log] 🔍 UserNav state: {mounted: false, loading: false, user: null}
+[2025-07-29T19:38:45.238Z] [log] 🔍 UserNav: Showing skeleton (mounted: false loading: false )
+[2025-07-29T19:38:45.241Z] [log] 🔍 UserNav state: {mounted: false, loading: false, user: null}
+[2025-07-29T19:38:45.241Z] [log] 🔍 UserNav: Showing skeleton (mounted: false loading: false )
+[2025-07-29T19:38:45.241Z] [log] 🔍 UserNav state: {mounted: false, loading: false, user: null}
+[2025-07-29T19:38:45.241Z] [log] 🔍 UserNav: Showing skeleton (mounted: false loading: false )
+[2025-07-29T19:38:45.287Z] [log] 🔍 Navbar: User state changed: {email: null, role: null, hasUser: false, isAdmin: false}
+[2025-07-29T19:38:45.290Z] [log] 🔍 Navbar: User state changed: {email: null, role: null, hasUser: false, isAdmin: false}
+[2025-07-29T19:38:45.296Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:38:45.296Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:38:45.296Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:38:45.296Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:38:45.301Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:38:45.302Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:38:45.302Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:38:45.302Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:38:45.651Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2025-07-29T19:38:45.702Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2025-07-29T19:38:46.008Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2025-07-29T19:38:46.015Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2025-07-29T19:38:46.016Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2025-07-29T19:38:46.024Z] [warning] Failed to load font: Pretendard NetworkError: A network error occurred.
+[2025-07-29T19:38:46.024Z] [warning] Failed to load font: Pretendard NetworkError: A network error occurred.
+[2025-07-29T19:38:46.156Z] [error] Failed to load resource: the server responded with a status of 404 (Not Found)
+[2025-07-29T19:38:46.162Z] [log] Font loaded: Inter in 2327.60ms
+[2025-07-29T19:38:46.164Z] [log] Font loaded: Inter in 2328.20ms
+[2025-07-29T19:38:46.165Z] [log] Font optimization initialized
+[2025-07-29T19:38:46.165Z] [log] Font optimization initialized
+[2025-07-29T19:38:46.166Z] [log] Critical components preloaded
+[2025-07-29T19:38:46.166Z] [log] Critical components preloaded
+[2025-07-29T19:38:46.166Z] [log] Performance optimization initialized successfully
+[2025-07-29T19:38:46.166Z] [log] Performance optimization initialized successfully
+[2025-07-29T19:38:46.475Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2025-07-29T19:38:46.499Z] [error] Failed to load resource: the server responded with a status of 400 (Bad Request)
+[2025-07-29T19:38:50.164Z] [warning] 🚨 AuthContext: Max wait timeout reached - forcing loading to false
+[2025-07-29T19:38:55.275Z] [log] [Toast] Creating toast: {id: 1, title: 덱 섞기 완료, description: 카드가 섞였습니다. 이제 카드를 펼쳐보세요.}
+[2025-07-29T19:38:55.278Z] [log] 🔍 RootLayoutClient state: {authLoading: false, isMounted: true}
+[2025-07-29T19:38:55.278Z] [log] 🔍 RootLayoutClient state: {authLoading: false, isMounted: true}
+[2025-07-29T19:38:55.284Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:38:55.284Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:38:55.284Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:38:55.284Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:38:55.292Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:38:55.292Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:38:55.292Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:38:55.292Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:38:55.353Z] [log] [Toaster] Rendering toasts: [Object]
+[2025-07-29T19:38:55.353Z] [log] [Toaster] Rendering toasts: [Object]
+[2025-07-29T19:39:00.279Z] [log] 🔍 RootLayoutClient state: {authLoading: false, isMounted: true}
+[2025-07-29T19:39:00.280Z] [log] 🔍 RootLayoutClient state: {authLoading: false, isMounted: true}
+[2025-07-29T19:39:00.285Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:39:00.286Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:39:00.286Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:39:00.286Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:39:00.290Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:39:00.291Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:39:00.291Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:39:00.291Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:39:00.444Z] [log] [Toaster] Rendering toasts: [Object]
+[2025-07-29T19:39:00.445Z] [log] [Toaster] Rendering toasts: [Object]
+[2025-07-29T19:39:03.375Z] [log] 🔍 RootLayoutClient state: {authLoading: false, isMounted: true}
+[2025-07-29T19:39:03.375Z] [log] 🔍 RootLayoutClient state: {authLoading: false, isMounted: true}
+[2025-07-29T19:39:03.378Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:39:03.378Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:39:03.378Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:39:03.378Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:39:03.381Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:39:03.382Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:39:03.382Z] [log] 🔍 UserNav state: {mounted: true, loading: false, user: null}
+[2025-07-29T19:39:03.382Z] [log] 🔍 UserNav: No user, showing login buttons
+[2025-07-29T19:39:14.263Z] [log] Cache Stats: {memoryCache: Object, cacheHitRate: 0}
+[2025-07-29T19:39:14.263Z] [log] Cache Stats: {memoryCache: Object, cacheHitRate: 0}
+[2025-07-29T19:39:42.284Z] [log] Cache Stats: {memoryCache: Object, cacheHitRate: 0}
+[2025-07-29T19:39:42.284Z] [log] Cache Stats: {memoryCache: Object, cacheHitRate: 0}

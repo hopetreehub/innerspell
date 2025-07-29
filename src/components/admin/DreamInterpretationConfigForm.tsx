@@ -137,7 +137,7 @@ export function DreamInterpretationConfigForm() {
         // Always include OpenAI models
         const allModels = [
           ...models,
-          { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
+          { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
           { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' }
         ];
         
@@ -154,7 +154,7 @@ export function DreamInterpretationConfigForm() {
         const defaultModels = [
           { id: 'googleai/gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro', provider: 'googleai' },
           { id: 'googleai/gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash', provider: 'googleai' },
-          { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
+          { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
           { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' }
         ];
         console.log('[DreamInterpretationConfigForm] Using default models:', defaultModels);
