@@ -4,6 +4,14 @@ import { auth, db } from '@/lib/firebase/admin';
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
+  // 🔴 SECURITY: 관리자 API 비활성화 - 운영 환경에서 접근 불가
+  return NextResponse.json({
+    success: false,
+    message: '이 API는 보안상 비활성화되었습니다. 관리자 계정은 Firebase Console에서 직접 관리하세요.',
+    error: 'API_DISABLED_FOR_SECURITY'
+  }, { status: 403 });
+  
+  /* DISABLED FOR SECURITY - 개발 환경에서만 주석 해제
   try {
     console.log('🚀 관리자 계정 생성 API 호출됨');
     
@@ -79,4 +87,5 @@ export async function GET(request: NextRequest) {
       error: error.message
     }, { status: 500 });
   }
+  */
 }

@@ -1,8 +1,0 @@
-{
-  "timestamp": "2025-07-24T11:32:03.582Z",
-  "error": "page.evaluate: ReferenceError: process is not defined\n    at eval (eval at evaluate (:291:30), <anonymous>:7:38)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
-  "stack": "page.evaluate: ReferenceError: process is not defined\n    at eval (eval at evaluate (:291:30), <anonymous>:7:38)\n    at UtilityScript.evaluate (<anonymous>:293:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at debugGoogleLogin (/mnt/e/project/test-studio-firebase/debug_google_login.js:54:39)",
-  "logs": [],
-  "errors": [],
-  "pageUrl": "https://test-studio-firebase.vercel.app/sign-in"
-}

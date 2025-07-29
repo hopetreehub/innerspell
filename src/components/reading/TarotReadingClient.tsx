@@ -825,7 +825,7 @@ export function TarotReadingClient() {
                 role="group"
                 aria-labelledby="spread-instruction"
               >
-                <div className="flex space-x-[-125px]">
+                <div className="flex space-x-[-110px]" style={{ paddingRight: '120px' }}>
                   <AnimatePresence>
                     {displayableRevealedCards.map((cardInSpread, index) => (
                         <motion.div
@@ -849,7 +849,7 @@ export function TarotReadingClient() {
                           }}
                           transition={{ duration: 0.25, delay: index * 0.03 }}
                           onClick={() => handleCardSelectFromSpread(cardInSpread)}
-                          className={`${TARGET_CARD_HEIGHT_CLASS} shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:z-20 shadow-md border border-black/10 hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg`}
+                          className={`${TARGET_CARD_HEIGHT_CLASS} shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-110 hover:z-30 hover:translate-y-[-8px] shadow-md border border-black/10 hover:border-primary/50 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg`}
                           style={{ aspectRatio: `${IMAGE_ORIGINAL_WIDTH} / ${IMAGE_ORIGINAL_HEIGHT}` }}
                         >
                           <motion.div
