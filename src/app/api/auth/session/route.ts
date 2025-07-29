@@ -13,6 +13,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'ID token is required' }, { status: 400 });
     }
     
+    if (!auth) {
+      return NextResponse.json({ error: 'Firebase auth not initialized' }, { status: 500 });
+    }
+    
     // ID 토큰 검증
     const decodedToken = await auth.verifyIdToken(idToken);
     
@@ -63,6 +67,10 @@ export async function GET(request: NextRequest) {
     
     if (!sessionCookie) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
+    }
+    
+    if (!auth) {
+      return NextResponse.json({ authenticated: false }, { status: 500 });
     }
     
     // 세션 쿠키 검증

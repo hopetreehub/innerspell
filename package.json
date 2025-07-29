@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@delorenj/taskmaster": "^1.13.3",
-    "@genkit-ai/firebase": "^1.15.2",
+    "@genkit-ai/firebase": "^1.15.5",
     "@genkit-ai/googleai": "^1.8.0",
     "@genkit-ai/next": "^1.8.0",
     "@google/generative-ai": "^0.24.1",
@@ -60,7 +60,7 @@
     "firebase-admin": "^12.3.0",
     "firebase-tools": "^14.11.1",
     "framer-motion": "^12.18.1",
-    "genkit": "^1.8.0",
+    "genkit": "^1.15.5",
     "genkitx-anthropic": "^0.23.1",
     "genkitx-openai": "^0.23.0",
     "lucide-react": "^0.475.0",
