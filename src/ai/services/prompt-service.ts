@@ -129,7 +129,7 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
     } catch {
       // Use OpenAI as absolute fallback
       return {
-        model: 'openai/gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo',
         promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
         safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
       };
@@ -319,7 +319,7 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
   } catch {
     // Use OpenAI as absolute fallback
     return {
-      model: 'openai/gpt-3.5-turbo',
+      model: 'gpt-3.5-turbo',
       promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
     };
   }
