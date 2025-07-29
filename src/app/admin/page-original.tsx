@@ -1,3 +1,4 @@
+
 'use client'; 
 
 import React, { useState, useEffect, lazy, Suspense } from 'react';
@@ -7,11 +8,7 @@ import { cacheBuster, refreshAuthWithCacheBust } from '@/lib/cache-buster';
 import { AdminDashboardStats } from '@/components/admin/AdminDashboardStats';
 import { Spinner } from '@/components/ui/spinner';
 
-// 자주 사용하는 컴포넌트는 즉시 로드 (통계, 실시간)
-import { UsageStatsCharts } from '@/components/admin/UsageStatsCharts';
-import { RealTimeMonitoringDashboard } from '@/components/admin/RealTimeMonitoringDashboard';
-
-// 덜 자주 사용하는 컴포넌트만 lazy loading
+// 레이지 로딩으로 초기 번들 크기 감소
 const AIPromptConfigForm = lazy(() => import('@/components/admin/AIPromptConfigForm').then(mod => ({ default: mod.AIPromptConfigForm })));
 const DreamInterpretationConfigForm = lazy(() => import('@/components/admin/DreamInterpretationConfigForm').then(mod => ({ default: mod.DreamInterpretationConfigForm })));
 const UserManagement = lazy(() => import('@/components/admin/UserManagement').then(mod => ({ default: mod.UserManagement })));
@@ -19,7 +16,8 @@ const SystemManagement = lazy(() => import('@/components/admin/SystemManagement'
 const AIProviderManagement = lazy(() => import('@/components/admin/AIProviderManagement').then(mod => ({ default: mod.AIProviderManagement })));
 const BlogManagement = lazy(() => import('@/components/admin/BlogManagement').then(mod => ({ default: mod.BlogManagement })));
 const TarotGuidelineManagement = lazy(() => import('@/components/admin/TarotGuidelineManagement').then(mod => ({ default: mod.TarotGuidelineManagement })));
-
+const UsageStatsCharts = lazy(() => import('@/components/admin/UsageStatsCharts').then(mod => ({ default: mod.UsageStatsCharts })));
+const RealTimeMonitoringDashboard = lazy(() => import('@/components/admin/RealTimeMonitoringDashboard').then(mod => ({ default: mod.RealTimeMonitoringDashboard })));
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool, Bell, BarChart, Activity } from 'lucide-react';
@@ -27,65 +25,18 @@ import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool, Bell, BarCha
 // 푸시 알림 토글도 레이지 로딩
 const PushNotificationToggle = lazy(() => import('@/components/ui/push-notification-toggle').then(mod => ({ default: mod.PushNotificationToggle })));
 
-// 향상된 로딩 스피너 컴포넌트
-const TabContentSpinner = ({ message = "로딩 중..." }: { message?: string }) => (
+// 로딩 스피너 컴포넌트
+const TabContentSpinner = () => (
   <div className="flex items-center justify-center min-h-[400px]">
-    <div className="text-center">
-      <Spinner size="large" />
-      <p className="mt-4 text-sm text-muted-foreground">{message}</p>
-    </div>
+    <Spinner size="large" />
   </div>
 );
 
-// 탭별 프리로딩 훅
-function useTabPreloading() {
-  const [preloadedTabs, setPreloadedTabs] = useState<Set<string>>(new Set(['stats', 'live-monitoring']));
-  
-  const preloadTab = async (tabValue: string) => {
-    if (preloadedTabs.has(tabValue)) return;
-    
-    try {
-      switch (tabValue) {
-        case 'ai-providers':
-          await import('@/components/admin/AIProviderManagement');
-          break;
-        case 'tarot-instructions':
-          await import('@/components/admin/TarotGuidelineManagement');
-          break;
-        case 'tarot-ai-config':
-          await import('@/components/admin/AIPromptConfigForm');
-          break;
-        case 'dream-ai-config':
-          await import('@/components/admin/DreamInterpretationConfigForm');
-          break;
-        case 'blog-management':
-          await import('@/components/admin/BlogManagement');
-          break;
-        case 'notifications':
-          await import('@/components/ui/push-notification-toggle');
-          break;
-        case 'user-management':
-          await import('@/components/admin/UserManagement');
-          break;
-        case 'system-management':
-          await import('@/components/admin/SystemManagement');
-          break;
-      }
-      
-      setPreloadedTabs(prev => new Set([...prev, tabValue]));
-    } catch (error) {
-      console.warn(`Failed to preload tab ${tabValue}:`, error);
-    }
-  };
-  
-  return { preloadTab, preloadedTabs };
-}
 
 export default function AdminDashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('stats');
-  const { preloadTab, preloadedTabs } = useTabPreloading();
 
   useEffect(() => {
     console.log('🔍 Admin Page - Auth State Check:', { loading, user: user ? `${user.email} (${user.role})` : null });
@@ -123,32 +74,8 @@ export default function AdminDashboardPage() {
     }
   }, []);
 
-  // 탭 호버 시 프리로딩
-  const handleTabHover = (tabValue: string) => {
-    preloadTab(tabValue);
-  };
 
-  // 인기 탭들을 사용자가 머무는 동안 백그라운드에서 프리로드
-  useEffect(() => {
-    if (!user || user.role !== 'admin') return;
-    
-    const preloadPopularTabs = async () => {
-      // 1초 지연 후 인기 탭들 프리로드
-      setTimeout(() => {
-        preloadTab('ai-providers');
-        preloadTab('tarot-instructions');
-      }, 1000);
-      
-      // 3초 지연 후 나머지 탭들 프리로드
-      setTimeout(() => {
-        preloadTab('user-management');
-        preloadTab('blog-management');
-      }, 3000);
-    };
-    
-    preloadPopularTabs();
-  }, [user, preloadTab]);
-
+  
   if (loading || !user || user.role !== 'admin') {
     return (
       <div className="flex h-[calc(100vh-200px)] w-full items-center justify-center">
@@ -172,6 +99,7 @@ export default function AdminDashboardPage() {
     );
   }
 
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <header className="text-center">
@@ -191,79 +119,38 @@ export default function AdminDashboardPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-10 mb-6">
-          <TabsTrigger 
-            value="stats" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('stats')}
-          >
+          <TabsTrigger value="stats" className="text-sm sm:text-base">
             <BarChart className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 통계
           </TabsTrigger>
-          <TabsTrigger 
-            value="live-monitoring" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('live-monitoring')}
-          >
+          <TabsTrigger value="live-monitoring" className="text-sm sm:text-base">
             <Activity className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 실시간
           </TabsTrigger>
-          <TabsTrigger 
-            value="ai-providers" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('ai-providers')}
-          >
+          <TabsTrigger value="ai-providers" className="text-sm sm:text-base">
             <Bot className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> AI 공급자
           </TabsTrigger>
-          <TabsTrigger 
-            value="tarot-instructions" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('tarot-instructions')}
-          >
+          <TabsTrigger value="tarot-instructions" className="text-sm sm:text-base">
             <BookOpen className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 타로 지침
           </TabsTrigger>
-          <TabsTrigger 
-            value="tarot-ai-config" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('tarot-ai-config')}
-          >
+          <TabsTrigger value="tarot-ai-config" className="text-sm sm:text-base">
             <Cog className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 타로 AI
           </TabsTrigger>
-          <TabsTrigger 
-            value="dream-ai-config" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('dream-ai-config')}
-          >
+          <TabsTrigger value="dream-ai-config" className="text-sm sm:text-base">
             <MoonStar className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 꿈해몽 AI
           </TabsTrigger>
-          <TabsTrigger 
-            value="blog-management" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('blog-management')}
-          >
+          <TabsTrigger value="blog-management" className="text-sm sm:text-base">
             <PenTool className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 블로그 관리
           </TabsTrigger>
-          <TabsTrigger 
-            value="notifications" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('notifications')}
-          >
+          <TabsTrigger value="notifications" className="text-sm sm:text-base">
             <Bell className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 알림 설정
           </TabsTrigger>
-          <TabsTrigger 
-            value="user-management" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('user-management')}
-          >
+          <TabsTrigger value="user-management" className="text-sm sm:text-base">
             <Users className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 회원 관리
           </TabsTrigger>
-          <TabsTrigger 
-            value="system-management" 
-            className="text-sm sm:text-base"
-            onMouseEnter={() => handleTabHover('system-management')}
-          >
+          <TabsTrigger value="system-management" className="text-sm sm:text-base">
             <ShieldCheck className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 시스템 관리
           </TabsTrigger>
         </TabsList>
 
-        {/* 즉시 로드되는 주요 탭들 */}
         <TabsContent value="stats">
           <Card className="shadow-lg border-primary/10">
             <CardHeader>
@@ -275,7 +162,9 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <UsageStatsCharts />
+              <Suspense fallback={<TabContentSpinner />}>
+                <UsageStatsCharts />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
@@ -291,12 +180,13 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RealTimeMonitoringDashboard />
+              <Suspense fallback={<TabContentSpinner />}>
+                <RealTimeMonitoringDashboard />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Lazy loading 탭들 - 향상된 로딩 메시지 */}
         <TabsContent value="ai-providers">
           <Card className="shadow-lg border-primary/10">
             <CardHeader>
@@ -308,7 +198,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Suspense fallback={<TabContentSpinner message="AI 공급자 설정을 불러오는 중..." />}>
+              <Suspense fallback={<TabContentSpinner />}>
                 <AIProviderManagement />
               </Suspense>
             </CardContent>
@@ -326,7 +216,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Suspense fallback={<TabContentSpinner message="타로 지침을 불러오는 중..." />}>
+              <Suspense fallback={<TabContentSpinner />}>
                 <TarotGuidelineManagement />
               </Suspense>
             </CardContent>
@@ -344,7 +234,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Suspense fallback={<TabContentSpinner message="타로 AI 설정을 불러오는 중..." />}>
+              <Suspense fallback={<TabContentSpinner />}>
                 <AIPromptConfigForm />
               </Suspense>
             </CardContent>
@@ -362,12 +252,13 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Suspense fallback={<TabContentSpinner message="꿈해몽 AI 설정을 불러오는 중..." />}>
+              <Suspense fallback={<TabContentSpinner />}>
                 <DreamInterpretationConfigForm />
               </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
+
 
         <TabsContent value="blog-management">
           <Card className="shadow-lg border-primary/10">
@@ -380,7 +271,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Suspense fallback={<TabContentSpinner message="블로그 관리 도구를 불러오는 중..." />}>
+              <Suspense fallback={<TabContentSpinner />}>
                 <BlogManagement />
               </Suspense>
             </CardContent>
@@ -398,7 +289,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <Suspense fallback={<TabContentSpinner message="알림 설정을 불러오는 중..." />}>
+              <Suspense fallback={<TabContentSpinner />}>
                 <PushNotificationToggle />
               </Suspense>
             </CardContent>
@@ -406,13 +297,13 @@ export default function AdminDashboardPage() {
         </TabsContent>
 
         <TabsContent value="user-management">
-          <Suspense fallback={<TabContentSpinner message="회원 관리 도구를 불러오는 중..." />}>
+          <Suspense fallback={<TabContentSpinner />}>
             <UserManagement />
           </Suspense>
         </TabsContent>
 
         <TabsContent value="system-management">
-          <Suspense fallback={<TabContentSpinner message="시스템 관리 도구를 불러오는 중..." />}>
+          <Suspense fallback={<TabContentSpinner />}>
             <SystemManagement />
           </Suspense>
         </TabsContent>
