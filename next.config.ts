@@ -14,6 +14,21 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // 실험적 기능들로 성능 최적화
+  experimental: {
+    optimizePackageImports: ['@chakra-ui/react', 'framer-motion', 'react-icons'],
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+  // 압축 설정
+  compress: true,
+  // 파워 데이터 압축
+  poweredByHeader: false,
+  // 리액트 스트릭트 모드
+  reactStrictMode: true,
+  // SWC 미니파이어 사용
+  swcMinify: true,
   // EMERGENCY CACHE BUSTING CONFIGURATION
   async headers() {
     return [
@@ -80,6 +95,11 @@ const nextConfig: NextConfig = {
     return `build-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   },
   images: {
+    // 이미지 최적화 설정
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30일 캐시
     remotePatterns: [
       {
         protocol: 'https',
