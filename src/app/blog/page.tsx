@@ -45,33 +45,51 @@ export const metadata: Metadata = {
   },
 };
 
-import { BlogMainWithPagination } from '@/components/blog/BlogMainWithPagination';
+import { BlogMainServer } from '@/components/blog/BlogMainServer';
 import { mockPosts } from '@/lib/blog/posts';
 
-// 서버 사이드에서 직접 블로그 데이터 제공
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// 정적 생성으로 변경하여 성능 최적화
+export const dynamic = 'force-static';
+export const revalidate = 3600; // 1시간마다 재검증
 
-export default function BlogPage() {
-  // 2025-07-26: 서버 사이드 데이터 디버깅
-  console.log('🚀 Blog 페이지 서버 렌더링');
-  console.log(`📊 서버에서 mockPosts 수: ${mockPosts?.length || 0}`);
-  console.log('🎯 첫 3개 포스트 제목:', mockPosts?.slice(0, 3).map(p => p.title) || []);
-  console.log('🕐 Deployment timestamp:', new Date().toISOString());
+type SearchParams = Promise<{
+  page?: string;
+  category?: string;
+  search?: string;
+}>;
+
+interface BlogPageProps {
+  searchParams: SearchParams;
+}
+
+export default async function BlogPage({ searchParams }: BlogPageProps) {
+  const params = await searchParams;
+  const currentPage = parseInt(params.page || '1', 10);
+  const category = params.category;
+  const search = params.search;
   
-  return (
-    <>
-      {/* 캐시 버스팅을 위한 메타 태그 */}
-      <meta name="cache-bust" content={`v0.1.3-${Date.now()}`} />
-      
-      {/* 임시 디버그 정보 (숨김) */}
-      <div style={{ display: 'none' }}>
-        <p>Debug: Total posts = {mockPosts?.length || 0}</p>
-        <p>Debug: First post title = {mockPosts?.[0]?.title || 'No posts'}</p>
-        <p>Debug: Timestamp = {new Date().toISOString()}</p>
-        <p>Debug: Build timestamp = {process.env.NEXT_PUBLIC_BUILD_TIMESTAMP}</p>
-      </div>
-      <BlogMainWithPagination />
-    </>
-  );
+  // 필터링 로직
+  let filteredPosts = mockPosts.filter(post => post.published);
+  
+  if (category && category !== '전체') {
+    filteredPosts = filteredPosts.filter(post => post.category === category);
+  }
+  
+  if (search) {
+    const searchLower = search.toLowerCase();
+    filteredPosts = filteredPosts.filter(post => 
+      post.title.toLowerCase().includes(searchLower) ||
+      post.excerpt.toLowerCase().includes(searchLower) ||
+      post.tags.some(tag => tag.toLowerCase().includes(searchLower))
+    );
+  }
+  
+  // 날짜순 정렬
+  filteredPosts.sort((a, b) => {
+    const dateA = new Date(a.publishedAt);
+    const dateB = new Date(b.publishedAt);
+    return dateB.getTime() - dateA.getTime();
+  });
+  
+  return <BlogMainServer initialPosts={filteredPosts} currentPage={currentPage} />;
 }

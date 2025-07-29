@@ -1,10 +1,4 @@
-// import { cache } from 'react'; // 클라이언트 렌더링 문제로 임시 제거
-import { 
-  getAllPosts as getFirestorePosts, 
-  getPostById as getFirestorePost,
-  getFeaturedPosts as getFirestoreFeaturedPosts,
-  searchPosts as searchFirestorePosts
-} from '@/services/blog-service';
+import { cache } from 'react';
 
 export interface BlogPost {
   id: string;
@@ -4187,3 +4181,18 @@ export function calculateReadingTime(content: string): number {
   const minutes = Math.ceil(words / wordsPerMinute);
   return minutes;
 }
+
+// 캐시된 getAllPosts 함수
+export const getAllPosts = cache(async (): Promise<BlogPost[]> => {
+  return mockPosts.filter(post => post.published);
+});
+
+// 특정 포스트 가져오기
+export const getPostById = cache(async (id: string): Promise<BlogPost  < /dev/null |  null> => {
+  return mockPosts.find(post => post.id === id && post.published) || null;
+});
+
+// Featured 포스트 가져오기
+export const getFeaturedPosts = cache(async (): Promise<BlogPost[]> => {
+  return mockPosts.filter(post => post.featured && post.published);
+});

@@ -2,8 +2,21 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { BlogPostDetail } from '@/components/blog/BlogPostDetail';
-import { getAllPosts } from '@/lib/blog/posts';
+import { mockPosts } from '@/lib/blog/posts';
 import { BlogPostJsonLd } from '@/components/blog/BlogJsonLd';
+
+// 정적 생성을 위한 설정
+export const dynamic = 'force-static';
+export const revalidate = 3600; // 1시간마다 재검증
+
+// 정적 생성할 경로들을 미리 생성
+export async function generateStaticParams() {
+  return mockPosts
+    .filter(post => post.published)
+    .map((post) => ({
+      slug: post.id,
+    }));
+}
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -11,8 +24,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const posts = await getAllPosts();
-  const post = posts.find(p => p.id === slug);
+  const post = mockPosts.find(p => p.id === slug && p.published);
 
   if (!post) {
     return {
@@ -51,8 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const posts = await getAllPosts();
-  const post = posts.find(p => p.id === slug);
+  const post = mockPosts.find(p => p.id === slug && p.published);
 
   if (!post) {
     notFound();
