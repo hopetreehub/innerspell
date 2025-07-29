@@ -94,11 +94,17 @@ const nextConfig: NextConfig = {
     return `build-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   },
   images: {
-    // 이미지 최적화 설정
-    formats: ['image/avif', 'image/webp'],
+    // 이미지 최적화 설정 - WebP 우선 적용
+    formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30일 캐시
+    // 이미지 품질 최적화
+    quality: 85,
+    // 로더 최적화
+    loader: 'default',
+    // 이미지 압축 최적화
+    unoptimized: false,
     remotePatterns: [
       {
         protocol: 'https',

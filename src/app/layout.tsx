@@ -14,6 +14,7 @@ import {
   LazyServiceWorkerRegistration,
   LazyGoogleAnalytics 
 } from '@/components/DynamicComponents';
+import { WebsiteStructuredData, OrganizationStructuredData } from '@/components/seo/StructuredData';
 
 // Next.js Font 최적화 - preload 추가
 const inter = Inter({ 
@@ -131,6 +132,14 @@ export default function RootLayout({
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
                   <LazyGoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
                 )}
+                
+                {/* SEO 구조화된 데이터 */}
+                <WebsiteStructuredData 
+                  url={siteUrl}
+                  name="InnerSpell - 당신의 내면을 탐험하세요"
+                  description="AI 기반 타로 해석, 타로 카드 백과사전, 영적 성장 블로그를 통해 당신의 내면을 발견하세요."
+                />
+                <OrganizationStructuredData url={siteUrl} />
               </AuthProvider>
             </AuthErrorBoundary>
         </ThemeProvider>

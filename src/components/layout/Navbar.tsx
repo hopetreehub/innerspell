@@ -20,6 +20,11 @@ const baseNavItems = [
   { href: '/community', label: '커뮤니티' },
 ];
 
+const userNavItems = [
+  { href: '/dashboard', label: '대시보드' },
+  { href: '/profile', label: '프로필' },
+];
+
 const adminNavItems = [
   { href: '/admin', label: '관리자 설정', icon: Shield },
 ];
