@@ -3,6 +3,10 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "installCommand": "rm -rf node_modules .next .vercel/cache && npm install --legacy-peer-deps",
+  "public": true,
+  "github": {
+    "silent": true
+  },
   "build": {
     "env": {
       "NEXT_CACHE_DISABLED": "1",
