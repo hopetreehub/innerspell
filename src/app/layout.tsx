@@ -8,22 +8,26 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import './globals.css';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { AuthErrorBoundary } from '@/components/auth/AuthErrorBoundary';
-import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
-import PerformanceMonitor from '@/components/PerformanceMonitor';
-import PerformanceManager from '@/components/PerformanceManager';
-import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import { 
+  LazyPerformanceMonitor, 
+  LazyPerformanceManager, 
+  LazyServiceWorkerRegistration,
+  LazyGoogleAnalytics 
+} from '@/components/DynamicComponents';
 
-// Next.js Font 최적화
+// Next.js Font 최적화 - preload 추가
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter'
+  variable: '--font-inter',
+  preload: true,
 });
 
 const jetbrainsMono = JetBrains_Mono({ 
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-jetbrains-mono'
+  variable: '--font-jetbrains-mono',
+  preload: false, // 주요 폰트가 아니므로 preload 하지 않음
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:4000';
@@ -94,6 +98,21 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="InnerSpell" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        
+        {/* Critical CSS for faster loading */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            body { font-family: system-ui, -apple-system, sans-serif; }
+            .animate-slide-up { opacity: 0; transform: translateY(30px); animation: slideUp 0.6s ease-out forwards; }
+            .animate-fade-in { opacity: 0; animation: fadeIn 0.8s ease-out forwards; }
+            @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+            @keyframes fadeIn { to { opacity: 1; } }
+          `
+        }} />
+        
+        {/* Resource hints for better performance */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-body antialiased`}>
         <ThemeProvider
@@ -106,11 +125,11 @@ export default function RootLayout({
               <AuthProvider>
                 <RootLayoutClient>{children}</RootLayoutClient>
                 <Toaster />
-                <ServiceWorkerRegistration />
-                <PerformanceMonitor />
-                <PerformanceManager />
+                <LazyServiceWorkerRegistration />
+                <LazyPerformanceMonitor />
+                <LazyPerformanceManager />
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-                  <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+                  <LazyGoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
                 )}
               </AuthProvider>
             </AuthErrorBoundary>

@@ -3,7 +3,7 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Star, Compass, BookOpen } from 'lucide-react';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -74,15 +74,14 @@ export default function HomePage() {
               >
                 {feature.imageSrc && (
                   <div className="relative w-full h-48 overflow-hidden"> {/* h-48 gives aspect ~3:2 for 300x200 */}
-                    <Image
+                    <OptimizedImage
                       src={feature.imageSrc}
                       alt={feature.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      data-ai-hint={feature.dataAiHint}
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      loading={index === 0 ? "eager" : "lazy"}
                       priority={index === 0}
+                      quality={85}
                       placeholder="blur"
                       blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAgEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                     />

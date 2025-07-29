@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import { HeroImage } from '@/components/ui/OptimizedImage';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Sparkles } from 'lucide-react';
 
@@ -43,15 +43,10 @@ export function HeroSection() {
           </div>
           <div className="relative animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <div className="aspect-square max-w-md mx-auto md:max-w-none rounded-xl overflow-hidden shadow-2xl transform transition-all duration-500 hover:scale-105 group">
-              <Image
+              <HeroImage
                 src="/images/tarothome.png?v=1" 
                 alt="신비로운 타로 카드"
-                width={600}
-                height={600}
-                priority // LCP candidate for homepage
-                className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                data-ai-hint="mystical tarot"
-                sizes="(max-width: 768px) 100vw, 50vw" 
+                className="w-full h-full transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center p-8">
                 <p className="text-primary-foreground text-center text-lg font-semibold">내면의 신비를 밝히세요</p>

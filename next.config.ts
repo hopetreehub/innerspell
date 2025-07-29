@@ -27,8 +27,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // 리액트 스트릭트 모드
   reactStrictMode: true,
-  // SWC 미니파이어 사용
-  swcMinify: true,
+  // SWC 미니파이어는 Next.js 15에서 기본값이므로 제거
   // EMERGENCY CACHE BUSTING CONFIGURATION
   async headers() {
     return [
