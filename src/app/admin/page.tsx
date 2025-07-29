@@ -387,21 +387,9 @@ export default function AdminDashboardPage() {
         </TabsContent>
 
         <TabsContent value="notifications">
-          <Card className="shadow-lg border-primary/10">
-            <CardHeader>
-              <CardTitle className="font-headline text-2xl text-primary flex items-center">
-                <Bell className="mr-2 h-6 w-6" /> 알림 설정
-              </CardTitle>
-              <CardDescription>
-                시스템 알림 채널과 조건을 관리합니다.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Suspense fallback={<TabContentSpinner message="알림 설정을 불러오는 중..." />}>
-                <NotificationSettings />
-              </Suspense>
-            </CardContent>
-          </Card>
+          <Suspense fallback={<TabContentSpinner message="알림 설정을 불러오는 중..." />}>
+            <NotificationSettings />
+          </Suspense>
         </TabsContent>
 
         <TabsContent value="user-management">
