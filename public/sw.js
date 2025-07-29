@@ -83,13 +83,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Chrome DevTools, hot reload 관련 요청 제외
+  // Chrome extensions, DevTools, hot reload 관련 요청 완전 제외
   if (request.url.includes('chrome-extension://') || 
+      request.url.includes('chrome://') ||
+      request.url.includes('moz-extension://') ||
+      request.url.includes('safari-extension://') ||
+      request.url.includes('webkit-extension://') ||
+      request.url.includes('edge-extension://') ||
       request.url.includes('webpack') ||
       request.url.includes('_next/webpack') ||
       request.url.includes('__nextjs') ||
-      request.url.includes('_next/static/development')) {
-    return;
+      request.url.includes('_next/static/development') ||
+      request.url.includes('hot-update') ||
+      request.url.includes('sockjs-node') ||
+      request.url.includes('__webpack') ||
+      request.url.includes('eventsource')) {
+    return; // 완전히 무시
   }
 
   // 캐시 전략 결정
@@ -114,14 +123,27 @@ self.addEventListener('fetch', (event) => {
           return cachedResponse;
         }
         // HTML 요청인 경우 오프라인 페이지로 리다이렉트
-        if (request.headers.get('accept').includes('text/html')) {
-          return caches.match('/offline');
+        const acceptHeader = request.headers.get('accept');
+        if (acceptHeader && acceptHeader.includes('text/html')) {
+          return caches.match('/offline').then(offlinePage => {
+            if (offlinePage) {
+              return offlinePage;
+            }
+            // 오프라인 페이지도 없으면 기본 응답
+            return new Response('오프라인 상태입니다', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: new Headers({ 'Content-Type': 'text/html; charset=utf-8' })
+            });
+          });
         }
-        // 그 외의 경우 네트워크 에러 응답
-        return new Response('Network error', {
-          status: 503,
-          statusText: 'Service Unavailable',
-          headers: new Headers({ 'Content-Type': 'text/plain' })
+        // 그 외의 경우 원본 네트워크 요청으로 fallback
+        return fetch(request).catch(() => {
+          return new Response('Network error', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: new Headers({ 'Content-Type': 'text/plain' })
+          });
         });
       });
     })
@@ -160,6 +182,13 @@ async function handleRequest(request, strategy) {
 // 네트워크에서 가져와 캐시에 저장
 async function fetchAndCache(request, cache, strategy) {
   try {
+    // Chrome extension 요청은 절대 처리하지 않음
+    if (request.url.includes('chrome-extension://') || 
+        request.url.includes('chrome://') ||
+        request.url.includes('moz-extension://')) {
+      throw new Error('Extension request not supported');
+    }
+
     const fetchOptions = {
       mode: 'cors',
       credentials: 'same-origin',
@@ -169,11 +198,19 @@ async function fetchAndCache(request, cache, strategy) {
     const response = await fetch(request, fetchOptions);
     
     if (response && response.ok && response.status === 200) {
-      // HTML이 아닌 리소스만 캐싱 (동적 페이지는 제외)
+      // 캐시 가능한 응답인지 확인
       const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('text/html')) {
-        const responseToCache = response.clone();
-        await cache.put(request, responseToCache);
+      const isValidResponse = response.headers.get('cache-control') !== 'no-store';
+      
+      // 안전한 캐싱을 위한 추가 검증
+      if (isValidResponse && !request.url.includes('chrome-extension://')) {
+        try {
+          const responseToCache = response.clone();
+          await cache.put(request, responseToCache);
+        } catch (cacheError) {
+          console.warn('[Service Worker] Cache put failed:', cacheError);
+          // 캐싱 실패해도 원본 응답은 반환
+        }
       }
     }
     
