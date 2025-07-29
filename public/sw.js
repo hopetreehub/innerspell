@@ -3,22 +3,14 @@ const CACHE_VERSION = 'v2';
 const CACHE_NAME = `innerspell-cache-${CACHE_VERSION}`;
 
 const urlsToCache = [
-  '/',
   '/offline',
   '/manifest.json',
   '/favicon.ico',
-  '/logo.png',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  '/logo.png'
 ];
 
-// 정적 리소스 캐싱
-const STATIC_RESOURCES = [
-  '/images/tarothome.png',
-  '/images/1ai.png',
-  '/images/2road.png',
-  '/images/3wisdom.png',
-];
+// 정적 리소스 캐싱 (나중에 lazy 로드)
+const STATIC_RESOURCES = [];
 
 // 캐시 전략 정의
 const CACHE_STRATEGIES = {
@@ -52,7 +44,14 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[Service Worker] Caching app shell');
-        return cache.addAll([...urlsToCache, ...STATIC_RESOURCES]);
+        // 각 URL을 개별적으로 캐싱하여 실패한 것은 무시
+        return Promise.all(
+          [...urlsToCache, ...STATIC_RESOURCES].map(url => {
+            return cache.add(url).catch(error => {
+              console.warn(`[Service Worker] Failed to cache ${url}:`, error);
+            });
+          })
+        );
       })
       .then(() => self.skipWaiting())
   );
@@ -84,6 +83,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Chrome DevTools, hot reload 관련 요청 제외
+  if (request.url.includes('chrome-extension://') || 
+      request.url.includes('webpack') ||
+      request.url.includes('_next/webpack') ||
+      request.url.includes('__nextjs') ||
+      request.url.includes('_next/static/development')) {
+    return;
+  }
+
   // 캐시 전략 결정
   let strategy = null;
   for (const [name, config] of Object.entries(CACHE_STRATEGIES)) {
@@ -98,7 +106,25 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    handleRequest(request, strategy)
+    handleRequest(request, strategy).catch(error => {
+      console.error('[Service Worker] Fetch error:', error);
+      // 네트워크 오류 시 캐시에서 찾거나 오프라인 페이지 반환
+      return caches.match(request).then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        // HTML 요청인 경우 오프라인 페이지로 리다이렉트
+        if (request.headers.get('accept').includes('text/html')) {
+          return caches.match('/offline');
+        }
+        // 그 외의 경우 네트워크 에러 응답
+        return new Response('Network error', {
+          status: 503,
+          statusText: 'Service Unavailable',
+          headers: new Headers({ 'Content-Type': 'text/plain' })
+        });
+      });
+    })
   );
 });
 
@@ -134,12 +160,21 @@ async function handleRequest(request, strategy) {
 // 네트워크에서 가져와 캐시에 저장
 async function fetchAndCache(request, cache, strategy) {
   try {
-    const response = await fetch(request);
+    const fetchOptions = {
+      mode: 'cors',
+      credentials: 'same-origin',
+      cache: 'no-cache'
+    };
     
-    if (response.ok) {
-      // 응답 복제 (Stream은 한번만 읽을 수 있음)
-      const responseToCache = response.clone();
-      await cache.put(request, responseToCache);
+    const response = await fetch(request, fetchOptions);
+    
+    if (response && response.ok && response.status === 200) {
+      // HTML이 아닌 리소스만 캐싱 (동적 페이지는 제외)
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('text/html')) {
+        const responseToCache = response.clone();
+        await cache.put(request, responseToCache);
+      }
     }
     
     return response;
