@@ -37,8 +37,11 @@ export function DevAuthHelper() {
   // Only show in development mode
   // Note: In production builds, this component won't be included at all
   // For now, always show in local development
+  // TEMP: Also show in test environment for QA purposes
   const isDevelopment = typeof window !== 'undefined' && 
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    (window.location.hostname === 'localhost' || 
+     window.location.hostname === '127.0.0.1' ||
+     window.location.hostname.includes('test-studio-firebase.vercel.app'));
   
   if (!isDevelopment) {
     return null;
