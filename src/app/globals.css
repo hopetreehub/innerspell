@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-body), 'Noto Sans KR', sans-serif;
+  font-family: var(--font-inter), 'Noto Sans KR', sans-serif;
+}
+
+code, pre {
+  font-family: var(--font-jetbrains-mono), monospace;
 }
 
 @layer base {

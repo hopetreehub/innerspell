@@ -83,6 +83,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // 외부 도메인 요청 제외 (Google Fonts 등)
+  const requestUrl = new URL(request.url);
+  if (requestUrl.origin !== self.location.origin && 
+      !requestUrl.hostname.includes('fonts.googleapis.com') &&
+      !requestUrl.hostname.includes('fonts.gstatic.com')) {
+    return;
+  }
+
   // Chrome extensions, DevTools, hot reload 관련 요청 완전 제외
   if (request.url.includes('chrome-extension://') || 
       request.url.includes('chrome://') ||
@@ -189,9 +197,13 @@ async function fetchAndCache(request, cache, strategy) {
       throw new Error('Extension request not supported');
     }
 
+    // 외부 도메인 요청인지 확인
+    const requestUrl = new URL(request.url);
+    const isExternal = requestUrl.origin !== self.location.origin;
+    
     const fetchOptions = {
-      mode: 'cors',
-      credentials: 'same-origin',
+      mode: isExternal ? 'no-cors' : 'cors',
+      credentials: isExternal ? 'omit' : 'same-origin',
       cache: 'no-cache'
     };
     

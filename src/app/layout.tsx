@@ -1,5 +1,6 @@
 
 import type { Metadata, Viewport } from 'next';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/context/AuthContext';
 import RootLayoutClient from './RootLayoutClient';
@@ -11,6 +12,19 @@ import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import PerformanceMonitor from '@/components/PerformanceMonitor';
 import PerformanceManager from '@/components/PerformanceManager';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+
+// Next.js Font 최적화
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter'
+});
+
+const jetbrainsMono = JetBrains_Mono({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono'
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:4000';
 
@@ -80,13 +94,8 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="InnerSpell" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased">
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-body antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -21,6 +21,13 @@ export default function Error({
     console.error('Error cause:', error.cause);
     console.error('Full error object:', error);
     console.error('=== END ERROR INFO ===');
+    
+    // MIME type 오류 감지 (Vercel Private 프로젝트 문제)
+    if (error.message?.includes('MIME type') || 
+        error.message?.includes('text/html') ||
+        error.message?.includes('Refused to execute script')) {
+      console.warn('⚠️ MIME type error detected - possibly due to Vercel private project redirect');
+    }
   }, [error]);
 
   return (
@@ -28,7 +35,9 @@ export default function Error({
       <AlertCircle className="w-24 h-24 text-destructive mb-8" />
       <h1 className="text-4xl font-bold text-primary mb-4 font-headline">이런! 오류가 발생했습니다</h1>
       <p className="text-lg text-foreground/80 mb-6 max-w-md">
-        예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+        {error.message?.includes('MIME type') || error.message?.includes('Refused to execute script')
+          ? '페이지 접근 권한이 필요합니다. 로그인이 필요할 수 있습니다.'
+          : '예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'}
       </p>
       <div className="text-sm text-muted-foreground mb-8 max-w-lg">
         <p className="mb-2">오류 코드: {error.digest || '알 수 없음'}</p>
