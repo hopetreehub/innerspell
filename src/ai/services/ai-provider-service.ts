@@ -60,13 +60,13 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
       if (hasOpenAI) {
         defaultModels.push(
           {
-            id: 'openai/gpt-4o-mini',
-            name: 'GPT-4o mini (OpenAI)',
+            id: 'openai/gpt-3.5-turbo',
+            name: 'GPT-3.5 Turbo (OpenAI)',
             provider: 'openai'
           },
           {
-            id: 'openai/gpt-4o',
-            name: 'GPT-4o (OpenAI)',
+            id: 'openai/gpt-4-turbo',
+            name: 'GPT-4 Turbo (OpenAI)',
             provider: 'openai'
           }
         );
@@ -91,8 +91,8 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
       if (defaultModels.length === 0) {
         defaultModels.push(
           {
-            id: 'openai/gpt-4o-mini',
-            name: 'GPT-4o mini (OpenAI)',
+            id: 'openai/gpt-3.5-turbo',
+            name: 'GPT-3.5 Turbo (OpenAI)',
             provider: 'openai'
           },
           {
