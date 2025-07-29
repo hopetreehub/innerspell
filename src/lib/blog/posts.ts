@@ -1673,18 +1673,9 @@ AI는 전통 타로를 대체하는 것이 아니라 보완하는 도구입니�
   }
 ];
 
-// 필요한 함수들 export
-export const getAllPosts = () => {
-  return mockPosts.filter(post => post.published);
-};
+// 필요한 함수들 export (중복 제거됨)
 
-export const getPostById = (id: string) => {
-  return mockPosts.find(post => post.id === id);
-};
 
-export const getFeaturedPosts = () => {
-  return mockPosts.filter(post => post.featured && post.published);
-};
 
 export const searchPosts = (query: string) => {
   const lowercaseQuery = query.toLowerCase();
@@ -4092,33 +4083,7 @@ A: 전혀 문제없습니다. 자책하지 말고 다음 날 다시 시작하면
 // 개발 환경에서는 Mock 데이터 사용으로 강제 설정
 const USE_FIRESTORE = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_USE_FIRESTORE === 'true';
 
-// 포스트 데이터 가져오기 함수
-export const getAllPosts = async (): Promise<BlogPost[]> => {
-  if (USE_FIRESTORE) {
-    try {
-      const { posts } = await getFirestorePosts(true);
-      return posts;
-    } catch (error) {
-      console.error('Firestore 에러, Mock 데이터 사용:', error);
-      // Firestore 실패 시 Mock 데이터로 폴백
-    }
-  }
-  
-  // Mock 데이터 사용
-  const publishedPosts = mockPosts.filter(post => post.published);
-  
-  console.log('getAllPosts - 전체 목 포스트 수:', mockPosts.length);
-  console.log('getAllPosts - published 포스트 수:', publishedPosts.length);
-  
-  // 카테고리별 집계
-  const categoryCount: Record<string, number> = {};
-  publishedPosts.forEach(post => {
-    categoryCount[post.category] = (categoryCount[post.category] || 0) + 1;
-  });
-  console.log('getAllPosts - 카테고리별 포스트 수:', categoryCount);
-  
-  return publishedPosts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
-};
+// 포스트 데이터 가져오기 함수 (중복 제거됨)
 
 export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
   if (USE_FIRESTORE) {
@@ -4140,18 +4105,6 @@ export const getPostsByCategory = async (category: string): Promise<BlogPost[]> 
   return posts.filter(post => post.category === category);
 };
 
-export const getFeaturedPosts = async (): Promise<BlogPost[]> => {
-  if (USE_FIRESTORE) {
-    try {
-      return await getFirestoreFeaturedPosts();
-    } catch (error) {
-      console.error('Firestore 에러, Mock 데이터 사용:', error);
-    }
-  }
-  
-  const posts = await getAllPosts();
-  return posts.filter(post => post.featured);
-};
 
 export const searchPosts = async (query: string): Promise<BlogPost[]> => {
   if (USE_FIRESTORE) {
@@ -4188,7 +4141,7 @@ export const getAllPosts = cache(async (): Promise<BlogPost[]> => {
 });
 
 // 특정 포스트 가져오기
-export const getPostById = cache(async (id: string): Promise<BlogPost  < /dev/null |  null> => {
+export const getPostById = cache(async (id: string): Promise<BlogPost | null> => {
   return mockPosts.find(post => post.id === id && post.published) || null;
 });
 

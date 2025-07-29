@@ -3,23 +3,24 @@ import { headers } from 'next/headers';
 
 // 실시간 모니터링 데이터 생성 함수
 function generateRealtimeData() {
-  const now = new Date();
-  
-  // 활성 사용자 생성 (2-15명)
-  const activeUsers = [];
-  const userCount = Math.floor(Math.random() * 14) + 2;
-  const pages = ['/tarot', '/dream', '/admin', '/blog', '/profile', '/', '/about'];
-  
-  for (let i = 0; i < userCount; i++) {
-    activeUsers.push({
-      userId: `user_${Math.random().toString(36).substr(2, 9)}`,
-      page: pages[Math.floor(Math.random() * pages.length)],
-      lastSeen: new Date(now.getTime() - Math.random() * 300000).toISOString(), // 최근 5분 내
-      sessionDuration: Math.floor(Math.random() * 1800) + 60, // 1분-30분
-      userAgent: 'Chrome/120.0.0.0',
-      location: ['서울', '부산', '대구', '인천', '광주'][Math.floor(Math.random() * 5)]
-    });
-  }
+  try {
+    const now = new Date();
+    
+    // 활성 사용자 생성 (2-15명)
+    const activeUsers = [];
+    const userCount = Math.floor(Math.random() * 14) + 2;
+    const pages = ['/tarot', '/dream', '/admin', '/blog', '/profile', '/', '/about'];
+    
+    for (let i = 0; i < userCount; i++) {
+      activeUsers.push({
+        userId: `user_${Math.random().toString(36).substring(2, 11)}`,
+        page: pages[Math.floor(Math.random() * pages.length)],
+        lastSeen: new Date(now.getTime() - Math.random() * 300000).toISOString(), // 최근 5분 내
+        sessionDuration: Math.floor(Math.random() * 1800) + 60, // 1분-30분
+        userAgent: 'Chrome/120.0.0.0',
+        location: ['서울', '부산', '대구', '인천', '광주'][Math.floor(Math.random() * 5)]
+      });
+    }
 
   // 최근 이벤트 생성 (10-25개)
   const recentEvents = [];
@@ -31,9 +32,9 @@ function generateRealtimeData() {
     const eventTime = new Date(now.getTime() - i * 15000 - Math.random() * 60000); // 지난 1시간 내
     
     const event = {
-      id: `event_${Math.random().toString(36).substr(2, 9)}`,
+      id: `event_${Math.random().toString(36).substring(2, 11)}`,
       type: eventType,
-      userId: `user_${Math.random().toString(36).substr(2, 9)}`,
+      userId: `user_${Math.random().toString(36).substring(2, 11)}`,
       timestamp: eventTime.toISOString(),
       details: {
         page: pages[Math.floor(Math.random() * pages.length)],
@@ -141,6 +142,50 @@ function generateRealtimeData() {
       }
     }
   };
+  } catch (error) {
+    console.error('Error generating realtime data:', error);
+    // 오류 발생 시 기본 데이터 반환
+    return {
+      timestamp: new Date().toISOString(),
+      stats: {
+        totalActiveUsers: 0,
+        currentTarotReadings: 0,
+        currentDreamInterpretations: 0,
+        averageResponseTime: 100,
+        errorRate: 0,
+        requestsPerMinute: 0,
+        cpuUsage: 20,
+        memoryUsage: 50,
+        diskUsage: 30,
+        networkLatency: 80,
+        activeConnections: 0
+      },
+      activeUsers: [],
+      recentEvents: [],
+      serverMetrics: {
+        cpuUsage: 20,
+        memoryUsage: 50,
+        diskUsage: 30,
+        networkLatency: 80,
+        activeConnections: 0,
+        requestsPerMinute: 0
+      },
+      analytics: {
+        topPages: [],
+        userGeography: [],
+        deviceTypes: {
+          mobile: 50,
+          desktop: 30,
+          tablet: 20
+        },
+        conversionMetrics: {
+          visitorToUser: 10,
+          userToReading: 50,
+          completionRate: 90
+        }
+      }
+    };
+  }
 }
 
 export async function GET(request: NextRequest) {
