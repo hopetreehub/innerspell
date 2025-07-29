@@ -2,7 +2,7 @@
   "buildCommand": "npm run clean && npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "rm -rf node_modules .next .vercel/cache && npm install",
+  "installCommand": "rm -rf node_modules .next .vercel/cache && npm install --legacy-peer-deps",
   "build": {
     "env": {
       "NEXT_CACHE_DISABLED": "1",
