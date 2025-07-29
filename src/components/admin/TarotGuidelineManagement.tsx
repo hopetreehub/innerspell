@@ -287,9 +287,9 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
           </div>
 
           {/* 디버그 정보 */}
-          <Card className="bg-gray-50 border-dashed">
+          <Card className="bg-gray-50 dark:bg-gray-900/50 border-dashed">
             <CardContent className="pt-4">
-              <div className="text-sm text-gray-600 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-sm text-gray-600 dark:text-gray-400 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <strong>스프레드:</strong> {spreads.length}개
                 </div>
@@ -304,7 +304,7 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
                 </div>
               </div>
               {spreads.length === 0 && (
-                <div className="mt-2 text-xs text-red-600">
+                <div className="mt-2 text-xs text-red-600 dark:text-red-400">
                   ⚠️ 데이터가 로드되지 않았습니다. "강제 새로고침" 버튼을 클릭해보세요.
                 </div>
               )}

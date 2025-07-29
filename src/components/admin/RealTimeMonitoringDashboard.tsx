@@ -129,13 +129,13 @@ export function RealTimeMonitoringDashboard() {
       
       {/* 실시간 통계 카드 */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-blue-200 bg-blue-50/50">
+        <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">실시간 활성 사용자</CardTitle>
-            <Users className="h-4 w-4 text-blue-500" />
+            <Users className="h-4 w-4 text-blue-500 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
               {data.stats.totalActiveUsers}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -144,13 +144,13 @@ export function RealTimeMonitoringDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-purple-200 bg-purple-50/50">
+        <Card className="border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">타로 리딩</CardTitle>
-            <Zap className="h-4 w-4 text-purple-500" />
+            <Zap className="h-4 w-4 text-purple-500 dark:text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
               {data.stats.currentTarotReadings}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -159,13 +159,13 @@ export function RealTimeMonitoringDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-green-200 bg-green-50/50">
+        <Card className="border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">꿈해몽</CardTitle>
-            <Activity className="h-4 w-4 text-green-500" />
+            <Activity className="h-4 w-4 text-green-500 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {data.stats.currentDreamInterpretations}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -174,13 +174,13 @@ export function RealTimeMonitoringDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-orange-200 bg-orange-50/50">
+        <Card className="border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">평균 응답시간</CardTitle>
-            <Clock className="h-4 w-4 text-orange-500" />
+            <Clock className="h-4 w-4 text-orange-500 dark:text-orange-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
+            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
               {Math.round(data.stats.averageResponseTime)}ms
             </div>
             <p className="text-xs text-muted-foreground">
@@ -202,9 +202,9 @@ export function RealTimeMonitoringDashboard() {
               <div className="text-2xl font-bold">
                 {data.stats.memoryUsage ? `${Math.round(data.stats.memoryUsage)}%` : 'N/A'}
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                 <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-blue-600 dark:bg-blue-500 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${data.stats.memoryUsage || 0}%` }}
                 />
               </div>
@@ -220,9 +220,9 @@ export function RealTimeMonitoringDashboard() {
               <div className="text-2xl font-bold">
                 {data.stats.cpuUsage ? `${Math.round(data.stats.cpuUsage)}%` : 'N/A'}
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                 <div 
-                  className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-green-600 dark:bg-green-500 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${data.stats.cpuUsage || 0}%` }}
                 />
               </div>
