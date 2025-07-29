@@ -15,6 +15,10 @@ export async function subscribeToNewsletter(
   formData: NewsletterSubscriptionFormData
 ): Promise<{ success: boolean; message: string }> {
   try {
+    if (!firestore) {
+      return { success: false, message: 'Firebase 서비스를 사용할 수 없습니다.' };
+    }
+
     const validationResult = NewsletterSubscriptionSchema.safeParse(formData);
     if (!validationResult.success) {
       return { success: false, message: validationResult.error.flatten().fieldErrors.email?.[0] || '유효하지 않은 이메일입니다.' };
@@ -26,6 +30,9 @@ export async function subscribeToNewsletter(
     const doc = await subscriberRef.get();
 
     if (doc.exists) {
+      if (!FieldValue) {
+        return { success: false, message: 'Firebase 서비스 오류가 발생했습니다.' };
+      }
       await subscriberRef.update({
         subscribedAt: FieldValue.serverTimestamp(),
         status: 'active', 

@@ -58,7 +58,7 @@ test('Debug admin menu visibility issue', async ({ page }) => {
     
     // Try to find React fiber and extract auth context
     const rootElement = document.getElementById('__next');
-    if (rootElement && rootElement._reactRootContainer) {
+    if (rootElement && (rootElement as any)._reactRootContainer) {
       console.log('Found React root container');
     }
     

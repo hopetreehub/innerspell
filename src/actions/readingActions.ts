@@ -44,6 +44,10 @@ export async function saveUserReading(
       createdAt: FieldValue.serverTimestamp(),
     };
 
+    if (!firestore) {
+      return { success: false, error: 'Firebase 서비스를 사용할 수 없습니다.' };
+    }
+
     const docRef = await firestore.collection('userReadings').add(readingData);
     console.log(`User reading saved successfully with ID: ${docRef.id} for user ${userId}.`);
     return { success: true, readingId: docRef.id };
