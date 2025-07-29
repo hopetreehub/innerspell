@@ -46,6 +46,7 @@ export const metadata: Metadata = {
 };
 
 import { BlogMainServer } from '@/components/blog/BlogMainServer';
+import { BlogMainJsonLd } from '@/components/blog/BlogJsonLd';
 import { mockPosts } from '@/lib/blog/posts';
 
 // 정적 생성으로 변경하여 성능 최적화
@@ -97,5 +98,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     return dateB.getTime() - dateA.getTime();
   });
   
-  return <BlogMainServer initialPosts={filteredPosts} currentPage={currentPage} />;
+  return (
+    <>
+      <BlogMainJsonLd />
+      <BlogMainServer initialPosts={filteredPosts} currentPage={currentPage} />
+    </>
+  );
 }

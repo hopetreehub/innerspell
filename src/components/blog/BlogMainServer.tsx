@@ -66,11 +66,16 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
         {/* Featured 포스트 섹션 */}
         {featuredPosts.length > 0 && (
           <section className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <h2 className="text-2xl font-bold text-primary">🌟 주요 포스트</h2>
-              <Badge variant="default" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                Featured
-              </Badge>
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl font-bold text-primary">🌟 주요 포스트</h2>
+                <Badge variant="default" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                  Featured
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground hidden md:block">
+                {featuredPosts.length}개의 추천 포스트
+              </p>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {featuredPosts.map((post, index) => (
@@ -140,8 +145,13 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
         {regularPosts.length > 0 && (
           <section className="mb-12">
             {featuredPosts.length > 0 && (
-              <div className="flex items-center gap-3 mb-8">
-                <h2 className="text-2xl font-bold text-primary">📝 모든 포스트</h2>
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-bold text-primary">📝 모든 포스트</h2>
+                </div>
+                <p className="text-sm text-muted-foreground hidden md:block">
+                  {regularPosts.length}개의 포스트
+                </p>
               </div>
             )}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -207,10 +217,21 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
 
         {/* 포스트가 없는 경우 */}
         {currentPosts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-lg text-muted-foreground">
-              아직 게시된 블로그 포스트가 없습니다.
-            </p>
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <div className="text-6xl mb-4">📝</div>
+              <h3 className="text-xl font-semibold text-primary mb-2">
+                아직 게시된 포스트가 없습니다
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                곧 영적 성장과 자기계발을 위한 좋은 콘텐츠로 찾아뵙겠습니다.
+              </p>
+              <Button asChild variant="outline">
+                <Link href="/">
+                  홈으로 돌아가기
+                </Link>
+              </Button>
+            </div>
           </div>
         )}
 
