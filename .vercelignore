@@ -1,0 +1,22 @@
+# Vercel 배포 시 제외할 파일들
+.git
+.next
+node_modules
+*.log
+.DS_Store
+.env.local
+.env.*.local
+coverage
+.nyc_output
+.github
+.vscode
+*.md
+!README.md
+screenshots
+test-*.js
+cypress
+__tests__
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
