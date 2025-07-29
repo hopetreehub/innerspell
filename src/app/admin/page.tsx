@@ -19,13 +19,12 @@ const SystemManagement = lazy(() => import('@/components/admin/SystemManagement'
 const AIProviderManagement = lazy(() => import('@/components/admin/AIProviderManagement').then(mod => ({ default: mod.AIProviderManagement })));
 const BlogManagement = lazy(() => import('@/components/admin/BlogManagement').then(mod => ({ default: mod.BlogManagement })));
 const TarotGuidelineManagement = lazy(() => import('@/components/admin/TarotGuidelineManagement').then(mod => ({ default: mod.TarotGuidelineManagement })));
+const NotificationSettings = lazy(() => import('@/components/admin/NotificationSettings').then(mod => ({ default: mod.NotificationSettings })));
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool, Bell, BarChart, Activity } from 'lucide-react';
 
-// 푸시 알림 토글도 레이지 로딩
-const PushNotificationToggle = lazy(() => import('@/components/ui/push-notification-toggle').then(mod => ({ default: mod.PushNotificationToggle })));
 
 // 향상된 로딩 스피너 컴포넌트
 const TabContentSpinner = ({ message = "로딩 중..." }: { message?: string }) => (
@@ -62,7 +61,7 @@ function useTabPreloading() {
           await import('@/components/admin/BlogManagement');
           break;
         case 'notifications':
-          await import('@/components/ui/push-notification-toggle');
+          await import('@/components/admin/NotificationSettings');
           break;
         case 'user-management':
           await import('@/components/admin/UserManagement');
@@ -391,15 +390,15 @@ export default function AdminDashboardPage() {
           <Card className="shadow-lg border-primary/10">
             <CardHeader>
               <CardTitle className="font-headline text-2xl text-primary flex items-center">
-                <Bell className="mr-2 h-6 w-6" /> 푸시 알림 설정
+                <Bell className="mr-2 h-6 w-6" /> 알림 설정
               </CardTitle>
               <CardDescription>
-                관리자용 푸시 알림을 설정하고 테스트합니다.
+                시스템 알림 채널과 조건을 관리합니다.
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex justify-center">
+            <CardContent>
               <Suspense fallback={<TabContentSpinner message="알림 설정을 불러오는 중..." />}>
-                <PushNotificationToggle />
+                <NotificationSettings />
               </Suspense>
             </CardContent>
           </Card>
