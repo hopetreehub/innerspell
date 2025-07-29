@@ -1,11 +1,11 @@
 const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
 
-async function checkAdminNotificationSettings() {
+async function testAdminNotificationFinal() {
+  console.log('관리자 로그인 후 알림 설정 최종 테스트 시작...');
+  
   const browser = await chromium.launch({ 
     headless: false,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
   
   const context = await browser.newContext({
@@ -13,223 +13,220 @@ async function checkAdminNotificationSettings() {
   });
   
   const page = await context.newPage();
-  const screenshotsDir = path.join(__dirname, 'screenshots');
   
-  // screenshots 디렉토리가 없으면 생성
-  if (!fs.existsSync(screenshotsDir)) {
-    fs.mkdirSync(screenshotsDir, { recursive: true });
-  }
-
   try {
-    console.log('🚀 Vercel 사이트 접속 중...');
+    console.log('1. 관리자 대시보드 접속 중...');
     await page.goto('https://test-studio-firebase.vercel.app/admin', { 
       waitUntil: 'networkidle',
-      timeout: 60000 
+      timeout: 30000 
     });
-
-    console.log('⏳ 페이지 로드 완료, 입력 필드 확인...');
-    await page.waitForTimeout(5000);
-
-    // 모든 input 요소들 확인
-    const allInputs = await page.locator('input').all();
-    console.log(`🔍 발견된 input 요소 개수: ${allInputs.length}`);
     
-    for (let i = 0; i < allInputs.length; i++) {
-      const inputType = await allInputs[i].getAttribute('type');
-      const inputPlaceholder = await allInputs[i].getAttribute('placeholder');
-      const inputName = await allInputs[i].getAttribute('name');
-      console.log(`Input ${i}: type=${inputType}, placeholder=${inputPlaceholder}, name=${inputName}`);
-    }
-
-    // 로그인 화면 스크린샷
+    // 페이지 로딩 대기
+    await page.waitForTimeout(3000);
+    
+    console.log('2. 로그인 화면 분석...');
+    
+    // 현재 화면 스크린샷
     await page.screenshot({ 
-      path: path.join(screenshotsDir, 'login-input-analysis.png'), 
+      path: '/mnt/e/project/test-studio-firebase/screenshots/admin-login-analysis.png',
       fullPage: true 
     });
-    console.log('📸 로그인 화면 분석 스크린샷 저장됨');
-
-    // 더 넓은 선택자로 이메일 입력 시도
+    
+    // 다양한 방법으로 이메일 입력 필드 찾기
     const emailSelectors = [
       'input[type="email"]',
-      'input[placeholder*="이메일"]',
       'input[placeholder*="email"]',
-      'input[name="email"]',
-      'input:first-of-type',
-      'input:nth-of-type(1)'
+      'input[placeholder*="your@email.com"]',
+      '[aria-label*="email"]',
+      '[name="email"]',
+      'input:first-of-type'
     ];
-
-    let emailInput = null;
+    
+    let emailField = null;
     for (const selector of emailSelectors) {
       try {
-        const element = page.locator(selector);
-        if (await element.isVisible()) {
-          emailInput = element;
-          console.log(`✅ 이메일 입력 필드 발견: ${selector}`);
+        const field = page.locator(selector).first();
+        const isVisible = await field.isVisible({ timeout: 2000 });
+        if (isVisible) {
+          emailField = field;
+          console.log(`✅ 이메일 필드 찾음: ${selector}`);
           break;
         }
       } catch (e) {
-        console.log(`❌ 선택자 실패: ${selector}`);
+        console.log(`❌ ${selector} 시도 실패`);
       }
     }
-
-    if (emailInput) {
-      console.log('🔐 로그인 시도 중...');
+    
+    if (emailField) {
+      console.log('3. 관리자 계정으로 로그인 시도...');
       
       // 이메일 입력
-      await emailInput.click();
-      await emailInput.fill('admin@test.com');
+      await emailField.click();
+      await emailField.fill('admin@innerspell.com');
       await page.waitForTimeout(1000);
       
-      // 비밀번호 입력 필드 찾기
+      // 비밀번호 필드 찾기
       const passwordSelectors = [
         'input[type="password"]',
-        'input[placeholder*="비밀번호"]',
-        'input[placeholder*="password"]',
-        'input[name="password"]',
+        '[aria-label*="password"]',
+        '[name="password"]',
         'input:nth-of-type(2)'
       ];
-
-      let passwordInput = null;
+      
+      let passwordField = null;
       for (const selector of passwordSelectors) {
         try {
-          const element = page.locator(selector);
-          if (await element.isVisible()) {
-            passwordInput = element;
-            console.log(`✅ 비밀번호 입력 필드 발견: ${selector}`);
+          const field = page.locator(selector).first();
+          const isVisible = await field.isVisible({ timeout: 2000 });
+          if (isVisible) {
+            passwordField = field;
+            console.log(`✅ 비밀번호 필드 찾음: ${selector}`);
             break;
           }
         } catch (e) {
-          console.log(`❌ 비밀번호 선택자 실패: ${selector}`);
+          console.log(`❌ ${selector} 시도 실패`);
         }
       }
-
-      if (passwordInput) {
-        await passwordInput.click();
-        await passwordInput.fill('admin123');
+      
+      if (passwordField) {
+        // 비밀번호 입력
+        await passwordField.click();
+        await passwordField.fill('admin123456');
         await page.waitForTimeout(1000);
         
-        // 로그인 후 스크린샷
-        await page.screenshot({ 
-          path: path.join(screenshotsDir, 'login-form-filled.png'), 
-          fullPage: true 
-        });
-        console.log('📸 로그인 폼 작성 완료 스크린샷 저장됨');
-        
-        // 로그인 버튼 클릭
-        const loginButtonSelectors = [
+        // 로그인 버튼 찾기 및 클릭
+        const loginSelectors = [
           'button:has-text("로그인")',
+          '[type="submit"]',
           'button[type="submit"]',
-          'input[type="submit"]',
-          'button:contains("로그인")',
-          'form button'
+          '.login-button',
+          'button:contains("로그인")'
         ];
-
-        let loginButton = null;
-        for (const selector of loginButtonSelectors) {
+        
+        let loginClicked = false;
+        for (const selector of loginSelectors) {
           try {
-            const element = page.locator(selector);
-            if (await element.isVisible()) {
-              loginButton = element;
-              console.log(`✅ 로그인 버튼 발견: ${selector}`);
+            const button = page.locator(selector).first();
+            const isVisible = await button.isVisible({ timeout: 2000 });
+            if (isVisible) {
+              await button.click();
+              loginClicked = true;
+              console.log(`✅ 로그인 버튼 클릭: ${selector}`);
               break;
             }
           } catch (e) {
-            console.log(`❌ 로그인 버튼 선택자 실패: ${selector}`);
+            console.log(`❌ ${selector} 버튼 시도 실패`);
           }
         }
-
-        if (loginButton) {
-          await loginButton.click();
-          console.log('⏳ 로그인 처리 중...');
-          await page.waitForTimeout(5000);
-
-          // 로그인 후 상태 스크린샷
+        
+        if (loginClicked) {
+          console.log('4. 로그인 처리 대기...');
+          await page.waitForTimeout(8000);
+          
+          // 로그인 후 스크린샷
           await page.screenshot({ 
-            path: path.join(screenshotsDir, 'after-login-attempt.png'), 
+            path: '/mnt/e/project/test-studio-firebase/screenshots/admin-after-login-attempt.png',
             fullPage: true 
           });
-          console.log('📸 로그인 시도 후 스크린샷 저장됨');
-
-          console.log('🔗 현재 URL:', page.url());
           
-          // 페이지 내용 확인
-          const bodyText = await page.textContent('body');
-          console.log('📄 현재 페이지 내용 (일부):', bodyText.substring(0, 800));
-
-          // 관리자 대시보드인지 확인
-          if (page.url().includes('/admin') && !bodyText.includes('로그인')) {
-            console.log('✅ 관리자 대시보드 접속 성공!');
+          // 관리자 대시보드 요소 확인
+          console.log('5. 관리자 대시보드 확인...');
+          const dashboardElements = [
+            'text=대시보드',
+            'text=알림 설정',
+            'text=사용자 관리',
+            'text=통계',
+            'text=Dashboard',
+            'text=Notification',
+            'text=Admin',
+            '[data-testid="dashboard"]',
+            '.admin-dashboard'
+          ];
+          
+          let foundDashboard = false;
+          for (const element of dashboardElements) {
+            try {
+              const isVisible = await page.locator(element).isVisible({ timeout: 3000 });
+              if (isVisible) {
+                foundDashboard = true;
+                console.log(`✅ 대시보드 요소 찾음: ${element}`);
+                break;
+              }
+            } catch (e) {
+              // 무시
+            }
+          }
+          
+          if (foundDashboard) {
+            console.log('6. 알림 설정 확인...');
             
             // 알림 설정 탭 찾기
-            const tabElements = await page.locator('button, a, [role="tab"], [data-tab]').allTextContents();
-            console.log('🔍 발견된 탭/버튼들:', tabElements);
-            
-            // 알림 관련 요소 찾기
-            const notificationTabSelectors = [
+            const notificationSelectors = [
               'text=알림 설정',
-              'text=알림',
-              '[role="tab"]:has-text("알림")',
+              'text=Notification',
+              '[data-testid="notification"]',
               'button:has-text("알림")',
-              '[data-tab*="notification"]'
+              'a:has-text("알림")'
             ];
-
-            let notificationTabFound = false;
-            for (const selector of notificationTabSelectors) {
+            
+            let notificationFound = false;
+            for (const selector of notificationSelectors) {
               try {
-                const element = page.locator(selector);
-                if (await element.isVisible()) {
-                  console.log(`🎯 알림 설정 탭 발견! 클릭 중: ${selector}`);
+                const element = page.locator(selector).first();
+                const isVisible = await element.isVisible({ timeout: 3000 });
+                if (isVisible) {
                   await element.click();
-                  await page.waitForTimeout(2000);
-                  
-                  // 알림 설정 화면 스크린샷
-                  await page.screenshot({ 
-                    path: path.join(screenshotsDir, 'admin-notification-check.png'), 
-                    fullPage: true 
-                  });
-                  console.log('📸 알림 설정 화면 스크린샷 저장됨');
-                  notificationTabFound = true;
+                  notificationFound = true;
+                  console.log(`✅ 알림 설정 클릭: ${selector}`);
+                  await page.waitForTimeout(3000);
                   break;
                 }
               } catch (e) {
-                // 계속 진행
+                // 무시
               }
             }
-
-            if (!notificationTabFound) {
-              console.log('❌ 알림 설정 탭을 찾을 수 없습니다');
+            
+            // 최종 결과 스크린샷
+            await page.screenshot({ 
+              path: '/mnt/e/project/test-studio-firebase/screenshots/notification-settings-final.png',
+              fullPage: true 
+            });
+            
+            if (notificationFound) {
+              console.log('✅ 알림 설정 테스트 성공!');
+            } else {
+              console.log('⚠️ 알림 설정 탭을 찾지 못했지만 대시보드는 로드됨');
             }
+            
           } else {
-            console.log('❌ 로그인 실패 또는 관리자 대시보드 접근 실패');
+            console.log('❌ 관리자 대시보드를 찾을 수 없습니다.');
           }
+          
+        } else {
+          console.log('❌ 로그인 버튼을 찾을 수 없습니다.');
         }
+        
+      } else {
+        console.log('❌ 비밀번호 필드를 찾을 수 없습니다.');
       }
+      
+    } else {
+      console.log('❌ 이메일 필드를 찾을 수 없습니다.');
     }
-
-    // 최종 상태 스크린샷
+    
+  } catch (error) {
+    console.error('테스트 중 오류 발생:', error);
+    
+    // 오류 상태 스크린샷
     await page.screenshot({ 
-      path: path.join(screenshotsDir, 'final-admin-state.png'), 
+      path: '/mnt/e/project/test-studio-firebase/screenshots/admin-final-error.png',
       fullPage: true 
     });
-    console.log('📸 최종 상태 스크린샷 저장됨');
-
-  } catch (error) {
-    console.error('❌ 오류 발생:', error);
-    
-    // 오류 시에도 스크린샷 저장
-    try {
-      await page.screenshot({ 
-        path: path.join(screenshotsDir, 'admin-error-final-state.png'), 
-        fullPage: true 
-      });
-      console.log('📸 오류 상태 스크린샷 저장됨');
-    } catch (screenshotError) {
-      console.error('스크린샷 저장 실패:', screenshotError);
-    }
   } finally {
+    console.log('브라우저를 10초 후에 닫습니다...');
+    await page.waitForTimeout(10000);
     await browser.close();
-    console.log('🔚 브라우저 종료됨');
   }
 }
 
-checkAdminNotificationSettings();
+testAdminNotificationFinal();
