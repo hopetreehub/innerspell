@@ -23,6 +23,10 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
   const currentPosts = initialPosts.slice(startIndex, endIndex);
+  
+  // Featured와 일반 포스트 분리
+  const featuredPosts = currentPosts.filter(post => post.featured);
+  const regularPosts = currentPosts.filter(post => !post.featured);
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,72 +63,150 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
           ))}
         </div>
 
-        {/* 블로그 포스트 그리드 */}
-        {currentPosts.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-12">
-            {currentPosts.map((post, index) => (
-              <article key={post.id} className="group">
-                <Link href={`/blog/${post.id}`}>
-                  <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div className="relative h-48 overflow-hidden">
-                      <Image
-                        src={post.image}
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        priority={index < 3}
-                        placeholder="blur"
-                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAgEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                      />
-                      {post.featured && (
-                        <Badge className="absolute top-2 right-2 bg-accent text-accent-foreground">
-                          추천
+        {/* Featured 포스트 섹션 */}
+        {featuredPosts.length > 0 && (
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <h2 className="text-2xl font-bold text-primary">🌟 주요 포스트</h2>
+              <Badge variant="default" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                Featured
+              </Badge>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {featuredPosts.map((post, index) => (
+                <article key={post.id} className="group">
+                  <Link href={`/blog/${post.id}`}>
+                    <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-primary/20 hover:border-primary/40">
+                      <div className="relative h-48 overflow-hidden">
+                        <Image
+                          src={post.image}
+                          alt={post.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority={index < 3}
+                          placeholder="blur"
+                          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAgEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                        />
+                        <Badge className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-semibold">
+                          ⭐ 추천
                         </Badge>
-                      )}
-                    </div>
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                        <Calendar className="w-4 h-4" />
-                        <time dateTime={new Date(post.publishedAt).toISOString()}>
-                          {format(new Date(post.publishedAt), 'PPP', { locale: ko })}
-                        </time>
                       </div>
-                      <h2 className="text-xl font-bold text-primary group-hover:text-accent transition-colors line-clamp-2">
-                        {post.title}
-                      </h2>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground line-clamp-3 mb-4">
-                        {post.excerpt}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            {post.author}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {post.readingTime}분
-                          </span>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <Calendar className="w-4 h-4" />
+                          <time dateTime={new Date(post.publishedAt).toISOString()}>
+                            {format(new Date(post.publishedAt), 'PPP', { locale: ko })}
+                          </time>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-primary group-hover:text-accent transition-colors" />
+                        <h2 className="text-xl font-bold text-primary group-hover:text-accent transition-colors line-clamp-2">
+                          {post.title}
+                        </h2>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground line-clamp-3 mb-4">
+                          {post.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <User className="w-4 h-4" />
+                              {post.author}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {post.readingTime}분
+                            </span>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-primary group-hover:text-accent transition-colors" />
+                        </div>
+                        <div className="flex flex-wrap gap-1 mt-3">
+                          {post.tags.slice(0, 3).map((tag) => (
+                            <Badge key={tag} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 일반 포스트 섹션 */}
+        {regularPosts.length > 0 && (
+          <section className="mb-12">
+            {featuredPosts.length > 0 && (
+              <div className="flex items-center gap-3 mb-8">
+                <h2 className="text-2xl font-bold text-primary">📝 모든 포스트</h2>
+              </div>
+            )}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {regularPosts.map((post, index) => (
+                <article key={post.id} className="group">
+                  <Link href={`/blog/${post.id}`}>
+                    <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                      <div className="relative h-48 overflow-hidden">
+                        <Image
+                          src={post.image}
+                          alt={post.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority={index < 3}
+                          placeholder="blur"
+                          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAgEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                        />
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-3">
-                        {post.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </article>
-            ))}
-          </div>
-        ) : (
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <Calendar className="w-4 h-4" />
+                          <time dateTime={new Date(post.publishedAt).toISOString()}>
+                            {format(new Date(post.publishedAt), 'PPP', { locale: ko })}
+                          </time>
+                        </div>
+                        <h2 className="text-xl font-bold text-primary group-hover:text-accent transition-colors line-clamp-2">
+                          {post.title}
+                        </h2>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground line-clamp-3 mb-4">
+                          {post.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <User className="w-4 h-4" />
+                              {post.author}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {post.readingTime}분
+                            </span>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-primary group-hover:text-accent transition-colors" />
+                        </div>
+                        <div className="flex flex-wrap gap-1 mt-3">
+                          {post.tags.slice(0, 3).map((tag) => (
+                            <Badge key={tag} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 포스트가 없는 경우 */}
+        {currentPosts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-lg text-muted-foreground">
               아직 게시된 블로그 포스트가 없습니다.

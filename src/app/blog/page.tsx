@@ -84,8 +84,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     );
   }
   
-  // 날짜순 정렬
+  // Featured 우선 + 날짜순 이중 정렬
   filteredPosts.sort((a, b) => {
+    // 1순위: Featured 여부 (featured가 true인 것이 먼저)
+    if (a.featured !== b.featured) {
+      return b.featured ? 1 : -1;
+    }
+    
+    // 2순위: 발행 날짜 (최신순)
     const dateA = new Date(a.publishedAt);
     const dateB = new Date(b.publishedAt);
     return dateB.getTime() - dateA.getTime();
