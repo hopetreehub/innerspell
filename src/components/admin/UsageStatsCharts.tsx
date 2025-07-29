@@ -20,7 +20,8 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, TrendingUp, Users, Activity, BarChart3 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, TrendingUp, Users, Activity, BarChart3, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface StatsData {
@@ -54,6 +55,7 @@ export function UsageStatsCharts() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const { user, firebaseUser } = useAuth();
 
   useEffect(() => {
@@ -75,11 +77,17 @@ export function UsageStatsCharts() {
 
       const data = await response.json();
       setStats(data);
+      setLastUpdate(new Date());
     } catch (err) {
       setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRefresh = () => {
+    setLoading(true);
+    fetchStats();
   };
 
   if (loading) {
@@ -105,6 +113,20 @@ export function UsageStatsCharts() {
 
   return (
     <div className="space-y-6">
+      {/* 헤더 및 새로고침 */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">사용 통계 대시보드</h3>
+          <p className="text-sm text-muted-foreground">
+            마지막 업데이트: {lastUpdate ? lastUpdate.toLocaleTimeString('ko-KR') : '알 수 없음'}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          새로고침
+        </Button>
+      </div>
+
       {/* 요약 카드 */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>

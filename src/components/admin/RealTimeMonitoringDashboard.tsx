@@ -21,12 +21,14 @@ import {
 } from 'lucide-react';
 import { useRealTimeMonitoring } from '@/hooks/useRealTimeMonitoring';
 import { RealTimeAlerts } from '@/components/admin/RealTimeAlerts';
+import { AdvancedMonitoringDashboard } from '@/components/admin/AdvancedMonitoringDashboard';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 export function RealTimeMonitoringDashboard() {
   const { data, connected, error, lastUpdate, reconnect, hasError } = useRealTimeMonitoring();
   const [autoScroll, setAutoScroll] = useState(true);
+  const [activeView, setActiveView] = useState<'overview' | 'advanced'>('overview');
 
   // 연결 상태 표시
   const ConnectionStatus = () => (
@@ -100,7 +102,30 @@ export function RealTimeMonitoringDashboard() {
 
   return (
     <div className="space-y-6">
-      <ConnectionStatus />
+      <div className="flex items-center justify-between">
+        <ConnectionStatus />
+        <div className="flex gap-2">
+          <Button
+            variant={activeView === 'overview' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setActiveView('overview')}
+          >
+            실시간 개요
+          </Button>
+          <Button
+            variant={activeView === 'advanced' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setActiveView('advanced')}
+          >
+            고급 분석
+          </Button>
+        </div>
+      </div>
+      
+      {activeView === 'advanced' ? (
+        <AdvancedMonitoringDashboard />
+      ) : (
+        <div className="space-y-6">
       
       {/* 실시간 통계 카드 */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -317,6 +342,8 @@ export function RealTimeMonitoringDashboard() {
           </CardContent>
         </Card>
       </div>
+        </div>
+      )}
     </div>
   );
 }
