@@ -1,25 +1,36 @@
 
 'use client'; 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { cacheBuster, refreshAuthWithCacheBust } from '@/lib/cache-buster';
-import { AIPromptConfigForm } from '@/components/admin/AIPromptConfigForm';
-import { DreamInterpretationConfigForm } from '@/components/admin/DreamInterpretationConfigForm';
-import { UserManagement } from '@/components/admin/UserManagement';
-import { SystemManagement } from '@/components/admin/SystemManagement';
-import { AIProviderManagement } from '@/components/admin/AIProviderManagement';
-import { BlogManagement } from '@/components/admin/BlogManagement';
-import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
 import { AdminDashboardStats } from '@/components/admin/AdminDashboardStats';
-import { UsageStatsCharts } from '@/components/admin/UsageStatsCharts';
-import { RealTimeMonitoringDashboard } from '@/components/admin/RealTimeMonitoringDashboard';
+import { Spinner } from '@/components/ui/spinner';
+
+// 레이지 로딩으로 초기 번들 크기 감소
+const AIPromptConfigForm = lazy(() => import('@/components/admin/AIPromptConfigForm').then(mod => ({ default: mod.AIPromptConfigForm })));
+const DreamInterpretationConfigForm = lazy(() => import('@/components/admin/DreamInterpretationConfigForm').then(mod => ({ default: mod.DreamInterpretationConfigForm })));
+const UserManagement = lazy(() => import('@/components/admin/UserManagement').then(mod => ({ default: mod.UserManagement })));
+const SystemManagement = lazy(() => import('@/components/admin/SystemManagement').then(mod => ({ default: mod.SystemManagement })));
+const AIProviderManagement = lazy(() => import('@/components/admin/AIProviderManagement').then(mod => ({ default: mod.AIProviderManagement })));
+const BlogManagement = lazy(() => import('@/components/admin/BlogManagement').then(mod => ({ default: mod.BlogManagement })));
+const TarotGuidelineManagement = lazy(() => import('@/components/admin/TarotGuidelineManagement').then(mod => ({ default: mod.TarotGuidelineManagement })));
+const UsageStatsCharts = lazy(() => import('@/components/admin/UsageStatsCharts').then(mod => ({ default: mod.UsageStatsCharts })));
+const RealTimeMonitoringDashboard = lazy(() => import('@/components/admin/RealTimeMonitoringDashboard').then(mod => ({ default: mod.RealTimeMonitoringDashboard })));
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, Target, PenTool, Bell, BarChart, Activity } from 'lucide-react';
-import { Spinner } from '@/components/ui/spinner';
-import { PushNotificationToggle } from '@/components/ui/push-notification-toggle';
+import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool, Bell, BarChart, Activity } from 'lucide-react';
+
+// 푸시 알림 토글도 레이지 로딩
+const PushNotificationToggle = lazy(() => import('@/components/ui/push-notification-toggle').then(mod => ({ default: mod.PushNotificationToggle })));
+
+// 로딩 스피너 컴포넌트
+const TabContentSpinner = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <Spinner size="large" />
+  </div>
+);
 
 
 export default function AdminDashboardPage() {
@@ -151,7 +162,9 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <UsageStatsCharts />
+              <Suspense fallback={<TabContentSpinner />}>
+                <UsageStatsCharts />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
@@ -167,7 +180,9 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RealTimeMonitoringDashboard />
+              <Suspense fallback={<TabContentSpinner />}>
+                <RealTimeMonitoringDashboard />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
@@ -183,7 +198,9 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AIProviderManagement />
+              <Suspense fallback={<TabContentSpinner />}>
+                <AIProviderManagement />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
@@ -199,7 +216,9 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <TarotGuidelineManagement />
+              <Suspense fallback={<TabContentSpinner />}>
+                <TarotGuidelineManagement />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
@@ -215,7 +234,9 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AIPromptConfigForm />
+              <Suspense fallback={<TabContentSpinner />}>
+                <AIPromptConfigForm />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
@@ -231,7 +252,9 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DreamInterpretationConfigForm />
+              <Suspense fallback={<TabContentSpinner />}>
+                <DreamInterpretationConfigForm />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
@@ -248,7 +271,9 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <BlogManagement />
+              <Suspense fallback={<TabContentSpinner />}>
+                <BlogManagement />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
@@ -264,17 +289,23 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <PushNotificationToggle />
+              <Suspense fallback={<TabContentSpinner />}>
+                <PushNotificationToggle />
+              </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="user-management">
-          <UserManagement />
+          <Suspense fallback={<TabContentSpinner />}>
+            <UserManagement />
+          </Suspense>
         </TabsContent>
 
         <TabsContent value="system-management">
-          <SystemManagement />
+          <Suspense fallback={<TabContentSpinner />}>
+            <SystemManagement />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </div>
