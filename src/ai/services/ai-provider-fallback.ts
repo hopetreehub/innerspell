@@ -41,8 +41,8 @@ const PROVIDER_PRIORITY: AIProvider[] = [
  */
 const PREFERRED_MODELS: Record<AIProvider, string[]> = {
   openai: ['gpt-4o-mini', 'gpt-4o', 'gpt-3.5-turbo'],
-  gemini: ['gemini-1.5-flash', 'gemini-1.5-pro'],
-  googleai: ['gemini-1.5-flash-latest', 'gemini-1.5-pro-latest'],
+  gemini: ['gemini-1.5-flash', 'gemini-1.5-flash-latest'],
+  googleai: ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-flash-8b'],
   anthropic: ['claude-3.5-sonnet', 'claude-3-haiku'],
   openrouter: ['anthropic/claude-3.5-sonnet', 'meta-llama/llama-3.1-405b-instruct'],
   grok: ['grok-2-mini', 'grok-2'],

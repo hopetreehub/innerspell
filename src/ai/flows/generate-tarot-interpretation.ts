@@ -111,8 +111,15 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
           providerName = 'googleai';
         }
         
-        providerInfo = { provider: providerName, model: cleanModelId };
-        model = cleanModelId;
+        // Fix model names that don't exist
+        if (cleanModelId === 'gemini-1.5-pro') {
+          console.log('[TAROT] Mapping gemini-1.5-pro to gemini-1.5-flash');
+          model = 'gemini-1.5-flash';
+        } else {
+          model = cleanModelId;
+        }
+        
+        providerInfo = { provider: providerName, model: model };
         promptTemplate = config.promptTemplate;
         safetySettings = config.safetySettings;
       } catch (error) {
@@ -124,10 +131,22 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
           providerInfo = fallbackInfo;
           model = fallbackInfo.model; // Don't add provider prefix
         } catch (fallbackError) {
-          console.log('[TAROT] Fallback system also failed, using hardcoded OpenAI:', fallbackError);
-          // Ultimate fallback: Use OpenAI with gpt-3.5-turbo
-          providerInfo = { provider: 'openai', model: 'gpt-3.5-turbo' };
-          model = 'gpt-3.5-turbo';
+          console.log('[TAROT] Fallback system also failed, using mock response:', fallbackError);
+          // Ultimate fallback: Return a mock response when no API is available
+          const mockInterpretation = `## AI 타로 해석 (데모 모드)
+
+현재 AI 서비스가 일시적으로 사용할 수 없습니다. 
+
+**선택하신 카드들:**
+${input.cardInterpretations}
+
+**질문:** ${input.question}
+
+이 카드들은 당신의 상황에 대한 깊은 통찰을 제공합니다. 정식 AI 해석을 받으시려면 관리자에게 AI API 설정을 요청해주세요.
+
+💫 타로는 내면의 지혜를 일깨우는 도구입니다. 카드가 보여주는 메시지를 통해 자신만의 답을 찾아가세요.`;
+          
+          return { interpretation: mockInterpretation };
         }
         
         // Use enhanced prompt template with guideline integration
