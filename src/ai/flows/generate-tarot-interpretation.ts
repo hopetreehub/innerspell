@@ -132,7 +132,10 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
         // Use fallback system if primary config fails
         const fallbackInfo = await getProviderWithFallback();
         providerInfo = fallbackInfo;
-        model = fallbackInfo.model; // Don't add provider prefix
+        // Ensure the model has provider prefix for Genkit
+        model = fallbackInfo.provider && !fallbackInfo.model.includes('/') 
+          ? `${fallbackInfo.provider}/${fallbackInfo.model}` 
+          : fallbackInfo.model;
         
         // Use enhanced prompt template with guideline integration
         promptTemplate = `당신은 전문적인 타로 카드 해석사입니다. 
@@ -166,13 +169,13 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       const providerConfig = getProviderConfig(fullModelId);
       
       // Configure prompt based on provider capabilities
-      // Use the appropriate model format for each provider
-      let modelForPrompt = model;
-      if (providerConfig.provider === 'openai' && !model.startsWith('openai/')) {
-        modelForPrompt = `openai/${model}`;
-      } else if (providerConfig.provider === 'googleai' && !model.startsWith('googleai/')) {
-        modelForPrompt = `googleai/${model}`;
-      }
+      // IMPORTANT: Genkit expects the full model ID with provider prefix
+      // For primary config, use the original config.model
+      // For fallback, model variable already has the correct format
+      const modelForPrompt = providerInfo.fallbackInfo?.fallbackUsed ? model : config.model;
+      
+      console.log('[TAROT] Using model ID for prompt:', modelForPrompt);
+      console.log('[TAROT] Is fallback:', providerInfo.fallbackInfo?.fallbackUsed || false);
       
       const promptConfig: any = {
         name: 'generateTarotInterpretationRuntimePrompt', 
@@ -195,9 +198,6 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
         // we'll keep the prompt as is
       }
 
-      console.log('[TAROT] Creating prompt with model:', modelForPrompt);
-      console.log('[TAROT] Provider info:', providerInfo);
-      console.log('[TAROT] Provider config:', providerConfig);
       const tarotPrompt = await ai.definePrompt(promptConfig);
 
       console.log('[TAROT] Calling AI with input:', {
