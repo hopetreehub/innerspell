@@ -15,7 +15,6 @@ import { getTarotPromptConfig } from '@/ai/services/prompt-service';
 import { getProviderConfig } from '@/lib/ai-utils';
 import { getProviderWithFallback } from '@/ai/services/ai-provider-fallback';
 import { getAllTarotGuidelines, getGuidelineBySpreadAndStyle } from '@/actions/tarotGuidelineActions';
-import { ensureModelHasProviderPrefix } from '@/lib/ensure-model-prefix';
 
 
 const GenerateTarotInterpretationInputSchema = z.object({
@@ -35,22 +34,26 @@ export type GenerateTarotInterpretationOutput = z.infer<typeof GenerateTarotInte
 
 
 export async function generateTarotInterpretation(input: GenerateTarotInterpretationInput): Promise<GenerateTarotInterpretationOutput> {
+  return generateTarotInterpretationFlow(input);
+}
+
+const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpretationInput): Promise<GenerateTarotInterpretationOutput> => {
   const ai = await getAI();
   
-  const flow = ai.defineFlow(
+  return ai.defineFlow(
     {
       name: 'generateTarotInterpretationFlow',
       inputSchema: GenerateTarotInterpretationInputSchema,
       outputSchema: GenerateTarotInterpretationOutputSchema,
     },
-    async (flowInput: GenerateTarotInterpretationInput) => {
+    async (input: GenerateTarotInterpretationInput) => {
     
     try {
       // 🔍 타로 지침 가져오기
       let guidelineInstructions = '';
-      if (flowInput.spreadId && flowInput.styleId) {
+      if (input.spreadId && input.styleId) {
         try {
-          const guidelineResult = await getGuidelineBySpreadAndStyle(flowInput.spreadId, flowInput.styleId);
+          const guidelineResult = await getGuidelineBySpreadAndStyle(input.spreadId, input.styleId);
           if (guidelineResult.success && guidelineResult.data) {
             const guideline = guidelineResult.data;
             
@@ -82,7 +85,7 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
             
             console.log('[TAROT] Using tarot guideline:', guideline.name);
           } else {
-            console.log('[TAROT] No specific guideline found for', flowInput.spreadId, flowInput.styleId);
+            console.log('[TAROT] No specific guideline found for', input.spreadId, input.styleId);
           }
         } catch (guidelineError) {
           console.warn('[TAROT] Failed to load guideline:', guidelineError);
@@ -94,33 +97,15 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
       let model: string;
       let promptTemplate: string;
       let safetySettings: any[];
-      let config: any; // Define config in outer scope
       
       try {
         // First try to get configured provider
-        config = await getTarotPromptConfig();
-        // ALWAYS ensure model has provider prefix using utility function
-        model = ensureModelHasProviderPrefix(config.model);
-        console.log('[TAROT] Ensured model prefix:', config.model, '->', model);
-        
-        // Extract provider info only for getProviderConfig usage
-        let provider: string;
-        if (config.model.includes('/')) {
-          provider = config.model.split('/')[0];
-        } else {
-          // Model ID without provider prefix - determine provider from model name
-          if (config.model.includes('gpt') || config.model.includes('o1')) {
-            provider = 'openai';
-          } else if (config.model.includes('gemini')) {
-            provider = 'googleai';
-          } else if (config.model.includes('claude')) {
-            provider = 'anthropic';
-          } else {
-            provider = 'openai'; // Default to OpenAI
-          }
-        }
-        
-        providerInfo = { provider, model: config.model };
+        const config = await getTarotPromptConfig();
+        // Fix model format - remove provider prefix for Genkit
+        const modelParts = config.model.split('/');
+        const cleanModelId = modelParts.length > 1 ? modelParts[1] : config.model;
+        providerInfo = { provider: modelParts[0] || 'openai', model: cleanModelId };
+        model = cleanModelId;
         promptTemplate = config.promptTemplate;
         safetySettings = config.safetySettings;
       } catch (error) {
@@ -128,9 +113,7 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
         // Use fallback system if primary config fails
         const fallbackInfo = await getProviderWithFallback();
         providerInfo = fallbackInfo;
-        // ALWAYS ensure the model has provider prefix using utility function
-        model = ensureModelHasProviderPrefix(fallbackInfo.model);
-        console.log('[TAROT] Fallback model with prefix:', fallbackInfo.model, '->', model);
+        model = fallbackInfo.model; // Don't add provider prefix
         
         // Use enhanced prompt template with guideline integration
         promptTemplate = `당신은 전문적인 타로 카드 해석사입니다. 
@@ -159,25 +142,14 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
         }
       }
       
-      // Pass the model ID for getProviderConfig (model already contains correct format)
       const providerConfig = getProviderConfig(model);
       
       // Configure prompt based on provider capabilities
-      // IMPORTANT: Genkit expects the full model ID with provider prefix
-      // model variable now always contains the correct format from both paths
-      const modelForPrompt = model;
-      
-      console.log('[TAROT] Using model ID for prompt:', modelForPrompt);
-      console.log('[TAROT] Is fallback:', providerInfo.fallbackInfo?.fallbackUsed || false);
-      console.log('[TAROT] Original config.model:', config?.model);
-      console.log('[TAROT] Provider info:', providerInfo);
-      console.log('[TAROT] Model variable:', model);
-      
       const promptConfig: any = {
         name: 'generateTarotInterpretationRuntimePrompt', 
         input: { schema: GenerateTarotInterpretationInputSchema }, 
         prompt: promptTemplate, 
-        model: modelForPrompt,
+        model: model,
       };
       
       // Add provider-specific configuration
@@ -194,16 +166,17 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
         // we'll keep the prompt as is
       }
 
+      console.log('[TAROT] Creating prompt with model:', model);
       const tarotPrompt = await ai.definePrompt(promptConfig);
 
       console.log('[TAROT] Calling AI with input:', {
-        questionLength: flowInput.question.length,
-        cardSpread: flowInput.cardSpread,
-        cardsCount: flowInput.cardInterpretations.split('\n').length,
-        isGuestUser: flowInput.isGuestUser
+        questionLength: input.question.length,
+        cardSpread: input.cardSpread,
+        cardsCount: input.cardInterpretations.split('\n').length,
+        isGuestUser: input.isGuestUser
       });
 
-      const llmResponse = await tarotPrompt(flowInput); 
+      const llmResponse = await tarotPrompt(input); 
       const interpretationText = llmResponse.text; 
 
       if (!interpretationText) {
@@ -240,19 +213,11 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
          userMessage = "생성된 콘텐츠가 안전 기준에 부합하지 않아 차단되었습니다. 질문이나 해석 요청 내용을 수정해 보세요.";
       } else if (errorMessage.includes("no valid candidates")) {
          userMessage = "AI가 현재 요청에 대해 적절한 답변을 찾지 못했습니다. 질문을 조금 다르게 해보거나, 나중에 다시 시도해주세요. (No Valid Candidates)";
-      } else if (e.message && e.message.includes("Model 'gpt-3.5-turbo' not found")) {
-        // Specific handling for the persistent gpt-3.5-turbo error
-        console.error('[TAROT] Caught gpt-3.5-turbo not found error. Attempting retry with fallback...');
-        // Return a specific error that indicates we need to use fallback
-        userMessage = 'AI 제공업체 설정을 확인해주세요. OpenAI API 키가 올바르게 설정되어 있는지 확인하거나, 다른 AI 제공업체를 활성화해주세요.';
       } else {
         userMessage = `AI 해석 오류: ${e.message || '알 수 없는 오류'}.`;
       }
       return { interpretation: userMessage };
     }
     }
-  );
-  
-  // Execute the flow with the input
-  return flow(input);
-}
+  )(flowInput);
+};
