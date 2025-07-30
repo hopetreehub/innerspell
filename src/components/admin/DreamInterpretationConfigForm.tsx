@@ -28,7 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
   configureDreamPromptSettings,
 } from '@/ai/flows/configure-dream-prompt-settings';
-import { getActiveAIModels } from '@/ai/services/ai-provider-service';
+// import { getActiveAIModels } from '@/ai/services/ai-provider-service'; // Removed to avoid dependency issues
 
 const DEFAULT_PROMPT = `[SYSTEM INSTRUCTIONS START]
 You are a sophisticated dream interpretation expert, integrating Eastern and Western symbolism, Jungian/Freudian psychology, spiritual philosophy, and, when provided, Saju (Four Pillars of Destiny) analysis. Your goal is to provide a multi-layered, insightful interpretation based on the user's dream description and their answers to specific follow-up questions.
@@ -126,45 +126,25 @@ export function DreamInterpretationConfigForm() {
   const [availableModels, setAvailableModels] = useState<{ id: string; name: string; provider: string }[]>([]);
   const [modelsLoading, setModelsLoading] = useState(true);
   
-  // Fetch available AI models on component mount
+  // Use static model list instead of fetching from getActiveAIModels to avoid dependency issues
   useEffect(() => {
-    async function fetchModels() {
-      try {
-        console.log('[DreamInterpretationConfigForm] Fetching AI models...');
-        const models = await getActiveAIModels();
-        console.log('[DreamInterpretationConfigForm] Fetched models:', models);
-        
-        // Always include OpenAI models
-        const allModels = [
-          ...models,
-          { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
-          { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' }
-        ];
-        
-        // Remove duplicates
-        const uniqueModels = allModels.filter((model, index, self) => 
-          index === self.findIndex(m => m.id === model.id)
-        );
-        
-        console.log('[DreamInterpretationConfigForm] Final models with OpenAI:', uniqueModels);
-        setAvailableModels(uniqueModels);
-      } catch (error) {
-        console.error('[DreamInterpretationConfigForm] Failed to fetch AI models:', error);
-        // Set default models on error
-        const defaultModels = [
-          { id: 'googleai/gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro', provider: 'googleai' },
-          { id: 'googleai/gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash', provider: 'googleai' },
-          { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
-          { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' }
-        ];
-        console.log('[DreamInterpretationConfigForm] Using default models:', defaultModels);
-        setAvailableModels(defaultModels);
-      } finally {
-        setModelsLoading(false);
-      }
-    }
+    const defaultModels = [
+      { id: 'googleai/gemini-1.5-pro', name: 'Gemini 1.5 Pro (Google AI)', provider: 'googleai' },
+      { id: 'googleai/gemini-1.5-flash', name: 'Gemini 1.5 Flash (Google AI)', provider: 'googleai' },
+      { id: 'googleai/gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro Latest (Google AI)', provider: 'googleai' },
+      { id: 'googleai/gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash Latest (Google AI)', provider: 'googleai' },
+      { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
+      { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' },
+      { id: 'openai/gpt-4o', name: 'GPT-4o (OpenAI)', provider: 'openai' },
+      { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini (OpenAI)', provider: 'openai' },
+      { id: 'anthropic/claude-3-haiku-20240307', name: 'Claude 3 Haiku (Anthropic)', provider: 'anthropic' },
+      { id: 'anthropic/claude-3-sonnet-20240229', name: 'Claude 3 Sonnet (Anthropic)', provider: 'anthropic' },
+      { id: 'anthropic/claude-3-opus-20240229', name: 'Claude 3 Opus (Anthropic)', provider: 'anthropic' }
+    ];
     
-    fetchModels();
+    console.log('[DreamInterpretationConfigForm] Using static model list:', defaultModels);
+    setAvailableModels(defaultModels);
+    setModelsLoading(false);
   }, []);
 
   const form = useForm<z.infer<typeof FormSchema>>({

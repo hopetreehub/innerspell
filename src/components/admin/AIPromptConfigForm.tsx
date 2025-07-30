@@ -32,7 +32,7 @@ import {
   configureAIPromptSettings,
   ConfigureAIPromptSettingsInput,
 } from '@/ai/flows/configure-ai-prompt-settings';
-import { getActiveAIModels } from '@/ai/services/ai-provider-service';
+// import { getActiveAIModels } from '@/ai/services/ai-provider-service'; // Removed to avoid dependency issues
 
 const safetySettingSchema = z.object({
   category: z.enum([
@@ -131,47 +131,25 @@ export function AIPromptConfigForm() {
   const [availableModels, setAvailableModels] = useState<{ id: string; name: string; provider: string }[]>([]);
   const [modelsLoading, setModelsLoading] = useState(true);
   
-  // Fetch available AI models on component mount
+  // Use static model list instead of fetching from getActiveAIModels to avoid dependency issues
   useEffect(() => {
-    async function fetchModels() {
-      try {
-        console.log('[AIPromptConfigForm] Fetching AI models...');
-        const models = await getActiveAIModels();
-        console.log('[AIPromptConfigForm] Fetched models:', models);
-        
-        // Always include OpenAI models with proper provider prefix
-        const allModels = [
-          ...models,
-          { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
-          { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' },
-          { id: 'openai/gpt-4o', name: 'GPT-4o (OpenAI)', provider: 'openai' },
-          { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini (OpenAI)', provider: 'openai' }
-        ];
-        
-        // Remove duplicates
-        const uniqueModels = allModels.filter((model, index, self) => 
-          index === self.findIndex(m => m.id === model.id)
-        );
-        
-        console.log('[AIPromptConfigForm] Final models with OpenAI:', uniqueModels);
-        setAvailableModels(uniqueModels);
-      } catch (error) {
-        console.error('[AIPromptConfigForm] Failed to fetch AI models:', error);
-        // Set default models on error
-        const defaultModels = [
-          { id: 'googleai/gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro', provider: 'googleai' },
-          { id: 'googleai/gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash', provider: 'googleai' },
-          { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
-          { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' }
-        ];
-        console.log('[AIPromptConfigForm] Using default models:', defaultModels);
-        setAvailableModels(defaultModels);
-      } finally {
-        setModelsLoading(false);
-      }
-    }
+    const defaultModels = [
+      { id: 'googleai/gemini-1.5-pro', name: 'Gemini 1.5 Pro (Google AI)', provider: 'googleai' },
+      { id: 'googleai/gemini-1.5-flash', name: 'Gemini 1.5 Flash (Google AI)', provider: 'googleai' },
+      { id: 'googleai/gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro Latest (Google AI)', provider: 'googleai' },
+      { id: 'googleai/gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash Latest (Google AI)', provider: 'googleai' },
+      { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
+      { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' },
+      { id: 'openai/gpt-4o', name: 'GPT-4o (OpenAI)', provider: 'openai' },
+      { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini (OpenAI)', provider: 'openai' },
+      { id: 'anthropic/claude-3-haiku-20240307', name: 'Claude 3 Haiku (Anthropic)', provider: 'anthropic' },
+      { id: 'anthropic/claude-3-sonnet-20240229', name: 'Claude 3 Sonnet (Anthropic)', provider: 'anthropic' },
+      { id: 'anthropic/claude-3-opus-20240229', name: 'Claude 3 Opus (Anthropic)', provider: 'anthropic' }
+    ];
     
-    fetchModels();
+    console.log('[AIPromptConfigForm] Using static model list:', defaultModels);
+    setAvailableModels(defaultModels);
+    setModelsLoading(false);
   }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({

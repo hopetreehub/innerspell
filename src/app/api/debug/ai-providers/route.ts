@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllAIProviderConfigsForGenkit } from '@/actions/aiProviderActions';
 import { decrypt } from '@/lib/encryption';
-import { getActiveAIModels } from '@/ai/services/ai-provider-service';
+// import { getActiveAIModels } from '@/ai/services/ai-provider-service'; // Removed to avoid dependency issues
 import { getTarotPromptConfig } from '@/ai/services/prompt-service';
 import { getAI } from '@/ai/genkit';
 
@@ -72,13 +72,9 @@ export async function GET(request: NextRequest) {
       }
     });
     
-    // Test active models service
+    // Skip active models test to avoid dependency issues
     let activeModels: any[] = [];
-    try {
-      activeModels = await getActiveAIModels();
-    } catch (error) {
-      console.error('[DEBUG] Error getting active models:', error instanceof Error ? error.message : 'Unknown error');
-    }
+    console.log('[DEBUG] Skipping getActiveAIModels test to avoid dependency issues');
     
     // Test prompt config service
     let promptConfig = null;
