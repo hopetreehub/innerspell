@@ -239,6 +239,9 @@ export async function getGuidelineBySpreadAndStyle(
   }
 }
 
+// 별칭 함수 추가 (enhanced-ai-service.ts에서 사용)
+export const getTarotGuidelineBySpreadAndStyle = getGuidelineBySpreadAndStyle;
+
 // 새로운 지침 저장
 export async function saveTarotGuideline(
   request: SaveGuidelineRequest

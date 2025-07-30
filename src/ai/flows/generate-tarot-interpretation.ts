@@ -1,8 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { getTarotPromptConfig } from '@/ai/services/prompt-service';
+import { getTarotPromptConfig, getEnhancedTarotPromptConfig } from '@/ai/services/prompt-service';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getTarotGuidelineBySpreadAndStyle } from '@/actions/tarotGuidelineActions';
 
 const GenerateTarotInterpretationInputSchema = z.object({
   question: z.string(),
@@ -80,13 +81,62 @@ async function tryGoogleAI(input: GenerateTarotInterpretationInput, prompt: stri
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    // Replace template variables
-    const finalPrompt = prompt
-      .replace('{{question}}', input.question)
-      .replace('{{cardSpread}}', input.cardSpread)
-      .replace('{{cardInterpretations}}', input.cardInterpretations);
+    // Get spread and style guidelines if available
+    let enhancedPrompt = prompt;
+    if (input.spreadId && input.styleId) {
+      const guidelineResult = await getTarotGuidelineBySpreadAndStyle(input.spreadId, input.styleId);
+      if (guidelineResult.success && guidelineResult.data) {
+        const guideline = guidelineResult.data;
+        
+        // Create structured guideline information
+        const spreadGuideline = {
+          name: guideline.spreadName,
+          generalApproach: guideline.generalApproach,
+          positions: guideline.positions.map(pos => `
+- ${pos.positionName}: ${pos.interpretationFocus}
+  핵심 질문: ${pos.keyQuestions.join(', ')}`).join('\n'),
+          interpretationTips: guideline.interpretationTips.join(' ')
+        };
+        
+        const styleGuideline = {
+          name: guideline.styleName,
+          description: guideline.styleDescription || '',
+          keyFocusAreas: guideline.keyFocusAreas.join(', '),
+          interpretationTips: guideline.interpretationTips.join(' ')
+        };
+        
+        // Add guidelines to prompt
+        enhancedPrompt = prompt + `
 
-    console.log('[TAROT] Calling Google AI...');
+[스프레드별 해석 지침]
+스프레드 이름: ${spreadGuideline.name}
+일반적 접근: ${spreadGuideline.generalApproach}
+
+각 위치별 해석 포커스:
+${spreadGuideline.positions}
+
+해석 팁: ${spreadGuideline.interpretationTips}
+[스프레드별 해석 지침 끝]
+
+[해석 스타일 지침]
+스타일 이름: ${styleGuideline.name}
+설명: ${styleGuideline.description}
+핵심 초점: ${styleGuideline.keyFocusAreas}
+해석 팁: ${styleGuideline.interpretationTips}
+[해석 스타일 지침 끝]`;
+      }
+    }
+
+    // Replace template variables
+    const finalPrompt = enhancedPrompt
+      .replace(/\{\{\{question\}\}\}/g, input.question)
+      .replace(/\{\{\{cardSpread\}\}\}/g, input.cardSpread)
+      .replace(/\{\{\{cardInterpretations\}\}\}/g, input.cardInterpretations)
+      .replace(/\{\{#if isGuestUser\}\}/g, input.isGuestUser ? '' : '{{if false}}')
+      .replace(/\{\{else\}\}/g, input.isGuestUser ? '{{else false}}' : '')
+      .replace(/\{\{\/if\}\}/g, '');
+
+    console.log('[TAROT] Calling Google AI with enhanced prompt...');
     const result = await model.generateContent(finalPrompt);
     const response = await result.response;
     const text = response.text();
@@ -111,13 +161,62 @@ async function tryOpenAI(input: GenerateTarotInterpretationInput, prompt: string
       return null;
     }
 
-    // Simple fetch to OpenAI API
-    const finalPrompt = prompt
-      .replace('{{question}}', input.question)
-      .replace('{{cardSpread}}', input.cardSpread)
-      .replace('{{cardInterpretations}}', input.cardInterpretations);
+    // Get spread and style guidelines if available
+    let enhancedPrompt = prompt;
+    if (input.spreadId && input.styleId) {
+      const guidelineResult = await getTarotGuidelineBySpreadAndStyle(input.spreadId, input.styleId);
+      if (guidelineResult.success && guidelineResult.data) {
+        const guideline = guidelineResult.data;
+        
+        // Create structured guideline information
+        const spreadGuideline = {
+          name: guideline.spreadName,
+          generalApproach: guideline.generalApproach,
+          positions: guideline.positions.map(pos => `
+- ${pos.positionName}: ${pos.interpretationFocus}
+  핵심 질문: ${pos.keyQuestions.join(', ')}`).join('\n'),
+          interpretationTips: guideline.interpretationTips.join(' ')
+        };
+        
+        const styleGuideline = {
+          name: guideline.styleName,
+          description: guideline.styleDescription || '',
+          keyFocusAreas: guideline.keyFocusAreas.join(', '),
+          interpretationTips: guideline.interpretationTips.join(' ')
+        };
+        
+        // Add guidelines to prompt
+        enhancedPrompt = prompt + `
 
-    console.log('[TAROT] Calling OpenAI...');
+[스프레드별 해석 지침]
+스프레드 이름: ${spreadGuideline.name}
+일반적 접근: ${spreadGuideline.generalApproach}
+
+각 위치별 해석 포커스:
+${spreadGuideline.positions}
+
+해석 팁: ${spreadGuideline.interpretationTips}
+[스프레드별 해석 지침 끝]
+
+[해석 스타일 지침]
+스타일 이름: ${styleGuideline.name}
+설명: ${styleGuideline.description}
+핵심 초점: ${styleGuideline.keyFocusAreas}
+해석 팁: ${styleGuideline.interpretationTips}
+[해석 스타일 지침 끝]`;
+      }
+    }
+
+    // Replace template variables
+    const finalPrompt = enhancedPrompt
+      .replace(/\{\{\{question\}\}\}/g, input.question)
+      .replace(/\{\{\{cardSpread\}\}\}/g, input.cardSpread)
+      .replace(/\{\{\{cardInterpretations\}\}\}/g, input.cardInterpretations)
+      .replace(/\{\{#if isGuestUser\}\}/g, input.isGuestUser ? '' : '{{if false}}')
+      .replace(/\{\{else\}\}/g, input.isGuestUser ? '{{else false}}' : '')
+      .replace(/\{\{\/if\}\}/g, '');
+
+    console.log('[TAROT] Calling OpenAI with enhanced prompt...');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {

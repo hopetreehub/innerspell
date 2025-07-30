@@ -28,6 +28,30 @@ YOUR ENTIRE RESPONSE MUST BE IN KOREAN.
 {{{cardInterpretations}}}
 [END USER'S INFORMATION]
 
+{{#if spreadGuideline}}
+[스프레드별 해석 지침]
+스프레드 이름: {{{spreadGuideline.name}}}
+일반적 접근: {{{spreadGuideline.generalApproach}}}
+
+각 위치별 해석 포커스:
+{{#each spreadGuideline.positions}}
+- {{{this.positionName}}}: {{{this.interpretationFocus}}}
+  핵심 질문: {{{this.keyQuestions}}}
+{{/each}}
+
+해석 팁: {{{spreadGuideline.interpretationTips}}}
+[스프레드별 해석 지침 끝]
+{{/if}}
+
+{{#if styleGuideline}}
+[해석 스타일 지침]
+스타일 이름: {{{styleGuideline.name}}}
+설명: {{{styleGuideline.description}}}
+핵심 초점: {{{styleGuideline.keyFocusAreas}}}
+해석 팁: {{{styleGuideline.interpretationTips}}}
+[해석 스타일 지침 끝]
+{{/if}}
+
 {{#if isGuestUser}}
 [GUEST MODE INSTRUCTIONS]
 - Provide a concise and engaging summary of the reading. It should be about 3-4 sentences long.
@@ -38,23 +62,35 @@ YOUR ENTIRE RESPONSE MUST BE IN KOREAN.
 [END GUEST MODE INSTRUCTIONS]
 {{else}}
 [FULL INTERPRETATION GUIDELINES - 응답을 작성할 때 이 지침을 주의 깊게 따르세요.]
+
+**매우 중요**: 스프레드별 해석 지침과 해석 스타일 지침이 제공된 경우, 반드시 해당 지침을 따라 해석하세요. 이 지침들은 당신의 해석 방향과 내용을 결정하는 핵심 요소입니다.
+
 YOUR RESPONSE MUST USE MARKDOWN H2 (e.g., "## 서론") FOR THE SECTION TITLES: 서론, 본론, 실행 가능한 조언과 격려, 결론.
 WHEN YOU GENERATE THE RESPONSE:
 - DO NOT repeat or output the "[USER'S INFORMATION]" block.
 - Your entire response should be the interpretation itself, starting directly with the "## 서론" (Introduction) heading.
 - USE the data within "[USER'S INFORMATION]" as the FACTUAL basis for your KOREAN interpretation.
-- PAY CLOSE ATTENTION to the "해석 스타일" (interpretation style) if mentioned within the "{{{question}}}". This style is CRUCIAL for shaping your response.
+- MUST FOLLOW the spread and style guidelines provided above for accurate interpretation.
 
 ## 서론: 공감적 연결 및 상황 설정
 사용자의 질문 ("{{{question}}}")에 진심으로 공감하며 이해했음을 보여주며 시작하세요. 질문에 명시된 "해석 스타일"을 파악하고, 이를 반영하여 리딩의 톤과 방향을 설정하세요.
 뽑힌 카드들 ({{{cardInterpretations}}}에 상세 설명됨)과 선택된 "{{{cardSpread}}}" 스프레드가 사용자의 특정 질문에 대해 어떻게 길을 밝혀줄지 기대를 모으며 부드럽게 리딩의 장을 마련하세요.
 
 ## 본론: 스토리텔링 방식의 카드 분석 - 해석의 핵심
-"{{{cardInterpretations}}}"에 나열된 각 카드에 대해, 그 카드가 사용자의 질문 ("{{{question}}}")과 어떤 관련이 있는지 설명하세요. 카드의 이름, 정/역방향, 그리고 "{{{cardSpread}}}" 내에서의 특정 위치(예: "과거", "현재", "도전 과제", "결과" - "{{{cardInterpretations}}}"에 위치명이 제공된 경우 사용)를 반드시 고려해야 합니다. 주어진 카드 정보를 바탕으로 새로운 문장과 이야기를 만드세요. 단순히 카드 정보를 나열하지 마세요.
-***매우 중요:*** 사용자의 질문에 포함된 "해석 스타일" 지침이 있다면, 그 스타일에 맞춰 카드 분석의 깊이, 사용하는 어휘, 강조점을 적극적으로 조절하세요. 예를 들어, "실질적 행동 지침" 스타일이라면 각 카드가 어떤 행동을 암시하는지, "심리학적 원형 탐구" 스타일이라면 각 카드가 어떤 내면의 상태나 원형을 나타내는지 등을 구체적으로 연결하여 설명해야 합니다.
-"{{{cardSpread}}}"의 전체적인 의미나 흐름을 당신의 이야기에 엮어 넣으세요. 예를 들어, "{{{cardSpread}}}"가 "과거-현재-미래" 구조를 나타낸다면, 이 타임라인을 따라 이야기를 구성하고 이전 카드가 이후 카드에 어떻게 영향을 미치는지 설명하세요.
-개별 카드 해석을 하나의 흐르는, 통일된 이야기로 연결하세요. 카드들이 서로 어떻게 영향을 주고받으며 "{{{question}}}"에 답하는지 보여주세요.
-긍정적인 잠재력, 강점, 성장의 기회를 강조하세요. 도전적인 카드가 나타나면, 그것을 교훈, 인식해야 할 영역, 또는 통찰과 노력으로 극복할 수 있는 장애물로 건설적으로 해석하세요. 전반적인 메시지는 힘을 실어주고 희망을 심어주면서도 현실을 인정해야 합니다. 풍부하고 묘사적이며 사려 깊은 언어를 사용하세요.
+
+**중요**: 스프레드별 해석 지침이 제공된 경우, 각 위치의 해석 포커스와 핵심 질문을 반드시 활용하여 해석하세요.
+
+각 카드를 해석할 때:
+1. **위치별 의미**: 스프레드 지침에서 제시한 각 위치(과거/현재/미래, 상황/조언/결과 등)의 해석 포커스를 따르세요
+2. **스타일 적용**: 해석 스타일 지침에 맞춰 어휘, 관점, 강조점을 조절하세요
+3. **카드 간 연결**: 카드들이 서로 어떻게 영향을 주고받는지 스프레드의 흐름에 따라 설명하세요
+
+예시:
+- "삼위일체 조망" 스프레드라면: 과거의 영향이 현재에 어떻게 나타나고, 미래로 어떻게 이어지는지
+- "전통 RWS" 스타일이라면: 전통적인 상징과 의미를 중심으로
+- "심리학적 원형 탐구" 스타일이라면: 각 카드가 나타내는 내면의 원형과 심리 상태를 중심으로
+
+긍정적인 잠재력과 성장의 기회를 강조하면서도 현실적인 조언을 제공하세요.
 
 ## 실행 가능한 조언과 격려: 실용적이고 영감을 주며 미래 지향적
 전체 리딩(모든 카드와 그 상호작용)을 바탕으로, 사용자의 질문 ("{{{question}}}")에 직접적으로 답하는 1-2가지 구체적이고 긍정적이며 실행 가능한 조언을 도출하세요. 이 조언은 해석의 자연스러운 결과처럼 느껴져야 합니다. 사용자가 요청한 "해석 스타일" (예: "실질적 행동 지침")을 이 부분에서 적극적으로 반영하여 조언의 성격을 결정하세요.
@@ -144,7 +180,9 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
  */
 export async function getEnhancedTarotPromptConfig(
   cardIds: string[],
-  interpretationMethod: string = 'traditional-rws'
+  interpretationMethod: string = 'traditional-rws',
+  spreadId?: string,
+  styleId?: string
 ): Promise<TarotPromptConfig & { 
   enhancedPrompt: string; 
   providerConfig?: any; 
@@ -158,11 +196,13 @@ export async function getEnhancedTarotPromptConfig(
       // Get base configuration
       const baseConfig = await getTarotPromptConfig();
       
-      // Enhance the prompt with card-specific instructions
+      // Enhance the prompt with card-specific instructions and spread/style guidelines
       const enhancedPrompt = await getTarotInterpretationPrompt(
         cardIds,
         interpretationMethod,
-        baseConfig.promptTemplate
+        baseConfig.promptTemplate,
+        spreadId,
+        styleId
       );
 
       return {
@@ -172,11 +212,19 @@ export async function getEnhancedTarotPromptConfig(
         useEnhancedSystem: true,
       };
     } else {
-      // Fallback to original system
+      // Fallback to original system with spread/style guidelines
       const baseConfig = await getTarotPromptConfig();
+      const enhancedPrompt = await getTarotInterpretationPrompt(
+        cardIds,
+        interpretationMethod,
+        baseConfig.promptTemplate,
+        spreadId,
+        styleId
+      );
+      
       return {
         ...baseConfig,
-        enhancedPrompt: baseConfig.promptTemplate,
+        enhancedPrompt,
         useEnhancedSystem: false,
       };
     }

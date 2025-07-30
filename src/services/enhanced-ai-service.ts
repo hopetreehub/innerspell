@@ -64,13 +64,19 @@ export async function getFeatureConfig(feature: AIFeature): Promise<{
 
 /**
  * Get enhanced tarot interpretation prompt with card-specific instructions
+ * and spread/style guidelines
  */
 export async function getTarotInterpretationPrompt(
   cardIds: string[],
   interpretationMethod: string,
-  basePrompt: string
+  basePrompt: string,
+  spreadId?: string,
+  styleId?: string
 ): Promise<string> {
   try {
+    // Import guideline actions
+    const { getTarotGuidelineBySpreadAndStyle } = await import('@/actions/tarotGuidelineActions');
+    
     // Get card-specific instructions
     const allInstructions: TarotCardInstruction[] = [];
     
@@ -98,6 +104,53 @@ ${instruction.combinationHints ? `- Combination Hints: ${instruction.combination
         .join('\n');
 
       enhancedPrompt += `\n\n[CARD-SPECIFIC INSTRUCTIONS]\n${cardInstructionSection}\n[END CARD-SPECIFIC INSTRUCTIONS]`;
+    }
+
+    // Get spread and style specific guidelines
+    if (spreadId && styleId) {
+      const guidelineResult = await getTarotGuidelineBySpreadAndStyle(spreadId, styleId);
+      
+      if (guidelineResult.success && guidelineResult.data) {
+        const guideline = guidelineResult.data;
+        
+        // Add spread-specific information
+        const spreadInfo = {
+          name: guideline.spreadName,
+          generalApproach: guideline.generalApproach,
+          positions: guideline.positions.map(pos => ({
+            positionName: pos.positionName,
+            interpretationFocus: pos.interpretationFocus,
+            keyQuestions: pos.keyQuestions.join(', ')
+          })),
+          interpretationTips: guideline.interpretationTips.join(' ')
+        };
+        
+        // Add style-specific information
+        const styleInfo = {
+          name: guideline.styleName,
+          description: guideline.styleDescription,
+          keyFocusAreas: guideline.keyFocusAreas.join(', '),
+          interpretationTips: guideline.interpretationTips.join(' ')
+        };
+        
+        // Replace placeholders in prompt
+        enhancedPrompt = enhancedPrompt
+          .replace('{{#if spreadGuideline}}', '')
+          .replace('{{/if}}', '')
+          .replace('{{#if styleGuideline}}', '')
+          .replace(/\{\{\{spreadGuideline\.(\w+)\}\}\}/g, (match, prop) => spreadInfo[prop] || '')
+          .replace(/\{\{\{styleGuideline\.(\w+)\}\}\}/g, (match, prop) => styleInfo[prop] || '');
+        
+        // Handle nested properties
+        enhancedPrompt = enhancedPrompt.replace(/\{\{#each spreadGuideline\.positions\}\}([\s\S]*?)\{\{\/each\}\}/g, 
+          (match, template) => {
+            return spreadInfo.positions.map(pos => 
+              template
+                .replace(/\{\{\{this\.(\w+)\}\}\}/g, (m, prop) => pos[prop] || '')
+            ).join('\n');
+          }
+        );
+      }
     }
 
     return enhancedPrompt;
