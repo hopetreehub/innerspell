@@ -49,7 +49,7 @@ import { useAuth } from '@/context/AuthContext';
 // 🔧 클라이언트 스프레드 ID를 타로 지침 시스템 ID로 매핑
 const spreadIdMapping: Record<string, string> = {
   'single-spark': 'single-card',
-  'trinity-view': 'past-present-future', 
+  'trinity-view': 'trinity-view', // 수정: 매핑 제거하여 원래 ID 사용
   'pentagram-insight': 'situation-action-outcome',
   'seven-stars-path': 'relationship-spread',
   'nine-realms-journey': 'cross-spread',
@@ -61,7 +61,7 @@ const styleIdMapping: Record<string, string> = {
   '전통 RWS (라이더-웨이트-스미스)': 'traditional-rws',
   '토트 기반 심층 분석': 'thoth-crowley',
   '심리학적 원형 탐구': 'psychological-jungian',
-  '영적 성장과 자기 성찰': 'intuitive-modern',
+  '영적 성장과 자기 성찰': 'spiritual-growth-reflection', // 수정: 올바른 ID로 변경
   '실질적 행동 지침': 'therapeutic-counseling',
   '내면의 그림자 작업': 'elemental-seasonal'
 };
