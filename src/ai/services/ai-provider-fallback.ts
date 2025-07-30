@@ -301,7 +301,7 @@ export async function getProviderWithFallback() {
   
   return {
     provider: result.selectedProvider,
-    model: result.selectedModel,
+    model: `${result.selectedProvider}/${result.selectedModel}`,
     apiKey: decrypt(configResult.data.apiKey),
     config: configResult.data,
     fallbackInfo: result
