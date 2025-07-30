@@ -104,16 +104,31 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
         // Fix model format - remove provider prefix for Genkit
         const modelParts = config.model.split('/');
         const cleanModelId = modelParts.length > 1 ? modelParts[1] : config.model;
-        providerInfo = { provider: modelParts[0] || 'openai', model: cleanModelId };
+        
+        // Map provider names correctly
+        let providerName = modelParts[0] || 'openai';
+        if (providerName === 'gemini') {
+          providerName = 'googleai';
+        }
+        
+        providerInfo = { provider: providerName, model: cleanModelId };
         model = cleanModelId;
         promptTemplate = config.promptTemplate;
         safetySettings = config.safetySettings;
       } catch (error) {
         console.log('[TAROT] Primary config failed, using fallback system:', error);
-        // Use fallback system if primary config fails
-        const fallbackInfo = await getProviderWithFallback();
-        providerInfo = fallbackInfo;
-        model = fallbackInfo.model; // Don't add provider prefix
+        
+        try {
+          // Use fallback system if primary config fails
+          const fallbackInfo = await getProviderWithFallback();
+          providerInfo = fallbackInfo;
+          model = fallbackInfo.model; // Don't add provider prefix
+        } catch (fallbackError) {
+          console.log('[TAROT] Fallback system also failed, using hardcoded OpenAI:', fallbackError);
+          // Ultimate fallback: Use OpenAI with gpt-3.5-turbo
+          providerInfo = { provider: 'openai', model: 'gpt-3.5-turbo' };
+          model = 'gpt-3.5-turbo';
+        }
         
         // Use enhanced prompt template with guideline integration
         promptTemplate = `당신은 전문적인 타로 카드 해석사입니다. 

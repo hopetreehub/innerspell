@@ -29,7 +29,7 @@ interface FallbackResult {
  */
 const PROVIDER_PRIORITY: AIProvider[] = [
   'openai',     // Most reliable, good performance
-  'gemini',     // Google's offering, good alternative
+  'googleai',   // Google's offering, good alternative (use googleai not gemini)
   'anthropic',  // High quality Claude models
   'openrouter', // Access to multiple models
   'grok',       // X.AI offering
@@ -85,7 +85,8 @@ async function makeTestAPICall(provider: AIProvider, model: string, apiKey: stri
   switch (provider) {
     case 'openai':
       return testOpenAI(apiKey, model, testPrompt);
-    case 'gemini':
+    case 'googleai':
+    case 'gemini':  // Support both names
       return testGemini(apiKey, model, testPrompt);
     case 'anthropic':
       return testAnthropic(apiKey, model, testPrompt);
@@ -301,7 +302,7 @@ export async function getProviderWithFallback() {
   
   return {
     provider: result.selectedProvider,
-    model: `${result.selectedProvider}/${result.selectedModel}`,
+    model: result.selectedModel, // Don't add provider prefix - Genkit handles this
     apiKey: decrypt(configResult.data.apiKey),
     config: configResult.data,
     fallbackInfo: result
