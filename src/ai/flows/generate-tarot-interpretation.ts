@@ -89,66 +89,51 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
         }
       }
       
-      // 🔄 ROBUST FALLBACK SYSTEM - No assumptions, only verified providers
+      // Try to get the best available provider with automatic fallback
+      let providerInfo;
       let model: string;
       let promptTemplate: string;
       let safetySettings: any[];
-      let finalProviderInfo: any;
+      let config: any; // Define config in outer scope
       
       try {
-        console.log('[TAROT] 🔍 Starting robust provider detection...');
+        // First try to get configured provider
+        config = await getTarotPromptConfig();
+        // ALWAYS ensure model has provider prefix using utility function
+        model = ensureModelHasProviderPrefix(config.model);
+        console.log('[TAROT] Ensured model prefix:', config.model, '->', model);
         
-        // Step 1: Get available active providers from Firestore
-        const activeModels = await getActiveAIModels();
-        console.log('[TAROT] ✅ Available active models:', activeModels);
-        
-        if (activeModels.length === 0) {
-          throw new Error('No active AI models configured. Please configure at least one AI provider in admin settings.');
-        }
-        
-        // Step 2: Try to get configured prompt settings
-        let config;
-        try {
-          config = await getTarotPromptConfig();
-          console.log('[TAROT] 📋 Got prompt config with model:', config.model);
-        } catch (configError) {
-          console.log('[TAROT] ⚠️ No prompt config found, using first available model');
-          config = {
-            model: activeModels[0].id, // Use first available active model
-            promptTemplate: '',
-            safetySettings: []
-          };
-        }
-        
-        // Step 3: Validate if configured model is actually available
-        const configuredModelAvailable = activeModels.find(m => 
-          m.id === config.model || 
-          ensureModelHasProviderPrefix(config.model) === m.id
-        );
-        
-        if (configuredModelAvailable) {
-          // Use configured model
-          model = ensureModelHasProviderPrefix(config.model);
-          finalProviderInfo = { 
-            provider: configuredModelAvailable.provider, 
-            model: config.model,
-            fallbackInfo: { fallbackUsed: false }
-          };
-          console.log('[TAROT] ✅ Using configured model:', model);
+        // Extract provider info only for getProviderConfig usage
+        let provider: string;
+        if (config.model.includes('/')) {
+          provider = config.model.split('/')[0];
         } else {
-          // Use first available model as fallback
-          const fallbackModel = activeModels[0];
-          model = fallbackModel.id;
-          finalProviderInfo = { 
-            provider: fallbackModel.provider, 
-            model: fallbackModel.id,
-            fallbackInfo: { fallbackUsed: true, reason: 'Configured model not available' }
-          };
-          console.log('[TAROT] 🔄 Using fallback model:', model, 'because configured model not available');
+          // Model ID without provider prefix - determine provider from model name
+          if (config.model.includes('gpt') || config.model.includes('o1')) {
+            provider = 'openai';
+          } else if (config.model.includes('gemini')) {
+            provider = 'googleai';
+          } else if (config.model.includes('claude')) {
+            provider = 'anthropic';
+          } else {
+            provider = 'openai'; // Default to OpenAI
+          }
         }
         
-        // Step 4: Set prompt template and safety settings
-        promptTemplate = config.promptTemplate || `당신은 전문적인 타로 카드 해석사입니다. 
+        providerInfo = { provider, model: config.model };
+        promptTemplate = config.promptTemplate;
+        safetySettings = config.safetySettings;
+      } catch (error) {
+        console.log('[TAROT] Primary config failed, using fallback system:', error);
+        // Use fallback system if primary config fails
+        const fallbackInfo = await getProviderWithFallback();
+        providerInfo = fallbackInfo;
+        // ALWAYS ensure the model has provider prefix using utility function
+        model = ensureModelHasProviderPrefix(fallbackInfo.model);
+        console.log('[TAROT] Fallback model with prefix:', fallbackInfo.model, '->', model);
+        
+        // Use enhanced prompt template with guideline integration
+        promptTemplate = `당신은 전문적인 타로 카드 해석사입니다. 
 ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\n' + guidelineInstructions + '\n\n위 지침을 바탕으로, ' : ''}사용자의 질문과 뽑힌 카드들을 바탕으로 깊이 있고 의미 있는 해석을 제공해주세요.
 
 질문: {{question}}
@@ -167,12 +152,11 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
 
 ## 결론
 희망적이고 긍정적인 마무리`;
+        safetySettings = [];
         
-        safetySettings = config.safetySettings || [];
-        
-      } catch (error) {
-        console.error('[TAROT] 🚨 CRITICAL: All provider detection failed:', error);
-        throw new Error(`AI provider configuration error: ${error.message}. Please configure AI providers in admin settings.`);
+        if (fallbackInfo.fallbackInfo.fallbackUsed) {
+          console.log('[TAROT] Using fallback provider due to primary failure');
+        }
       }
       
       // Pass the model ID for getProviderConfig (model already contains correct format)
@@ -180,13 +164,14 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       
       // Configure prompt based on provider capabilities
       // IMPORTANT: Genkit expects the full model ID with provider prefix
+      // model variable now always contains the correct format from both paths
       const modelForPrompt = model;
       
-      console.log('[TAROT] 🚀 Final configuration:');
-      console.log('[TAROT] Model for prompt:', modelForPrompt);
-      console.log('[TAROT] Provider info:', finalProviderInfo);
-      console.log('[TAROT] Is fallback:', finalProviderInfo.fallbackInfo?.fallbackUsed || false);
-      console.log('[TAROT] Provider config:', providerConfig);
+      console.log('[TAROT] Using model ID for prompt:', modelForPrompt);
+      console.log('[TAROT] Is fallback:', providerInfo.fallbackInfo?.fallbackUsed || false);
+      console.log('[TAROT] Original config.model:', config?.model);
+      console.log('[TAROT] Provider info:', providerInfo);
+      console.log('[TAROT] Model variable:', model);
       
       const promptConfig: any = {
         name: 'generateTarotInterpretationRuntimePrompt', 
@@ -255,19 +240,13 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
          userMessage = "생성된 콘텐츠가 안전 기준에 부합하지 않아 차단되었습니다. 질문이나 해석 요청 내용을 수정해 보세요.";
       } else if (errorMessage.includes("no valid candidates")) {
          userMessage = "AI가 현재 요청에 대해 적절한 답변을 찾지 못했습니다. 질문을 조금 다르게 해보거나, 나중에 다시 시도해주세요. (No Valid Candidates)";
-      } else if (e.message && (e.message.includes("Model 'gpt-3.5-turbo' not found") || 
-                                e.message.includes("Model ") && e.message.includes(" not found"))) {
-        // Specific handling for model not found errors
-        console.error('[TAROT] ❌ Model not found error:', e.message);
-        userMessage = `🤖 AI 모델을 찾을 수 없습니다. 관리자 페이지에서 AI 제공업체 설정을 확인하거나, 다른 AI 모델을 활성화해주세요. 현재 사용 가능한 모델이 없거나 API 키가 잘못 설정되었을 수 있습니다.`;
-      } else if (e.message && e.message.includes("AI provider configuration error")) {
-        // Configuration errors
-        userMessage = `⚙️ ${e.message}`;
-      } else if (e.message && e.message.includes("No active AI models configured")) {
-        // No models configured
-        userMessage = `🚫 활성화된 AI 모델이 없습니다. 관리자 페이지에서 적어도 하나의 AI 제공업체를 설정하고 활성화해주세요.`;
+      } else if (e.message && e.message.includes("Model 'gpt-3.5-turbo' not found")) {
+        // Specific handling for the persistent gpt-3.5-turbo error
+        console.error('[TAROT] Caught gpt-3.5-turbo not found error. Attempting retry with fallback...');
+        // Return a specific error that indicates we need to use fallback
+        userMessage = 'AI 제공업체 설정을 확인해주세요. OpenAI API 키가 올바르게 설정되어 있는지 확인하거나, 다른 AI 제공업체를 활성화해주세요.';
       } else {
-        userMessage = `🤖 AI 해석 생성 중 오류가 발생했습니다: ${e.message || '알 수 없는 오류'}. 잠시 후 다시 시도해주세요.`;
+        userMessage = `AI 해석 오류: ${e.message || '알 수 없는 오류'}.`;
       }
       return { interpretation: userMessage };
     }
