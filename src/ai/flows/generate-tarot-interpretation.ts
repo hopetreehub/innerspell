@@ -40,7 +40,7 @@ export async function generateTarotInterpretation(input: GenerateTarotInterpreta
 const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpretationInput): Promise<GenerateTarotInterpretationOutput> => {
   const ai = await getAI();
   
-  return ai.defineFlow(
+  const flow = ai.defineFlow(
     {
       name: 'generateTarotInterpretationFlow',
       inputSchema: GenerateTarotInterpretationInputSchema,
@@ -240,5 +240,8 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       return { interpretation: userMessage };
     }
     }
-  )(flowInput);
+  );
+  
+  // Execute the flow with the input
+  return flow(flowInput);
 };
