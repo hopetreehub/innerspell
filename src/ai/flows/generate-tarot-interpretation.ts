@@ -93,10 +93,11 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
       let model: string;
       let promptTemplate: string;
       let safetySettings: any[];
+      let config: any; // Define config in outer scope
       
       try {
         // First try to get configured provider
-        const config = await getTarotPromptConfig();
+        config = await getTarotPromptConfig();
         // Fix model format - handle both formats: "gpt-3.5-turbo" and "openai/gpt-3.5-turbo"
         let cleanModelId: string;
         let provider: string;
@@ -168,7 +169,7 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       // IMPORTANT: Genkit expects the full model ID with provider prefix
       // For primary config, use the original config.model
       // For fallback, model variable already has the correct format
-      const modelForPrompt = providerInfo.fallbackInfo?.fallbackUsed ? model : config.model;
+      const modelForPrompt = providerInfo.fallbackInfo?.fallbackUsed || !config ? model : config.model;
       
       console.log('[TAROT] Using model ID for prompt:', modelForPrompt);
       console.log('[TAROT] Is fallback:', providerInfo.fallbackInfo?.fallbackUsed || false);
