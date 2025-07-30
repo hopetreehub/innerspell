@@ -34,10 +34,6 @@ export type GenerateTarotInterpretationOutput = z.infer<typeof GenerateTarotInte
 
 
 export async function generateTarotInterpretation(input: GenerateTarotInterpretationInput): Promise<GenerateTarotInterpretationOutput> {
-  return generateTarotInterpretationFlow(input);
-}
-
-const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpretationInput): Promise<GenerateTarotInterpretationOutput> => {
   const ai = await getAI();
   
   const flow = ai.defineFlow(
@@ -46,14 +42,14 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
       inputSchema: GenerateTarotInterpretationInputSchema,
       outputSchema: GenerateTarotInterpretationOutputSchema,
     },
-    async (input: GenerateTarotInterpretationInput) => {
+    async (flowInput: GenerateTarotInterpretationInput) => {
     
     try {
       // 🔍 타로 지침 가져오기
       let guidelineInstructions = '';
-      if (input.spreadId && input.styleId) {
+      if (flowInput.spreadId && flowInput.styleId) {
         try {
-          const guidelineResult = await getGuidelineBySpreadAndStyle(input.spreadId, input.styleId);
+          const guidelineResult = await getGuidelineBySpreadAndStyle(flowInput.spreadId, flowInput.styleId);
           if (guidelineResult.success && guidelineResult.data) {
             const guideline = guidelineResult.data;
             
@@ -85,7 +81,7 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
             
             console.log('[TAROT] Using tarot guideline:', guideline.name);
           } else {
-            console.log('[TAROT] No specific guideline found for', input.spreadId, input.styleId);
+            console.log('[TAROT] No specific guideline found for', flowInput.spreadId, flowInput.styleId);
           }
         } catch (guidelineError) {
           console.warn('[TAROT] Failed to load guideline:', guidelineError);
@@ -201,13 +197,13 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       const tarotPrompt = await ai.definePrompt(promptConfig);
 
       console.log('[TAROT] Calling AI with input:', {
-        questionLength: input.question.length,
-        cardSpread: input.cardSpread,
-        cardsCount: input.cardInterpretations.split('\n').length,
-        isGuestUser: input.isGuestUser
+        questionLength: flowInput.question.length,
+        cardSpread: flowInput.cardSpread,
+        cardsCount: flowInput.cardInterpretations.split('\n').length,
+        isGuestUser: flowInput.isGuestUser
       });
 
-      const llmResponse = await tarotPrompt(input); 
+      const llmResponse = await tarotPrompt(flowInput); 
       const interpretationText = llmResponse.text; 
 
       if (!interpretationText) {
@@ -253,5 +249,5 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
   );
   
   // Execute the flow with the input
-  return flow(flowInput);
-};
+  return flow(input);
+}

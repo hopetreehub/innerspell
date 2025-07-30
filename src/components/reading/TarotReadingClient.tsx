@@ -425,11 +425,18 @@ export function TarotReadingClient() {
         spreadId: mappedSpreadId,
         styleId: mappedStyleId,
       });
+      
+      // Check if result is valid
+      if (!result || typeof result.interpretation !== 'string') {
+        console.error('[TAROT] Invalid result from generateTarotInterpretation:', result);
+        throw new Error('AI 해석 응답이 올바르지 않습니다.');
+      }
+      
       setInterpretation(result.interpretation);
       setStage('interpretation_ready');
       
       // 사용 기록 저장 (로그인한 사용자만)
-      if (user) {
+      if (user && result.interpretation) {
         try {
           await recordTarotUsage(user.uid, {
             question: question,

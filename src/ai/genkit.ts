@@ -168,15 +168,12 @@ export async function getAI() {
 
 // For backward compatibility
 export const ai = {
-  defineFlow: (...args: any[]) => {
-    return {
-      ...(args[0] || {}),
-      // Wrap the flow function to ensure AI is initialized
-      fn: async (input: any) => {
-        const instance = await getAI();
-        const flow = instance.defineFlow(args[0], args[1]);
-        return flow(input);
-      }
+  defineFlow: (config: any, flowFn: any) => {
+    // Return a function that can be called directly
+    return async (input: any) => {
+      const instance = await getAI();
+      const flow = instance.defineFlow(config, flowFn);
+      return flow(input);
     };
   },
   definePrompt: async (...args: Parameters<ReturnType<typeof genkit>['definePrompt']>) => {
