@@ -15,6 +15,7 @@ import { getTarotPromptConfig } from '@/ai/services/prompt-service';
 import { getProviderConfig } from '@/lib/ai-utils';
 import { getProviderWithFallback } from '@/ai/services/ai-provider-fallback';
 import { getAllTarotGuidelines, getGuidelineBySpreadAndStyle } from '@/actions/tarotGuidelineActions';
+import { ensureModelHasProviderPrefix } from '@/lib/ensure-model-prefix';
 
 
 const GenerateTarotInterpretationInputSchema = z.object({
@@ -98,22 +99,9 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
       try {
         // First try to get configured provider
         config = await getTarotPromptConfig();
-        // Ensure model has provider prefix
-        if (config.model && !config.model.includes('/')) {
-          // Add provider prefix if missing
-          if (config.model.includes('gpt') || config.model.includes('o1')) {
-            model = `openai/${config.model}`;
-          } else if (config.model.includes('gemini')) {
-            model = `googleai/${config.model}`;
-          } else if (config.model.includes('claude')) {
-            model = `anthropic/${config.model}`;
-          } else {
-            model = `openai/${config.model}`; // Default to OpenAI
-          }
-          console.log('[TAROT] Added provider prefix to model:', config.model, '->', model);
-        } else {
-          model = config.model;
-        }
+        // ALWAYS ensure model has provider prefix using utility function
+        model = ensureModelHasProviderPrefix(config.model);
+        console.log('[TAROT] Ensured model prefix:', config.model, '->', model);
         
         // Extract provider info only for getProviderConfig usage
         let provider: string;
@@ -140,10 +128,9 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
         // Use fallback system if primary config fails
         const fallbackInfo = await getProviderWithFallback();
         providerInfo = fallbackInfo;
-        // Ensure the model has provider prefix for Genkit
-        model = fallbackInfo.provider && !fallbackInfo.model.includes('/') 
-          ? `${fallbackInfo.provider}/${fallbackInfo.model}` 
-          : fallbackInfo.model;
+        // ALWAYS ensure the model has provider prefix using utility function
+        model = ensureModelHasProviderPrefix(fallbackInfo.model);
+        console.log('[TAROT] Fallback model with prefix:', fallbackInfo.model, '->', model);
         
         // Use enhanced prompt template with guideline integration
         promptTemplate = `당신은 전문적인 타로 카드 해석사입니다. 
