@@ -85,11 +85,13 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
   try {
     const configDoc = await firestore.collection('aiConfiguration').doc('promptSettings').get();
 
-    // Get active AI models to find a suitable default
+    // Get active AI models to find a suitable default - prioritize available providers
     const activeModels = await getActiveAIModels();
-    // Prefer OpenAI models if available
-    const openaiModel = activeModels.find(m => m.provider === 'openai');
-    const defaultModel = openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL);
+    console.log('[PromptService] Available active models:', activeModels);
+    
+    // Choose the FIRST available model (no provider preference assumptions)
+    const defaultModel = activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL;
+    console.log('[PromptService] Selected default model:', defaultModel);
 
     if (!configDoc.exists) {
       return {
@@ -134,18 +136,19 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
     // Try to get active models as fallback
     try {
       const activeModels = await getActiveAIModels();
-      // Prefer OpenAI models if available
-      const openaiModel = activeModels.find(m => m.provider === 'openai');
-      const fallbackModel = openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL);
+      // Use FIRST available model (no assumptions about OpenAI)
+      const fallbackModel = activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL;
+      console.log('[PromptService] Using fallback model:', fallbackModel);
       return {
         model: fallbackModel,
         promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
         safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
       };
     } catch {
-      // Use OpenAI as absolute fallback with proper provider prefix
+      // Use Google AI as absolute fallback (more likely to be configured)
+      console.log('[PromptService] Using absolute fallback: googleai/gemini-1.5-flash');
       return {
-        model: 'openai/gpt-3.5-turbo',
+        model: 'googleai/gemini-1.5-flash',
         promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
         safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
       };
@@ -341,17 +344,18 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
   // Try to get active models as fallback
   try {
     const activeModels = await getActiveAIModels();
-    // Prefer OpenAI models if available
-    const openaiModel = activeModels.find(m => m.provider === 'openai');
-    const fallbackModel = openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_DREAM_MODEL);
+    // Use FIRST available model (no assumptions)
+    const fallbackModel = activeModels.length > 0 ? activeModels[0].id : DEFAULT_DREAM_MODEL;
+    console.log('[DreamPromptService] Using fallback model:', fallbackModel);
     return {
       model: fallbackModel,
       promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
     };
   } catch {
-    // Use OpenAI as absolute fallback with proper provider prefix
+    // Use Google AI as absolute fallback (more likely to be configured)
+    console.log('[DreamPromptService] Using absolute fallback: googleai/gemini-1.5-pro-latest');
     return {
-      model: 'openai/gpt-3.5-turbo',
+      model: 'googleai/gemini-1.5-pro-latest',
       promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
     };
   }
