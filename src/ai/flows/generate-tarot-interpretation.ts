@@ -166,11 +166,19 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       const providerConfig = getProviderConfig(fullModelId);
       
       // Configure prompt based on provider capabilities
+      // Use the appropriate model format for each provider
+      let modelForPrompt = model;
+      if (providerConfig.provider === 'openai' && !model.startsWith('openai/')) {
+        modelForPrompt = `openai/${model}`;
+      } else if (providerConfig.provider === 'googleai' && !model.startsWith('googleai/')) {
+        modelForPrompt = `googleai/${model}`;
+      }
+      
       const promptConfig: any = {
         name: 'generateTarotInterpretationRuntimePrompt', 
         input: { schema: GenerateTarotInterpretationInputSchema }, 
         prompt: promptTemplate, 
-        model: model,
+        model: modelForPrompt,
       };
       
       // Add provider-specific configuration
@@ -187,7 +195,9 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
         // we'll keep the prompt as is
       }
 
-      console.log('[TAROT] Creating prompt with model:', model);
+      console.log('[TAROT] Creating prompt with model:', modelForPrompt);
+      console.log('[TAROT] Provider info:', providerInfo);
+      console.log('[TAROT] Provider config:', providerConfig);
       const tarotPrompt = await ai.definePrompt(promptConfig);
 
       console.log('[TAROT] Calling AI with input:', {
