@@ -158,9 +158,8 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
         }
       }
       
-      // Pass the full model ID with provider prefix for getProviderConfig
-      const fullModelId = providerInfo.provider ? `${providerInfo.provider}/${model}` : model;
-      const providerConfig = getProviderConfig(fullModelId);
+      // Pass the model ID for getProviderConfig (model already contains correct format)
+      const providerConfig = getProviderConfig(model);
       
       // Configure prompt based on provider capabilities
       // IMPORTANT: Genkit expects the full model ID with provider prefix

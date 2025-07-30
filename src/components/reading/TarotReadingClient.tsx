@@ -450,10 +450,12 @@ export function TarotReadingClient() {
       }
     } catch (error) {
       console.error('해석 생성 오류:', error);
+      // Show actual error message for debugging
+      const errorMessage = error instanceof Error ? error.message : String(error);
       toast({
         variant: 'destructive',
-        title: '해석 오류',
-        description: 'AI 해석을 생성하는 데 실패했습니다. 잠시 후 다시 시도해주세요.',
+        title: 'AI 해석 오류',
+        description: errorMessage,
       });
       setStage('cards_selected');
     }
