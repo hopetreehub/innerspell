@@ -240,6 +240,11 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
          userMessage = "생성된 콘텐츠가 안전 기준에 부합하지 않아 차단되었습니다. 질문이나 해석 요청 내용을 수정해 보세요.";
       } else if (errorMessage.includes("no valid candidates")) {
          userMessage = "AI가 현재 요청에 대해 적절한 답변을 찾지 못했습니다. 질문을 조금 다르게 해보거나, 나중에 다시 시도해주세요. (No Valid Candidates)";
+      } else if (e.message && e.message.includes("Model 'gpt-3.5-turbo' not found")) {
+        // Specific handling for the persistent gpt-3.5-turbo error
+        console.error('[TAROT] Caught gpt-3.5-turbo not found error. Attempting retry with fallback...');
+        // Return a specific error that indicates we need to use fallback
+        userMessage = 'AI 제공업체 설정을 확인해주세요. OpenAI API 키가 올바르게 설정되어 있는지 확인하거나, 다른 AI 제공업체를 활성화해주세요.';
       } else {
         userMessage = `AI 해석 오류: ${e.message || '알 수 없는 오류'}.`;
       }
