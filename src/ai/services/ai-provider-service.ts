@@ -60,12 +60,12 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
       if (hasOpenAI) {
         defaultModels.push(
           {
-            id: 'gpt-3.5-turbo',
+            id: 'openai/gpt-3.5-turbo',
             name: 'GPT-3.5 Turbo (OpenAI)',
             provider: 'openai'
           },
           {
-            id: 'gpt-4o',
+            id: 'openai/gpt-4o',
             name: 'GPT-4o (OpenAI)',
             provider: 'openai'
           }
@@ -91,12 +91,12 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
       if (defaultModels.length === 0) {
         defaultModels.push(
           {
-            id: 'gpt-3.5-turbo',
+            id: 'openai/gpt-3.5-turbo',
             name: 'GPT-3.5 Turbo (OpenAI)',
             provider: 'openai'
           },
           {
-            id: 'gemini-1.5-flash',
+            id: 'googleai/gemini-1.5-flash',
             name: 'Gemini 1.5 Flash (Google AI)',
             provider: 'googleai'
           }
@@ -113,22 +113,22 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
     // Return default models on error (OpenAI first)
     const defaultModels = [
       {
-        id: 'gpt-3.5-turbo',
+        id: 'openai/gpt-3.5-turbo',
         name: 'GPT-3.5 Turbo (OpenAI)',
         provider: 'openai'
       },
       {
-        id: 'gpt-4o',
+        id: 'openai/gpt-4o',
         name: 'GPT-4o (OpenAI)',
         provider: 'openai'
       },
       {
-        id: 'gemini-1.5-pro',
+        id: 'googleai/gemini-1.5-pro',
         name: 'Gemini 1.5 Pro (Google AI)',
         provider: 'googleai'
       },
       {
-        id: 'gemini-1.5-flash',
+        id: 'googleai/gemini-1.5-flash',
         name: 'Gemini 1.5 Flash (Google AI)',
         provider: 'googleai'
       }
