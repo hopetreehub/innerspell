@@ -168,6 +168,9 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       
       console.log('[TAROT] Using model ID for prompt:', modelForPrompt);
       console.log('[TAROT] Is fallback:', providerInfo.fallbackInfo?.fallbackUsed || false);
+      console.log('[TAROT] Original config.model:', config?.model);
+      console.log('[TAROT] Provider info:', providerInfo);
+      console.log('[TAROT] Model variable:', model);
       
       const promptConfig: any = {
         name: 'generateTarotInterpretationRuntimePrompt', 
