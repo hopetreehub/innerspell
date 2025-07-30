@@ -215,9 +215,17 @@ export async function getGuidelineBySpreadAndStyle(
       };
     }
     
+    console.log('[tarotGuidelineActions] Searching for:', { spreadId, styleId });
+    console.log('[tarotGuidelineActions] Available guidelines:');
+    allData.data.guidelines.forEach(g => {
+      console.log(`  - ID: ${g.id}, spreadId: ${g.spreadId}, styleId: ${g.styleId}`);
+    });
+    
     const guideline = allData.data.guidelines.find(
       g => g.spreadId === spreadId && g.styleId === styleId
     );
+    
+    console.log('[tarotGuidelineActions] Found guideline:', guideline ? guideline.id : 'none');
     
     if (!guideline) {
       return {
