@@ -101,10 +101,29 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
       try {
         // First try to get configured provider
         const config = await getTarotPromptConfig();
-        // Fix model format - remove provider prefix for Genkit
-        const modelParts = config.model.split('/');
-        const cleanModelId = modelParts.length > 1 ? modelParts[1] : config.model;
-        providerInfo = { provider: modelParts[0] || 'openai', model: cleanModelId };
+        // Fix model format - handle both formats: "gpt-3.5-turbo" and "openai/gpt-3.5-turbo"
+        let cleanModelId: string;
+        let provider: string;
+        
+        if (config.model.includes('/')) {
+          const modelParts = config.model.split('/');
+          provider = modelParts[0];
+          cleanModelId = modelParts[1];
+        } else {
+          // Model ID without provider prefix - determine provider from model name
+          cleanModelId = config.model;
+          if (cleanModelId.includes('gpt') || cleanModelId.includes('o1')) {
+            provider = 'openai';
+          } else if (cleanModelId.includes('gemini')) {
+            provider = 'googleai';
+          } else if (cleanModelId.includes('claude')) {
+            provider = 'anthropic';
+          } else {
+            provider = 'openai'; // Default to OpenAI
+          }
+        }
+        
+        providerInfo = { provider, model: cleanModelId };
         model = cleanModelId;
         promptTemplate = config.promptTemplate;
         safetySettings = config.safetySettings;
@@ -142,7 +161,9 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
         }
       }
       
-      const providerConfig = getProviderConfig(model);
+      // Pass the full model ID with provider prefix for getProviderConfig
+      const fullModelId = providerInfo.provider ? `${providerInfo.provider}/${model}` : model;
+      const providerConfig = getProviderConfig(fullModelId);
       
       // Configure prompt based on provider capabilities
       const promptConfig: any = {
