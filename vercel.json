@@ -10,7 +10,7 @@
   "build": {
     "env": {
       "NEXT_CACHE_DISABLED": "1",
-      "MIDDLEWARE_CACHE_BUST": "2025-07-30-ai-fix-cache-clear"
+      "MIDDLEWARE_CACHE_BUST": "2025-07-30-config-scope-fix"
     }
   },
   "devCommand": "npm run dev",

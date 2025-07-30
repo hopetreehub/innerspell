@@ -169,7 +169,7 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       // IMPORTANT: Genkit expects the full model ID with provider prefix
       // For primary config, use the original config.model
       // For fallback, model variable already has the correct format
-      const modelForPrompt = providerInfo.fallbackInfo?.fallbackUsed || !config ? model : config.model;
+      const modelForPrompt = (providerInfo.fallbackInfo?.fallbackUsed || !config) ? model : config.model;
       
       console.log('[TAROT] Using model ID for prompt:', modelForPrompt);
       console.log('[TAROT] Is fallback:', providerInfo.fallbackInfo?.fallbackUsed || false);
