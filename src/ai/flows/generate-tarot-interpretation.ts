@@ -72,7 +72,7 @@ ${input.cardSpread === '3카드 (과거-현재-미래)' ? `
 // Try Google AI (Gemini) first
 async function tryGoogleAI(input: GenerateTarotInterpretationInput, prompt: string): Promise<string | null> {
   try {
-    const apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.GOOGLE_AI_API_KEY;
+    const apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     if (!apiKey) {
       console.log('[TAROT] No Google AI API key found');
       return null;
@@ -83,10 +83,16 @@ async function tryGoogleAI(input: GenerateTarotInterpretationInput, prompt: stri
 
     // Get spread and style guidelines if available
     let enhancedPrompt = prompt;
+    console.log('[TAROT] Checking for guidelines:', { spreadId: input.spreadId, styleId: input.styleId });
+    
     if (input.spreadId && input.styleId) {
+      console.log('[TAROT] Fetching guidelines for:', input.spreadId, input.styleId);
       const guidelineResult = await getTarotGuidelineBySpreadAndStyle(input.spreadId, input.styleId);
+      console.log('[TAROT] Guideline result:', guidelineResult);
+      
       if (guidelineResult.success && guidelineResult.data) {
         const guideline = guidelineResult.data;
+        console.log('[TAROT] Found guideline:', guideline.name);
         
         // Create structured guideline information
         const spreadGuideline = {
@@ -170,10 +176,16 @@ async function tryOpenAI(input: GenerateTarotInterpretationInput, prompt: string
 
     // Get spread and style guidelines if available
     let enhancedPrompt = prompt;
+    console.log('[TAROT] OpenAI - Checking for guidelines:', { spreadId: input.spreadId, styleId: input.styleId });
+    
     if (input.spreadId && input.styleId) {
+      console.log('[TAROT] OpenAI - Fetching guidelines for:', input.spreadId, input.styleId);
       const guidelineResult = await getTarotGuidelineBySpreadAndStyle(input.spreadId, input.styleId);
+      console.log('[TAROT] OpenAI - Guideline result:', guidelineResult);
+      
       if (guidelineResult.success && guidelineResult.data) {
         const guideline = guidelineResult.data;
+        console.log('[TAROT] OpenAI - Found guideline:', guideline.name);
         
         // Create structured guideline information
         const spreadGuideline = {
@@ -265,7 +277,13 @@ ${spreadGuideline.positions}
 }
 
 export async function generateTarotInterpretation(input: GenerateTarotInterpretationInput): Promise<GenerateTarotInterpretationOutput> {
-  console.log('[TAROT] Starting interpretation generation V2...');
+  console.log('[TAROT] Starting interpretation generation V2...', {
+    question: input.question,
+    cardSpread: input.cardSpread,
+    spreadId: input.spreadId,
+    styleId: input.styleId,
+    isGuestUser: input.isGuestUser
+  });
   
   try {
     // Try to get configured prompt template
