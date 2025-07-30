@@ -98,30 +98,27 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
       try {
         // First try to get configured provider
         config = await getTarotPromptConfig();
-        // Fix model format - handle both formats: "gpt-3.5-turbo" and "openai/gpt-3.5-turbo"
-        let cleanModelId: string;
-        let provider: string;
+        // Use the model ID exactly as configured - no manipulation needed
+        model = config.model;
         
+        // Extract provider info only for getProviderConfig usage
+        let provider: string;
         if (config.model.includes('/')) {
-          const modelParts = config.model.split('/');
-          provider = modelParts[0];
-          cleanModelId = modelParts[1];
+          provider = config.model.split('/')[0];
         } else {
           // Model ID without provider prefix - determine provider from model name
-          cleanModelId = config.model;
-          if (cleanModelId.includes('gpt') || cleanModelId.includes('o1')) {
+          if (config.model.includes('gpt') || config.model.includes('o1')) {
             provider = 'openai';
-          } else if (cleanModelId.includes('gemini')) {
+          } else if (config.model.includes('gemini')) {
             provider = 'googleai';
-          } else if (cleanModelId.includes('claude')) {
+          } else if (config.model.includes('claude')) {
             provider = 'anthropic';
           } else {
             provider = 'openai'; // Default to OpenAI
           }
         }
         
-        providerInfo = { provider, model: cleanModelId };
-        model = cleanModelId;
+        providerInfo = { provider, model: config.model };
         promptTemplate = config.promptTemplate;
         safetySettings = config.safetySettings;
       } catch (error) {
@@ -167,9 +164,8 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
       
       // Configure prompt based on provider capabilities
       // IMPORTANT: Genkit expects the full model ID with provider prefix
-      // For primary config, use the original config.model
-      // For fallback, model variable already has the correct format
-      const modelForPrompt = (providerInfo.fallbackInfo?.fallbackUsed || !config) ? model : config.model;
+      // model variable now always contains the correct format from both paths
+      const modelForPrompt = model;
       
       console.log('[TAROT] Using model ID for prompt:', modelForPrompt);
       console.log('[TAROT] Is fallback:', providerInfo.fallbackInfo?.fallbackUsed || false);
