@@ -216,9 +216,22 @@ export async function getGuidelineBySpreadAndStyle(
     }
     
     console.log('[tarotGuidelineActions] Searching for:', { spreadId, styleId });
-    console.log('[tarotGuidelineActions] Available guidelines:');
-    allData.data.guidelines.forEach(g => {
-      console.log(`  - ID: ${g.id}, spreadId: ${g.spreadId}, styleId: ${g.styleId}`);
+    console.log('[tarotGuidelineActions] Available guidelines total:', allData.data.guidelines.length);
+    
+    // Trinity-view 관련 지침들만 필터링해서 확인
+    const trinityGuidelines = allData.data.guidelines.filter(g => 
+      g.spreadId === 'trinity-view' || g.id.includes('trinity-view')
+    );
+    console.log('[tarotGuidelineActions] Trinity-view guidelines:', trinityGuidelines.length);
+    trinityGuidelines.forEach(g => {
+      console.log(`  - ID: ${g.id}, spreadId: "${g.spreadId}", styleId: "${g.styleId}"`);
+    });
+    
+    // 요청된 styleId와 매칭되는 지침들 확인
+    const styleMatches = allData.data.guidelines.filter(g => g.styleId === styleId);
+    console.log('[tarotGuidelineActions] Style matches for', styleId + ':', styleMatches.length);
+    styleMatches.forEach(g => {
+      console.log(`  - ID: ${g.id}, spreadId: "${g.spreadId}", styleId: "${g.styleId}"`);
     });
     
     const guideline = allData.data.guidelines.find(
