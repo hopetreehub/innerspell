@@ -127,14 +127,21 @@ ${spreadGuideline.positions}
       }
     }
 
-    // Replace template variables
-    const finalPrompt = enhancedPrompt
-      .replace(/\{\{\{question\}\}\}/g, input.question)
-      .replace(/\{\{\{cardSpread\}\}\}/g, input.cardSpread)
-      .replace(/\{\{\{cardInterpretations\}\}\}/g, input.cardInterpretations)
-      .replace(/\{\{#if isGuestUser\}\}/g, input.isGuestUser ? '' : '{{if false}}')
-      .replace(/\{\{else\}\}/g, input.isGuestUser ? '{{else false}}' : '')
-      .replace(/\{\{\/if\}\}/g, '');
+    // Replace template variables with proper escaping
+    let finalPrompt = enhancedPrompt
+      .replace(/\{\{\{question\}\}\}/g, input.question || '')
+      .replace(/\{\{\{cardSpread\}\}\}/g, input.cardSpread || '')
+      .replace(/\{\{\{cardInterpretations\}\}\}/g, input.cardInterpretations || '');
+    
+    // Handle conditional blocks
+    if (input.isGuestUser) {
+      finalPrompt = finalPrompt.replace(/\{\{#if isGuestUser\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g, '$1');
+    } else {
+      finalPrompt = finalPrompt.replace(/\{\{#if isGuestUser\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g, '$2');
+    }
+    
+    // Remove any remaining handlebars syntax
+    finalPrompt = finalPrompt.replace(/\{\{[^}]*\}\}/g, '');
 
     console.log('[TAROT] Calling Google AI with enhanced prompt...');
     const result = await model.generateContent(finalPrompt);
@@ -207,14 +214,21 @@ ${spreadGuideline.positions}
       }
     }
 
-    // Replace template variables
-    const finalPrompt = enhancedPrompt
-      .replace(/\{\{\{question\}\}\}/g, input.question)
-      .replace(/\{\{\{cardSpread\}\}\}/g, input.cardSpread)
-      .replace(/\{\{\{cardInterpretations\}\}\}/g, input.cardInterpretations)
-      .replace(/\{\{#if isGuestUser\}\}/g, input.isGuestUser ? '' : '{{if false}}')
-      .replace(/\{\{else\}\}/g, input.isGuestUser ? '{{else false}}' : '')
-      .replace(/\{\{\/if\}\}/g, '');
+    // Replace template variables with proper escaping
+    let finalPrompt = enhancedPrompt
+      .replace(/\{\{\{question\}\}\}/g, input.question || '')
+      .replace(/\{\{\{cardSpread\}\}\}/g, input.cardSpread || '')
+      .replace(/\{\{\{cardInterpretations\}\}\}/g, input.cardInterpretations || '');
+    
+    // Handle conditional blocks
+    if (input.isGuestUser) {
+      finalPrompt = finalPrompt.replace(/\{\{#if isGuestUser\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g, '$1');
+    } else {
+      finalPrompt = finalPrompt.replace(/\{\{#if isGuestUser\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g, '$2');
+    }
+    
+    // Remove any remaining handlebars syntax
+    finalPrompt = finalPrompt.replace(/\{\{[^}]*\}\}/g, '');
 
     console.log('[TAROT] Calling OpenAI with enhanced prompt...');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {

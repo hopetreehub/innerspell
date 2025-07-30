@@ -3,9 +3,9 @@ import { TarotSpread, InterpretationStyle, DeckCharacteristics } from '@/types/t
 // 기본 타로 스프레드 정의
 export const TAROT_SPREADS: TarotSpread[] = [
   {
-    id: 'past-present-future',
-    name: '삼위일체 (과거-현재-미래)',
-    nameEn: 'Past-Present-Future',
+    id: 'trinity-view',
+    name: '삼위일체 조망 (Trinity View)',
+    nameEn: 'Trinity View',
     description: '시간의 흐름에 따른 상황 분석과 미래 전망을 위한 기본 스프레드',
     cardCount: 3,
     positions: [
@@ -420,6 +420,24 @@ export const INTERPRETATION_STYLES: InterpretationStyle[] = [
       '자연의 리듬 존중',
       '생태적 관점 통합',
       '순환과 변화의 이해'
+    ]
+  },
+  {
+    id: 'spiritual-growth-reflection',
+    name: '영적 성장과 자기 성찰',
+    nameEn: 'Spiritual Growth and Self-Reflection',
+    description: '내면의 영적 성장과 자기 이해를 깊이 있게 탐구하는 해석 방법',
+    approach: 'spiritual',
+    deckType: 'any',
+    philosophy: '타로를 통한 내면 탐구와 영혼의 진화, 자기 발견의 여정을 추구',
+    keyPrinciples: [
+      '영혼의 여정과 성장 단계 인식',
+      '내면의 지혜와 직관 개발',
+      '카르마적 교훈과 영적 의미 탐구',
+      '자기 성찰을 통한 의식 확장',
+      '영적 가르침과 삶의 목적 발견',
+      '내면의 빛과 그림자 통합',
+      '고차원적 관점에서의 삶 이해'
     ]
   }
 ];
