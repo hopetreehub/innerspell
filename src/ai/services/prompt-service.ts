@@ -9,7 +9,7 @@
 import { firestore } from '@/lib/firebase/admin';
 import { getFeatureConfig, getTarotInterpretationPrompt } from '@/services/enhanced-ai-service';
 import { AIFeature } from '@/types';
-import { getActiveAIModels } from '@/ai/services/ai-provider-service';
+// import { getActiveAIModels } from '@/ai/services/ai-provider-service';
 // SafetySetting import removed due to version compatibility
 
 // --- TAROT INTERPRETATION CONFIG ---
@@ -85,13 +85,9 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
   try {
     const configDoc = await firestore.collection('aiConfiguration').doc('promptSettings').get();
 
-    // Get active AI models to find a suitable default - prioritize available providers
-    const activeModels = await getActiveAIModels();
-    console.log('[PromptService] Available active models:', activeModels);
-    
-    // Choose the FIRST available model (no provider preference assumptions)
-    const defaultModel = activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL;
-    console.log('[PromptService] Selected default model:', defaultModel);
+    // Use Google AI as default model (most likely to be configured and cost-effective)
+    const defaultModel = 'googleai/gemini-1.5-flash';
+    console.log('[PromptService] Using default model:', defaultModel);
 
     if (!configDoc.exists) {
       return {
@@ -133,26 +129,13 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
     return { model, promptTemplate, safetySettings: safetySettings.length > 0 ? safetySettings : DEFAULT_TAROT_SAFETY_SETTINGS };
   } catch (error) {
     console.error("Firestore에서 타로 프롬프트 설정을 불러오는 중 오류 발생. 기본값을 사용합니다:", error);
-    // Try to get active models as fallback
-    try {
-      const activeModels = await getActiveAIModels();
-      // Use FIRST available model (no assumptions about OpenAI)
-      const fallbackModel = activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL;
-      console.log('[PromptService] Using fallback model:', fallbackModel);
-      return {
-        model: fallbackModel,
-        promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
-        safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
-      };
-    } catch {
-      // Use Google AI as absolute fallback (more likely to be configured)
-      console.log('[PromptService] Using absolute fallback: googleai/gemini-1.5-flash');
-      return {
-        model: 'googleai/gemini-1.5-flash',
-        promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
-        safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
-      };
-    }
+    // Use Google AI as fallback (more likely to be configured and cost-effective)
+    console.log('[PromptService] Using fallback model: googleai/gemini-1.5-flash');
+    return {
+      model: 'googleai/gemini-1.5-flash',
+      promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
+      safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
+    };
   }
 }
 
@@ -305,9 +288,8 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
    try {
     const configDoc = await firestore.collection('aiConfiguration').doc('dreamPromptSettings').get();
 
-    // Get active AI models to find a suitable default
-    const activeModels = await getActiveAIModels();
-    const defaultModel = activeModels.length > 0 ? activeModels[0].id : DEFAULT_DREAM_MODEL;
+    // Use Google AI as default model (more likely to be configured)
+    const defaultModel = 'googleai/gemini-1.5-pro-latest';
 
     if (configDoc.exists) {
       const configData = configDoc.data()!;
@@ -341,22 +323,10 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
     console.error("Firestore에서 꿈 해몽 프롬프트 설정을 불러오는 중 오류 발생. 기본값을 사용합니다.", error);
   }
   
-  // Try to get active models as fallback
-  try {
-    const activeModels = await getActiveAIModels();
-    // Use FIRST available model (no assumptions)
-    const fallbackModel = activeModels.length > 0 ? activeModels[0].id : DEFAULT_DREAM_MODEL;
-    console.log('[DreamPromptService] Using fallback model:', fallbackModel);
-    return {
-      model: fallbackModel,
-      promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
-    };
-  } catch {
-    // Use Google AI as absolute fallback (more likely to be configured)
-    console.log('[DreamPromptService] Using absolute fallback: googleai/gemini-1.5-pro-latest');
-    return {
-      model: 'googleai/gemini-1.5-pro-latest',
-      promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
-    };
-  }
+  // Use Google AI as fallback (more likely to be configured)
+  console.log('[DreamPromptService] Using fallback model: googleai/gemini-1.5-pro-latest');
+  return {
+    model: 'googleai/gemini-1.5-pro-latest',
+    promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
+  };
 }
