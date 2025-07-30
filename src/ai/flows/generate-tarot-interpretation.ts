@@ -98,8 +98,22 @@ ${guideline.commonPitfalls.map(pitfall => `- ${pitfall}`).join('\n')}
       try {
         // First try to get configured provider
         config = await getTarotPromptConfig();
-        // Use the model ID exactly as configured - no manipulation needed
-        model = config.model;
+        // Ensure model has provider prefix
+        if (config.model && !config.model.includes('/')) {
+          // Add provider prefix if missing
+          if (config.model.includes('gpt') || config.model.includes('o1')) {
+            model = `openai/${config.model}`;
+          } else if (config.model.includes('gemini')) {
+            model = `googleai/${config.model}`;
+          } else if (config.model.includes('claude')) {
+            model = `anthropic/${config.model}`;
+          } else {
+            model = `openai/${config.model}`; // Default to OpenAI
+          }
+          console.log('[TAROT] Added provider prefix to model:', config.model, '->', model);
+        } else {
+          model = config.model;
+        }
         
         // Extract provider info only for getProviderConfig usage
         let provider: string;
