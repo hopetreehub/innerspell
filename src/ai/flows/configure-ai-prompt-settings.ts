@@ -14,13 +14,11 @@ import {getAI} from '@/ai/genkit';
 import {z} from 'genkit';
 import { firestore } from '@/lib/firebase/admin'; // Import Firestore admin instance
 
-const supportedModels = [
-  'googleai/gemini-1.5-pro-latest',
-  'googleai/gemini-1.5-flash-latest',
-] as const;
+// Remove hardcoded model list - accept any model string
+// Models are now validated by the provider configuration
 
 const ConfigureAIPromptSettingsInputSchema = z.object({
-  model: z.enum(supportedModels).describe('The AI model to use for generating interpretations.'),
+  model: z.string().describe('The AI model to use for generating interpretations. Must include provider prefix (e.g., openai/gpt-4, googleai/gemini-1.5-pro).'),
   promptTemplate: z
     .string()
     .describe('The new prompt template to use for generating tarot card interpretations.'),
@@ -70,8 +68,25 @@ export async function configureAIPromptSettings(
     },
     async (flowInput: ConfigureAIPromptSettingsInput) => {
       try {
+        // Ensure model has provider prefix
+        let modelWithPrefix = flowInput.model;
+        if (!modelWithPrefix.includes('/')) {
+          // Auto-detect provider based on model name
+          if (modelWithPrefix.includes('gpt') || modelWithPrefix.includes('o1')) {
+            modelWithPrefix = `openai/${modelWithPrefix}`;
+          } else if (modelWithPrefix.includes('gemini')) {
+            modelWithPrefix = `googleai/${modelWithPrefix}`;
+          } else if (modelWithPrefix.includes('claude')) {
+            modelWithPrefix = `anthropic/${modelWithPrefix}`;
+          } else {
+            // Default to OpenAI for unknown models
+            modelWithPrefix = `openai/${modelWithPrefix}`;
+          }
+          console.log(`[AI Config] Added provider prefix: ${flowInput.model} -> ${modelWithPrefix}`);
+        }
+        
         const settingsToSave = {
-          model: flowInput.model,
+          model: modelWithPrefix,
           promptTemplate: flowInput.promptTemplate,
           safetySettings: flowInput.safetySettings || [], // Ensure safetySettings is always an array
         };

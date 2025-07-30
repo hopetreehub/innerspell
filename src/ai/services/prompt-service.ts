@@ -100,9 +100,25 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
     }
 
     const configData = configDoc.data()!;
-    const model = (configData.model && typeof configData.model === 'string' && configData.model.trim() !== '')
+    let model = (configData.model && typeof configData.model === 'string' && configData.model.trim() !== '')
       ? configData.model
       : defaultModel;
+    
+    // Ensure model has provider prefix
+    if (!model.includes('/')) {
+      // Auto-detect provider based on model name
+      if (model.includes('gpt') || model.includes('o1')) {
+        model = `openai/${model}`;
+      } else if (model.includes('gemini')) {
+        model = `googleai/${model}`;
+      } else if (model.includes('claude')) {
+        model = `anthropic/${model}`;
+      } else {
+        // Default to OpenAI for unknown models
+        model = `openai/${model}`;
+      }
+      console.log(`[PromptService] Added provider prefix to stored model: ${configData.model} -> ${model}`);
+    }
     
     const promptTemplate = (configData.promptTemplate && typeof configData.promptTemplate === 'string' && configData.promptTemplate.trim() !== '')
       ? configData.promptTemplate
@@ -292,9 +308,25 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
 
     if (configDoc.exists) {
       const configData = configDoc.data()!;
-      const model = (configData.model && typeof configData.model === 'string' && configData.model.trim() !== '')
+      let model = (configData.model && typeof configData.model === 'string' && configData.model.trim() !== '')
         ? configData.model
         : defaultModel;
+      
+      // Ensure model has provider prefix
+      if (!model.includes('/')) {
+        // Auto-detect provider based on model name
+        if (model.includes('gpt') || model.includes('o1')) {
+          model = `openai/${model}`;
+        } else if (model.includes('gemini')) {
+          model = `googleai/${model}`;
+        } else if (model.includes('claude')) {
+          model = `anthropic/${model}`;
+        } else {
+          // Default to OpenAI for unknown models
+          model = `openai/${model}`;
+        }
+        console.log(`[DreamPromptService] Added provider prefix to stored model: ${configData.model} -> ${model}`);
+      }
       const promptTemplate = (configData.promptTemplate && typeof configData.promptTemplate === 'string' && configData.promptTemplate.trim() !== '')
         ? configData.promptTemplate
         : DEFAULT_DREAM_PROMPT_TEMPLATE;

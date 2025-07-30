@@ -139,11 +139,13 @@ export function AIPromptConfigForm() {
         const models = await getActiveAIModels();
         console.log('[AIPromptConfigForm] Fetched models:', models);
         
-        // Always include OpenAI models
+        // Always include OpenAI models with proper provider prefix
         const allModels = [
           ...models,
-          { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
-          { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' }
+          { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
+          { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' },
+          { id: 'openai/gpt-4o', name: 'GPT-4o (OpenAI)', provider: 'openai' },
+          { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini (OpenAI)', provider: 'openai' }
         ];
         
         // Remove duplicates
