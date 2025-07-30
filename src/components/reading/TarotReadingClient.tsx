@@ -397,9 +397,19 @@ export function TarotReadingClient() {
     const cardInterpretationsText = selectedCardsForReading
       .map((card, index) => {
         const orientation = card.isReversed ? '역방향' : '정방향';
-        const meaning = card.isReversed
+        let meaning = card.isReversed
           ? card.meaningReversed
           : card.meaningUpright;
+        
+        // [의미] 플레이스홀더를 실제 기본 해석으로 대체
+        if (meaning.includes('[의미]')) {
+          if (card.isReversed) {
+            meaning = `${card.name}의 역방향은 일반적으로 정방향 의미의 차단, 과잉, 또는 반대를 나타냅니다. 이 카드는 도전과 성장의 기회를 제시합니다.`;
+          } else {
+            meaning = `${card.name}는 ${card.suit ? card.suit + ' 수트의 ' : ''}에너지와 특성을 나타냅니다. 이 카드는 현재 상황에서 중요한 메시지를 전달하고 있습니다.`;
+          }
+        }
+        
         const positionName = selectedSpread.positions?.[index] ? ` (${selectedSpread.positions[index]})` : '';
         return `${index + 1}. ${card.name}${positionName} (${orientation}): ${meaning.substring(0,100)}...`;
       })
