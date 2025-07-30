@@ -161,7 +161,7 @@ export function AIPromptConfigForm() {
         const defaultModels = [
           { id: 'googleai/gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro', provider: 'googleai' },
           { id: 'googleai/gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash', provider: 'googleai' },
-          { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
+          { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OpenAI)', provider: 'openai' },
           { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' }
         ];
         console.log('[AIPromptConfigForm] Using default models:', defaultModels);
@@ -177,7 +177,7 @@ export function AIPromptConfigForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      model: availableModels.length > 0 ? availableModels[0].id : '',
+      model: 'openai/gpt-3.5-turbo', // Always use provider prefix
       promptTemplate: DEFAULT_PROMPT_TEMPLATE_FOR_FORM,
       safetySettings: [
         {
