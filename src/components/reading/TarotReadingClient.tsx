@@ -844,7 +844,7 @@ export function TarotReadingClient() {
                 role="group"
                 aria-labelledby="spread-instruction"
               >
-                <div className="flex space-x-[-125px]" style={{ paddingRight: '125px' }}>
+                <div className="flex space-x-[-60px]" style={{ paddingRight: '60px' }}>
                   <AnimatePresence>
                     {displayableRevealedCards.map((cardInSpread, index) => (
                         <motion.div
