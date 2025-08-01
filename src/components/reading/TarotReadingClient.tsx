@@ -888,7 +888,7 @@ export function TarotReadingClient() {
                               alt={`${cardInSpread.name} (${cardInSpread.isReversed ? '역방향' : '정방향'})`}
                               width={IMAGE_ORIGINAL_WIDTH}
                               height={IMAGE_ORIGINAL_HEIGHT}
-                              className={`h-full w-auto object-contain ${cardInSpread.isReversed ? 'rotate-180 transform' : ''}`}
+                              className={`h-full w-auto object-contain ${cardInSpread.isFaceUp && cardInSpread.isReversed ? 'rotate-180 transform' : ''}`}
                               sizes={CARD_IMAGE_SIZES}
                               priority={index < 10}
                             />
