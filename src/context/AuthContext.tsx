@@ -96,8 +96,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // 🔥 ALWAYS USE REAL FIREBASE - Mock Auth completely removed
     
     if (!auth) {
-      console.warn("AuthProvider: Firebase auth is not initialized. Skipping auth state listener.");
+      console.warn("AuthProvider: Firebase auth is not initialized. Using development mode - setting loading to false immediately.");
       setLoading(false);
+      setUser(null);
+      setFirebaseUser(null);
       return;
     }
 

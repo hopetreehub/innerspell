@@ -47,9 +47,7 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
   // Prevent hydration mismatch by always rendering the same structure
   return (
     <div suppressHydrationWarning>
-      {!isMounted ? (
-        <MainContent>{children}</MainContent>
-      ) : authLoading ? (
+      {!isMounted || authLoading ? (
         <div className="flex h-screen w-full items-center justify-center bg-background">
           <Spinner size="large" />
         </div>
