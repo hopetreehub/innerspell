@@ -41,7 +41,14 @@ import type {
   SavedReadingCard,
 } from '@/types';
 import { tarotInterpretationStyles, tarotSpreads } from '@/types';
-import { tarotDeck as allCards } from '@/lib/tarot-data';
+import { tarotDeck as allTarotCards } from '@/lib/tarot-data';
+
+// back.png를 제외한 실제 타로 카드만 필터링
+const allCards = allTarotCards.filter(card => 
+  !card.id.includes('back') && 
+  !card.imageSrc?.includes('back.png') &&
+  !card.name?.toLowerCase().includes('back')
+);
 import { generateTarotInterpretation } from '@/ai/flows/generate-tarot-interpretation';
 import { recordTarotUsage } from '@/actions/usageStatsActions';
 import { useAuth } from '@/context/AuthContext';
@@ -97,14 +104,16 @@ type ReadingStage =
   | 'interpreting'
   | 'interpretation_ready';
 
-const CARD_BACK_IMAGE = '/images/tarot/back.png';
+import { TAROT_IMAGE_CONFIG, getTarotImagePath } from '@/config/tarot-images';
+
+const CARD_BACK_IMAGE = TAROT_IMAGE_CONFIG.features.reading.cardBack;
 const NUM_VISUAL_CARDS_IN_STACK = 20;
 const N_ANIMATING_CARDS_FOR_SHUFFLE = 20;
 
-const TARGET_CARD_HEIGHT_CLASS = "h-60";
-const IMAGE_ORIGINAL_WIDTH = 275;
-const IMAGE_ORIGINAL_HEIGHT = 475;
-const CARD_IMAGE_SIZES = "140px";
+const TARGET_CARD_HEIGHT_CLASS = "h-56";
+const IMAGE_ORIGINAL_WIDTH = 512;
+const IMAGE_ORIGINAL_HEIGHT = 819;
+const CARD_IMAGE_SIZES = "110px";
 
 const SignUpPrompt = () => (
   <div className="mt-6 p-4 bg-primary/10 border border-primary/20 rounded-lg text-center animate-fade-in">
@@ -167,8 +176,8 @@ export function TarotReadingClient() {
     visualCardAnimControls.forEach((controls, i) => {
       controls.start(
         {
-          x: i * 0.2,
-          y: i * -0.2,
+          x: 0,
+          y: 0,
           zIndex: NUM_VISUAL_CARDS_IN_STACK - i,
           rotate: 0,
           opacity: 1,
@@ -189,7 +198,7 @@ export function TarotReadingClient() {
     setReadingJustSaved(false);
     setIsSharingReading(false);
     visualCardAnimControls.forEach((controls, i) => {
-      controls.start({ x: i * 0.2, y: i * -0.2, zIndex: NUM_VISUAL_CARDS_IN_STACK - i, rotate: 0, opacity: 1 }, { duration: 0 });
+      controls.start({ x: 0, y: 0, zIndex: NUM_VISUAL_CARDS_IN_STACK - i, rotate: 0, opacity: 1 }, { duration: 0 });
     });
   }
 
@@ -651,11 +660,11 @@ export function TarotReadingClient() {
       {visualCardAnimControls.map((controls, i) => (
         <motion.div
           key={`visual-card-${i}`}
-          className={`absolute top-0 left-0 h-full w-full rounded-lg overflow-hidden shadow-md border border-black/10`}
+          className={`absolute top-0 left-0 h-full w-full overflow-hidden`}
           animate={controls}
           initial={{
-            x: i * 0.2,
-            y: i * -0.2,
+            x: 0,
+            y: 0,
             zIndex: NUM_VISUAL_CARDS_IN_STACK - i,
             opacity: 1,
             rotate: 0,
@@ -666,7 +675,7 @@ export function TarotReadingClient() {
             alt="카드 뒷면 뭉치"
             width={IMAGE_ORIGINAL_WIDTH}
             height={IMAGE_ORIGINAL_HEIGHT}
-            className="h-full w-auto object-contain rounded-lg"
+            className="h-full w-auto object-contain"
             sizes={CARD_IMAGE_SIZES}
             priority={i < N_ANIMATING_CARDS_FOR_SHUFFLE}
           />
@@ -674,7 +683,7 @@ export function TarotReadingClient() {
       ))}
       {(stage === 'deck_ready' || stage === 'shuffled') &&
         !isShufflingAnimationActive && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-lg bg-black/20">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
             <p className="text-xl font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
               덱 (섞기)
             </p>
@@ -844,7 +853,7 @@ export function TarotReadingClient() {
                 role="group"
                 aria-labelledby="spread-instruction"
               >
-                <div className="flex space-x-[-125px]" style={{ paddingRight: '125px' }}>
+                <div className="flex space-x-[-128px]" style={{ paddingRight: '128px' }}>
                   <AnimatePresence>
                     {displayableRevealedCards.map((cardInSpread, index) => (
                         <motion.div
@@ -868,18 +877,18 @@ export function TarotReadingClient() {
                           }}
                           transition={{ duration: 0.25, delay: index * 0.03 }}
                           onClick={() => handleCardSelectFromSpread(cardInSpread)}
-                          className={`${TARGET_CARD_HEIGHT_CLASS} shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-110 hover:z-30 hover:translate-y-[-8px] shadow-md border border-black/10 hover:border-primary/50 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg`}
+                          className={`${TARGET_CARD_HEIGHT_CLASS} shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-125 hover:z-30 hover:translate-y-[-12px] focus:outline-none`}
                           style={{ aspectRatio: `${IMAGE_ORIGINAL_WIDTH} / ${IMAGE_ORIGINAL_HEIGHT}` }}
                         >
                           <motion.div
-                            className={`relative h-full w-full overflow-hidden rounded-lg transition-all duration-200 ease-in-out`}
+                            className={`relative h-full w-full overflow-hidden transition-all duration-200 ease-in-out`}
                           >
                             <Image
-                              src={CARD_BACK_IMAGE}
-                              alt={`카드 뒷면`}
+                              src={getTarotImagePath('reading', cardInSpread.id, false)}
+                              alt={`${cardInSpread.name} (${cardInSpread.isReversed ? '역방향' : '정방향'})`}
                               width={IMAGE_ORIGINAL_WIDTH}
                               height={IMAGE_ORIGINAL_HEIGHT}
-                              className="h-full w-auto object-contain rounded-lg"
+                              className={`h-full w-auto object-contain ${cardInSpread.isReversed ? 'rotate-180 transform' : ''}`}
                               sizes={CARD_IMAGE_SIZES}
                               priority={index < 10}
                             />
@@ -933,25 +942,27 @@ export function TarotReadingClient() {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1, transition: { delay: 0.1 } }}
                       exit={{ opacity: 0, scale: 0.8, transition: {duration: 0.2} }}
-                      className={`${TARGET_CARD_HEIGHT_CLASS} overflow-hidden rounded-lg shadow-lg border-2 ${card.isReversed ? 'border-destructive/50' : 'border-primary/50'}`}
-                      style={{ aspectRatio: `${IMAGE_ORIGINAL_WIDTH} / ${IMAGE_ORIGINAL_HEIGHT}` }}
+                      className={`${TARGET_CARD_HEIGHT_CLASS}`}
+                      style={{ aspectRatio: `${IMAGE_ORIGINAL_WIDTH} / ${IMAGE_ORIGINAL_HEIGHT}`, border: 'none', outline: 'none', boxShadow: 'none' }}
                       aria-label={`${index + 1}번째 선택된 카드: ${card.name} (${card.isReversed ? '역방향' : '정방향'})`}
                     >
                       <motion.div
-                        className={`relative h-full w-full overflow-hidden rounded-lg`}
+                        className={`relative h-full w-full`}
                         initial={{ rotateY: card.isFaceUp ? 0 : 180 }}
                         animate={{ rotateY: 0 }}
                         transition={{ duration: 0.4, ease: "easeInOut" }}
                       >
                         <div style={{ backfaceVisibility: 'hidden' }}>
                            <Image
-                            src={card.imageSrc}
+                            src={getTarotImagePath('reading', card.id, false)}
                             alt={`${card.name} (${card.isReversed ? '역방향' : '정방향'})`}
                             width={IMAGE_ORIGINAL_WIDTH}
                             height={IMAGE_ORIGINAL_HEIGHT}
-                            className={`h-full w-full object-contain rounded-lg ${card.isReversed ? 'rotate-180 transform' : ''}`}
+                            className={`h-full w-full object-cover ${card.isReversed ? 'rotate-180 transform' : ''}`}
+                            style={{ border: 'none', outline: 'none' }}
                             data-ai-hint={card.dataAiHint}
                             sizes={CARD_IMAGE_SIZES}
+                            priority={index < 3}
                           />
                         </div>
                       </motion.div>
