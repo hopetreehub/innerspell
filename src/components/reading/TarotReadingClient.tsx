@@ -884,7 +884,7 @@ export function TarotReadingClient() {
                             className={`relative h-full w-full overflow-hidden transition-all duration-200 ease-in-out`}
                           >
                             <Image
-                              src={getTarotImagePath('reading', cardInSpread.id, false)}
+                              src={getTarotImagePath('reading', cardInSpread.id, !cardInSpread.isFaceUp)}
                               alt={`${cardInSpread.name} (${cardInSpread.isReversed ? '역방향' : '정방향'})`}
                               width={IMAGE_ORIGINAL_WIDTH}
                               height={IMAGE_ORIGINAL_HEIGHT}
