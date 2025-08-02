@@ -1,0 +1,41 @@
+# Add labels to PRs based on file changes
+frontend:
+  - src/**/*
+  - '*.tsx'
+  - '*.jsx'
+
+backend:
+  - src/api/**/*
+  - src/lib/**/*
+
+styles:
+  - '**/*.css'
+  - '**/*.scss'
+  - '**/*.sass'
+  - 'tailwind.config.*'
+
+tests:
+  - '**/*.test.*'
+  - '**/*.spec.*'
+  - 'jest.*'
+  - 'playwright.*'
+
+ci/cd:
+  - '.github/**/*'
+  - 'vercel.json'
+  - 'package.json'
+
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+
+dependencies:
+  - 'package.json'
+  - 'package-lock.json'
+  - 'yarn.lock'
+
+config:
+  - '*.config.*'
+  - '*.json'
+  - '.env*'
+  - '.*rc*'
