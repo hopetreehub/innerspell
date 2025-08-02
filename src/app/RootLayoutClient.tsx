@@ -42,7 +42,10 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
   //   return () => clearTimeout(timeout);
   // }, []);
   
-  console.log('🔍 RootLayoutClient state:', { authLoading, isMounted });
+  // Remove console log during build to prevent timeout
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 RootLayoutClient state:', { authLoading, isMounted });
+  }
 
   // Prevent hydration mismatch by always rendering the same structure
   return (

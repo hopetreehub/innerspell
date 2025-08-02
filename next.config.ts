@@ -14,12 +14,17 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Increase timeout for static page generation
+  staticPageGenerationTimeout: 180, // 3 minutes per page
   // 실험적 기능들로 성능 최적화
   experimental: {
     optimizePackageImports: ['@chakra-ui/react', 'framer-motion', 'react-icons'],
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // Reduce memory usage during build
+    workerThreads: false,
+    cpus: 1,
   },
   // 압축 설정
   compress: true,
@@ -166,6 +171,55 @@ const nextConfig: NextConfig = {
       { module: /node_modules\/handlebars/ },
       { message: /Can't resolve '@genkit-ai\/firebase'/ },
     ];
+    
+    // Optimize for large files
+    config.performance = {
+      ...config.performance,
+      maxAssetSize: 512000, // 500 KB
+      maxEntrypointSize: 512000, // 500 KB
+    };
+    
+    // Split large chunks
+    if (!isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            default: false,
+            vendors: false,
+            // Split large blog posts data
+            blogPosts: {
+              test: /[\\/]src[\\/]lib[\\/]blog[\\/]posts\.ts$/,
+              name: 'blog-posts',
+              priority: 10,
+              enforce: true,
+            },
+            // Split tarot data
+            tarotData: {
+              test: /[\\/]src[\\/]data[\\/](tarot|major|minor).*\.ts$/,
+              name: 'tarot-data',
+              priority: 10,
+              enforce: true,
+            },
+            // Framework bundle
+            framework: {
+              test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-sync-external-store)[\\/]/,
+              name: 'framework',
+              priority: 40,
+              reuseExistingChunk: true,
+            },
+            // Libraries
+            lib: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'lib',
+              priority: 30,
+              reuseExistingChunk: true,
+            },
+          },
+        },
+      };
+    }
     
     return config;
   },

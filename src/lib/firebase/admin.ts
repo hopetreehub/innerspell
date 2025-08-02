@@ -13,7 +13,9 @@ if (!admin.apps.length) {
       try {
         const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
         credential = admin.credential.cert(serviceAccount);
-        console.log('✅ Using Firebase service account from FIREBASE_SERVICE_ACCOUNT_KEY');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Using Firebase service account from FIREBASE_SERVICE_ACCOUNT_KEY');
+        }
       } catch (parseError) {
         console.error('❌ Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:', parseError);
         throw parseError;
@@ -22,7 +24,9 @@ if (!admin.apps.length) {
       // Fall back to application default credentials (local development)
       try {
         credential = admin.credential.applicationDefault();
-        console.log('✅ Using Firebase application default credentials');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Using Firebase application default credentials');
+        }
       } catch (defaultError) {
         console.log('⚠️ Application default credentials not available, skipping admin initialization');
         initializationError = defaultError as Error;
@@ -37,7 +41,9 @@ if (!admin.apps.length) {
         .replace(/\n/g, '')
         .replace(/"/g, '');
       
-      console.log('🔍 Clean Project ID:', cleanProjectId);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 Clean Project ID:', cleanProjectId);
+      }
       
       admin.initializeApp({
         credential: credential,
@@ -45,7 +51,9 @@ if (!admin.apps.length) {
       });
       
       adminInitialized = true;
-      console.log('🔥 Firebase Admin SDK initialized successfully');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔥 Firebase Admin SDK initialized successfully');
+      }
     }
   } catch (error) {
     console.error('❌ Failed to initialize Firebase Admin:', error);

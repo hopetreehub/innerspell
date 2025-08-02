@@ -54,10 +54,11 @@ export default async function TarotCardPage({ params }: TarotCardPageProps) {
   );
 }
 
-// 정적 생성을 위한 경로 생성
+// Only pre-generate major arcana cards to speed up build
 export async function generateStaticParams() {
-  // 모든 카드(메이저 + 마이너)의 경로 생성
-  return allTarotCards.map((card) => ({
+  // Only generate static pages for major arcana cards (22 cards)
+  // Minor arcana cards will be generated on-demand
+  return allMajorArcanaCards.map((card) => ({
     id: card.id,
   }));
 }

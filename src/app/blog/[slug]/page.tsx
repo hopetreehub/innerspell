@@ -2,17 +2,19 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { BlogPostDetail } from '@/components/blog/BlogPostDetail';
-import { mockPosts } from '@/lib/blog/posts';
+import { loadBlogPostBySlug, loadFeaturedPosts } from '@/lib/blog/posts-loader';
 import { BlogPostJsonLd } from '@/components/blog/BlogJsonLd';
 
-// 정적 생성을 위한 설정
-export const dynamic = 'force-static';
+// Dynamic generation for better build performance
+export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // 1시간마다 재검증
 
-// 정적 생성할 경로들을 미리 생성
+// Only pre-generate featured posts to speed up build
 export async function generateStaticParams() {
-  return mockPosts
-    .filter(post => post.published)
+  // Only generate static pages for featured posts
+  const featuredPosts = await loadFeaturedPosts();
+  return featuredPosts
+    .slice(0, 5) // Limit to 5 featured posts
     .map((post) => ({
       slug: post.id,
     }));
@@ -24,7 +26,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = mockPosts.find(p => p.id === slug && p.published);
+  const post = await loadBlogPostBySlug(slug);
 
   if (!post) {
     return {
@@ -63,7 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = mockPosts.find(p => p.id === slug && p.published);
+  const post = await loadBlogPostBySlug(slug);
 
   if (!post) {
     notFound();
