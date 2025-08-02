@@ -28,14 +28,19 @@ async function ensureInitialized(): Promise<void> {
           credential = admin.credential.applicationDefault();
         }
         
-        const projectId = (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'innerspell-an7ce')
+        const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+        if (!projectId) {
+          throw new Error('NEXT_PUBLIC_FIREBASE_PROJECT_ID environment variable is not set');
+        }
+        
+        const cleanProjectId = projectId
           .trim()
           .replace(/\n/g, '')
           .replace(/"/g, '');
         
         admin.initializeApp({
           credential: credential,
-          projectId: projectId,
+          projectId: cleanProjectId,
         });
         
         isInitialized = true;

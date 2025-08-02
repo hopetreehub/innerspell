@@ -30,13 +30,47 @@ const nextConfig: NextConfig = {
   // 리액트 스트릭트 모드
   reactStrictMode: true,
   // SWC 미니파이어는 Next.js 15에서 기본값이므로 제거
-  // EMERGENCY CACHE BUSTING CONFIGURATION
+  // SECURITY HEADERS AND CACHE CONFIGURATION
   async headers() {
+    // Security headers that apply to all routes
+    const securityHeaders = [
+      {
+        key: 'X-Frame-Options',
+        value: 'SAMEORIGIN',
+      },
+      {
+        key: 'X-Content-Type-Options',
+        value: 'nosniff',
+      },
+      {
+        key: 'X-XSS-Protection',
+        value: '1; mode=block',
+      },
+      {
+        key: 'Referrer-Policy',
+        value: 'strict-origin-when-cross-origin',
+      },
+      {
+        key: 'Permissions-Policy',
+        value: 'camera=(), microphone=(), geolocation=()',
+      },
+      {
+        key: 'Strict-Transport-Security',
+        value: 'max-age=63072000; includeSubDomains; preload',
+      },
+    ];
+
     return [
+      {
+        // Apply security headers to all routes
+        source: '/:path*',
+        headers: securityHeaders,
+      },
       {
         // Apply aggressive no-cache headers to admin and auth routes
         source: '/(admin|api/auth|api/dev-auth|sign-in|sign-up)/:path*',
         headers: [
+          ...securityHeaders,
           {
             key: 'Cache-Control',
             value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
@@ -75,6 +109,7 @@ const nextConfig: NextConfig = {
         // Force cache invalidation for all API routes
         source: '/api/:path*',
         headers: [
+          ...securityHeaders,
           {
             key: 'Cache-Control',
             value: 'no-store, no-cache, must-revalidate, max-age=0',
