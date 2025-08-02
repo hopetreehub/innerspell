@@ -25,10 +25,9 @@ export function getApiHeaders(additionalHeaders: Record<string, string> = {}): R
   const csrfToken = getCsrfToken();
   if (csrfToken) {
     headers['x-csrf-token'] = csrfToken;
-  } else {
-    // CSRF 토큰이 없으면 API secret 사용 (환경변수에서)
-    const apiSecret = process.env.NEXT_PUBLIC_BLOG_API_SECRET || 'c3UqPIMPMcos5QJPHcKMVDH4TQBUQ01rqDkmDLLT02c=';
-    headers['x-api-secret'] = apiSecret;
+  } else if (process.env.NEXT_PUBLIC_BLOG_API_SECRET) {
+    // CSRF 토큰이 없으면 API secret 사용 (환경변수에서만)
+    headers['x-api-secret'] = process.env.NEXT_PUBLIC_BLOG_API_SECRET;
   }
   
   return headers;
