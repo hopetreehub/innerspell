@@ -3,8 +3,11 @@ import admin from 'firebase-admin';
 let adminInitialized = false;
 let initializationError: Error | null = null;
 
+// Skip Firebase Admin initialization during build
+const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
+
 // Production Firebase Admin initialization
-if (!admin.apps.length) {
+if (!admin.apps.length && !isBuildTime) {
   try {
     let credential;
     
@@ -68,7 +71,7 @@ let db: admin.firestore.Firestore | null = null;
 let FieldValue: typeof admin.firestore.FieldValue | null = null;
 let auth: admin.auth.Auth | null = null;
 
-if (adminInitialized && admin.apps.length > 0) {
+if (adminInitialized && admin.apps.length > 0 && !isBuildTime) {
   try {
     firestore = admin.firestore();
     db = firestore;
@@ -81,6 +84,10 @@ if (adminInitialized && admin.apps.length > 0) {
 
 // Initialize admin function for API routes
 export function initAdmin() {
+  if (isBuildTime) {
+    // Skip during build
+    return;
+  }
   if (!admin.apps.length) {
     throw new Error('Firebase Admin not initialized');
   }
