@@ -64,7 +64,14 @@ export function DreamInterpretationClient() {
     setClarificationAnswers({});
     setAdditionalInfo('');
     try {
-      const result = await generateDreamClarificationQuestions({ dreamDescription: initialDescription });
+      // Set a timeout for AI question generation (10 seconds)
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('AI 서비스 응답 시간 초과')), 10000)
+      );
+      
+      const aiPromise = generateDreamClarificationQuestions({ dreamDescription: initialDescription });
+      
+      const result = await Promise.race([aiPromise, timeoutPromise]);
       setClarificationQuestions(result.questions);
       setStep('clarifying');
     } catch (error: any) {
@@ -126,13 +133,20 @@ export function DreamInterpretationClient() {
     }));
 
     try {
-      const result = await generateDreamInterpretation({ 
+      // Set a timeout for AI interpretation (15 seconds)
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('AI 해석 서비스 응답 시간 초과')), 15000)
+      );
+      
+      const aiPromise = generateDreamInterpretation({ 
         dreamDescription: initialDescription,
         clarifications: clarifications.length > 0 ? clarifications : undefined,
         additionalInfo: additionalInfo.trim() ? additionalInfo.trim() : undefined,
         sajuInfo: user?.sajuInfo,
         isGuestUser: !user,
       });
+      
+      const result = await Promise.race([aiPromise, timeoutPromise]);
       setInterpretation(result.interpretation);
       setStep('done');
       
