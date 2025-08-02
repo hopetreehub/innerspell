@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { admin } from '@/lib/firebase-admin';
+import { getFirestore } from '@/lib/firebase/admin-lazy';
 import { monitoring } from '@/lib/monitoring';
 
 export const runtime = 'nodejs';
@@ -67,7 +67,7 @@ export async function GET() {
     // Test Firebase connectivity and get collection info
     try {
       const dbStartTime = performance.now();
-      const db = admin.firestore();
+      const db = await getFirestore();
       
       // Test basic connectivity
       await db.collection('health-check').limit(1).get();
