@@ -5,20 +5,15 @@ import { BlogPostDetail } from '@/components/blog/BlogPostDetail';
 import { loadBlogPostBySlug, loadFeaturedPosts } from '@/lib/blog/posts-loader';
 import { BlogPostJsonLd } from '@/components/blog/BlogJsonLd';
 
-// Dynamic generation for better build performance
+// Use on-demand generation to prevent build timeouts
 export const dynamic = 'force-dynamic';
-export const revalidate = 3600; // 1시간마다 재검증
+export const revalidate = false; // Disable ISR for now
 
-// Only pre-generate featured posts to speed up build
-export async function generateStaticParams() {
-  // Only generate static pages for featured posts
-  const featuredPosts = await loadFeaturedPosts();
-  return featuredPosts
-    .slice(0, 5) // Limit to 5 featured posts
-    .map((post) => ({
-      slug: post.id,
-    }));
-}
+// Disable static generation to prevent build timeout
+// Pages will be generated on-demand
+// export async function generateStaticParams() {
+//   return [];
+// }
 
 type Props = {
   params: Promise<{ slug: string }>;

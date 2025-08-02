@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run clean && npm run build",
+  "buildCommand": "NODE_OPTIONS='--max-old-space-size=4096' npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
   "installCommand": "rm -rf node_modules .next .vercel/cache && npm install --legacy-peer-deps",
@@ -17,6 +17,9 @@
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 30
+    },
+    "src/app/**/*.tsx": {
+      "maxDuration": 60
     }
   },
   "headers": [

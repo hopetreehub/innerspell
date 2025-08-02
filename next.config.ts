@@ -22,9 +22,6 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    // Reduce memory usage during build
-    workerThreads: false,
-    cpus: 1,
   },
   // 압축 설정
   compress: true,

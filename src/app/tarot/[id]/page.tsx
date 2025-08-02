@@ -54,14 +54,11 @@ export default async function TarotCardPage({ params }: TarotCardPageProps) {
   );
 }
 
-// Only pre-generate major arcana cards to speed up build
-export async function generateStaticParams() {
-  // Only generate static pages for major arcana cards (22 cards)
-  // Minor arcana cards will be generated on-demand
-  return allMajorArcanaCards.map((card) => ({
-    id: card.id,
-  }));
-}
+// Disable static generation to prevent build timeout
+// Pages will be generated on-demand
+// export async function generateStaticParams() {
+//   return [];
+// }
 
 // 메타데이터 생성
 export async function generateMetadata({ params }: TarotCardPageProps) {
