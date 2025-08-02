@@ -16,8 +16,18 @@ import {
 } from 'firebase/auth';
 
 export function PasswordChangeForm() {
-  // 임시로 비활성화하여 프로필 페이지 렌더링 문제 해결
-  return null;
+  const { user: firebaseUser } = useAuth();
+  const { toast } = useToast();
+  
+  // State variables
+  const [showPasswordChangeForm, setShowPasswordChangeForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
