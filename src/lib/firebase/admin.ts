@@ -79,3 +79,4 @@ export function initAdmin() {
 }
 
 export { admin, firestore, db, FieldValue, auth };
+export { auth as adminAuth, firestore as adminFirestore };
