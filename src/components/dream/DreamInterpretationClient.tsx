@@ -71,11 +71,28 @@ export function DreamInterpretationClient() {
       console.error('질문 생성 오류:', error);
       toast({
         variant: 'destructive',
-        title: '질문 생성 오류',
-        description: error.message || 'AI가 추가 질문을 생성하는데 실패했습니다. 잠시 후 다시 시도하거나, 바로 해석을 진행할 수 있습니다.',
+        title: 'AI 서비스 일시 중단',
+        description: 'AI 서비스가 일시적으로 중단되었습니다. 기본 질문으로 진행하겠습니다.',
       });
-      // Allow user to proceed without clarification if question generation fails
-      setStep('initial'); // Go back to initial step to show the "Interpret directly" button
+      
+      // Provide fallback questions when AI service is unavailable
+      const fallbackQuestions = [
+        {
+          question: "꿈에서 가장 인상 깊었던 감정은 무엇인가요?",
+          options: ["기쁨과 희망", "불안과 걱정", "평온함", "호기심과 궁금함"]
+        },
+        {
+          question: "꿈의 배경은 어떤 곳이었나요?",
+          options: ["익숙한 장소", "낯선 장소", "자연 환경", "실내 공간"]
+        },
+        {
+          question: "꿈에서 당신의 역할은 무엇이었나요?",
+          options: ["주도적으로 행동", "수동적으로 관찰", "다른 사람과 함께", "혼자 있었음"]
+        }
+      ];
+      
+      setClarificationQuestions(fallbackQuestions);
+      setStep('clarifying');
     } finally {
       setIsLoading(false);
     }
@@ -133,12 +150,50 @@ export function DreamInterpretationClient() {
       }
     } catch (error) {
       console.error('꿈 해석 생성 오류:', error);
+      
+      // Provide fallback interpretation when AI is unavailable
+      const fallbackInterpretation = `## 💭 당신의 꿈 해몽
+
+**[꿈의 요약 및 전반적 분석]**
+
+${initialDescription.length > 100 ? initialDescription.substring(0, 100) + '...' : initialDescription}
+
+현재 AI 서비스가 일시적으로 중단되어 상세한 해석을 제공할 수 없습니다. 하지만 당신의 꿈은 무의식이 보내는 소중한 메시지입니다.
+
+**[기본 해석 가이드]**
+
+꿈은 우리의 내면과 소통하는 창구입니다. 꿈에서 느꼈던 감정과 인상적인 장면들을 기억해두시기 바랍니다.
+
+**[현실적 조언]**
+
+- 꿈 일기를 작성하여 패턴을 관찰해보세요
+- 꿈에서 느꼈던 감정을 현실에서도 탐색해보세요
+- 필요하다면 전문가의 도움을 받아보세요
+
+---
+*AI 서비스가 복구되면 더 상세한 해석을 받으실 수 있습니다.*`;
+
       toast({
-        variant: 'destructive',
-        title: '해석 오류',
-        description: 'AI 꿈 해석을 생성하는 데 실패했습니다. 잠시 후 다시 시도해주세요.',
+        variant: 'default',
+        title: 'AI 서비스 일시 중단',
+        description: 'AI 서비스가 일시적으로 중단되어 기본 해석을 제공합니다.',
       });
-      setStep('clarifying');
+      
+      setInterpretation(fallbackInterpretation);
+      setStep('done');
+      
+      // Still record usage if user is logged in
+      if (user) {
+        try {
+          await recordDreamUsage(user.uid, {
+            dreamContent: initialDescription.substring(0, 200),
+            interpretation: '기본 해석 제공 (AI 서비스 일시 중단)'
+          });
+          console.log('[DREAM] Basic usage recorded for user:', user.uid);
+        } catch (error) {
+          console.warn('[DREAM] Failed to record usage:', error);
+        }
+      }
     } finally {
       setIsLoading(false);
     }
