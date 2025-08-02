@@ -15,6 +15,9 @@ export function DevAuthHelper() {
       const email = 'admin@innerspell.com';
       const password = 'admin123';
       
+      if (!auth) {
+        throw new Error('Auth not available');
+      }
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
       toast({

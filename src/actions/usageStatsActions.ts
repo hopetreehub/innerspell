@@ -173,7 +173,7 @@ export async function getUserUsageDetails(
     
     const records: DetailedUsageRecord[] = [];
     
-    usageSnapshot.docs.forEach(doc => {
+    usageSnapshot.docs.forEach((doc: any) => {
       const data = doc.data();
       records.push({
         id: doc.id,

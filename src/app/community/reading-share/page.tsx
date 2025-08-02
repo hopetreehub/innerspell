@@ -202,7 +202,7 @@ export default function ReadingSharePage() {
               className="pl-10"
             />
           </div>
-          <Select value={sortBy} onValueChange={setSortBy}>
+          <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'latest' | 'popular' | 'likes' | 'comments')}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="정렬 기준" />
             </SelectTrigger>
@@ -326,9 +326,9 @@ export default function ReadingSharePage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleLike(experience.id)}
-                        className={experience.isLiked ? 'text-red-500' : ''}
+                        className={(experience as any).isLiked ? 'text-red-500' : ''}
                       >
-                        <Heart className={`h-4 w-4 mr-1 ${experience.isLiked ? 'fill-current' : ''}`} />
+                        <Heart className={`h-4 w-4 mr-1 ${(experience as any).isLiked ? 'fill-current' : ''}`} />
                         {experience.likes}
                       </Button>
                       <Button variant="ghost" size="sm">

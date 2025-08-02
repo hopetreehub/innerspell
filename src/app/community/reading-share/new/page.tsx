@@ -115,16 +115,13 @@ export default function NewReadingSharePage() {
       // Firebase에 저장
       const result = await createReadingExperience(validatedData, user.uid);
       
-      if (result.success) {
-        toast({
-          title: "공유 완료!",
-          description: "리딩 경험이 성공적으로 공유되었습니다.",
-        });
-        
-        router.push('/community/reading-share');
-      } else {
-        throw new Error(result.error);
-      }
+      // createReadingExperience가 성공하면 (에러를 던지지 않으면) 성공으로 간주
+      toast({
+        title: "공유 완료!",
+        description: "리딩 경험이 성공적으로 공유되었습니다.",
+      });
+      
+      router.push('/community/reading-share');
     } catch (error) {
       console.error('폼 제출 오류:', error);
       

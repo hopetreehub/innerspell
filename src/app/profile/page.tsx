@@ -56,14 +56,14 @@ export default function ProfilePage() {
     e.preventDefault();
     if (!user) return;
     setIsUpdating(true);
-    const result = await updateUserProfile(user.uid, { displayName, birthDate, sajuInfo });
+    const result = await updateUserProfile(user.uid, { name: displayName });
     
-    if (result.success) {
-      toast({ title: '성공', description: result.message });
+    if (result.success && result.data) {
+      toast({ title: '성공', description: result.data.message || '프로필이 업데이트되었습니다.' });
       setIsEditing(false);
       refreshUser(); // Refresh user data in context
     } else {
-      toast({ variant: 'destructive', title: '오류', description: result.message });
+      toast({ variant: 'destructive', title: '오류', description: 'error' in result ? result.error : '업데이트 중 오류가 발생했습니다.' });
     }
     setIsUpdating(false);
   };

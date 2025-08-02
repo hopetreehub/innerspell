@@ -50,7 +50,7 @@ function maskApiKey(apiKey: string): string {
 export async function saveAIProviderConfig(
   formData: AIProviderFormData
 ): Promise<{ success: boolean; message: string }> {
-  return safeFirestoreOperation(async (firestore) => {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const validation = AIProviderFormSchema.safeParse(formData);
     if (!validation.success) {
       throw new Error('유효하지 않은 데이터입니다.');
@@ -88,6 +88,12 @@ export async function saveAIProviderConfig(
 
     return { success: true, message: `${provider} 설정이 성공적으로 저장되었습니다. (환경변수에도 저장됨)` };
   });
+  
+  if (result.success && result.data) {
+    return { success: true, message: result.data.message };
+  } else {
+    return { success: false, message: 'error' in result ? result.error : '저장 중 오류가 발생했습니다.' };
+  }
 }
 
 export async function getAIProviderConfig(
@@ -216,7 +222,7 @@ export async function getAllAIProviderConfigsForGenkit(): Promise<{
 export async function deleteAIProviderConfig(
   provider: AIProvider
 ): Promise<{ success: boolean; message: string }> {
-  return safeFirestoreOperation(async (firestore) => {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     await docRef.delete();
     
@@ -227,6 +233,12 @@ export async function deleteAIProviderConfig(
 
     return { success: true, message: `${provider} 설정이 성공적으로 삭제되었습니다.` };
   });
+  
+  if (result.success && result.data) {
+    return { success: true, message: result.data.message };
+  } else {
+    return { success: false, message: 'error' in result ? result.error : '삭제 중 오류가 발생했습니다.' };
+  }
 }
 
 export async function testAIProviderConnection(
@@ -579,7 +591,7 @@ async function testHuggingFaceConnection(
 export async function saveAIFeatureMapping(
   mappings: AIFeatureMapping[]
 ): Promise<{ success: boolean; message: string }> {
-  return safeFirestoreOperation(async (firestore) => {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     await docRef.set({ mappings, updatedAt: new Date() });
 
@@ -587,6 +599,12 @@ export async function saveAIFeatureMapping(
 
     return { success: true, message: '기능별 AI 모델 매핑이 성공적으로 저장되었습니다.' };
   });
+  
+  if (result.success && result.data) {
+    return { success: true, message: result.data.message };
+  } else {
+    return { success: false, message: 'error' in result ? result.error : '매핑 저장 중 오류가 발생했습니다.' };
+  }
 }
 
 export async function getAIFeatureMappings(): Promise<{
@@ -594,7 +612,7 @@ export async function getAIFeatureMappings(): Promise<{
   data?: AIFeatureMapping[];
   message?: string;
 }> {
-  return safeFirestoreOperation(async (firestore) => {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     const doc = await docRef.get();
 
@@ -605,6 +623,12 @@ export async function getAIFeatureMappings(): Promise<{
     const data = doc.data();
     return { success: true, data: data?.mappings || [] };
   });
+  
+  if (result.success && result.data) {
+    return { success: true, data: result.data.data };
+  } else {
+    return { success: false, message: 'error' in result ? result.error : '매핑 조회 중 오류가 발생했습니다.' };
+  }
 }
 
 // Helper function to save API key to environment file
@@ -691,11 +715,16 @@ export async function getAIConfiguration(): Promise<{
 
     // Get global settings
     const globalDoc = await firestore.collection('aiConfiguration').doc('globalSettings').get();
-    const globalSettings = globalDoc.exists ? globalDoc.data() : {
+    const globalSettings = globalDoc.exists ? globalDoc.data() as {
+      defaultTemperature: number;
+      defaultMaxTokens: number;
+      enableFallback: boolean;
+      fallbackProvider?: AIProvider;
+    } : {
       defaultTemperature: 0.7,
       defaultMaxTokens: 1000,
       enableFallback: true,
-    } as { defaultTemperature: number; defaultMaxTokens: number; enableFallback: boolean; fallbackProvider?: AIProvider };
+    };
 
     const configuration: AIConfiguration = {
       providers: providersResult.data || [],

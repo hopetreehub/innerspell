@@ -31,7 +31,7 @@ function generateRealtimeData() {
     const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
     const eventTime = new Date(now.getTime() - i * 15000 - Math.random() * 60000); // 지난 1시간 내
     
-    const event = {
+    const event: any = {
       id: `event_${Math.random().toString(36).substring(2, 11)}`,
       type: eventType,
       userId: `user_${Math.random().toString(36).substring(2, 11)}`,

@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { getTarotPromptConfig, getEnhancedTarotPromptConfig } from '@/ai/services/prompt-service';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getTarotGuidelineBySpreadAndStyle } from '@/actions/tarotGuidelineActions';
+import { TAROT_SPREADS, INTERPRETATION_STYLES } from '@/data/tarot-spreads';
+import type { TarotGuideline } from '@/types/tarot-guidelines';
 
 const GenerateTarotInterpretationInputSchema = z.object({
   question: z.string(),
@@ -94,19 +96,22 @@ async function tryGoogleAI(input: GenerateTarotInterpretationInput, prompt: stri
         const guideline = guidelineResult.data;
         console.log('[TAROT] Found guideline:', guideline.name);
         
-        // Create structured guideline information
+        // Get spread and style data from reference data
+        const spread = TAROT_SPREADS.find((s: any) => s.id === guideline.spreadId);
+        const style = INTERPRETATION_STYLES.find((s: any) => s.id === guideline.styleId);
+        
         const spreadGuideline = {
-          name: guideline.spreadName,
+          name: spread?.name || 'Unknown Spread',
           generalApproach: guideline.generalApproach,
-          positions: guideline.positions.map(pos => `
+          positions: guideline.positionGuidelines.map((pos: any) => `
 - ${pos.positionName}: ${pos.interpretationFocus}
-  핵심 질문: ${pos.keyQuestions.join(', ')}`).join('\n'),
+  핵심 질문: ${pos.keyQuestions?.join(', ') || ''}`).join('\n'),
           interpretationTips: guideline.interpretationTips.join(' ')
         };
         
         const styleGuideline = {
-          name: guideline.styleName,
-          description: guideline.styleDescription || '',
+          name: style?.name || 'Unknown Style',
+          description: style?.description || guideline.description,
           keyFocusAreas: guideline.keyFocusAreas.join(', '),
           interpretationTips: guideline.interpretationTips.join(' ')
         };
@@ -187,19 +192,22 @@ async function tryOpenAI(input: GenerateTarotInterpretationInput, prompt: string
         const guideline = guidelineResult.data;
         console.log('[TAROT] OpenAI - Found guideline:', guideline.name);
         
-        // Create structured guideline information
+        // Get spread and style data from reference data
+        const spread = TAROT_SPREADS.find((s: any) => s.id === guideline.spreadId);
+        const style = INTERPRETATION_STYLES.find((s: any) => s.id === guideline.styleId);
+        
         const spreadGuideline = {
-          name: guideline.spreadName,
+          name: spread?.name || 'Unknown Spread',
           generalApproach: guideline.generalApproach,
-          positions: guideline.positions.map(pos => `
+          positions: guideline.positionGuidelines.map((pos: any) => `
 - ${pos.positionName}: ${pos.interpretationFocus}
-  핵심 질문: ${pos.keyQuestions.join(', ')}`).join('\n'),
+  핵심 질문: ${pos.keyQuestions?.join(', ') || ''}`).join('\n'),
           interpretationTips: guideline.interpretationTips.join(' ')
         };
         
         const styleGuideline = {
-          name: guideline.styleName,
-          description: guideline.styleDescription || '',
+          name: style?.name || 'Unknown Style',
+          description: style?.description || guideline.description,
           keyFocusAreas: guideline.keyFocusAreas.join(', '),
           interpretationTips: guideline.interpretationTips.join(' ')
         };

@@ -68,7 +68,7 @@ export async function getAllTarotGuidelines(forceRefresh = false): Promise<Tarot
         console.log('[tarotGuidelineActions] Querying Firestore for custom guidelines...');
         const customGuidelinesSnapshot = await firestore.collection('tarotGuidelines').get();
         
-        customGuidelinesSnapshot.docs.forEach(doc => {
+        customGuidelinesSnapshot.docs.forEach((doc: any) => {
           const data = doc.data() as TarotGuideline;
           customGuidelines.push({ ...data, id: doc.id });
         });
@@ -97,13 +97,7 @@ export async function getAllTarotGuidelines(forceRefresh = false): Promise<Tarot
         spreads: TAROT_SPREADS,
         styles: INTERPRETATION_STYLES,
         guidelines: uniqueGuidelines,
-        combinations: SPREAD_STYLE_COMBINATIONS,
-        stats: {
-          totalGuidelines: uniqueGuidelines.length,
-          systemGuidelines: TAROT_GUIDELINES.length,
-          customGuidelines: customGuidelines.length,
-          lastUpdated: new Date().toISOString()
-        }
+        combinations: SPREAD_STYLE_COMBINATIONS
       }
     };
     

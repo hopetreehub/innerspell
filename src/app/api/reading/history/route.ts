@@ -14,7 +14,7 @@ import { db } from '@/lib/firebase/admin';
  */
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('session')?.value;
 
     if (!sessionCookie) {
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
     const snapshot = await query.limit(limit).get();
     
     // 데이터 변환
-    const readings: EnhancedTarotReading[] = snapshot.docs.map(doc => {
+    const readings: EnhancedTarotReading[] = snapshot.docs.map((doc: any) => {
       const data = doc.data();
       return {
         id: doc.id,
@@ -193,13 +193,13 @@ async function generateAnalytics(userId: string): Promise<ReadingAnalytics> {
         .get()
     ]);
 
-    const allReadings = allReadingsSnapshot.docs.map(doc => ({
+    const allReadings = allReadingsSnapshot.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt.toDate()
     })) as EnhancedTarotReading[];
 
-    const recentReadings = recentReadingsSnapshot.docs.map(doc => ({
+    const recentReadings = recentReadingsSnapshot.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt.toDate()

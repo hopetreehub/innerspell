@@ -234,8 +234,9 @@ function calculatePagePerformance(data: PerformanceData[]) {
     };
     
     Object.entries(stats.metrics).forEach(([metricName, values]) => {
-      const sum = (values as number[]).reduce((a, b) => a + b, 0);
-      result[path].averages[metricName] = Math.round(sum / values.length);
+      const sum = (Array.isArray(values) ? values as number[] : []).reduce((a, b) => a + b, 0);
+      const valueArray = Array.isArray(values) ? values as number[] : [];
+      result[path].averages[metricName] = valueArray.length > 0 ? Math.round(sum / valueArray.length) : 0;
     });
   });
   

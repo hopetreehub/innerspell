@@ -9,7 +9,7 @@ import { db } from '@/lib/firebase/admin';
  */
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('session')?.value;
 
     if (!sessionCookie) {
@@ -96,7 +96,7 @@ async function generatePatternAnalysis(userId: string, startDate: Date, endDate:
     .orderBy('createdAt', 'desc')
     .get();
 
-  const readings = snapshot.docs.map(doc => ({
+  const readings = snapshot.docs.map((doc: any) => ({
     id: doc.id,
     ...doc.data(),
     createdAt: doc.data().createdAt.toDate()
@@ -240,7 +240,7 @@ async function generateGrowthAnalysis(userId: string, startDate: Date, endDate: 
     .orderBy('createdAt', 'asc')
     .get();
 
-  const readings = allReadingsSnapshot.docs.map(doc => ({
+  const readings = allReadingsSnapshot.docs.map((doc: any) => ({
     id: doc.id,
     ...doc.data(),
     createdAt: doc.data().createdAt.toDate()
@@ -273,7 +273,7 @@ async function generateRecommendations(userId: string) {
     .limit(50)
     .get();
 
-  const readings = recentReadingsSnapshot.docs.map(doc => ({
+  const readings = recentReadingsSnapshot.docs.map((doc: any) => ({
     id: doc.id,
     ...doc.data(),
     createdAt: doc.data().createdAt.toDate()
@@ -372,7 +372,7 @@ async function generateOverviewAnalysis(userId: string, startDate: Date, endDate
     .where('createdAt', '<=', endDate)
     .get();
 
-  const readings = snapshot.docs.map(doc => ({
+  const readings = snapshot.docs.map((doc: any) => ({
     id: doc.id,
     ...doc.data(),
     createdAt: doc.data().createdAt.toDate()

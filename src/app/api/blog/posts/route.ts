@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('❌ API Route 에러:', error);
     return NextResponse.json(
-      { error: '포스트 목록을 불러올 수 없습니다.', debug: error.message },
+      { error: '포스트 목록을 불러올 수 없습니다.', debug: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

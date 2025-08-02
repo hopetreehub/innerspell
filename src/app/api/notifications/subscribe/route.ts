@@ -12,7 +12,7 @@ interface PushSubscription {
 }
 
 // In-memory storage for demo (use database in production)
-const subscriptions = new Map<string, PushSubscription & { createdAt: number }>();
+const subscriptions = new Map<string, PushSubscription & { createdAt: number; lastUsed: number; userId?: string; userAgent: string; }>();
 
 export async function POST(request: NextRequest) {
   try {
