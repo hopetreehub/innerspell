@@ -437,7 +437,7 @@ export function AIProviderManagement({ className }: AIProviderManagementProps) {
 
       {showMappingForm && (
         <AIFeatureMappingForm
-          providers={providers}
+          providers={providers.map(p => ({ ...p, maskedApiKey: p.maskedApiKey || '••••••••' }))}
           onClose={() => setShowMappingForm(false)}
           onSave={() => {
             setShowMappingForm(false);

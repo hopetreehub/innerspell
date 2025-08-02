@@ -20,6 +20,13 @@ export class ReadingExperienceService {
   private static readonly USERS_COLLECTION = 'users';
   private static readonly PAGE_SIZE = 20;
 
+  private static ensureDb() {
+    if (!db) {
+      throw new Error('Firebase database not initialized');
+    }
+    return db;
+  }
+
   /**
    * 리딩 경험 목록을 가져옵니다 (클라이언트 사이드)
    */
@@ -30,7 +37,8 @@ export class ReadingExperienceService {
   ) {
     try {
       // 인덱스 문제 해결을 위해 단순화된 쿼리 사용
-      let q = query(collection(db, this.COLLECTION_NAME));
+      const database = this.ensureDb();
+      let q = query(collection(database, this.COLLECTION_NAME));
 
       // 페이지네이션
       if (lastDoc) {
@@ -51,7 +59,7 @@ export class ReadingExperienceService {
 
       // 작성자 정보 배치 조회
       const authorPromises = Array.from(authorIds).map(async (authorId) => {
-        const userDoc = await getDoc(doc(db, this.USERS_COLLECTION, authorId));
+        const userDoc = await getDoc(doc(this.ensureDb(), this.USERS_COLLECTION, authorId));
         if (userDoc.exists()) {
           authors[authorId] = userDoc.data() as UserProfile;
         }
@@ -137,7 +145,7 @@ export class ReadingExperienceService {
    */
   static async getExperience(experienceId: string) {
     try {
-      const docRef = doc(db, this.COLLECTION_NAME, experienceId);
+      const docRef = doc(this.ensureDb(), this.COLLECTION_NAME, experienceId);
       const docSnapshot = await getDoc(docRef);
       
       if (!docSnapshot.exists()) {
@@ -147,7 +155,7 @@ export class ReadingExperienceService {
       const data = docSnapshot.data();
       
       // 작성자 정보 조회
-      const userDoc = await getDoc(doc(db, this.USERS_COLLECTION, data.authorId));
+      const userDoc = await getDoc(doc(this.ensureDb(), this.USERS_COLLECTION, data.authorId));
       let author = undefined;
       if (userDoc.exists()) {
         const userData = userDoc.data() as UserProfile;
@@ -190,12 +198,12 @@ export class ReadingExperienceService {
     try {
       const [likeQuery, bookmarkQuery] = await Promise.all([
         getDocs(query(
-          collection(db, 'reading-likes'),
+          collection(this.ensureDb(), 'reading-likes'),
           where('postId', '==', experienceId),
           where('userId', '==', userId)
         )),
         getDocs(query(
-          collection(db, 'bookmarks'),
+          collection(this.ensureDb(), 'bookmarks'),
           where('postId', '==', experienceId),
           where('userId', '==', userId)
         ))
@@ -223,7 +231,7 @@ export class ReadingExperienceService {
     try {
       // 인덱스 문제 해결을 위해 단순화된 쿼리 사용
       const q = query(
-        collection(db, this.COLLECTION_NAME),
+        collection(this.ensureDb(), this.COLLECTION_NAME),
         limit(200) // 최근 200개 게시글만 확인
       );
 
@@ -269,7 +277,7 @@ export class ReadingExperienceService {
       // 1. 같은 태그를 가진 게시글 - 인덱스 문제 해결을 위해 단순화
       if (tags.length > 0) {
         const tagQuery = query(
-          collection(db, this.COLLECTION_NAME),
+          collection(this.ensureDb(), this.COLLECTION_NAME),
           limit(50) // 더 많이 가져와서 클라이언트에서 필터링
         );
 
@@ -302,7 +310,7 @@ export class ReadingExperienceService {
       // 2. 같은 스프레드 타입 게시글 (태그로 찾지 못한 경우) - 인덱스 문제 해결을 위해 단순화
       if (relatedExperiences.length < limitCount) {
         const spreadQuery = query(
-          collection(db, this.COLLECTION_NAME),
+          collection(this.ensureDb(), this.COLLECTION_NAME),
           limit(30)
         );
 
@@ -353,7 +361,7 @@ export class ReadingExperienceService {
       // 실제 프로덕션에서는 Algolia 같은 검색 서비스를 사용하는 것이 좋습니다
       
       const q = query(
-        collection(db, this.COLLECTION_NAME),
+        collection(this.ensureDb(), this.COLLECTION_NAME),
         limit(100) // 최근 100개에서 검색
       );
 

@@ -40,7 +40,7 @@ export const LazyGoogleAnalytics = dynamic(
 
 // 관리자 컴포넌트들을 lazy load
 export const LazyBlogManagement = dynamic(
-  () => import('@/components/admin/BlogManagement').then(mod => ({ default: mod.default || mod })),
+  () => import('@/components/admin/BlogManagement').then(mod => ({ default: mod.BlogManagement })),
   { 
     loading: () => (
       <div className="space-y-4">
@@ -53,7 +53,7 @@ export const LazyBlogManagement = dynamic(
 );
 
 export const LazyTarotReadingClient = dynamic(
-  () => import('@/components/reading/TarotReadingClient').then(mod => ({ default: mod.default || mod })),
+  () => import('@/components/reading/TarotReadingClient').then(mod => ({ default: mod.TarotReadingClient })),
   { 
     loading: () => (
       <div className="space-y-4">
@@ -69,7 +69,7 @@ export const LazyTarotReadingClient = dynamic(
 );
 
 export const LazyBlogSearch = dynamic(
-  () => import('@/components/blog/BlogSearch').then(mod => ({ default: mod.default || mod })),
+  () => import('@/components/blog/BlogSearch').then(mod => ({ default: mod.BlogSearch })),
   { 
     loading: () => <Skeleton className="h-10 w-full" />
   }

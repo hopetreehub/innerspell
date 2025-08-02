@@ -15,7 +15,8 @@ import {
   AIModel, 
   AIProviderConfig, 
   AIFeatureMapping,
-  TarotCardInstruction 
+  TarotCardInstruction,
+  PositionGuideline 
 } from '@/types';
 
 /**
@@ -115,9 +116,9 @@ ${instruction.combinationHints ? `- Combination Hints: ${instruction.combination
         
         // Add spread-specific information
         const spreadInfo = {
-          name: guideline.spreadName,
+          name: guideline.name,
           generalApproach: guideline.generalApproach,
-          positions: guideline.positions.map(pos => ({
+          positions: guideline.positionGuidelines.map((pos: PositionGuideline) => ({
             positionName: pos.positionName,
             interpretationFocus: pos.interpretationFocus,
             keyQuestions: pos.keyQuestions.join(', ')
@@ -127,8 +128,8 @@ ${instruction.combinationHints ? `- Combination Hints: ${instruction.combination
         
         // Add style-specific information
         const styleInfo = {
-          name: guideline.styleName,
-          description: guideline.styleDescription,
+          name: guideline.name,
+          description: guideline.description,
           keyFocusAreas: guideline.keyFocusAreas.join(', '),
           interpretationTips: guideline.interpretationTips.join(' ')
         };
@@ -138,15 +139,15 @@ ${instruction.combinationHints ? `- Combination Hints: ${instruction.combination
           .replace('{{#if spreadGuideline}}', '')
           .replace('{{/if}}', '')
           .replace('{{#if styleGuideline}}', '')
-          .replace(/\{\{\{spreadGuideline\.(\w+)\}\}\}/g, (match, prop) => spreadInfo[prop] || '')
-          .replace(/\{\{\{styleGuideline\.(\w+)\}\}\}/g, (match, prop) => styleInfo[prop] || '');
+          .replace(/\{\{\{spreadGuideline\.(\w+)\}\}\}/g, (match, prop: string) => (spreadInfo as any)[prop] || '')
+          .replace(/\{\{\{styleGuideline\.(\w+)\}\}\}/g, (match, prop: string) => (styleInfo as any)[prop] || '');
         
         // Handle nested properties
         enhancedPrompt = enhancedPrompt.replace(/\{\{#each spreadGuideline\.positions\}\}([\s\S]*?)\{\{\/each\}\}/g, 
           (match, template) => {
-            return spreadInfo.positions.map(pos => 
+            return spreadInfo.positions.map((pos: any) => 
               template
-                .replace(/\{\{\{this\.(\w+)\}\}\}/g, (m, prop) => pos[prop] || '')
+                .replace(/\{\{\{this\.(\w+)\}\}\}/g, (m: string, prop: string) => pos[prop] || '')
             ).join('\n');
           }
         );

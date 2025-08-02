@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useComponentPreloader } from '@/hooks/useComponentPreloader';
+import { importWithNamedExport, type ComponentModule } from '@/types/dynamic-imports';
 
 interface AdminTabOptimizerContextType {
   preloadTab: (tabId: string) => Promise<void>;
@@ -29,15 +30,39 @@ export function AdminTabOptimizerProvider({ children }: AdminTabOptimizerProvide
 
   // 탭별 컴포넌트 매핑
   const tabComponentMap = {
-    'ai-providers': () => import('@/components/admin/AIProviderManagement'),
-    'tarot-instructions': () => import('@/components/admin/TarotGuidelineManagement'),
-    'tarot-ai-config': () => import('@/components/admin/AIPromptConfigForm'),
-    'dream-ai-config': () => import('@/components/admin/DreamInterpretationConfigForm'),
-    'blog-management': () => import('@/components/admin/BlogManagement'),
-    'notifications': () => import('@/components/ui/push-notification-toggle'),
-    'user-management': () => import('@/components/admin/UserManagement'),
-    'system-management': () => import('@/components/admin/SystemManagement'),
-  };
+    'ai-providers': () => importWithNamedExport(
+      () => import('@/components/admin/AIProviderManagement'),
+      'AIProviderManagement'
+    ),
+    'tarot-instructions': () => importWithNamedExport(
+      () => import('@/components/admin/TarotGuidelineManagement'),
+      'TarotGuidelineManagement'
+    ),
+    'tarot-ai-config': () => importWithNamedExport(
+      () => import('@/components/admin/AIPromptConfigForm'),
+      'AIPromptConfigForm'
+    ),
+    'dream-ai-config': () => importWithNamedExport(
+      () => import('@/components/admin/DreamInterpretationConfigForm'),
+      'DreamInterpretationConfigForm'
+    ),
+    'blog-management': () => importWithNamedExport(
+      () => import('@/components/admin/BlogManagement'),
+      'BlogManagement'
+    ),
+    'notifications': () => importWithNamedExport(
+      () => import('@/components/ui/push-notification-toggle'),
+      'PushNotificationToggle'
+    ),
+    'user-management': () => importWithNamedExport(
+      () => import('@/components/admin/UserManagement'),
+      'UserManagement'
+    ),
+    'system-management': () => importWithNamedExport(
+      () => import('@/components/admin/SystemManagement'),
+      'SystemManagement'
+    ),
+  } as const;
 
   const preloadTab = async (tabId: string) => {
     if (preloadedTabs.includes(tabId)) return;
@@ -65,12 +90,12 @@ export function AdminTabOptimizerProvider({ children }: AdminTabOptimizerProvide
         preloadMultiple([
           {
             id: 'ai-providers',
-            import: () => import('@/components/admin/AIProviderManagement'),
+            import: tabComponentMap['ai-providers'],
             options: { delay: 0, priority: 'high' }
           },
           {
             id: 'tarot-instructions',
-            import: () => import('@/components/admin/TarotGuidelineManagement'),
+            import: tabComponentMap['tarot-instructions'],
             options: { delay: 200, priority: 'high' }
           }
         ]);
@@ -81,17 +106,17 @@ export function AdminTabOptimizerProvider({ children }: AdminTabOptimizerProvide
         preloadMultiple([
           {
             id: 'user-management',
-            import: () => import('@/components/admin/UserManagement'),
+            import: tabComponentMap['user-management'],
             options: { delay: 0, priority: 'low' }
           },
           {
             id: 'blog-management',
-            import: () => import('@/components/admin/BlogManagement'),
+            import: tabComponentMap['blog-management'],
             options: { delay: 300, priority: 'low' }
           },
           {
             id: 'tarot-ai-config',
-            import: () => import('@/components/admin/AIPromptConfigForm'),
+            import: tabComponentMap['tarot-ai-config'],
             options: { delay: 600, priority: 'low' }
           }
         ]);
@@ -102,17 +127,17 @@ export function AdminTabOptimizerProvider({ children }: AdminTabOptimizerProvide
         preloadMultiple([
           {
             id: 'dream-ai-config',
-            import: () => import('@/components/admin/DreamInterpretationConfigForm'),
+            import: tabComponentMap['dream-ai-config'],
             options: { delay: 0, priority: 'low' }
           },
           {
             id: 'notifications',
-            import: () => import('@/components/ui/push-notification-toggle'),
+            import: tabComponentMap['notifications'],
             options: { delay: 200, priority: 'low' }
           },
           {
             id: 'system-management',
-            import: () => import('@/components/admin/SystemManagement'),
+            import: tabComponentMap['system-management'],
             options: { delay: 400, priority: 'low' }
           }
         ]);

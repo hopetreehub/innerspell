@@ -183,13 +183,17 @@ export function LazyAdminDreamConfig() {
 
 // 클라이언트 사이드 컴포넌트들
 const LazyTarotReading = lazy(() =>
-  import('@/components/reading/TarotReadingClient').catch(() => ({
+  import('@/components/reading/TarotReadingClient').then(module => ({
+    default: module.TarotReadingClient
+  })).catch(() => ({
     default: () => <div>타로 리딩을 불러올 수 없습니다.</div>
   }))
 );
 
 const LazyDreamInterpretation = lazy(() =>
-  import('@/components/dream/DreamInterpretationClient').catch(() => ({
+  import('@/components/dream/DreamInterpretationClient').then(module => ({
+    default: module.DreamInterpretationClient || module.default
+  })).catch(() => ({
     default: () => <div>꿈해몽을 불러올 수 없습니다.</div>
   }))
 );
@@ -225,9 +229,8 @@ const LazyRecharts = lazy(() =>
 export function LazyChart({ children }: { children: React.ReactNode }) {
   return (
     <Suspense fallback={<ChartLoading />}>
-      <LazyRecharts>
-        {children}
-      </LazyRecharts>
+      <LazyRecharts />
+      {children}
     </Suspense>
   );
 }
