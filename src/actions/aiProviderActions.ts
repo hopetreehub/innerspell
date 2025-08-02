@@ -138,40 +138,42 @@ export async function getAllAIProviderConfigs(forceRefresh = false): Promise<{
     }
     
     console.log('[aiProviderActions] Fetching providers from Firestore...');
-    const snapshot = await firestore.collection('aiProviderConfigs').get();
-    const configs: (AIProviderConfig & { maskedApiKey?: string })[] = [];
+    return await safeFirestoreOperation(async (firestore) => {
+      const snapshot = await firestore.collection('aiProviderConfigs').get();
+      const configs: (AIProviderConfig & { maskedApiKey?: string })[] = [];
 
-    // Use docs array instead of forEach for better compatibility with mock
-    const docs = snapshot.docs || [];
-    for (const doc of docs) {
-      const data = doc.data() as AIProviderConfig;
-      // Decrypt API key and create masked version
-      const decryptedKey = decrypt(data.apiKey);
-      const decryptedConfig = {
-        ...data,
-        apiKey: decryptedKey, // Send actual decrypted key
-        maskedApiKey: maskApiKey(decryptedKey), // Also send masked version
-      };
-      configs.push(decryptedConfig);
-    }
-    
-    // 메모리 캐시 업데이트
-    providersCache = configs;
-    cacheTimestamp = Date.now();
-    
-    // 브라우저 캐시 업데이트 (클라이언트에서만)
-    if (cacheAIProviders) {
-      try {
-        await cacheAIProviders(configs);
-        console.log('[aiProviderActions] Updated browser cache with', configs.length, 'providers');
-      } catch (error) {
-        console.warn('[aiProviderActions] Failed to update browser cache:', error);
+      // Use docs array instead of forEach for better compatibility with mock
+      const docs = snapshot.docs || [];
+      for (const doc of docs) {
+        const data = doc.data() as AIProviderConfig;
+        // Decrypt API key and create masked version
+        const decryptedKey = decrypt(data.apiKey);
+        const decryptedConfig = {
+          ...data,
+          apiKey: decryptedKey, // Send actual decrypted key
+          maskedApiKey: maskApiKey(decryptedKey), // Also send masked version
+        };
+        configs.push(decryptedConfig);
       }
-    }
-    
-    console.log('[aiProviderActions] Cached', configs.length, 'providers');
+      
+      // 메모리 캐시 업데이트
+      providersCache = configs;
+      cacheTimestamp = Date.now();
+      
+      // 브라우저 캐시 업데이트 (클라이언트에서만)
+      if (cacheAIProviders) {
+        try {
+          await cacheAIProviders(configs);
+          console.log('[aiProviderActions] Updated browser cache with', configs.length, 'providers');
+        } catch (error) {
+          console.warn('[aiProviderActions] Failed to update browser cache:', error);
+        }
+      }
+      
+      console.log('[aiProviderActions] Cached', configs.length, 'providers');
 
-    return { success: true, data: configs };
+      return configs;
+    });
   } catch (error) {
     console.error('Error getting all AI provider configs:', error);
     return { success: false, message: 'AI 제공업체 설정을 불러오는 중 오류가 발생했습니다.' };
@@ -184,7 +186,7 @@ export async function getAllAIProviderConfigsForGenkit(): Promise<{
   data?: AIProviderConfig[];
   message?: string;
 }> {
-  try {
+  return safeFirestoreOperation(async (firestore) => {
     console.log('[aiProviderActions] Fetching from aiProviderConfigs collection...');
     const snapshot = await firestore.collection('aiProviderConfigs').get();
     const configs: AIProviderConfig[] = [];
@@ -207,11 +209,8 @@ export async function getAllAIProviderConfigsForGenkit(): Promise<{
     }
 
     console.log('[aiProviderActions] Returning configs count:', configs.length);
-    return { success: true, data: configs };
-  } catch (error) {
-    console.error('[aiProviderActions] Error getting AI provider configs for genkit:', error);
-    return { success: false, message: 'AI 제공업체 설정을 불러오는 중 오류가 발생했습니다.' };
-  }
+    return configs;
+  });
 }
 
 export async function deleteAIProviderConfig(
