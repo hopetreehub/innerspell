@@ -1,34 +1,76 @@
 import { initializeApp, cert, getApps, getApp } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, Firestore } from 'firebase-admin/firestore';
 
-// Initialize Firebase Admin
-let app;
+// Lazy initialization
+let app: any;
+let _adminDb: Firestore | null = null;
+let initialized = false;
+let initPromise: Promise<void> | null = null;
 
-if (!getApps().length) {
-  try {
-    // 환경 변수에서 서비스 계정 가져오기
-    const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-    
-    if (!serviceAccountKey) {
-      throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set');
-    }
-    
-    const serviceAccount = JSON.parse(serviceAccountKey);
-    
-    app = initializeApp({
-      credential: cert(serviceAccount),
-      projectId: serviceAccount.project_id,
-    });
-    
-    console.log('✅ Firebase Admin initialized with service account');
-  } catch (error) {
-    console.error('❌ Error initializing Firebase Admin:', error);
-    throw error;
+async function ensureInitialized(): Promise<void> {
+  if (initialized) return;
+  
+  if (initPromise) {
+    await initPromise;
+    return;
   }
-} else {
-  app = getApp();
+
+  initPromise = (async () => {
+    if (!getApps().length) {
+      try {
+        // Skip initialization during build
+        if (typeof window === 'undefined' && !process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+          console.log('⚠️  Skipping Firebase Admin initialization during build');
+          return;
+        }
+
+        const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+        
+        if (!serviceAccountKey) {
+          throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set');
+        }
+        
+        const serviceAccount = JSON.parse(serviceAccountKey);
+        
+        app = initializeApp({
+          credential: cert(serviceAccount),
+          projectId: serviceAccount.project_id,
+        });
+        
+        _adminDb = getFirestore(app);
+        initialized = true;
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Firebase Admin initialized with service account');
+        }
+      } catch (error) {
+        console.error('❌ Error initializing Firebase Admin:', error);
+        throw error;
+      }
+    } else {
+      app = getApp();
+      _adminDb = getFirestore(app);
+      initialized = true;
+    }
+  })();
+
+  await initPromise;
 }
 
-// Export Firestore instance
-export const adminDb = getFirestore(app);
+// Proxy to lazy-load adminDb
+export const adminDb = new Proxy({} as Firestore, {
+  get(target, prop, receiver) {
+    if (!_adminDb) {
+      throw new Error('Firebase Admin not initialized. This should not be accessed during build time.');
+    }
+    return Reflect.get(_adminDb, prop, _adminDb);
+  }
+});
+
+// Export lazy getter for adminApp
+export async function getAdminApp() {
+  await ensureInitialized();
+  return app;
+}
+
 export { app as adminApp };
