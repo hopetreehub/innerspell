@@ -1,0 +1,572 @@
+
+> nextn@1.0.0 typecheck
+> tsc --noEmit
+
+src/actions/aiProviderActions.ts(232,10): error TS2304: Cannot find name 'safeFirestoreOperation'.
+src/actions/aiProviderActions.ts(232,40): error TS7006: Parameter 'firestore' implicitly has an 'any' type.
+src/actions/aiProviderActions.ts(595,10): error TS2304: Cannot find name 'safeFirestoreOperation'.
+src/actions/aiProviderActions.ts(595,40): error TS7006: Parameter 'firestore' implicitly has an 'any' type.
+src/actions/aiProviderActions.ts(610,10): error TS2304: Cannot find name 'safeFirestoreOperation'.
+src/actions/aiProviderActions.ts(610,40): error TS7006: Parameter 'firestore' implicitly has an 'any' type.
+src/actions/aiProviderActions.ts(706,23): error TS2552: Cannot find name 'getFirestore'. Did you mean 'firestore'?
+src/actions/readingExperienceActions.ts(36,27): error TS2339: Property 'date' does not exist on type '{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }'.
+src/actions/readingExperienceActions.ts(37,29): error TS2339: Property 'spread' does not exist on type '{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }'.
+src/actions/readingExperienceActions.ts(38,31): error TS2339: Property 'question' does not exist on type '{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }'.
+src/actions/readingExperienceActions.ts(39,37): error TS2339: Property 'interpretation' does not exist on type '{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }'.
+src/actions/readingExperienceActions.ts(40,33): error TS2339: Property 'reflection' does not exist on type '{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }'.
+src/actions/readingExperienceActions.ts(41,31): error TS2339: Property 'isPublic' does not exist on type '{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }'.
+src/actions/readingExperienceActions.ts(145,16): error TS2352: Conversion of type '{ viewCount: any; createdAt: any; updatedAt: any; id: string; }' to type 'ReadingExperience' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ viewCount: any; createdAt: any; updatedAt: any; id: string; }' is missing the following properties from type 'ReadingExperience': title, content, authorId, spreadType, and 6 more.
+src/actions/readingExperienceActions.ts(247,18): error TS2339: Property 'interpretation' does not exist on type 'Partial<{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }>'.
+src/actions/readingExperienceActions.ts(247,85): error TS2339: Property 'interpretation' does not exist on type 'Partial<{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }>'.
+src/actions/readingExperienceActions.ts(248,18): error TS2339: Property 'reflection' does not exist on type 'Partial<{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }>'.
+src/actions/readingExperienceActions.ts(248,77): error TS2339: Property 'reflection' does not exist on type 'Partial<{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }>'.
+src/actions/readingExperienceActions.ts(249,18): error TS2339: Property 'isPublic' does not exist on type 'Partial<{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }>'.
+src/actions/readingExperienceActions.ts(249,73): error TS2339: Property 'isPublic' does not exist on type 'Partial<{ title: string; content: string; spreadType: string; cards: string[]; tags: string[]; }>'.
+src/actions/tarotGuidelineActions.ts(71,47): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/actions/tarotGuidelineActions.ts(101,9): error TS2353: Object literal may only specify known properties, and 'stats' does not exist in type '{ spreads: TarotSpread[]; styles: InterpretationStyle[]; guidelines: TarotGuideline[]; combinations: SpreadStyleCombination[]; }'.
+src/actions/usageStatsActions.ts(176,32): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/actions/userActions.ts(59,11): error TS18048: 'currentData' is possibly 'undefined'.
+src/actions/userActions.ts(63,11): error TS18048: 'currentData' is possibly 'undefined'.
+src/actions/userActions.ts(67,30): error TS18048: 'currentData' is possibly 'undefined'.
+src/actions/userActions.ts(100,14): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(101,13): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(102,15): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(103,14): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(104,12): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(105,23): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(106,23): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(107,19): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(108,18): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(109,18): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(147,45): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(150,47): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(152,30): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(152,81): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(154,36): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(154,56): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(158,14): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(159,20): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(159,33): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(160,17): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(162,21): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(164,18): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(165,17): error TS18048: 'data' is possibly 'undefined'.
+src/actions/userActions.ts(166,27): error TS18048: 'data' is possibly 'undefined'.
+src/ai/flows/generate-tarot-interpretation.backup.ts(181,13): error TS2304: Cannot find name 'fallbackInfo'.
+src/ai/flows/generate-tarot-interpretation.ts(99,27): error TS2339: Property 'spreadName' does not exist on type 'TarotGuideline'.
+src/ai/flows/generate-tarot-interpretation.ts(101,32): error TS2339: Property 'positions' does not exist on type 'TarotGuideline'.
+src/ai/flows/generate-tarot-interpretation.ts(101,46): error TS7006: Parameter 'pos' implicitly has an 'any' type.
+src/ai/flows/generate-tarot-interpretation.ts(108,27): error TS2339: Property 'styleName' does not exist on type 'TarotGuideline'.
+src/ai/flows/generate-tarot-interpretation.ts(109,34): error TS2551: Property 'styleDescription' does not exist on type 'TarotGuideline'. Did you mean 'description'?
+src/ai/flows/generate-tarot-interpretation.ts(192,27): error TS2339: Property 'spreadName' does not exist on type 'TarotGuideline'.
+src/ai/flows/generate-tarot-interpretation.ts(194,32): error TS2339: Property 'positions' does not exist on type 'TarotGuideline'.
+src/ai/flows/generate-tarot-interpretation.ts(194,46): error TS7006: Parameter 'pos' implicitly has an 'any' type.
+src/ai/flows/generate-tarot-interpretation.ts(201,27): error TS2339: Property 'styleName' does not exist on type 'TarotGuideline'.
+src/ai/flows/generate-tarot-interpretation.ts(202,34): error TS2551: Property 'styleDescription' does not exist on type 'TarotGuideline'. Did you mean 'description'?
+src/app/api/admin/live-stats/route.ts(204,33): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/api/admin/realtime/route.ts(49,23): error TS2339: Property 'spread' does not exist on type '{ page: string; duration: number; success: boolean; }'.
+src/app/api/admin/realtime/route.ts(50,23): error TS2339: Property 'style' does not exist on type '{ page: string; duration: number; success: boolean; }'.
+src/app/api/admin/realtime/route.ts(53,23): error TS2339: Property 'dreamLength' does not exist on type '{ page: string; duration: number; success: boolean; }'.
+src/app/api/admin/realtime/route.ts(54,23): error TS2339: Property 'symbols' does not exist on type '{ page: string; duration: number; success: boolean; }'.
+src/app/api/admin/realtime/route.ts(57,23): error TS2339: Property 'errorCode' does not exist on type '{ page: string; duration: number; success: boolean; }'.
+src/app/api/admin/realtime/route.ts(58,23): error TS2339: Property 'errorMessage' does not exist on type '{ page: string; duration: number; success: boolean; }'.
+src/app/api/admin/realtime/route.ts(61,23): error TS2339: Property 'action' does not exist on type '{ page: string; duration: number; success: boolean; }'.
+src/app/api/analytics/performance/route.ts(238,60): error TS18046: 'values' is of type 'unknown'.
+src/app/api/blog/posts/route.ts(87,46): error TS18046: 'error' is of type 'unknown'.
+src/app/api/notifications/subscribe/route.ts(73,26): error TS2339: Property 'lastUsed' does not exist on type 'PushSubscription & { createdAt: number; }'.
+src/app/api/notifications/subscribe/route.ts(78,32): error TS2339: Property 'lastUsed' does not exist on type 'PushSubscription & { createdAt: number; }'.
+src/app/api/reading/analytics/route.ts(13,39): error TS2339: Property 'get' does not exist on type 'Promise<ReadonlyRequestCookies>'.
+src/app/api/reading/analytics/route.ts(99,38): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/api/reading/analytics/route.ts(243,49): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/api/reading/analytics/route.ts(276,52): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/api/reading/analytics/route.ts(375,38): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/api/reading/history/route.ts(18,39): error TS2339: Property 'get' does not exist on type 'Promise<ReadonlyRequestCookies>'.
+src/app/api/reading/history/route.ts(108,64): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/api/reading/history/route.ts(196,54): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/api/reading/history/route.ts(202,60): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/app/community/reading-share/new/page.tsx(118,18): error TS2339: Property 'success' does not exist on type 'void'.
+src/app/community/reading-share/new/page.tsx(126,32): error TS2339: Property 'error' does not exist on type 'void'.
+src/app/community/reading-share/page.tsx(205,34): error TS2322: Type 'Dispatch<SetStateAction<"comments" | "likes" | "latest" | "popular">>' is not assignable to type '(value: string) => void'.
+  Types of parameters 'value' and 'value' are incompatible.
+    Type 'string' is not assignable to type 'SetStateAction<"comments" | "likes" | "latest" | "popular">'.
+src/app/community/reading-share/page.tsx(329,47): error TS2339: Property 'isLiked' does not exist on type 'ReadingExperience'.
+src/app/community/reading-share/page.tsx(331,70): error TS2339: Property 'isLiked' does not exist on type 'ReadingExperience'.
+src/app/profile/page.tsx(59,56): error TS2353: Object literal may only specify known properties, and 'displayName' does not exist in type '{ name?: string | undefined; bio?: string | undefined; avatar?: string | undefined; level?: "beginner" | "intermediate" | "advanced" | "expert" | undefined; }'.
+src/app/profile/page.tsx(62,48): error TS2339: Property 'message' does not exist on type '{ success: true; data: { success: boolean; error: string; message?: undefined; } | { success: boolean; message: string; error?: undefined; }; }'.
+src/app/profile/page.tsx(66,72): error TS2339: Property 'message' does not exist on type '{ success: false; error: string; }'.
+src/components/DevAuthHelper.tsx(18,63): error TS2345: Argument of type 'Auth | null' is not assignable to parameter of type 'Auth'.
+  Type 'null' is not assignable to type 'Auth'.
+src/components/DynamicComponents.tsx(43,3): error TS2345: Argument of type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/BlogManagement")>' is not assignable to parameter of type 'DynamicOptions<{}> | Loader<{}>'.
+  Type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/BlogManagement")>' is not assignable to type '() => LoaderComponent<{}>'.
+    Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/BlogManagement")>' is not assignable to type 'LoaderComponent<{}>'.
+      Type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/BlogManagement")' is not assignable to type 'ComponentType<{}> | ComponentModule<{}>'.
+src/components/DynamicComponents.tsx(56,3): error TS2345: Argument of type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/reading/TarotReadingClient")>' is not assignable to parameter of type 'DynamicOptions<{}> | Loader<{}>'.
+  Type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/reading/TarotReadingClient")>' is not assignable to type '() => LoaderComponent<{}>'.
+    Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/reading/TarotReadingClient")>' is not assignable to type 'LoaderComponent<{}>'.
+      Type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/reading/TarotReadingClient")' is not assignable to type 'ComponentType<{}> | ComponentModule<{}>'.
+src/components/DynamicComponents.tsx(72,3): error TS2345: Argument of type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/blog/BlogSearch")>' is not assignable to parameter of type 'DynamicOptions<{}> | Loader<{}>'.
+  Type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/blog/BlogSearch")>' is not assignable to type '() => LoaderComponent<{}>'.
+    Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/blog/BlogSearch")>' is not assignable to type 'LoaderComponent<{}>'.
+      Type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/blog/BlogSearch")' is not assignable to type 'ComponentType<{}> | ComponentModule<{}>'.
+src/components/LazyComponents.tsx(186,10): error TS2307: Cannot find module '@/components/TarotReading' or its corresponding type declarations.
+src/components/LazyComponents.tsx(192,10): error TS2307: Cannot find module '@/components/DreamInterpretation' or its corresponding type declarations.
+src/components/LazyComponents.tsx(219,33): error TS2322: Type 'Promise<{ default: typeof import("/mnt/e/project/test-studio-firebase/node_modules/recharts/types/index"); Surface: (props: Props) => Element; Layer: ForwardRefExoticComponent<SVGAttributes<SVGGElement> & LayerProps & RefAttributes<...>>; ... 51 more ...; Global: { ...; }; }>' is not assignable to type 'Promise<{ default: ComponentType<any>; }>'.
+  Type '{ default: typeof import("/mnt/e/project/test-studio-firebase/node_modules/recharts/types/index"); Surface: (props: Props) => Element; Layer: ForwardRefExoticComponent<SVGAttributes<SVGGElement> & LayerProps & RefAttributes<...>>; ... 51 more ...; Global: { ...; }; }' is not assignable to type '{ default: ComponentType<any>; }'.
+    Types of property 'default' are incompatible.
+      Type 'typeof import("/mnt/e/project/test-studio-firebase/node_modules/recharts/types/index")' is not assignable to type 'ComponentType<any>'.
+src/components/admin/AIProviderManagement.tsx(440,11): error TS2719: Type '({ provider: "openai" | "gemini" | "googleai" | "anthropic" | "grok" | "openrouter" | "huggingface"; apiKey: string; isActive: boolean; maxRequestsPerMinute: number; models: { id: string; ... 5 more ...; costPer1kTokens?: number | undefined; }[]; baseUrl?: string | undefined; createdAt?: Date | undefined; updatedAt?...' is not assignable to type '({ provider: "openai" | "gemini" | "googleai" | "anthropic" | "grok" | "openrouter" | "huggingface"; apiKey: string; isActive: boolean; maxRequestsPerMinute: number; models: { id: string; ... 5 more ...; costPer1kTokens?: number | undefined; }[]; baseUrl?: string | undefined; createdAt?: Date | undefined; updatedAt?...'. Two different types with this name exist, but they are unrelated.
+  Type '{ provider: "openai" | "gemini" | "googleai" | "anthropic" | "grok" | "openrouter" | "huggingface"; apiKey: string; isActive: boolean; maxRequestsPerMinute: number; models: { id: string; ... 5 more ...; costPer1kTokens?: number | undefined; }[]; baseUrl?: string | undefined; createdAt?: Date | undefined; updatedAt?:...' is not assignable to type '{ provider: "openai" | "gemini" | "googleai" | "anthropic" | "grok" | "openrouter" | "huggingface"; apiKey: string; isActive: boolean; maxRequestsPerMinute: number; models: { id: string; ... 5 more ...; costPer1kTokens?: number | undefined; }[]; baseUrl?: string | undefined; createdAt?: Date | undefined; updatedAt?:...'. Two different types with this name exist, but they are unrelated.
+    Type '{ provider: "openai" | "gemini" | "googleai" | "anthropic" | "grok" | "openrouter" | "huggingface"; apiKey: string; isActive: boolean; maxRequestsPerMinute: number; models: { id: string; ... 5 more ...; costPer1kTokens?: number | undefined; }[]; baseUrl?: string | undefined; createdAt?: Date | undefined; updatedAt?:...' is not assignable to type '{ maskedApiKey: string; }'.
+      Types of property 'maskedApiKey' are incompatible.
+        Type 'string | undefined' is not assignable to type 'string'.
+          Type 'undefined' is not assignable to type 'string'.
+src/components/admin/AdminTabOptimizer.tsx(49,37): error TS2345: Argument of type '(() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/AIProviderManagement")>) | (() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/TarotGuidelineManagement")>) | ... 5 more ... | (() => Promise<...>)' is not assignable to parameter of type '() => Promise<ComponentModule>'.
+  Type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/AIProviderManagement")>' is not assignable to type '() => Promise<ComponentModule>'.
+    Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/AIProviderManagement")>' is not assignable to type 'Promise<ComponentModule>'.
+      Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/AIProviderManagement")' but required in type 'ComponentModule'.
+src/components/admin/AdminTabOptimizer.tsx(68,27): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/AIProviderManagement")>' is not assignable to type 'Promise<ComponentModule>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/AIProviderManagement")' but required in type 'ComponentModule'.
+src/components/admin/AdminTabOptimizer.tsx(73,27): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/TarotGuidelineManagement")>' is not assignable to type 'Promise<ComponentModule>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/TarotGuidelineManagement")' but required in type 'ComponentModule'.
+src/components/admin/AdminTabOptimizer.tsx(84,27): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UserManagement")>' is not assignable to type 'Promise<ComponentModule>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UserManagement")' but required in type 'ComponentModule'.
+src/components/admin/AdminTabOptimizer.tsx(89,27): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/BlogManagement")>' is not assignable to type 'Promise<ComponentModule>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/BlogManagement")' but required in type 'ComponentModule'.
+src/components/admin/AdminTabOptimizer.tsx(94,27): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/AIPromptConfigForm")>' is not assignable to type 'Promise<ComponentModule>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/AIPromptConfigForm")' but required in type 'ComponentModule'.
+src/components/admin/AdminTabOptimizer.tsx(105,27): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/DreamInterpretationConfigForm")>' is not assignable to type 'Promise<ComponentModule>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/DreamInterpretationConfigForm")' but required in type 'ComponentModule'.
+src/components/admin/AdminTabOptimizer.tsx(110,27): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/ui/push-notification-toggle")>' is not assignable to type 'Promise<ComponentModule>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/ui/push-notification-toggle")' but required in type 'ComponentModule'.
+src/components/admin/AdminTabOptimizer.tsx(115,27): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/SystemManagement")>' is not assignable to type 'Promise<ComponentModule>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/SystemManagement")' but required in type 'ComponentModule'.
+src/components/admin/BlogManagement.tsx(238,11): error TS2353: Object literal may only specify known properties, and 'featuredImage' does not exist in type 'SetStateAction<Partial<BlogPost>>'.
+src/components/admin/BlogManagement.tsx(441,13): error TS2353: Object literal may only specify known properties, and 'featuredImage' does not exist in type 'SetStateAction<Partial<BlogPost>>'.
+src/components/admin/DreamInterpretationConfigForm.tsx(161,57): error TS2345: Argument of type '{ model: string; promptTemplate: string; }' is not assignable to parameter of type '{ model: "googleai/gemini-1.5-pro-latest" | "googleai/gemini-1.5-flash-latest"; promptTemplate: string; }'.
+  Types of property 'model' are incompatible.
+    Type 'string' is not assignable to type '"googleai/gemini-1.5-pro-latest" | "googleai/gemini-1.5-flash-latest"'.
+src/components/admin/RealTimeMonitoringDashboard.tsx(251,9): error TS2322: Type 'RealtimeStats' is not assignable to type '{ totalActiveUsers: number; averageResponseTime: number; errorRate: number; memoryUsage?: number | undefined; cpuUsage?: number | undefined; }'.
+  Types of property 'errorRate' are incompatible.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+src/components/analytics/GoogleAnalytics.tsx(109,19): error TS2345: Argument of type '"consent"' is not assignable to parameter of type '"set" | "event" | "config" | "js"'.
+src/components/dream/DreamInterpretationClient.tsx(75,33): error TS18046: 'result' is of type 'unknown'.
+src/components/dream/DreamInterpretationClient.tsx(150,25): error TS18046: 'result' is of type 'unknown'.
+src/components/dream/DreamInterpretationClient.tsx(158,29): error TS18046: 'result' is of type 'unknown'.
+src/components/profile/PasswordChangeForm.tsx(24,10): error TS2304: Cannot find name 'firebaseUser'.
+src/components/profile/PasswordChangeForm.tsx(24,27): error TS2304: Cannot find name 'firebaseUser'.
+src/components/profile/PasswordChangeForm.tsx(25,7): error TS2304: Cannot find name 'toast'.
+src/components/profile/PasswordChangeForm.tsx(28,9): error TS2304: Cannot find name 'newPassword'.
+src/components/profile/PasswordChangeForm.tsx(28,25): error TS2304: Cannot find name 'confirmNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(29,7): error TS2304: Cannot find name 'toast'.
+src/components/profile/PasswordChangeForm.tsx(32,9): error TS2304: Cannot find name 'newPassword'.
+src/components/profile/PasswordChangeForm.tsx(33,7): error TS2304: Cannot find name 'toast'.
+src/components/profile/PasswordChangeForm.tsx(37,5): error TS2304: Cannot find name 'setIsChangingPassword'.
+src/components/profile/PasswordChangeForm.tsx(39,55): error TS2304: Cannot find name 'firebaseUser'.
+src/components/profile/PasswordChangeForm.tsx(39,75): error TS2304: Cannot find name 'currentPassword'.
+src/components/profile/PasswordChangeForm.tsx(40,42): error TS2304: Cannot find name 'firebaseUser'.
+src/components/profile/PasswordChangeForm.tsx(41,36): error TS2304: Cannot find name 'firebaseUser'.
+src/components/profile/PasswordChangeForm.tsx(41,50): error TS2304: Cannot find name 'newPassword'.
+src/components/profile/PasswordChangeForm.tsx(42,7): error TS2304: Cannot find name 'toast'.
+src/components/profile/PasswordChangeForm.tsx(43,7): error TS2552: Cannot find name 'setShowPasswordChangeForm'. Did you mean 'PasswordChangeForm'?
+src/components/profile/PasswordChangeForm.tsx(44,7): error TS2304: Cannot find name 'setCurrentPassword'.
+src/components/profile/PasswordChangeForm.tsx(45,7): error TS2304: Cannot find name 'setNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(46,7): error TS2304: Cannot find name 'setConfirmNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(56,7): error TS2304: Cannot find name 'toast'.
+src/components/profile/PasswordChangeForm.tsx(58,7): error TS2304: Cannot find name 'setIsChangingPassword'.
+src/components/profile/PasswordChangeForm.tsx(70,11): error TS2304: Cannot find name 'showPasswordChangeForm'.
+src/components/profile/PasswordChangeForm.tsx(71,34): error TS2304: Cannot find name 'setShowPasswordChangeForm'.
+src/components/profile/PasswordChangeForm.tsx(82,25): error TS2304: Cannot find name 'showCurrentPassword'.
+src/components/profile/PasswordChangeForm.tsx(83,26): error TS2304: Cannot find name 'currentPassword'.
+src/components/profile/PasswordChangeForm.tsx(84,36): error TS2304: Cannot find name 'setCurrentPassword'.
+src/components/profile/PasswordChangeForm.tsx(91,34): error TS2304: Cannot find name 'setShowCurrentPassword'.
+src/components/profile/PasswordChangeForm.tsx(91,58): error TS2304: Cannot find name 'showCurrentPassword'.
+src/components/profile/PasswordChangeForm.tsx(92,31): error TS2304: Cannot find name 'showCurrentPassword'.
+src/components/profile/PasswordChangeForm.tsx(94,20): error TS2304: Cannot find name 'showCurrentPassword'.
+src/components/profile/PasswordChangeForm.tsx(104,25): error TS2304: Cannot find name 'showNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(105,26): error TS2304: Cannot find name 'newPassword'.
+src/components/profile/PasswordChangeForm.tsx(106,36): error TS2304: Cannot find name 'setNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(113,34): error TS2304: Cannot find name 'setShowNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(113,54): error TS2304: Cannot find name 'showNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(114,31): error TS2304: Cannot find name 'showNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(116,20): error TS2304: Cannot find name 'showNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(126,25): error TS2304: Cannot find name 'showConfirmPassword'.
+src/components/profile/PasswordChangeForm.tsx(127,26): error TS2304: Cannot find name 'confirmNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(128,36): error TS2304: Cannot find name 'setConfirmNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(135,34): error TS2304: Cannot find name 'setShowConfirmPassword'.
+src/components/profile/PasswordChangeForm.tsx(135,58): error TS2304: Cannot find name 'showConfirmPassword'.
+src/components/profile/PasswordChangeForm.tsx(136,31): error TS2304: Cannot find name 'showConfirmPassword'.
+src/components/profile/PasswordChangeForm.tsx(138,20): error TS2304: Cannot find name 'showConfirmPassword'.
+src/components/profile/PasswordChangeForm.tsx(143,47): error TS2304: Cannot find name 'isChangingPassword'.
+src/components/profile/PasswordChangeForm.tsx(144,18): error TS2304: Cannot find name 'isChangingPassword'.
+src/components/profile/PasswordChangeForm.tsx(145,18): error TS2304: Cannot find name 'isChangingPassword'.
+src/components/profile/PasswordChangeForm.tsx(148,17): error TS2304: Cannot find name 'setShowPasswordChangeForm'.
+src/components/profile/PasswordChangeForm.tsx(149,17): error TS2304: Cannot find name 'setCurrentPassword'.
+src/components/profile/PasswordChangeForm.tsx(150,17): error TS2304: Cannot find name 'setNewPassword'.
+src/components/profile/PasswordChangeForm.tsx(151,17): error TS2304: Cannot find name 'setConfirmNewPassword'.
+src/components/reading/TarotReadingClient-debug.tsx(6,58): error TS2304: Cannot find name 'stage'.
+src/components/reading/TarotReadingClient-debug.tsx(7,54): error TS2304: Cannot find name 'isShufflingAnimationActive'.
+src/components/reading/TarotReadingClient-debug.tsx(9,7): error TS2304: Cannot find name 'isShufflingAnimationActive'.
+src/components/reading/TarotReadingClient-debug.tsx(15,3): error TS2304: Cannot find name 'setIsShufflingAnimationActive'.
+src/components/reading/TarotReadingClient-debug.tsx(16,3): error TS2304: Cannot find name 'setStage'.
+src/components/reading/TarotReadingClient-debug.tsx(17,3): error TS2304: Cannot find name 'setReadingJustSaved'.
+src/components/reading/TarotReadingClient-debug.tsx(18,3): error TS2304: Cannot find name 'setIsSharingReading'.
+src/components/reading/TarotReadingClient-debug.tsx(19,3): error TS2304: Cannot find name 'setRevealedSpreadCards'.
+src/components/reading/TarotReadingClient-debug.tsx(20,3): error TS2304: Cannot find name 'setSelectedCardsForReading'.
+src/components/reading/TarotReadingClient-debug.tsx(21,3): error TS2304: Cannot find name 'setInterpretation'.
+src/components/reading/TarotReadingClient-debug.tsx(22,3): error TS2304: Cannot find name 'setDisplayedInterpretation'.
+src/components/reading/TarotReadingClient-debug.tsx(23,3): error TS2304: Cannot find name 'setIsInterpretationDialogOpen'.
+src/components/reading/TarotReadingClient-debug.tsx(36,24): error TS2304: Cannot find name 'shouldUseOptimizedImages'.
+src/components/reading/TarotReadingClient-debug.tsx(37,26): error TS2304: Cannot find name 'getCardsWithOptimizedImages'.
+src/components/reading/TarotReadingClient-debug.tsx(37,54): error TS2304: Cannot find name 'allCards'.
+src/components/reading/TarotReadingClient-debug.tsx(38,3): error TS2304: Cannot find name 'setDeck'.
+src/components/reading/TarotReadingClient-debug.tsx(42,3): error TS2304: Cannot find name 'setStage'.
+src/components/reading/TarotReadingClient-debug.tsx(43,3): error TS2304: Cannot find name 'setIsShufflingAnimationActive'.
+src/components/reading/TarotReadingClient-debug.tsx(58,3): error TS18004: No value exists in scope for the shorthand property 'stage'. Either declare one or provide an initializer.
+src/components/reading/TarotReadingClient-debug.tsx(59,3): error TS18004: No value exists in scope for the shorthand property 'isShufflingAnimationActive'. Either declare one or provide an initializer.
+src/components/reading/TarotReadingClient-debug.tsx(60,27): error TS2304: Cannot find name 'isShufflingAnimationActive'.
+src/components/reading/TarotReadingClient-debug.tsx(60,57): error TS2304: Cannot find name 'stage'.
+src/context/AuthContext.tsx(163,17): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/context/AuthContext.tsx(164,17): error TS2322: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/data/tarot-guidelines.ts(2928,5): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'SpreadStyleCombination'.
+src/data/tarot-guidelines.ts(3089,5): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'SpreadStyleCombination'.
+src/lib/__tests__/tarot-data.test.ts(58,75): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/lib/__tests__/tarot-data.test.ts(58,75): error TS18048: 'a' is possibly 'undefined'.
+src/lib/__tests__/tarot-data.test.ts(58,79): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/lib/__tests__/tarot-data.test.ts(58,79): error TS18048: 'b' is possibly 'undefined'.
+src/lib/__tests__/tarot-data.test.ts(63,33): error TS2532: Object is possibly 'undefined'.
+src/lib/__tests__/tarot-data.test.ts(63,33): error TS2365: Operator '+' cannot be applied to types 'string | number' and 'number'.
+src/lib/__tests__/tarot-data.test.ts(166,55): error TS18048: 'card.number' is possibly 'undefined'.
+src/lib/__tests__/tarot-data.test.ts(166,55): error TS2365: Operator '>=' cannot be applied to types 'string | number' and 'number'.
+src/lib/__tests__/tarot-data.test.ts(166,75): error TS18048: 'card.number' is possibly 'undefined'.
+src/lib/__tests__/tarot-data.test.ts(166,75): error TS2365: Operator '<=' cannot be applied to types 'string | number' and 'number'.
+src/lib/dynamicImports.ts(25,34): error TS2322: Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/node_modules/date-fns/index")>' is not assignable to type 'ImportedModule<any>'.
+  Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/node_modules/date-fns/index")' but required in type '{ default: any; }'.
+src/lib/dynamicImports.ts(165,48): error TS2345: Argument of type '(() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UsageStatsCharts")>) | (() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/RealTimeMonitoringDashboard")>) | ... 5 more ... | (() => Promise<...>)' is not assignable to parameter of type 'ImportFunction<any>'.
+  Type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UsageStatsCharts")>' is not assignable to type 'ImportFunction<any>'.
+    Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UsageStatsCharts")>' is not assignable to type 'Promise<{ default: any; }>'.
+      Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UsageStatsCharts")' but required in type '{ default: any; }'.
+src/lib/dynamicImports.ts(190,39): error TS2345: Argument of type '(() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UsageStatsCharts")>) | (() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/RealTimeMonitoringDashboard")>)' is not assignable to parameter of type 'ImportFunction<any>'.
+  Type '() => Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UsageStatsCharts")>' is not assignable to type 'ImportFunction<any>'.
+    Type 'Promise<typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UsageStatsCharts")>' is not assignable to type 'Promise<{ default: any; }>'.
+      Property 'default' is missing in type 'typeof import("/mnt/e/project/test-studio-firebase/src/components/admin/UsageStatsCharts")' but required in type '{ default: any; }'.
+src/lib/firebase/admin-helpers.ts(94,10): error TS2724: '"firebase-admin/firestore"' has no exported member named 'FirebaseFirestore'. Did you mean 'FirebaseFirestoreError'?
+src/lib/notifications/push-manager.ts(67,7): error TS2322: Type 'ServiceWorkerRegistration | undefined' is not assignable to type 'ServiceWorkerRegistration | null'.
+  Type 'undefined' is not assignable to type 'ServiceWorkerRegistration | null'.
+src/lib/performance/caching.ts(158,31): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/lib/performance/caching.ts(204,31): error TS2339: Property 'timestamp' does not exist on type 'IDBRequest<any>'.
+src/lib/performance/caching.ts(204,50): error TS2339: Property 'maxAge' does not exist on type 'IDBRequest<any>'.
+src/lib/performance/caching.ts(212,21): error TS2339: Property 'data' does not exist on type 'IDBRequest<any>'.
+src/lib/performance/caching.ts(255,35): error TS2339: Property 'value' does not exist on type 'IDBRequest<IDBCursorWithValue | null>'.
+src/lib/performance/caching.ts(257,28): error TS2339: Property 'delete' does not exist on type 'IDBRequest<IDBCursorWithValue | null>'.
+src/lib/performance/caching.ts(259,27): error TS2339: Property 'continue' does not exist on type 'IDBRequest<IDBCursorWithValue | null>'.
+src/lib/performance/metrics.ts(45,24): error TS2339: Property 'value' does not exist on type 'PerformanceEntry'.
+src/lib/performance/metrics.ts(46,47): error TS2339: Property 'value' does not exist on type 'PerformanceEntry'.
+src/scripts/seed-guidelines.ts(47,63): error TS2339: Property 'positions' does not exist on type 'TarotGuideline'.
+src/services/blog-service-server.ts(118,31): error TS7006: Parameter 'doc' implicitly has an 'any' type.
+src/services/blog-service.ts(210,18): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/blog-service.ts(228,47): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/blog-service.ts(246,47): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/blog-service.ts(268,25): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/blog-service.ts(285,25): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/blog-service.ts(425,21): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/enhanced-ai-service.ts(118,27): error TS2339: Property 'spreadName' does not exist on type 'TarotGuideline'.
+src/services/enhanced-ai-service.ts(120,32): error TS2339: Property 'positions' does not exist on type 'TarotGuideline'.
+src/services/enhanced-ai-service.ts(120,46): error TS7006: Parameter 'pos' implicitly has an 'any' type.
+src/services/enhanced-ai-service.ts(130,27): error TS2339: Property 'styleName' does not exist on type 'TarotGuideline'.
+src/services/enhanced-ai-service.ts(131,34): error TS2551: Property 'styleDescription' does not exist on type 'TarotGuideline'. Did you mean 'description'?
+src/services/enhanced-ai-service.ts(141,76): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ name: any; generalApproach: string; positions: any; interpretationTips: string; }'.
+src/services/enhanced-ai-service.ts(142,75): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ name: any; description: any; keyFocusAreas: string; interpretationTips: string; }'.
+src/services/enhanced-ai-service.ts(147,45): error TS7006: Parameter 'pos' implicitly has an 'any' type.
+src/services/enhanced-ai-service.ts(149,55): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/services/enhanced-ai-service.ts(149,58): error TS7006: Parameter 'prop' implicitly has an 'any' type.
+src/services/reading-comment-service.ts(26,20): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-comment-service.ts(44,42): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-comment-service.ts(89,22): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-comment-service.ts(114,20): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-comment-service.ts(149,32): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-comment-service.ts(191,20): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-comment-service.ts(212,42): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(33,32): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(54,42): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(140,26): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(150,40): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(193,22): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(198,22): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(226,20): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(272,22): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(305,22): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+src/services/reading-experience-service.ts(356,20): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'Firestore'.
+      Type 'null' is not assignable to type 'Firestore'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'CollectionReference<unknown, DocumentData>'.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): CollectionReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore | null' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'null' is not assignable to type 'DocumentReference<unknown, DocumentData>'.
+tests/archive/2025-08-02/admin-login-comprehensive-test.spec.ts(121,68): error TS18046: 'error' is of type 'unknown'.
+tests/archive/2025-08-02/admin-login-comprehensive-test.spec.ts(239,52): error TS18046: 'error' is of type 'unknown'.
+tests/archive/2025-08-02/admin-login-comprehensive-test.spec.ts(245,46): error TS18046: 'authState' is of type 'unknown'.
+tests/archive/2025-08-02/admin-menu-debug.spec.ts(203,29): error TS18046: 'e' is of type 'unknown'.
+tests/archive/2025-08-02/admin-menu-debug.spec.ts(226,44): error TS18046: 'e' is of type 'unknown'.
+tests/archive/2025-08-02/admin-performance-fixes-test.spec.ts(117,36): error TS2304: Cannot find name 'googleButton'.
+tests/archive/2025-08-02/card-spread-verification.spec.ts(96,11): error TS7034: Variable 'jsErrors' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/archive/2025-08-02/card-spread-verification.spec.ts(116,7): error TS7005: Variable 'jsErrors' implicitly has an 'any[]' type.
+tests/archive/2025-08-02/card-spreading.spec.ts(4,61): error TS2345: Argument of type '({ page }: PlaywrightTestArgs & PlaywrightTestOptions & PlaywrightWorkerArgs & PlaywrightWorkerOptions) => Promise<...>' is not assignable to parameter of type 'TestBody<PlaywrightTestArgs & PlaywrightTestOptions & PlaywrightWorkerArgs & PlaywrightWorkerOptions>'.
+  Type 'Promise<{ cardCount: number; containerClass: string | null; selectionWorking: boolean; }>' is not assignable to type 'void | Promise<void>'.
+    Type 'Promise<{ cardCount: number; containerClass: string | null; selectionWorking: boolean; }>' is not assignable to type 'Promise<void>'.
+      Type '{ cardCount: number; containerClass: string | null; selectionWorking: boolean; }' is not assignable to type 'void'.
+tests/archive/2025-08-02/chrome-extension-analysis.spec.ts(184,11): error TS2454: Variable 'page' is used before being assigned.
+tests/archive/2025-08-02/chrome-extension-analysis.spec.ts(198,11): error TS2454: Variable 'context' is used before being assigned.
+tests/archive/2025-08-02/chrome-extension-analysis.spec.ts(416,15): error TS2339: Property 'text' does not exist on type '{ type: string; text: string; timestamp: string; } | { url: string; error: string; timestamp: string; }'.
+  Property 'text' does not exist on type '{ url: string; error: string; timestamp: string; }'.
+tests/archive/2025-08-02/chrome-extension-analysis.spec.ts(416,28): error TS2339: Property 'text' does not exist on type '{ type: string; text: string; timestamp: string; } | { url: string; error: string; timestamp: string; }'.
+  Property 'text' does not exist on type '{ url: string; error: string; timestamp: string; }'.
+tests/archive/2025-08-02/chrome-extension-analysis.spec.ts(417,15): error TS2339: Property 'url' does not exist on type '{ type: string; text: string; timestamp: string; } | { url: string; error: string; timestamp: string; }'.
+  Property 'url' does not exist on type '{ type: string; text: string; timestamp: string; }'.
+tests/archive/2025-08-02/chrome-extension-analysis.spec.ts(417,27): error TS2339: Property 'url' does not exist on type '{ type: string; text: string; timestamp: string; } | { url: string; error: string; timestamp: string; }'.
+  Property 'url' does not exist on type '{ type: string; text: string; timestamp: string; }'.
+tests/archive/2025-08-02/chrome-extension-analysis.spec.ts(418,15): error TS2339: Property 'error' does not exist on type '{ type: string; text: string; timestamp: string; } | { url: string; error: string; timestamp: string; }'.
+  Property 'error' does not exist on type '{ type: string; text: string; timestamp: string; }'.
+tests/archive/2025-08-02/chrome-extension-analysis.spec.ts(418,29): error TS2339: Property 'error' does not exist on type '{ type: string; text: string; timestamp: string; } | { url: string; error: string; timestamp: string; }'.
+  Property 'error' does not exist on type '{ type: string; text: string; timestamp: string; }'.
+tests/archive/2025-08-02/emergency-diagnosis.spec.ts(17,11): error TS7034: Variable 'consoleErrors' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/archive/2025-08-02/emergency-diagnosis.spec.ts(27,30): error TS7005: Variable 'consoleErrors' implicitly has an 'any[]' type.
+tests/archive/2025-08-02/emergency-diagnosis.spec.ts(104,36): error TS18046: 'e' is of type 'unknown'.
+tests/archive/2025-08-02/emergency-diagnosis.spec.ts(112,11): error TS7034: Variable 'failedRequests' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/archive/2025-08-02/emergency-diagnosis.spec.ts(113,11): error TS7034: Variable 'slowRequests' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/archive/2025-08-02/emergency-diagnosis.spec.ts(116,31): error TS2339: Property 'timing' does not exist on type 'Response'.
+tests/archive/2025-08-02/emergency-diagnosis.spec.ts(134,31): error TS7005: Variable 'failedRequests' implicitly has an 'any[]' type.
+tests/archive/2025-08-02/emergency-diagnosis.spec.ts(135,39): error TS7005: Variable 'slowRequests' implicitly has an 'any[]' type.
+tests/archive/2025-08-02/final-admin-fix-verification.spec.ts(112,3): error TS18046: 'cacheStatus' is of type 'unknown'.
+tests/archive/2025-08-02/final-admin-fix-verification.spec.ts(112,23): error TS7006: Parameter 'status' implicitly has an 'any' type.
+tests/archive/2025-08-02/final-admin-login-test.spec.ts(75,13): error TS7034: Variable 'result' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/archive/2025-08-02/final-admin-login-test.spec.ts(79,14): error TS7005: Variable 'result' implicitly has an 'any[]' type.
+tests/archive/2025-08-02/final-verification.spec.ts(23,36): error TS18046: 'e' is of type 'unknown'.
+tests/archive/2025-08-02/final-verification.spec.ts(59,34): error TS18046: 'e' is of type 'unknown'.
+tests/archive/2025-08-02/final-verification.spec.ts(90,11): error TS7034: Variable 'errors' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/archive/2025-08-02/final-verification.spec.ts(119,7): error TS7005: Variable 'errors' implicitly has an 'any[]' type.
+tests/archive/2025-08-02/new-vercel-deployment.spec.ts(96,41): error TS2345: Argument of type '{ label: RegExp; }' is not assignable to parameter of type 'string | readonly string[] | ElementHandle<Node> | { value?: string | undefined; label?: string | undefined; index?: number | undefined; } | readonly ElementHandle<Node>[] | readonly { ...; }[] | null'.
+  Types of property 'label' are incompatible.
+    Type 'RegExp' is not assignable to type 'string'.
+tests/archive/2025-08-02/tarot-history-local.spec.ts(232,42): error TS2339: Property 'offsetHeight' does not exist on type 'Element'.
+tests/archive/2025-08-02/tarot-history-local.spec.ts(233,36): error TS2339: Property 'offsetHeight' does not exist on type 'Element'.
+tests/archive/2025-08-02/urgent-auth-skeleton-debug.spec.ts(100,16): error TS2339: Property '__REACT_DEVTOOLS_GLOBAL_HOOK__' does not exist on type 'Window & typeof globalThis'.
+tests/archive/2025-08-02/vercel-deployment-check.spec.ts(67,72): error TS18047: 'el.textContent' is possibly 'null'.
+tests/archive/2025-08-02/vercel-loading-issue.spec.ts(163,35): error TS18046: 'reactInfo' is of type 'unknown'.
+tests/archive/2025-08-02/vercel-loading-issue.spec.ts(164,37): error TS18046: 'reactInfo' is of type 'unknown'.
+tests/archive/2025-08-02/vercel-loading-issue.spec.ts(165,34): error TS18046: 'reactInfo' is of type 'unknown'.
+tests/archive/2025-08-02/vercel-main-domain.spec.ts(93,48): error TS18046: 'error' is of type 'unknown'.
+tests/archive/2025-08-02/verify-blog-deployment.spec.ts(43,54): error TS18046: 'error' is of type 'unknown'.
+tests/archive/2025-08-02/verify-blog-posts.spec.ts(81,9): error TS7034: Variable 'errors' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/archive/2025-08-02/verify-blog-posts.spec.ts(86,5): error TS7005: Variable 'errors' implicitly has an 'any[]' type.
+tests/archive/2025-08-02/verify-deployment-urls.spec.ts(51,52): error TS18046: 'error' is of type 'unknown'.
+tests/archive/2025-08-02/verify-deployment-urls.spec.ts(110,25): error TS7006: Parameter 'msg' implicitly has an 'any' type.
+tests/integration/performance.spec.ts(138,25): error TS2339: Property 'memory' does not exist on type 'Performance'.
+tests/integration/performance.spec.ts(139,30): error TS2339: Property 'memory' does not exist on type 'Performance'.
+tests/integration/performance.spec.ts(161,25): error TS2339: Property 'memory' does not exist on type 'Performance'.
+tests/integration/performance.spec.ts(162,30): error TS2339: Property 'memory' does not exist on type 'Performance'.

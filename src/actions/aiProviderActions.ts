@@ -1,6 +1,6 @@
 'use server';
 
-import { firestore } from '@/lib/firebase/admin';
+import { getFirestore, getFieldValue, safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import { 
   AIConfiguration,
   AIFeatureMapping,
@@ -50,10 +50,10 @@ function maskApiKey(apiKey: string): string {
 export async function saveAIProviderConfig(
   formData: AIProviderFormData
 ): Promise<{ success: boolean; message: string }> {
-  try {
+  return safeFirestoreOperation(async (firestore) => {
     const validation = AIProviderFormSchema.safeParse(formData);
     if (!validation.success) {
-      return { success: false, message: '유효하지 않은 데이터입니다.' };
+      throw new Error('유효하지 않은 데이터입니다.');
     }
 
     const { provider, apiKey, baseUrl, isActive, maxRequestsPerMinute, selectedModels } = validation.data;
@@ -75,9 +75,6 @@ export async function saveAIProviderConfig(
     };
 
     // Save to Firestore - using unified collection name
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     await docRef.set(providerConfig);
 
@@ -90,24 +87,18 @@ export async function saveAIProviderConfig(
     console.log(`[DEV MOCK] Saved AI provider config:`, { provider, modelsCount: models.length });
 
     return { success: true, message: `${provider} 설정이 성공적으로 저장되었습니다. (환경변수에도 저장됨)` };
-  } catch (error) {
-    console.error('Error saving AI provider config:', error);
-    return { success: false, message: 'AI 제공업체 설정 저장 중 오류가 발생했습니다.' };
-  }
+  });
 }
 
 export async function getAIProviderConfig(
   provider: AIProvider
 ): Promise<{ success: boolean; data?: AIProviderConfig; message?: string }> {
-  try {
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
+  return safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     const doc = await docRef.get();
 
     if (!doc.exists) {
-      return { success: false, message: '설정을 찾을 수 없습니다.' };
+      throw new Error('설정을 찾을 수 없습니다.');
     }
 
     const data = doc.data() as AIProviderConfig;
@@ -117,11 +108,8 @@ export async function getAIProviderConfig(
       apiKey: decrypt(data.apiKey),
     };
 
-    return { success: true, data: decryptedConfig };
-  } catch (error) {
-    console.error('Error getting AI provider config:', error);
-    return { success: false, message: 'AI 제공업체 설정을 불러오는 중 오류가 발생했습니다.' };
-  }
+    return decryptedConfig;
+  });
 }
 
 export async function getAllAIProviderConfigs(forceRefresh = false): Promise<{
@@ -689,21 +677,20 @@ export async function getAIConfiguration(): Promise<{
   data?: AIConfiguration;
   message?: string;
 }> {
-  try {
+  return safeFirestoreOperation(async (firestore) => {
     // Get all provider configs
     const providersResult = await getAllAIProviderConfigs();
     if (!providersResult.success) {
-      return { success: false, message: providersResult.message };
+      throw new Error(providersResult.message || 'Failed to get provider configs');
     }
 
     // Get feature mappings
     const mappingsResult = await getAIFeatureMappings();
     if (!mappingsResult.success) {
-      return { success: false, message: mappingsResult.message };
+      throw new Error(mappingsResult.message || 'Failed to get feature mappings');
     }
 
     // Get global settings
-    const firestore = getFirestore();
     const globalDoc = await firestore.collection('aiConfiguration').doc('globalSettings').get();
     const globalSettings = globalDoc.exists ? globalDoc.data() : {
       defaultTemperature: 0.7,
@@ -718,9 +705,6 @@ export async function getAIConfiguration(): Promise<{
       updatedAt: new Date(),
     };
 
-    return { success: true, data: configuration };
-  } catch (error) {
-    console.error('Error getting AI configuration:', error);
-    return { success: false, message: 'AI 설정을 불러오는 중 오류가 발생했습니다.' };
-  }
+    return configuration;
+  });
 }

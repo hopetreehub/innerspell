@@ -56,6 +56,10 @@ export async function createOrUpdateUserProfile(
       // 변경된 필드만 업데이트
       const currentData = userDoc.data();
       
+      if (!currentData) {
+        return { success: false, error: '사용자 데이터를 읽을 수 없습니다.' };
+      }
+      
       if (currentData.email !== userData.email) {
         updateData.email = userData.email;
       }
@@ -95,11 +99,16 @@ export async function getUserProfileData(userId: string) {
     }
 
     const data = userDoc.data();
+    
+    if (!data) {
+      return { success: false, error: '사용자 데이터를 읽을 수 없습니다.' };
+    }
+    
     const profile: UserProfile = {
       id: userId,
-      email: data.email,
-      name: data.name,
-      avatar: data.avatar,
+      email: data.email || '',
+      name: data.name || '',
+      avatar: data.avatar || '',
       level: data.level || 'beginner',
       bio: data.bio || '',
       followersCount: data.followersCount || 0,
@@ -140,18 +149,22 @@ export async function getUserProfile(userId: string): Promise<AppUser | null> {
     
     const data = userDoc.data();
     
+    if (!data) {
+      return null;
+    }
+    
     // 🔧 긴급 수정: 관리자 권한 로직 수정 - 따옴표 제거 추가
     const adminEmails = (process.env.ADMIN_EMAILS || 'admin@innerspell.com,junsupark9999@gmail.com')
       .split(',')
       .map(email => email.trim().replace(/\n/g, '').replace(/"/g, ''));
-    const isEnvAdmin = adminEmails.includes(data.email);
+    const isEnvAdmin = adminEmails.includes(data.email || '');
     
     // 환경변수 관리자 OR 데이터베이스 관리자 역할 존중
     const finalRole = isEnvAdmin ? 'admin' : (data.role || 'user');
     
     console.log(`🔍 권한 체크: ${data.email} - ENV_ADMIN: ${isEnvAdmin}, DB_ROLE: ${data.role}, FINAL: ${finalRole}`);
     console.log(`🔍 관리자 이메일 목록:`, adminEmails);
-    console.log(`🔍 현재 사용자 이메일: "${data.email}" (길이: ${data.email?.length})`);
+    console.log(`🔍 현재 사용자 이메일: "${data.email || ''}" (길이: ${data.email?.length || 0})`);
     
     const appUser: AppUser = {
       uid: userId,

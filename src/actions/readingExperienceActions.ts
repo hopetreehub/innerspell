@@ -31,15 +31,12 @@ export async function createReadingExperience(
     
     // 리딩 경험 문서 생성
     const readingExperienceData = {
-      userId,
+      authorId: userId,
       title: validatedData.title,
-      date: validatedData.date,
-      spread: validatedData.spread,
-      question: validatedData.question,
-      interpretation: validatedData.interpretation,
-      reflection: validatedData.reflection,
-      isPublic: validatedData.isPublic,
+      content: validatedData.content,
+      spreadType: validatedData.spreadType,
       cards: validatedData.cards,
+      tags: validatedData.tags,
       
       // 사용자 정보
       author: {
@@ -50,9 +47,10 @@ export async function createReadingExperience(
       },
       
       // 메타데이터
-      viewCount: 0,
-      likeCount: 0,
-      commentCount: 0,
+      views: 0,
+      likes: 0,
+      commentsCount: 0,
+      isPublished: true,
       createdAt: getFieldValue().serverTimestamp(),
       updatedAt: getFieldValue().serverTimestamp()
     };
@@ -138,14 +136,14 @@ export async function getReadingExperience(id: string, incrementView = false) {
         }
         
         transaction.update(docRef, {
-          viewCount: getFieldValue().increment(1)
+          views: getFieldValue().increment(1)
         });
         
         const data = doc.data();
         return {
           id: doc.id,
           ...data,
-          viewCount: (data?.viewCount || 0) + 1, // 증가된 값 반영
+          views: (data?.views || 0) + 1, // 증가된 값 반영
           createdAt: data?.createdAt?.toDate() || new Date(),
           updatedAt: data?.updatedAt?.toDate() || new Date()
         } as ReadingExperience;
@@ -244,9 +242,10 @@ export async function updateReadingExperience(
     };
     
     if (formData.title !== undefined) updateData.title = formData.title;
-    if (formData.interpretation !== undefined) updateData.interpretation = formData.interpretation;
-    if (formData.reflection !== undefined) updateData.reflection = formData.reflection;
-    if (formData.isPublic !== undefined) updateData.isPublic = formData.isPublic;
+    if (formData.content !== undefined) updateData.content = formData.content;
+    if (formData.spreadType !== undefined) updateData.spreadType = formData.spreadType;
+    if (formData.cards !== undefined) updateData.cards = formData.cards;
+    if (formData.tags !== undefined) updateData.tags = formData.tags;
     
     await docRef.update(updateData);
     return id;
@@ -325,7 +324,7 @@ export async function toggleLike(readingExperienceId: string, userId: string) {
         // 좋아요 취소
         transaction.delete(likeRef);
         transaction.update(experienceRef, {
-          likeCount: getFieldValue().increment(-1)
+          likes: getFieldValue().increment(-1)
         });
         return false;
       } else {
@@ -336,7 +335,7 @@ export async function toggleLike(readingExperienceId: string, userId: string) {
           createdAt: getFieldValue().serverTimestamp()
         });
         transaction.update(experienceRef, {
-          likeCount: getFieldValue().increment(1)
+          likes: getFieldValue().increment(1)
         });
         return true;
       }
@@ -385,7 +384,7 @@ export async function createComment(
       
       transaction.set(commentRef, commentData);
       transaction.update(experienceRef, {
-        commentCount: getFieldValue().increment(1)
+        commentsCount: getFieldValue().increment(1)
       });
       
       return commentRef.id;
@@ -446,7 +445,7 @@ export async function deleteComment(
       // 리딩 경험의 댓글 수 감소
       const experienceRef = firestore.collection('readingExperiences').doc(readingExperienceId);
       transaction.update(experienceRef, {
-        commentCount: getFieldValue().increment(-1)
+        commentsCount: getFieldValue().increment(-1)
       });
     });
     
