@@ -1,9 +1,7 @@
-
 'use server';
 
 import { z } from 'zod';
-import { firestore } from '@/lib/firebase/admin';
-import { FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { getFirestore, getFieldValue, safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import type { CommunityComment } from '@/types';
 import { CommunityCommentFormSchema, CommunityCommentFormData } from '@/types';
 
@@ -29,10 +27,7 @@ function mapDocToCommunityComment(doc: FirebaseFirestore.DocumentSnapshot): Comm
 
 // Get all comments for a specific post
 export async function getCommentsForPost(postId: string): Promise<CommunityComment[]> {
-  try {
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
+  const result = await safeFirestoreOperation(async (firestore) => {
     const snapshot = await firestore
       .collection('communityPosts')
       .doc(postId)
@@ -45,11 +40,14 @@ export async function getCommentsForPost(postId: string): Promise<CommunityComme
     }
     
     return snapshot.docs.map(mapDocToCommunityComment);
-  } catch (error) {
-    console.error(`Error fetching comments for post ${postId}:`, error);
-    // Return empty array on error to prevent UI crash
+  });
+
+  if (!result.success) {
+    console.error(`Error fetching comments for post ${postId}:`, result.error);
     return [];
   }
+  
+  return result.data;
 }
 
 // Add a new comment to a post
@@ -66,31 +64,40 @@ export async function addComment(
     }
 
     const { content, isSecret } = validationResult.data;
-    const postRef = firestore.collection('communityPosts').doc(postId);
-    const commentRef = postRef.collection('comments').doc();
-
-    const newComment = {
-      authorId: author.uid,
-      authorName: author.displayName || '익명',
-      authorPhotoURL: author.photoURL || '',
-      content: content,
-      isSecret: isSecret || false,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    };
-
-    console.log(`[DEBUG] Starting transaction for postId: ${postId}`);
-    await firestore.runTransaction(async (transaction: any) => {
-      console.log(`[DEBUG] Inside transaction - setting comment and updating post`);
-      transaction.set(commentRef, newComment);
-      transaction.update(postRef, {
-        commentCount: FieldValue.increment(1),
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-    });
-    console.log(`[DEBUG] Transaction completed for postId: ${postId}`);
     
-    return { success: true, commentId: commentRef.id };
+    const result = await safeFirestoreOperation(async (firestore) => {
+      const postRef = firestore.collection('communityPosts').doc(postId);
+      const commentRef = postRef.collection('comments').doc();
+
+      const newComment = {
+        authorId: author.uid,
+        authorName: author.displayName || '익명',
+        authorPhotoURL: author.photoURL || '',
+        content: content,
+        isSecret: isSecret || false,
+        createdAt: getFieldValue().serverTimestamp(),
+        updatedAt: getFieldValue().serverTimestamp(),
+      };
+
+      console.log(`[DEBUG] Starting transaction for postId: ${postId}`);
+      await firestore.runTransaction(async (transaction: any) => {
+        console.log(`[DEBUG] Inside transaction - setting comment and updating post`);
+        transaction.set(commentRef, newComment);
+        transaction.update(postRef, {
+          commentCount: getFieldValue().increment(1),
+          updatedAt: getFieldValue().serverTimestamp(),
+        });
+      });
+      console.log(`[DEBUG] Transaction completed for postId: ${postId}`);
+      
+      return commentRef.id;
+    });
+
+    if (!result.success) {
+      return { success: false, error: result.error };
+    }
+    
+    return { success: true, commentId: result.data };
   } catch (error) {
     console.error(`Error adding comment to post ${postId}:`, error);
     return { success: false, error: '댓글을 추가하는 중 오류가 발생했습니다.' };
@@ -103,7 +110,7 @@ export async function deleteComment(
   commentId: string,
   userId: string
 ): Promise<{ success: boolean; error?: string }> {
-  try {
+  return safeFirestoreOperation(async (firestore) => {
     const postRef = firestore.collection('communityPosts').doc(postId);
     const commentRef = postRef.collection('comments').doc(commentId);
     
@@ -116,21 +123,15 @@ export async function deleteComment(
       return { success: false, error: '댓글을 삭제할 권한이 없습니다.' };
     }
 
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
     await firestore.runTransaction(async (transaction: any) => {
       transaction.delete(commentRef);
       transaction.update(postRef, {
-        commentCount: FieldValue.increment(-1),
+        commentCount: getFieldValue().increment(-1),
       });
     });
 
     return { success: true };
-  } catch (error) {
-    console.error(`Error deleting comment ${commentId} from post ${postId}:`, error);
-    return { success: false, error: '댓글 삭제 중 오류가 발생했습니다.' };
-  }
+  });
 }
 
 // Update a comment
@@ -140,32 +141,31 @@ export async function updateComment(
   content: string,
   userId: string
 ): Promise<{ success: boolean; error?: string | object }> {
-    try {
+  try {
     const validationResult = CommunityCommentFormSchema.safeParse({ content });
     if (!validationResult.success) {
       return { success: false, error: validationResult.error.flatten().fieldErrors };
     }
 
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
-    const commentRef = firestore.collection('communityPosts').doc(postId).collection('comments').doc(commentId);
-    const doc = await commentRef.get();
+    return safeFirestoreOperation(async (firestore) => {
+      const commentRef = firestore.collection('communityPosts').doc(postId).collection('comments').doc(commentId);
+      const doc = await commentRef.get();
 
-    if (!doc.exists) {
-      return { success: false, error: '댓글을 찾을 수 없습니다.' };
-    }
-    
-    if (doc.data()?.authorId !== userId) {
-      return { success: false, error: '댓글을 수정할 권한이 없습니다.' };
-    }
-    
-    await commentRef.update({
-      content: validationResult.data.content,
-      updatedAt: FieldValue.serverTimestamp(),
+      if (!doc.exists) {
+        return { success: false, error: '댓글을 찾을 수 없습니다.' };
+      }
+      
+      if (doc.data()?.authorId !== userId) {
+        return { success: false, error: '댓글을 수정할 권한이 없습니다.' };
+      }
+      
+      await commentRef.update({
+        content: validationResult.data.content,
+        updatedAt: getFieldValue().serverTimestamp(),
+      });
+
+      return { success: true };
     });
-
-    return { success: true };
   } catch (error) {
     console.error(`Error updating comment ${commentId} from post ${postId}:`, error);
     return { success: false, error: '댓글 수정 중 오류가 발생했습니다.' };

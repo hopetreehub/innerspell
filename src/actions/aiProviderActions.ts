@@ -229,10 +229,7 @@ export async function getAllAIProviderConfigsForGenkit(): Promise<{
 export async function deleteAIProviderConfig(
   provider: AIProvider
 ): Promise<{ success: boolean; message: string }> {
-  try {
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
+  return safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     await docRef.delete();
     
@@ -242,10 +239,7 @@ export async function deleteAIProviderConfig(
     console.log(`[DEV MOCK] Deleted AI provider config:`, provider);
 
     return { success: true, message: `${provider} 설정이 성공적으로 삭제되었습니다.` };
-  } catch (error) {
-    console.error('Error deleting AI provider config:', error);
-    return { success: false, message: 'AI 제공업체 설정 삭제 중 오류가 발생했습니다.' };
-  }
+  });
 }
 
 export async function testAIProviderConnection(
@@ -598,20 +592,14 @@ async function testHuggingFaceConnection(
 export async function saveAIFeatureMapping(
   mappings: AIFeatureMapping[]
 ): Promise<{ success: boolean; message: string }> {
-  try {
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
+  return safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     await docRef.set({ mappings, updatedAt: new Date() });
 
     console.log(`[DEV MOCK] Saved AI feature mappings:`, mappings.length);
 
     return { success: true, message: '기능별 AI 모델 매핑이 성공적으로 저장되었습니다.' };
-  } catch (error) {
-    console.error('Error saving AI feature mappings:', error);
-    return { success: false, message: 'AI 기능 매핑 저장 중 오류가 발생했습니다.' };
-  }
+  });
 }
 
 export async function getAIFeatureMappings(): Promise<{
@@ -619,10 +607,7 @@ export async function getAIFeatureMappings(): Promise<{
   data?: AIFeatureMapping[];
   message?: string;
 }> {
-  try {
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
+  return safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     const doc = await docRef.get();
 
@@ -632,10 +617,7 @@ export async function getAIFeatureMappings(): Promise<{
 
     const data = doc.data();
     return { success: true, data: data?.mappings || [] };
-  } catch (error) {
-    console.error('Error getting AI feature mappings:', error);
-    return { success: false, message: 'AI 기능 매핑을 불러오는 중 오류가 발생했습니다.' };
-  }
+  });
 }
 
 // Helper function to save API key to environment file
@@ -721,9 +703,7 @@ export async function getAIConfiguration(): Promise<{
     }
 
     // Get global settings
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
+    const firestore = getFirestore();
     const globalDoc = await firestore.collection('aiConfiguration').doc('globalSettings').get();
     const globalSettings = globalDoc.exists ? globalDoc.data() : {
       defaultTemperature: 0.7,

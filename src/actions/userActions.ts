@@ -1,6 +1,6 @@
 'use server';
 
-import { db, FieldValue } from '@/lib/firebase/admin';
+import { getFirestore, getFieldValue, safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import { UserProfile } from '@/types';
 
 /**
@@ -14,8 +14,8 @@ export async function createOrUpdateUserProfile(
     avatar?: string;
   }
 ) {
-  try {
-    const userRef = db.collection('users').doc(userId);
+  return safeFirestoreOperation(async (firestore) => {
+    const userRef = firestore.collection('users').doc(userId);
     const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
@@ -36,8 +36,8 @@ export async function createOrUpdateUserProfile(
         followingCount: 0,
         postsCount: 0,
         role: isAdmin ? 'admin' : 'user',
-        createdAt: FieldValue.serverTimestamp(),
-        updatedAt: FieldValue.serverTimestamp()
+        createdAt: getFieldValue().serverTimestamp(),
+        updatedAt: getFieldValue().serverTimestamp()
       };
 
       await userRef.set(newUserProfile);
@@ -50,7 +50,7 @@ export async function createOrUpdateUserProfile(
     } else {
       // 기존 사용자 프로필 업데이트 (이메일, 이름, 아바타만)
       const updateData: any = {
-        updatedAt: FieldValue.serverTimestamp()
+        updatedAt: getFieldValue().serverTimestamp()
       };
 
       // 변경된 필드만 업데이트
@@ -79,21 +79,15 @@ export async function createOrUpdateUserProfile(
         isNewUser: false
       };
     }
-  } catch (error) {
-    console.error('사용자 프로필 생성/업데이트 오류:', error);
-    return { 
-      success: false, 
-      error: '프로필 처리 중 오류가 발생했습니다.' 
-    };
-  }
+  });
 }
 
 /**
  * 사용자 프로필 조회 (UserProfile 타입 반환)
  */
 export async function getUserProfileData(userId: string) {
-  try {
-    const userRef = db.collection('users').doc(userId);
+  return safeFirestoreOperation(async (firestore) => {
+    const userRef = firestore.collection('users').doc(userId);
     const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
@@ -116,10 +110,7 @@ export async function getUserProfileData(userId: string) {
     };
 
     return { success: true, profile };
-  } catch (error) {
-    console.error('사용자 프로필 조회 오류:', error);
-    return { success: false, error: '프로필을 불러오는데 실패했습니다.' };
-  }
+  });
 }
 
 export interface AppUser {
@@ -139,8 +130,8 @@ export interface AppUser {
  * Firebase Auth 사용자 정보를 AppUser로 변환 (관리자 권한 포함)
  */
 export async function getUserProfile(userId: string): Promise<AppUser | null> {
-  try {
-    const userRef = db.collection('users').doc(userId);
+  const result = await safeFirestoreOperation(async (firestore) => {
+    const userRef = firestore.collection('users').doc(userId);
     const userDoc = await userRef.get();
     
     if (!userDoc.exists) {
@@ -176,10 +167,14 @@ export async function getUserProfile(userId: string): Promise<AppUser | null> {
     };
     
     return appUser;
-  } catch (error) {
-    console.error('getUserProfile 오류:', error);
+  });
+  
+  if (!result.success) {
+    console.error('getUserProfile 오류:', result.error);
     return null;
   }
+  
+  return result.data;
 }
 
 /**
@@ -265,16 +260,16 @@ export async function updateUserProfile(
     level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
   }
 ) {
-  try {
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
+  return safeFirestoreOperation(async (firestore) => {
+    const userRef = firestore.collection('users').doc(userId);
+    const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
       return { success: false, error: '사용자 프로필을 찾을 수 없습니다.' };
     }
 
     const updateFields: any = {
-      updatedAt: Timestamp.now()
+      updatedAt: getFieldValue().serverTimestamp()
     };
 
     // 변경된 필드만 업데이트
@@ -291,18 +286,12 @@ export async function updateUserProfile(
       updateFields.level = updateData.level;
     }
 
-    await updateDoc(userRef, updateFields);
+    await userRef.update(updateFields);
     console.log(`사용자 프로필 업데이트 완료: ${userId}`);
 
     return { 
       success: true, 
       message: '프로필이 성공적으로 업데이트되었습니다.' 
     };
-  } catch (error) {
-    console.error('사용자 프로필 업데이트 오류:', error);
-    return { 
-      success: false, 
-      error: '프로필 업데이트 중 오류가 발생했습니다.' 
-    };
-  }
+  });
 }

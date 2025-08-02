@@ -1,9 +1,7 @@
-
 'use server';
 
 import { z } from 'zod';
-import { firestore } from '@/lib/firebase/admin';
-import { FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { getFirestore, getFieldValue, safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import type { SavedReading, SavedReadingCard } from '@/types';
 import { findCardById } from '@/data/all-tarot-cards';
 import { SaveReadingInputSchema, type SaveReadingInput } from '@/types';
@@ -41,16 +39,20 @@ export async function saveUserReading(
       spreadNumCards,
       drawnCards: drawnCardsWithPosition, // Saves the simplified, validated card info with position fallback
       interpretationText,
-      createdAt: FieldValue.serverTimestamp(),
+      createdAt: getFieldValue().serverTimestamp(),
     };
 
-    if (!firestore) {
-      return { success: false, error: 'Firebase 서비스를 사용할 수 없습니다.' };
+    const result = await safeFirestoreOperation(async (firestore) => {
+      const docRef = await firestore.collection('userReadings').add(readingData);
+      console.log(`User reading saved successfully with ID: ${docRef.id} for user ${userId}.`);
+      return docRef.id;
+    });
+
+    if (!result.success) {
+      return { success: false, error: result.error };
     }
 
-    const docRef = await firestore.collection('userReadings').add(readingData);
-    console.log(`User reading saved successfully with ID: ${docRef.id} for user ${userId}.`);
-    return { success: true, readingId: docRef.id };
+    return { success: true, readingId: result.data };
 
   } catch (error) {
     console.error('🚨 서버 액션 저장 실패:', error instanceof Error ? error.message : error);
@@ -80,7 +82,7 @@ export async function getUserReadings(userId: string): Promise<SavedReading[]> {
   
   console.log(`🔍 getUserReadings called with userId: ${userId}`);
   
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const snapshot = await firestore
       .collection('userReadings')
       .where('userId', '==', userId)
@@ -134,18 +136,22 @@ export async function getUserReadings(userId: string): Promise<SavedReading[]> {
         createdAt: createdAt,
       } as SavedReading;
     });
-  } catch (error) {
-    console.error(`Error fetching readings for user ${userId}:`, error);
-    // Instead of throwing, return an empty array to prevent UI crash.
+  });
+
+  if (!result.success) {
+    console.error(`Error fetching readings for user ${userId}:`, result.error);
     return [];
   }
+
+  return result.data;
 }
 
 export async function deleteUserReading(userId: string, readingId: string): Promise<{ success: boolean; error?: string }> {
   if (!userId || !readingId) {
     return { success: false, error: '사용자 ID 또는 리딩 ID가 제공되지 않았습니다.' };
   }
-  try {
+  
+  return safeFirestoreOperation(async (firestore) => {
     const readingRef = firestore.collection('userReadings').doc(readingId);
     const doc = await readingRef.get();
 
@@ -160,8 +166,5 @@ export async function deleteUserReading(userId: string, readingId: string): Prom
     await readingRef.delete();
     console.log(`User reading ${readingId} deleted successfully for user ${userId}.`);
     return { success: true };
-  } catch (error) {
-    console.error('Error deleting user reading from Firestore:', error);
-    return { success: false, error: error instanceof Error ? error.message : '리딩 삭제 중 알 수 없는 오류가 발생했습니다.' };
-  }
+  });
 }

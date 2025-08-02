@@ -2,25 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { 
-  collection, 
-  doc, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  getDoc, 
-  getDocs, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
-  startAfter, 
-  increment,
-  runTransaction,
-  Timestamp,
-  DocumentSnapshot
-} from 'firebase/firestore';
-import { firestore as db } from '@/lib/firebase/admin';
+import { getFirestore, getFieldValue, safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import { 
   ReadingExperience, 
   ReadingExperienceFormData, 
@@ -36,504 +18,439 @@ export async function createReadingExperience(
   formData: ReadingExperienceFormData,
   userId: string
 ) {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     // 폼 데이터 검증
     const validatedData = ReadingExperienceFormSchema.parse(formData);
     
     // 사용자 정보 조회
-    if (!db) {
-      throw new Error('Firestore is not initialized');
-    }
-    const userDoc = await getDoc(doc(db, 'users', userId));
-    if (!userDoc.exists()) {
+    const userDoc = await firestore.collection('users').doc(userId).get();
+    if (!userDoc.exists) {
       throw new Error('사용자를 찾을 수 없습니다.');
     }
-
     const userData = userDoc.data() as UserProfile;
     
-    // 리딩 경험 데이터 생성
-    const experienceData = {
+    // 리딩 경험 문서 생성
+    const readingExperienceData = {
+      userId,
       title: validatedData.title,
-      content: validatedData.content,
-      authorId: userId,
-      spreadType: validatedData.spreadType,
+      date: validatedData.date,
+      spread: validatedData.spread,
+      question: validatedData.question,
+      interpretation: validatedData.interpretation,
+      reflection: validatedData.reflection,
+      isPublic: validatedData.isPublic,
       cards: validatedData.cards,
-      tags: validatedData.tags,
-      likes: 0,
-      commentsCount: 0,
-      views: 0,
-      isPublished: true,
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now()
+      
+      // 사용자 정보
+      author: {
+        id: userId,
+        name: userData.name,
+        avatar: userData.avatar || null,
+        level: userData.level || 'beginner'
+      },
+      
+      // 메타데이터
+      viewCount: 0,
+      likeCount: 0,
+      commentCount: 0,
+      createdAt: getFieldValue().serverTimestamp(),
+      updatedAt: getFieldValue().serverTimestamp()
     };
-
-    // Firestore에 저장
-    if (!db) {
-      throw new Error('Firestore is not initialized');
-    }
-    const docRef = await addDoc(collection(db, 'reading-experiences'), experienceData);
     
-    // 사용자 게시글 수 증가
-    if (!db) {
-      throw new Error('Firestore is not initialized');
-    }
-    await runTransaction(db, async (transaction) => {
-      const userRef = doc(db, 'users', userId);
-      transaction.update(userRef, {
-        postsCount: increment(1),
-        updatedAt: Timestamp.now()
-      });
+    const docRef = await firestore.collection('readingExperiences').add(readingExperienceData);
+    
+    // 사용자의 리딩 경험 수 증가
+    await firestore.collection('users').doc(userId).update({
+      'stats.readingCount': getFieldValue().increment(1),
+      updatedAt: getFieldValue().serverTimestamp()
     });
+    
+    return docRef.id;
+  });
 
-    revalidatePath('/community/reading-share');
-    return { success: true, id: docRef.id };
-  } catch (error) {
-    console.error('리딩 경험 생성 오류:', error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: '알 수 없는 오류가 발생했습니다.' };
+  if (!result.success) {
+    throw new Error(result.error);
   }
+
+  revalidatePath('/community/reading-share');
+  redirect(`/community/reading-share/${result.data}`);
 }
 
 // 리딩 경험 목록 조회
 export async function getReadingExperiences(
-  pageSize: number = 20,
-  lastDoc?: DocumentSnapshot,
-  sortBy: 'latest' | 'popular' | 'likes' | 'comments' = 'latest',
-  filterTag?: string
+  pageSize: number = 12,
+  lastDocId?: string
 ) {
-  try {
-    // 인덱스 문제 해결을 위해 단순화된 쿼리 사용
-    let q = query(collection(db, 'reading-experiences'));
+  return safeFirestoreOperation(async (firestore) => {
+    const readingExperiencesRef = firestore.collection('readingExperiences');
+    let q = readingExperiencesRef
+      .where('isPublic', '==', true)
+      .orderBy('createdAt', 'desc')
+      .limit(pageSize + 1); // 다음 페이지 여부 확인을 위해 +1
 
-    // 페이지네이션
-    if (lastDoc) {
-      q = query(q, startAfter(lastDoc));
+    if (lastDocId) {
+      const lastDoc = await readingExperiencesRef.doc(lastDocId).get();
+      if (lastDoc.exists) {
+        q = q.startAfter(lastDoc);
+      }
     }
-    q = query(q, limit(pageSize * 2)); // 필터링을 고려하여 더 많이 가져옴
 
-    const querySnapshot = await getDocs(q);
+    const snapshot = await q.get();
     const experiences: ReadingExperience[] = [];
-    const authors: { [key: string]: UserProfile } = {};
-
-    // 작성자 정보를 미리 조회
-    const authorIds = new Set<string>();
-    querySnapshot.docs.forEach(doc => {
-      const data = doc.data();
-      authorIds.add(data.authorId);
-    });
-
-    // 작성자 정보 배치 조회
-    const authorPromises = Array.from(authorIds).map(async (authorId) => {
-      const userDoc = await getDoc(doc(db, 'users', authorId));
-      if (userDoc.exists()) {
-        authors[authorId] = userDoc.data() as UserProfile;
+    
+    snapshot.forEach((doc) => {
+      if (experiences.length < pageSize) {
+        const data = doc.data();
+        experiences.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date()
+        } as ReadingExperience);
       }
     });
-    await Promise.all(authorPromises);
-
-    // 경험 데이터 구성
-    querySnapshot.docs.forEach(docSnapshot => {
-      const data = docSnapshot.data();
-      const author = authors[data.authorId];
-      
-      experiences.push({
-        id: docSnapshot.id,
-        title: data.title,
-        content: data.content,
-        authorId: data.authorId,
-        author: author ? {
-          id: author.id,
-          name: author.name,
-          avatar: author.avatar,
-          level: author.level
-        } : undefined,
-        spreadType: data.spreadType,
-        cards: data.cards || [],
-        tags: data.tags || [],
-        likes: data.likes || 0,
-        commentsCount: data.commentsCount || 0,
-        views: data.views || 0,
-        isPublished: data.isPublished,
-        createdAt: data.createdAt.toDate(),
-        updatedAt: data.updatedAt.toDate()
-      });
-    });
-
-    // 클라이언트 사이드에서 필터링
-    let filteredExperiences = experiences.filter(exp => exp.isPublished);
     
-    // 태그 필터링
-    if (filterTag) {
-      filteredExperiences = filteredExperiences.filter(exp => 
-        exp.tags.includes(filterTag)
-      );
-    }
-
-    // 정렬
-    switch (sortBy) {
-      case 'popular':
-        filteredExperiences.sort((a, b) => (b.views || 0) - (a.views || 0));
-        break;
-      case 'likes':
-        filteredExperiences.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-        break;
-      case 'comments':
-        filteredExperiences.sort((a, b) => (b.commentsCount || 0) - (a.commentsCount || 0));
-        break;
-      default: // latest
-        filteredExperiences.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-    }
-
-    // 페이지 크기만큼 자르기
-    const paginatedExperiences = filteredExperiences.slice(0, pageSize);
-
+    const hasMore = snapshot.size > pageSize;
+    const nextCursor = hasMore && experiences.length > 0 
+      ? experiences[experiences.length - 1].id 
+      : null;
+    
     return {
-      success: true,
-      experiences: paginatedExperiences,
-      lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null,
-      hasMore: filteredExperiences.length > pageSize
+      experiences,
+      hasMore,
+      nextCursor
     };
-  } catch (error) {
-    console.error('리딩 경험 목록 조회 오류:', error);
-    return { success: false, error: '데이터를 불러오는데 실패했습니다.' };
-  }
+  });
 }
 
 // 특정 리딩 경험 조회
-export async function getReadingExperience(experienceId: string, userId?: string) {
-  try {
-    const docRef = doc(db, 'reading-experiences', experienceId);
-    const docSnapshot = await getDoc(docRef);
+export async function getReadingExperience(id: string, incrementView = false) {
+  return safeFirestoreOperation(async (firestore) => {
+    const docRef = firestore.collection('readingExperiences').doc(id);
     
-    if (!docSnapshot.exists()) {
-      return { success: false, error: '게시글을 찾을 수 없습니다.' };
-    }
-
-    const data = docSnapshot.data();
-    
-    // 조회수 증가 (작성자 본인 제외)
-    if (userId && userId !== data.authorId) {
-      await updateDoc(docRef, {
-        views: increment(1),
-        updatedAt: Timestamp.now()
+    if (incrementView) {
+      // 트랜잭션으로 조회수 증가와 문서 조회를 동시에 처리
+      const result = await firestore.runTransaction(async (transaction) => {
+        const doc = await transaction.get(docRef);
+        
+        if (!doc.exists) {
+          throw new Error('리딩 경험을 찾을 수 없습니다.');
+        }
+        
+        transaction.update(docRef, {
+          viewCount: getFieldValue().increment(1)
+        });
+        
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          viewCount: (data?.viewCount || 0) + 1, // 증가된 값 반영
+          createdAt: data?.createdAt?.toDate() || new Date(),
+          updatedAt: data?.updatedAt?.toDate() || new Date()
+        } as ReadingExperience;
       });
-    }
-
-    // 작성자 정보 조회
-    const userDoc = await getDoc(doc(db, 'users', data.authorId));
-    let author = undefined;
-    if (userDoc.exists()) {
-      const userData = userDoc.data() as UserProfile;
-      author = {
-        id: userData.id,
-        name: userData.name,
-        avatar: userData.avatar,
-        level: userData.level
-      };
-    }
-
-    // 사용자별 좋아요/북마크 상태 조회
-    let isLiked = false;
-    let isBookmarked = false;
-    
-    if (userId) {
-      const [likeQuery, bookmarkQuery] = await Promise.all([
-        getDocs(query(
-          collection(db, 'reading-likes'),
-          where('postId', '==', experienceId),
-          where('userId', '==', userId)
-        )),
-        getDocs(query(
-          collection(db, 'bookmarks'),
-          where('postId', '==', experienceId),
-          where('userId', '==', userId)
-        ))
-      ]);
       
-      isLiked = !likeQuery.empty;
-      isBookmarked = !bookmarkQuery.empty;
+      return result;
+    } else {
+      // 단순 조회
+      const doc = await docRef.get();
+      
+      if (!doc.exists) {
+        throw new Error('리딩 경험을 찾을 수 없습니다.');
+      }
+      
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data?.createdAt?.toDate() || new Date(),
+        updatedAt: data?.updatedAt?.toDate() || new Date()
+      } as ReadingExperience;
+    }
+  });
+}
+
+// 사용자의 리딩 경험 목록 조회
+export async function getUserReadingExperiences(
+  userId: string,
+  pageSize: number = 12,
+  lastDocId?: string
+) {
+  return safeFirestoreOperation(async (firestore) => {
+    const readingExperiencesRef = firestore.collection('readingExperiences');
+    let q = readingExperiencesRef
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .limit(pageSize + 1);
+
+    if (lastDocId) {
+      const lastDoc = await readingExperiencesRef.doc(lastDocId).get();
+      if (lastDoc.exists) {
+        q = q.startAfter(lastDoc);
+      }
     }
 
-    const experience: ReadingExperience & { isLiked?: boolean, isBookmarked?: boolean } = {
-      id: docSnapshot.id,
-      title: data.title,
-      content: data.content,
-      authorId: data.authorId,
-      author,
-      spreadType: data.spreadType,
-      cards: data.cards || [],
-      tags: data.tags || [],
-      likes: data.likes || 0,
-      commentsCount: data.commentsCount || 0,
-      views: data.views || 0,
-      isPublished: data.isPublished,
-      createdAt: data.createdAt.toDate(),
-      updatedAt: data.updatedAt.toDate(),
-      isLiked,
-      isBookmarked
+    const snapshot = await q.get();
+    const experiences: ReadingExperience[] = [];
+    
+    snapshot.forEach((doc) => {
+      if (experiences.length < pageSize) {
+        const data = doc.data();
+        experiences.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date()
+        } as ReadingExperience);
+      }
+    });
+    
+    const hasMore = snapshot.size > pageSize;
+    const nextCursor = hasMore && experiences.length > 0 
+      ? experiences[experiences.length - 1].id 
+      : null;
+    
+    return {
+      experiences,
+      hasMore,
+      nextCursor
     };
+  });
+}
 
-    return { success: true, experience };
-  } catch (error) {
-    console.error('리딩 경험 조회 오류:', error);
-    return { success: false, error: '게시글을 불러오는데 실패했습니다.' };
+// 리딩 경험 업데이트
+export async function updateReadingExperience(
+  id: string,
+  userId: string,
+  formData: Partial<ReadingExperienceFormData>
+) {
+  const result = await safeFirestoreOperation(async (firestore) => {
+    const docRef = firestore.collection('readingExperiences').doc(id);
+    const doc = await docRef.get();
+    
+    if (!doc.exists) {
+      throw new Error('리딩 경험을 찾을 수 없습니다.');
+    }
+    
+    const data = doc.data();
+    if (data?.userId !== userId) {
+      throw new Error('수정 권한이 없습니다.');
+    }
+    
+    // 검증된 데이터만 업데이트
+    const updateData: any = {
+      updatedAt: getFieldValue().serverTimestamp()
+    };
+    
+    if (formData.title !== undefined) updateData.title = formData.title;
+    if (formData.interpretation !== undefined) updateData.interpretation = formData.interpretation;
+    if (formData.reflection !== undefined) updateData.reflection = formData.reflection;
+    if (formData.isPublic !== undefined) updateData.isPublic = formData.isPublic;
+    
+    await docRef.update(updateData);
+    return id;
+  });
+
+  if (!result.success) {
+    throw new Error(result.error);
   }
+
+  revalidatePath(`/community/reading-share/${id}`);
+  return result.data;
+}
+
+// 리딩 경험 삭제
+export async function deleteReadingExperience(id: string, userId: string) {
+  const result = await safeFirestoreOperation(async (firestore) => {
+    const docRef = firestore.collection('readingExperiences').doc(id);
+    
+    // 트랜잭션으로 삭제 처리
+    await firestore.runTransaction(async (transaction) => {
+      const doc = await transaction.get(docRef);
+      
+      if (!doc.exists) {
+        throw new Error('리딩 경험을 찾을 수 없습니다.');
+      }
+      
+      const data = doc.data();
+      if (data?.userId !== userId) {
+        throw new Error('삭제 권한이 없습니다.');
+      }
+      
+      // 관련 댓글 삭제
+      const commentsSnapshot = await firestore
+        .collection('readingComments')
+        .where('readingExperienceId', '==', id)
+        .get();
+      
+      commentsSnapshot.forEach((commentDoc) => {
+        transaction.delete(commentDoc.ref);
+      });
+      
+      // 리딩 경험 삭제
+      transaction.delete(docRef);
+      
+      // 사용자의 리딩 경험 수 감소
+      const userRef = firestore.collection('users').doc(userId);
+      transaction.update(userRef, {
+        'stats.readingCount': getFieldValue().increment(-1),
+        updatedAt: getFieldValue().serverTimestamp()
+      });
+    });
+    
+    return true;
+  });
+
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+
+  revalidatePath('/community/reading-share');
+  redirect('/community/reading-share');
 }
 
 // 좋아요 토글
-export async function toggleLike(experienceId: string, userId: string) {
-  try {
-    const result = await runTransaction(db, async (transaction) => {
-      const experienceRef = doc(db, 'reading-experiences', experienceId);
-      const experienceDoc = await transaction.get(experienceRef);
+export async function toggleLike(readingExperienceId: string, userId: string) {
+  return safeFirestoreOperation(async (firestore) => {
+    const likeRef = firestore
+      .collection('readingLikes')
+      .doc(`${readingExperienceId}_${userId}`);
+    
+    const result = await firestore.runTransaction(async (transaction) => {
+      const likeDoc = await transaction.get(likeRef);
+      const experienceRef = firestore.collection('readingExperiences').doc(readingExperienceId);
       
-      if (!experienceDoc.exists()) {
-        throw new Error('게시글을 찾을 수 없습니다.');
-      }
-
-      // 기존 좋아요 확인
-      const likeQuery = query(
-        collection(db, 'reading-likes'),
-        where('postId', '==', experienceId),
-        where('userId', '==', userId)
-      );
-      const likeSnapshot = await getDocs(likeQuery);
-
-      if (likeSnapshot.empty) {
+      if (likeDoc.exists) {
+        // 좋아요 취소
+        transaction.delete(likeRef);
+        transaction.update(experienceRef, {
+          likeCount: getFieldValue().increment(-1)
+        });
+        return false;
+      } else {
         // 좋아요 추가
-        const likeRef = doc(collection(db, 'reading-likes'));
         transaction.set(likeRef, {
-          postId: experienceId,
-          userId: userId,
-          createdAt: Timestamp.now()
+          userId,
+          readingExperienceId,
+          createdAt: getFieldValue().serverTimestamp()
         });
-        
-        // 좋아요 수 증가
         transaction.update(experienceRef, {
-          likes: increment(1),
-          updatedAt: Timestamp.now()
+          likeCount: getFieldValue().increment(1)
         });
-        
-        return { isLiked: true };
-      } else {
-        // 좋아요 제거
-        const likeDoc = likeSnapshot.docs[0];
-        transaction.delete(doc(db, 'reading-likes', likeDoc.id));
-        
-        // 좋아요 수 감소
-        transaction.update(experienceRef, {
-          likes: increment(-1),
-          updatedAt: Timestamp.now()
-        });
-        
-        return { isLiked: false };
+        return true;
       }
     });
-
-    revalidatePath(`/community/reading-share/${experienceId}`);
-    return { success: true, ...result };
-  } catch (error) {
-    console.error('좋아요 토글 오류:', error);
-    return { success: false, error: '좋아요 처리에 실패했습니다.' };
-  }
-}
-
-// 북마크 토글
-export async function toggleBookmark(experienceId: string, userId: string) {
-  try {
-    const result = await runTransaction(db, async (transaction) => {
-      // 기존 북마크 확인
-      const bookmarkQuery = query(
-        collection(db, 'bookmarks'),
-        where('postId', '==', experienceId),
-        where('userId', '==', userId)
-      );
-      const bookmarkSnapshot = await getDocs(bookmarkQuery);
-
-      if (bookmarkSnapshot.empty) {
-        // 북마크 추가
-        const bookmarkRef = doc(collection(db, 'bookmarks'));
-        transaction.set(bookmarkRef, {
-          postId: experienceId,
-          userId: userId,
-          createdAt: Timestamp.now()
-        });
-        
-        return { isBookmarked: true };
-      } else {
-        // 북마크 제거
-        const bookmarkDoc = bookmarkSnapshot.docs[0];
-        transaction.delete(doc(db, 'bookmarks', bookmarkDoc.id));
-        
-        return { isBookmarked: false };
-      }
-    });
-
-    return { success: true, ...result };
-  } catch (error) {
-    console.error('북마크 토글 오류:', error);
-    return { success: false, error: '북마크 처리에 실패했습니다.' };
-  }
+    
+    revalidatePath(`/community/reading-share/${readingExperienceId}`);
+    return result;
+  });
 }
 
 // 댓글 작성
 export async function createComment(
-  experienceId: string,
-  formData: CommentFormData,
-  userId: string
+  readingExperienceId: string,
+  userId: string,
+  formData: CommentFormData
 ) {
-  try {
+  return safeFirestoreOperation(async (firestore) => {
+    // 폼 데이터 검증
     const validatedData = CommentFormSchema.parse(formData);
     
-    const result = await runTransaction(db, async (transaction) => {
-      // 댓글 추가
-      const commentRef = doc(collection(db, 'reading-comments'));
-      transaction.set(commentRef, {
-        postId: experienceId,
-        authorId: userId,
-        content: validatedData.content,
-        likes: 0,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
-      });
-
-      // 게시글 댓글 수 증가
-      const experienceRef = doc(db, 'reading-experiences', experienceId);
+    // 사용자 정보 조회
+    const userDoc = await firestore.collection('users').doc(userId).get();
+    if (!userDoc.exists) {
+      throw new Error('사용자를 찾을 수 없습니다.');
+    }
+    const userData = userDoc.data() as UserProfile;
+    
+    // 댓글 생성
+    const commentData = {
+      readingExperienceId,
+      userId,
+      content: validatedData.content,
+      author: {
+        id: userId,
+        name: userData.name,
+        avatar: userData.avatar || null,
+        level: userData.level || 'beginner'
+      },
+      createdAt: getFieldValue().serverTimestamp(),
+      updatedAt: getFieldValue().serverTimestamp()
+    };
+    
+    const result = await firestore.runTransaction(async (transaction) => {
+      const commentRef = firestore.collection('readingComments').doc();
+      const experienceRef = firestore.collection('readingExperiences').doc(readingExperienceId);
+      
+      transaction.set(commentRef, commentData);
       transaction.update(experienceRef, {
-        commentsCount: increment(1),
-        updatedAt: Timestamp.now()
+        commentCount: getFieldValue().increment(1)
       });
-
-      return { commentId: commentRef.id };
+      
+      return commentRef.id;
     });
-
-    revalidatePath(`/community/reading-share/${experienceId}`);
-    return { success: true, ...result };
-  } catch (error) {
-    console.error('댓글 작성 오류:', error);
-    return { success: false, error: '댓글 작성에 실패했습니다.' };
-  }
+    
+    revalidatePath(`/community/reading-share/${readingExperienceId}`);
+    return result;
+  });
 }
 
 // 댓글 목록 조회
-export async function getComments(experienceId: string) {
-  try {
-    const q = query(
-      collection(db, 'reading-comments'),
-      where('postId', '==', experienceId),
-      orderBy('createdAt', 'asc')
-    );
-
-    const querySnapshot = await getDocs(q);
+export async function getComments(readingExperienceId: string) {
+  return safeFirestoreOperation(async (firestore) => {
+    const snapshot = await firestore
+      .collection('readingComments')
+      .where('readingExperienceId', '==', readingExperienceId)
+      .orderBy('createdAt', 'asc')
+      .get();
+    
     const comments: ReadingComment[] = [];
-    const authors: { [key: string]: UserProfile } = {};
-
-    // 작성자 정보를 미리 조회
-    const authorIds = new Set<string>();
-    querySnapshot.docs.forEach(doc => {
+    snapshot.forEach((doc) => {
       const data = doc.data();
-      authorIds.add(data.authorId);
-    });
-
-    // 작성자 정보 배치 조회
-    const authorPromises = Array.from(authorIds).map(async (authorId) => {
-      const userDoc = await getDoc(doc(db, 'users', authorId));
-      if (userDoc.exists()) {
-        authors[authorId] = userDoc.data() as UserProfile;
-      }
-    });
-    await Promise.all(authorPromises);
-
-    // 댓글 데이터 구성
-    querySnapshot.docs.forEach(docSnapshot => {
-      const data = docSnapshot.data();
-      const author = authors[data.authorId];
-      
       comments.push({
-        id: docSnapshot.id,
-        postId: data.postId,
-        authorId: data.authorId,
-        author: author ? {
-          id: author.id,
-          name: author.name,
-          avatar: author.avatar
-        } : undefined,
-        content: data.content,
-        parentId: data.parentId,
-        likes: data.likes || 0,
-        createdAt: data.createdAt.toDate(),
-        updatedAt: data.updatedAt.toDate()
-      });
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date()
+      } as ReadingComment);
     });
-
-    return { success: true, comments };
-  } catch (error) {
-    console.error('댓글 조회 오류:', error);
-    return { success: false, error: '댓글을 불러오는데 실패했습니다.' };
-  }
+    
+    return comments;
+  });
 }
 
-// 리딩 경험 삭제
-export async function deleteReadingExperience(experienceId: string, userId: string) {
-  try {
-    const result = await runTransaction(db, async (transaction) => {
-      const experienceRef = doc(db, 'reading-experiences', experienceId);
-      const experienceDoc = await transaction.get(experienceRef);
+// 댓글 삭제
+export async function deleteComment(
+  commentId: string,
+  readingExperienceId: string,
+  userId: string
+) {
+  return safeFirestoreOperation(async (firestore) => {
+    await firestore.runTransaction(async (transaction) => {
+      const commentRef = firestore.collection('readingComments').doc(commentId);
+      const commentDoc = await transaction.get(commentRef);
       
-      if (!experienceDoc.exists()) {
-        throw new Error('게시글을 찾을 수 없습니다.');
+      if (!commentDoc.exists) {
+        throw new Error('댓글을 찾을 수 없습니다.');
       }
-
-      const data = experienceDoc.data();
       
-      // 작성자 확인
-      if (data.authorId !== userId) {
+      const data = commentDoc.data();
+      if (data?.userId !== userId) {
         throw new Error('삭제 권한이 없습니다.');
       }
-
-      // 게시글 삭제
-      transaction.delete(experienceRef);
-
-      // 사용자 게시글 수 감소
-      const userRef = doc(db, 'users', userId);
-      transaction.update(userRef, {
-        postsCount: increment(-1),
-        updatedAt: Timestamp.now()
+      
+      // 댓글 삭제
+      transaction.delete(commentRef);
+      
+      // 리딩 경험의 댓글 수 감소
+      const experienceRef = firestore.collection('readingExperiences').doc(readingExperienceId);
+      transaction.update(experienceRef, {
+        commentCount: getFieldValue().increment(-1)
       });
-
-      return { success: true };
-    });
-
-    // 관련 데이터 정리 (별도 트랜잭션으로)
-    const [likesSnapshot, commentsSnapshot, bookmarksSnapshot] = await Promise.all([
-      getDocs(query(collection(db, 'reading-likes'), where('postId', '==', experienceId))),
-      getDocs(query(collection(db, 'reading-comments'), where('postId', '==', experienceId))),
-      getDocs(query(collection(db, 'bookmarks'), where('postId', '==', experienceId)))
-    ]);
-
-    // 관련 데이터 삭제
-    const deletePromises: Promise<void>[] = [];
-    
-    likesSnapshot.docs.forEach(doc => {
-      deletePromises.push(deleteDoc(doc.ref));
     });
     
-    commentsSnapshot.docs.forEach(doc => {
-      deletePromises.push(deleteDoc(doc.ref));
-    });
-    
-    bookmarksSnapshot.docs.forEach(doc => {
-      deletePromises.push(deleteDoc(doc.ref));
-    });
-
-    await Promise.all(deletePromises);
-
-    revalidatePath('/community/reading-share');
-    redirect('/community/reading-share');
-  } catch (error) {
-    console.error('리딩 경험 삭제 오류:', error);
-    return { success: false, error: '게시글 삭제에 실패했습니다.' };
-  }
+    revalidatePath(`/community/reading-share/${readingExperienceId}`);
+    return true;
+  });
 }
