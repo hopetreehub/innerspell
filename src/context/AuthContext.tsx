@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let isMounted = true;
-    let unsubscribe: (() => void) | undefined;
+    let unsubscribe: (() => void) | undefined = undefined;
 
     // 🔥 ALWAYS USE REAL FIREBASE - Mock Auth completely removed
     

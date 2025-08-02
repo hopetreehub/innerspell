@@ -60,7 +60,7 @@ export async function getAllTarotGuidelines(forceRefresh = false): Promise<Tarot
       return guidelinesCache;
     }
     
-    let customGuidelines: TarotGuideline[] = [];
+    const customGuidelines: TarotGuideline[] = [];
     
     // Firebase Admin이 사용 가능할 때만 Firestore에서 데이터 가져오기
     if (isFirebaseAdminAvailable() && firestore) {

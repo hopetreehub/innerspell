@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     });
     
     // Skip active models test to avoid dependency issues
-    let activeModels: any[] = [];
+    const activeModels: any[] = [];
     console.log('[DEBUG] Skipping getActiveAIModels test to avoid dependency issues');
     
     // Test prompt config service

@@ -199,7 +199,7 @@ async function fetchRealtimeStats() {
     let tarotCount = 0;
     let dreamCount = 0;
     const responseTimeSum = 0;
-    let errorCount = 0;
+    const errorCount = 0;
 
     recentUsageSnapshot.forEach(doc => {
       const data = doc.data();

@@ -305,7 +305,7 @@ export function TarotGuidelineManagement({ className }: TarotGuidelineManagement
               </div>
               {spreads.length === 0 && (
                 <div className="mt-2 text-xs text-red-600 dark:text-red-400">
-                  ⚠️ 데이터가 로드되지 않았습니다. "강제 새로고침" 버튼을 클릭해보세요.
+                  ⚠️ 데이터가 로드되지 않았습니다. &quot;강제 새로고침&quot; 버튼을 클릭해보세요.
                 </div>
               )}
             </CardContent>

@@ -40,19 +40,19 @@ interface RealTimeAlertsProps {
   }>;
 }
 
+// 임계값 설정 - 컴포넌트 외부에 정의하여 재생성 방지
+const THRESHOLDS = {
+  responseTime: 2000, // 2초
+  errorRate: 5, // 5%
+  memoryUsage: 80, // 80%
+  cpuUsage: 80, // 80%
+  maxActiveUsers: 100
+};
+
 export function RealTimeAlerts({ stats, recentEvents }: RealTimeAlertsProps) {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [alertsEnabled, setAlertsEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(false);
-
-  // 임계값 설정
-  const thresholds = {
-    responseTime: 2000, // 2초
-    errorRate: 5, // 5%
-    memoryUsage: 80, // 80%
-    cpuUsage: 80, // 80%
-    maxActiveUsers: 100
-  };
 
   // 통계 기반 알림 생성
   useEffect(() => {
@@ -61,12 +61,12 @@ export function RealTimeAlerts({ stats, recentEvents }: RealTimeAlertsProps) {
     const newAlerts: AlertData[] = [];
 
     // 응답 시간 알림
-    if (stats.averageResponseTime > thresholds.responseTime) {
+    if (stats.averageResponseTime > THRESHOLDS.responseTime) {
       newAlerts.push({
         id: `response-time-${Date.now()}`,
         type: 'warning',
         title: '응답 시간 지연',
-        message: `평균 응답 시간이 ${Math.round(stats.averageResponseTime)}ms로 임계값(${thresholds.responseTime}ms)을 초과했습니다.`,
+        message: `평균 응답 시간이 ${Math.round(stats.averageResponseTime)}ms로 임계값(${THRESHOLDS.responseTime}ms)을 초과했습니다.`,
         timestamp: new Date(),
         dismissed: false,
         data: { responseTime: stats.averageResponseTime }
@@ -74,12 +74,12 @@ export function RealTimeAlerts({ stats, recentEvents }: RealTimeAlertsProps) {
     }
 
     // 오류율 알림
-    if (stats.errorRate > thresholds.errorRate) {
+    if (stats.errorRate > THRESHOLDS.errorRate) {
       newAlerts.push({
         id: `error-rate-${Date.now()}`,
         type: 'error',
         title: '높은 오류율 감지',
-        message: `오류율이 ${stats.errorRate.toFixed(2)}%로 임계값(${thresholds.errorRate}%)을 초과했습니다.`,
+        message: `오류율이 ${stats.errorRate.toFixed(2)}%로 임계값(${THRESHOLDS.errorRate}%)을 초과했습니다.`,
         timestamp: new Date(),
         dismissed: false,
         data: { errorRate: stats.errorRate }
@@ -87,12 +87,12 @@ export function RealTimeAlerts({ stats, recentEvents }: RealTimeAlertsProps) {
     }
 
     // 메모리 사용량 알림
-    if (stats.memoryUsage && stats.memoryUsage > thresholds.memoryUsage) {
+    if (stats.memoryUsage && stats.memoryUsage > THRESHOLDS.memoryUsage) {
       newAlerts.push({
         id: `memory-${Date.now()}`,
         type: 'warning',
         title: '높은 메모리 사용량',
-        message: `메모리 사용량이 ${Math.round(stats.memoryUsage)}%로 임계값(${thresholds.memoryUsage}%)을 초과했습니다.`,
+        message: `메모리 사용량이 ${Math.round(stats.memoryUsage)}%로 임계값(${THRESHOLDS.memoryUsage}%)을 초과했습니다.`,
         timestamp: new Date(),
         dismissed: false,
         data: { memoryUsage: stats.memoryUsage }
@@ -100,12 +100,12 @@ export function RealTimeAlerts({ stats, recentEvents }: RealTimeAlertsProps) {
     }
 
     // CPU 사용량 알림
-    if (stats.cpuUsage && stats.cpuUsage > thresholds.cpuUsage) {
+    if (stats.cpuUsage && stats.cpuUsage > THRESHOLDS.cpuUsage) {
       newAlerts.push({
         id: `cpu-${Date.now()}`,
         type: 'warning',
         title: '높은 CPU 사용량',
-        message: `CPU 사용량이 ${Math.round(stats.cpuUsage)}%로 임계값(${thresholds.cpuUsage}%)을 초과했습니다.`,
+        message: `CPU 사용량이 ${Math.round(stats.cpuUsage)}%로 임계값(${THRESHOLDS.cpuUsage}%)을 초과했습니다.`,
         timestamp: new Date(),
         dismissed: false,
         data: { cpuUsage: stats.cpuUsage }
@@ -113,7 +113,7 @@ export function RealTimeAlerts({ stats, recentEvents }: RealTimeAlertsProps) {
     }
 
     // 활성 사용자 수 알림
-    if (stats.totalActiveUsers > thresholds.maxActiveUsers) {
+    if (stats.totalActiveUsers > THRESHOLDS.maxActiveUsers) {
       newAlerts.push({
         id: `users-${Date.now()}`,
         type: 'info',
@@ -267,10 +267,10 @@ export function RealTimeAlerts({ stats, recentEvents }: RealTimeAlertsProps) {
         {alertsEnabled && (
           <CardContent>
             <div className="text-sm text-muted-foreground">
-              <p>• 응답 시간: {thresholds.responseTime}ms 초과 시 경고</p>
-              <p>• 오류율: {thresholds.errorRate}% 초과 시 경고</p>
-              <p>• 메모리/CPU: {thresholds.memoryUsage}% 초과 시 경고</p>
-              <p>• 활성 사용자: {thresholds.maxActiveUsers}명 초과 시 정보</p>
+              <p>• 응답 시간: {THRESHOLDS.responseTime}ms 초과 시 경고</p>
+              <p>• 오류율: {THRESHOLDS.errorRate}% 초과 시 경고</p>
+              <p>• 메모리/CPU: {THRESHOLDS.memoryUsage}% 초과 시 경고</p>
+              <p>• 활성 사용자: {THRESHOLDS.maxActiveUsers}명 초과 시 정보</p>
             </div>
           </CardContent>
         )}

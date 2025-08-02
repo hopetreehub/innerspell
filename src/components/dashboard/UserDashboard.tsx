@@ -270,7 +270,7 @@ export default function UserDashboard() {
                     🌟 주요 테마
                   </h4>
                   <p className="text-sm text-purple-700 dark:text-purple-300">
-                    "성장"과 "변화"가 이달의 핵심 키워드입니다. 
+                    &quot;성장&quot;과 &quot;변화&quot;가 이달의 핵심 키워드입니다. 
                     새로운 도전을 받아들일 준비가 되어 있는 시기입니다.
                   </p>
                 </div>

@@ -42,9 +42,9 @@ export function useComponentPreloader() {
       setLoadingStatus(prev => new Map(prev).set(componentId, 'loading'));
 
       try {
-        const module = await importFunction();
+        const importedModule = await importFunction();
         setLoadingStatus(prev => new Map(prev).set(componentId, 'loaded'));
-        return module;
+        return importedModule;
       } catch (error) {
         console.warn(`Failed to preload component ${componentId}:`, error);
         setLoadingStatus(prev => new Map(prev).set(componentId, 'error'));
