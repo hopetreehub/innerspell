@@ -74,6 +74,7 @@ const styleIdMapping: Record<string, string> = {
 };
 import { saveUserReading } from '@/actions/readingActions';
 import { shareReadingClient } from '@/lib/firebase/client-share';
+import { ShareGuideDialog } from './ShareGuideDialog';
 
 
 import Image from 'next/image';
@@ -154,6 +155,8 @@ export function TarotReadingClient() {
   const [isSavingReading, setIsSavingReading] = useState(false);
   const [readingJustSaved, setReadingJustSaved] = useState(false);
   const [isSharingReading, setIsSharingReading] = useState(false);
+  const [shareGuideOpen, setShareGuideOpen] = useState(false);
+  const [currentShareUrl, setCurrentShareUrl] = useState('');
 
 
   const { toast } = useToast();
@@ -623,10 +626,14 @@ export function TarotReadingClient() {
         // Copy the share URL to clipboard
         await navigator.clipboard.writeText(result.shareUrl);
         
+        // Store share URL and open guide dialog
+        setCurrentShareUrl(result.shareUrl);
+        setShareGuideOpen(true);
+        
         toast({
           title: '공유 링크 생성됨',
-          description: '리딩 공유 링크가 클립보드에 복사되었습니다. 30일간 유효합니다.',
-          duration: 5000,
+          description: '공유 가이드를 확인해주세요!',
+          duration: 3000,
         });
       } else {
         throw new Error(result.error || 'Failed to create share link');
@@ -1137,6 +1144,13 @@ export function TarotReadingClient() {
           </CardContent>
         </Card>
       )}
+
+      {/* Share Guide Dialog */}
+      <ShareGuideDialog 
+        isOpen={shareGuideOpen}
+        onClose={() => setShareGuideOpen(false)}
+        shareUrl={currentShareUrl}
+      />
 
     </div>
   );
