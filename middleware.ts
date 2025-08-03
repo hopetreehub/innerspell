@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { apiSecurityMiddleware } from '@/middleware/api-security';
 
-export function middleware(request: NextRequest) {
-  // 개발 환경에서는 모든 접근 허용
+export async function middleware(request: NextRequest) {
+  // Apply API security to all API routes first
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return await apiSecurityMiddleware(request);
+  }
+
+  // 개발 환경에서는 페이지 접근 모든 허용
   if (process.env.NODE_ENV === 'development') {
     return NextResponse.next();
   }
@@ -32,13 +38,13 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
+     * Match all request paths including API routes for security middleware
+     * Exclude only:
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
   ],
 };
