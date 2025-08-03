@@ -1,8 +1,12 @@
-import { firestore, db, FieldValue, auth, admin } from './admin';
+import { 
+  getFirestore as getFirestoreLazy, 
+  getAuth as getAuthLazy, 
+  getFieldValue as getFieldValueLazy,
+  admin 
+} from './admin-lazy';
 
 /**
- * Type-safe Firebase Admin SDK helpers with null checks
- * These helpers ensure Firebase services are initialized before use
+ * Type-safe Firebase Admin SDK helpers with proper async initialization
  */
 
 export class FirebaseNotInitializedError extends Error {
@@ -13,43 +17,54 @@ export class FirebaseNotInitializedError extends Error {
 }
 
 /**
- * Get Firestore instance with null check
- * @throws {FirebaseNotInitializedError} if Firestore is not initialized
+ * Get Firestore instance with initialization
+ * @returns Promise<Firestore> instance
  */
-export function getFirestore() {
-  if (!firestore) {
+export async function getFirestore() {
+  try {
+    return await getFirestoreLazy();
+  } catch (error) {
     throw new FirebaseNotInitializedError('Firestore');
   }
-  return firestore;
 }
 
 /**
- * Get Auth instance with null check
- * @throws {FirebaseNotInitializedError} if Auth is not initialized
+ * Get Auth instance with initialization
+ * @returns Promise<Auth> instance
  */
-export function getAuth() {
-  if (!auth) {
+export async function getAuth() {
+  try {
+    return await getAuthLazy();
+  } catch (error) {
     throw new FirebaseNotInitializedError('Auth');
   }
-  return auth;
 }
 
 /**
- * Get FieldValue with null check
- * @throws {FirebaseNotInitializedError} if FieldValue is not available
+ * Get FieldValue with initialization
+ * @returns Promise<FieldValue> instance
  */
-export function getFieldValue() {
-  if (!FieldValue) {
+export async function getFieldValue() {
+  try {
+    return await getFieldValueLazy();
+  } catch (error) {
     throw new FirebaseNotInitializedError('FieldValue');
   }
-  return FieldValue;
 }
 
 /**
  * Check if Firebase Admin is initialized
+ * This is now always async due to lazy initialization
  */
-export function isFirebaseInitialized() {
-  return firestore !== null && auth !== null && FieldValue !== null;
+export async function isFirebaseInitialized() {
+  try {
+    await getFirestoreLazy();
+    await getAuthLazy();
+    await getFieldValueLazy();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -60,7 +75,7 @@ export async function safeFirestoreOperation<T>(
   operation: (firestore: admin.firestore.Firestore) => Promise<T>
 ): Promise<{ success: true; data: T } | { success: false; error: string }> {
   try {
-    const fs = getFirestore();
+    const fs = await getFirestore();
     const data = await operation(fs);
     return { success: true, data };
   } catch (error) {
@@ -74,21 +89,30 @@ export async function safeFirestoreOperation<T>(
 }
 
 /**
- * Get a Firestore collection reference with null check
+ * Get a Firestore collection reference with initialization
  */
-export function getCollection(collectionPath: string) {
-  const fs = getFirestore();
+export async function getCollection(collectionPath: string) {
+  const fs = await getFirestore();
   return fs.collection(collectionPath);
 }
 
 /**
- * Get a Firestore document reference with null check
+ * Get a Firestore document reference with initialization
  */
-export function getDoc(collectionPath: string, docId: string) {
-  const fs = getFirestore();
+export async function getDoc(collectionPath: string, docId: string) {
+  const fs = await getFirestore();
   return fs.collection(collectionPath).doc(docId);
 }
 
 // Re-export types for convenience
 export type { admin };
 export { FirebaseFirestore } from 'firebase-admin/firestore';
+
+// Legacy synchronous exports - these will throw errors if used directly
+// They're kept for backward compatibility but should not be used
+export const firestore = null as any;
+export const db = null as any;
+export const FieldValue = null as any;
+export const auth = null as any;
+export const adminAuth = null as any;
+export const adminFirestore = null as any;

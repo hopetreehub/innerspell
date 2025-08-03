@@ -74,16 +74,20 @@ export function ShareGuideDialog({ isOpen, onClose, shareUrl }: ShareGuideDialog
         '2. 메시지 입력창을 길게 눌러 "붙여넣기"를 선택하세요',
         '3. 복사된 링크가 나타나면 전송 버튼을 누르세요',
       ],
+      where: '💬 메시지 입력창에 붙여넣기',
+      tip: '링크를 보내면 카드 이미지와 해석 내용이 미리보기로 표시됩니다'
     },
     {
       name: '인스타그램',
       icon: Instagram,
       color: 'bg-gradient-to-r from-purple-500 to-pink-500',
       guide: [
-        '1. 인스타그램 스토리나 프로필 편집으로 이동하세요',
-        '2. 링크 추가 옵션을 선택하세요',
-        '3. 복사된 링크를 붙여넣고 저장하세요',
+        '1. 인스타그램 프로필 → "프로필 편집" 클릭',
+        '2. "링크 추가" 또는 "웹사이트" 항목 찾기',
+        '3. 복사된 링크를 붙여넣고 "완료" 클릭',
       ],
+      where: '🔗 프로필 링크 섹션에 붙여넣기',
+      tip: '스토리에서는 "링크" 스티커를 사용하세요 (팔로워 1만 이상)'
     },
     {
       name: '페이스북',
@@ -94,6 +98,8 @@ export function ShareGuideDialog({ isOpen, onClose, shareUrl }: ShareGuideDialog
         '2. 게시물 작성창에 붙여넣기(Ctrl+V 또는 Cmd+V)',
         '3. 링크 미리보기가 나타나면 게시하기',
       ],
+      where: '📝 게시물 작성창에 붙여넣기',
+      tip: '링크가 자동으로 카드 형태로 변환되어 보기 좋게 표시됩니다'
     },
     {
       name: '트위터',
@@ -104,6 +110,8 @@ export function ShareGuideDialog({ isOpen, onClose, shareUrl }: ShareGuideDialog
         '2. 작성창에 붙여넣기(Ctrl+V 또는 Cmd+V)',
         '3. 원하는 메시지를 추가하고 트윗하기',
       ],
+      where: '✍️ 트윗 작성창에 붙여넣기',
+      tip: '해시태그 #타로 #InnerSpell을 추가하면 더 많은 사람들이 볼 수 있어요'
     },
   ];
 
@@ -174,13 +182,26 @@ export function ShareGuideDialog({ isOpen, onClose, shareUrl }: ShareGuideDialog
                     </div>
                     <h3 className="font-semibold">{sns.name}에 공유하기</h3>
                   </div>
-                  <ul className="space-y-2">
+                  
+                  {/* 붙여넣기 위치 강조 */}
+                  <div className="mb-3 p-2 bg-primary/10 rounded-md">
+                    <p className="text-sm font-medium text-primary">{sns.where}</p>
+                  </div>
+                  
+                  <ul className="space-y-2 mb-3">
                     {sns.guide.map((step, index) => (
                       <li key={index} className="text-sm text-muted-foreground">
                         {step}
                       </li>
                     ))}
                   </ul>
+                  
+                  {/* 추가 팁 */}
+                  <div className="pt-3 border-t">
+                    <p className="text-xs text-muted-foreground">
+                      <span className="font-medium">💡 Tip:</span> {sns.tip}
+                    </p>
+                  </div>
                 </Card>
               </TabsContent>
             ))}

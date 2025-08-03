@@ -32,6 +32,7 @@ export async function saveUserReading(
       position: card.position || `카드 ${index + 1}`
     }));
 
+    const FieldValue = await getFieldValue();
     const readingData = {
       userId,
       question,
@@ -39,7 +40,7 @@ export async function saveUserReading(
       spreadNumCards,
       drawnCards: drawnCardsWithPosition, // Saves the simplified, validated card info with position fallback
       interpretationText,
-      createdAt: getFieldValue().serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     };
 
     const result = await safeFirestoreOperation(async (firestore) => {
