@@ -96,20 +96,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // 🔥 ALWAYS USE REAL FIREBASE - Mock Auth completely removed
     
     if (!auth) {
-      console.warn("AuthProvider: Firebase auth is not initialized. Using development mode - setting loading to false immediately.");
+      console.warn("AuthProvider: Firebase auth is not initialized. Setting loading to false immediately.");
+      // Immediately set loading to false to prevent infinite loading
       setLoading(false);
       setUser(null);
       setFirebaseUser(null);
       return;
     }
 
-    // ⚡ 성능 최적화: 로딩 시간 단축 - 5초로 단축
+    // ⚡ 성능 최적화: 로딩 시간 단축 - 2초로 단축
     const maxWaitTimeout = setTimeout(() => {
       if (isMounted) {
         console.warn('🚨 AuthContext: Max wait timeout reached - forcing loading to false');
         setLoading(false);
       }
-    }, 5000);
+    }, 2000);
 
     console.log('🔥 AuthContext: Setting up onAuthStateChanged listener');
     

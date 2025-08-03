@@ -54,11 +54,12 @@ export default async function TarotCardPage({ params }: TarotCardPageProps) {
   );
 }
 
-// Disable static generation to prevent build timeout
-// Pages will be generated on-demand
-// export async function generateStaticParams() {
-//   return [];
-// }
+// Generate static params for all tarot cards
+export async function generateStaticParams() {
+  return allTarotCards.map((card) => ({
+    id: card.id,
+  }));
+}
 
 // 메타데이터 생성
 export async function generateMetadata({ params }: TarotCardPageProps) {

@@ -15,7 +15,6 @@ const baseNavItems = [
   { href: '/', label: '홈' },
   { href: '/reading', label: '타로리딩' },
   { href: '/tarot', label: '타로카드' },
-  { href: '/tarot/cards', label: '카드사전' },
   { href: '/dream-interpretation', label: '꿈해몽' },
   { href: '/blog', label: '블로그' },
   { href: '/community', label: '커뮤니티' },
