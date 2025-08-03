@@ -2,8 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { firestore } from '@/lib/firebase/admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import { getFirestore, getFieldValue } from '@/lib/firebase/admin-helpers';
 
 const NewsletterSubscriptionSchema = z.object({
   email: z.string().email({ message: '유효한 이메일 주소를 입력해주세요.' }),
@@ -15,9 +14,7 @@ export async function subscribeToNewsletter(
   formData: NewsletterSubscriptionFormData
 ): Promise<{ success: boolean; message: string }> {
   try {
-    if (!firestore) {
-      return { success: false, message: 'Firebase 서비스를 사용할 수 없습니다.' };
-    }
+    const firestore = await getFirestore();
 
     const validationResult = NewsletterSubscriptionSchema.safeParse(formData);
     if (!validationResult.success) {
@@ -30,11 +27,9 @@ export async function subscribeToNewsletter(
     const doc = await subscriberRef.get();
 
     if (doc.exists) {
-      if (!FieldValue) {
-        return { success: false, message: 'Firebase 서비스 오류가 발생했습니다.' };
-      }
+      const fieldValue = await getFieldValue();
       await subscriberRef.update({
-        subscribedAt: FieldValue.serverTimestamp(),
+        subscribedAt: fieldValue.serverTimestamp(),
         status: 'active', 
       });
       console.log(`Newsletter: Email ${email} re-subscribed/updated in Firestore.`);
@@ -42,7 +37,7 @@ export async function subscribeToNewsletter(
     } else {
       await subscriberRef.set({
         email: email,
-        subscribedAt: FieldValue.serverTimestamp(),
+        subscribedAt: fieldValue.serverTimestamp(),
         status: 'active',
       });
       console.log(`Newsletter: Email ${email} successfully subscribed and saved to Firestore.`);

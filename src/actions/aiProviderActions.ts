@@ -222,7 +222,7 @@ export async function getAllAIProviderConfigsForGenkit(): Promise<{
 export async function deleteAIProviderConfig(
   provider: AIProvider
 ): Promise<{ success: boolean; message: string }> {
-  return safeFirestoreOperation(async (firestore) => {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
     await docRef.delete();
     
@@ -233,6 +233,12 @@ export async function deleteAIProviderConfig(
 
     return { success: true, message: `${provider} 설정이 성공적으로 삭제되었습니다.` };
   });
+  
+  if (!result.success) {
+    return { success: false, message: result.error };
+  }
+  
+  return result.data;
 }
 
 export async function testAIProviderConnection(

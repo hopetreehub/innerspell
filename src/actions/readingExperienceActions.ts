@@ -51,16 +51,17 @@ export async function createReadingExperience(
       likes: 0,
       commentsCount: 0,
       isPublished: true,
-      createdAt: getFieldValue().serverTimestamp(),
-      updatedAt: getFieldValue().serverTimestamp()
+      createdAt: (await getFieldValue()).serverTimestamp(),
+      updatedAt: (await getFieldValue()).serverTimestamp()
     };
     
     const docRef = await firestore.collection('readingExperiences').add(readingExperienceData);
     
     // 사용자의 리딩 경험 수 증가
+    const fieldValue = await getFieldValue();
     await firestore.collection('users').doc(userId).update({
-      'stats.readingCount': getFieldValue().increment(1),
-      updatedAt: getFieldValue().serverTimestamp()
+      'stats.readingCount': fieldValue.increment(1),
+      updatedAt: fieldValue.serverTimestamp()
     });
     
     return docRef.id;
@@ -128,6 +129,7 @@ export async function getReadingExperience(id: string, incrementView = false) {
     
     if (incrementView) {
       // 트랜잭션으로 조회수 증가와 문서 조회를 동시에 처리
+      const fieldValue = await getFieldValue();
       const result = await firestore.runTransaction(async (transaction) => {
         const doc = await transaction.get(docRef);
         
@@ -136,7 +138,7 @@ export async function getReadingExperience(id: string, incrementView = false) {
         }
         
         transaction.update(docRef, {
-          views: getFieldValue().increment(1)
+          views: fieldValue.increment(1)
         });
         
         const data = doc.data();
@@ -237,8 +239,9 @@ export async function updateReadingExperience(
     }
     
     // 검증된 데이터만 업데이트
+    const fieldValue = await getFieldValue();
     const updateData: any = {
-      updatedAt: getFieldValue().serverTimestamp()
+      updatedAt: fieldValue.serverTimestamp()
     };
     
     if (formData.title !== undefined) updateData.title = formData.title;
@@ -265,6 +268,7 @@ export async function deleteReadingExperience(id: string, userId: string) {
     const docRef = firestore.collection('readingExperiences').doc(id);
     
     // 트랜잭션으로 삭제 처리
+    const fieldValue = await getFieldValue();
     await firestore.runTransaction(async (transaction) => {
       const doc = await transaction.get(docRef);
       
@@ -293,8 +297,8 @@ export async function deleteReadingExperience(id: string, userId: string) {
       // 사용자의 리딩 경험 수 감소
       const userRef = firestore.collection('users').doc(userId);
       transaction.update(userRef, {
-        'stats.readingCount': getFieldValue().increment(-1),
-        updatedAt: getFieldValue().serverTimestamp()
+        'stats.readingCount': fieldValue.increment(-1),
+        updatedAt: fieldValue.serverTimestamp()
       });
     });
     
@@ -316,6 +320,7 @@ export async function toggleLike(readingExperienceId: string, userId: string) {
       .collection('readingLikes')
       .doc(`${readingExperienceId}_${userId}`);
     
+    const fieldValue = await getFieldValue();
     const result = await firestore.runTransaction(async (transaction) => {
       const likeDoc = await transaction.get(likeRef);
       const experienceRef = firestore.collection('readingExperiences').doc(readingExperienceId);
@@ -324,7 +329,7 @@ export async function toggleLike(readingExperienceId: string, userId: string) {
         // 좋아요 취소
         transaction.delete(likeRef);
         transaction.update(experienceRef, {
-          likes: getFieldValue().increment(-1)
+          likes: fieldValue.increment(-1)
         });
         return false;
       } else {
@@ -332,10 +337,10 @@ export async function toggleLike(readingExperienceId: string, userId: string) {
         transaction.set(likeRef, {
           userId,
           readingExperienceId,
-          createdAt: getFieldValue().serverTimestamp()
+          createdAt: fieldValue.serverTimestamp()
         });
         transaction.update(experienceRef, {
-          likes: getFieldValue().increment(1)
+          likes: fieldValue.increment(1)
         });
         return true;
       }
@@ -374,17 +379,18 @@ export async function createComment(
         avatar: userData.avatar || null,
         level: userData.level || 'beginner'
       },
-      createdAt: getFieldValue().serverTimestamp(),
-      updatedAt: getFieldValue().serverTimestamp()
+      createdAt: (await getFieldValue()).serverTimestamp(),
+      updatedAt: (await getFieldValue()).serverTimestamp()
     };
     
+    const fieldValue = await getFieldValue();
     const result = await firestore.runTransaction(async (transaction) => {
       const commentRef = firestore.collection('readingComments').doc();
       const experienceRef = firestore.collection('readingExperiences').doc(readingExperienceId);
       
       transaction.set(commentRef, commentData);
       transaction.update(experienceRef, {
-        commentsCount: getFieldValue().increment(1)
+        commentsCount: fieldValue.increment(1)
       });
       
       return commentRef.id;
@@ -426,6 +432,7 @@ export async function deleteComment(
   userId: string
 ) {
   return safeFirestoreOperation(async (firestore) => {
+    const fieldValue = await getFieldValue();
     await firestore.runTransaction(async (transaction) => {
       const commentRef = firestore.collection('readingComments').doc(commentId);
       const commentDoc = await transaction.get(commentRef);
@@ -445,7 +452,7 @@ export async function deleteComment(
       // 리딩 경험의 댓글 수 감소
       const experienceRef = firestore.collection('readingExperiences').doc(readingExperienceId);
       transaction.update(experienceRef, {
-        commentsCount: getFieldValue().increment(-1)
+        commentsCount: fieldValue.increment(-1)
       });
     });
     
