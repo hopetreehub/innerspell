@@ -1,365 +1,386 @@
 'use client';
 
 import React, { useState } from 'react';
-import { TarotCard, CardOrientation } from '@/types/tarot';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
 import { 
+  ArrowLeft, 
   Heart, 
   Briefcase, 
-  Heart as Health, 
-  Sparkles,
-  RotateCcw,
-  ArrowLeft,
-  Share2,
-  BookOpen,
+  Activity, 
+  Lightbulb, 
+  RotateCcw, 
   Star,
-  Lightbulb
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  Share2
 } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { type TarotCard } from '@/data/tarot-cards';
 
 interface TarotCardDetailProps {
   card: TarotCard;
-  orientation?: CardOrientation;
-  onOrientationChange?: (orientation: CardOrientation) => void;
-  showBackButton?: boolean;
-  relatedCards?: TarotCard[];
+  allCards: TarotCard[];
 }
 
-export function TarotCardDetail({ 
-  card, 
-  orientation = 'upright',
-  onOrientationChange,
-  showBackButton = true,
-  relatedCards = []
-}: TarotCardDetailProps) {
-  const [selectedOrientation, setSelectedOrientation] = useState<CardOrientation>(orientation);
+export function TarotCardDetail({ card, allCards }: TarotCardDetailProps) {
+  const [currentOrientation, setCurrentOrientation] = useState<'upright' | 'reversed'>('upright');
 
-  const handleOrientationChange = (newOrientation: CardOrientation) => {
-    setSelectedOrientation(newOrientation);
-    onOrientationChange?.(newOrientation);
+  // 수트별 색상 매핑
+  const suitColors = {
+    major: 'bg-gradient-to-br from-purple-500 to-indigo-600',
+    wands: 'bg-gradient-to-br from-red-500 to-orange-600',
+    cups: 'bg-gradient-to-br from-blue-500 to-cyan-600',
+    swords: 'bg-gradient-to-br from-gray-500 to-slate-600',
+    pentacles: 'bg-gradient-to-br from-green-500 to-emerald-600'
   };
 
-  const isUpright = selectedOrientation === 'upright';
+  const suitNames = {
+    major: '메이저 아르카나',
+    wands: '완드 (지팡이)',
+    cups: '컵 (성배)',
+    swords: '소드 (검)',
+    pentacles: '펜타클 (금화)'
+  };
+
+  // 이전/다음 카드 찾기
+  const currentIndex = allCards.findIndex(c => c.id === card.id);
+  const previousCard = currentIndex > 0 ? allCards[currentIndex - 1] : null;
+  const nextCard = currentIndex < allCards.length - 1 ? allCards[currentIndex + 1] : null;
+
+  // 관련 카드 (같은 수트의 카드들)
+  const relatedCards = allCards
+    .filter(c => c.suit === card.suit && c.id !== card.id)
+    .slice(0, 4);
+
+  // 공유하기 함수
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `${card.name} 타로 카드 해석`,
+        text: card.description,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      // 토스트 메시지 표시 (구현 필요)
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+        {/* 상단 네비게이션 */}
         <div className="flex items-center justify-between mb-8">
-          {showBackButton && (
-            <Button variant="ghost" asChild>
-              <Link href="/tarot">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                타로 카드 목록
-              </Link>
-            </Button>
-          )}
+          <Link 
+            href="/tarot/cards"
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            카드 목록으로 돌아가기
+          </Link>
+          
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Share2 className="mr-2 h-4 w-4" />
-              공유
-            </Button>
-            <Button variant="outline" size="sm">
-              <BookOpen className="mr-2 h-4 w-4" />
-              해석 요청
+            {previousCard && (
+              <Link href={`/tarot/cards/${previousCard.id}`}>
+                <Button variant="outline" size="sm">
+                  <ChevronLeft className="h-4 w-4" />
+                  이전
+                </Button>
+              </Link>
+            )}
+            {nextCard && (
+              <Link href={`/tarot/cards/${nextCard.id}`}>
+                <Button variant="outline" size="sm">
+                  다음
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
+            <Button variant="outline" size="sm" onClick={handleShare}>
+              <Share2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* 카드 이미지 및 기본 정보 */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* 왼쪽: 카드 이미지 및 기본 정보 */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-8">
-              <CardHeader className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Badge variant={card.arcana === 'major' ? 'default' : 'secondary'}>
-                    {card.arcana === 'major' ? '메이저' : '마이너'} 아르카나
-                  </Badge>
-                  {card.suit && (
-                    <Badge variant="outline">
-                      {card.suit === 'wands' && '완드'}
-                      {card.suit === 'cups' && '컵'}
-                      {card.suit === 'swords' && '소드'}
-                      {card.suit === 'pentacles' && '펜타클'}
+            <Card className="sticky top-4">
+              <CardContent className="p-0">
+                {/* 카드 이미지 */}
+                <div className="relative h-96 overflow-hidden rounded-t-lg">
+                  <div className={`absolute inset-0 ${suitColors[card.suit]} opacity-20`} />
+                  <Image
+                    src={card.image}
+                    alt={card.name}
+                    fill
+                    className={`object-cover transition-transform duration-500 ${
+                      currentOrientation === 'reversed' ? 'rotate-180' : ''
+                    }`}
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    priority
+                  />
+                  
+                  {/* 배지들 */}
+                  <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    <Badge className={`${suitColors[card.suit]} text-white border-0`}>
+                      {suitNames[card.suit]}
                     </Badge>
+                    {card.featured && (
+                      <Badge className="bg-yellow-500 text-black border-0">
+                        <Star className="h-3 w-3 mr-1" />
+                        추천 카드
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* 카드 번호 */}
+                  {card.number !== null && (
+                    <div className="absolute top-4 right-4 bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold">
+                      {card.number}
+                    </div>
                   )}
                 </div>
-                <CardTitle className="text-2xl font-bold">
-                  {card.nameKorean}
-                </CardTitle>
-                <CardDescription className="text-lg">
-                  {card.name}
-                  {card.number !== null && ` (${card.number})`}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* 카드 이미지 */}
-                <div className="relative mb-6">
-                  <div className={`relative w-full aspect-[2/3] mx-auto max-w-xs transition-transform duration-500 ${
-                    !isUpright ? 'rotate-180' : ''
-                  }`}>
-                    <Image
-                      src={card.imageUrl || '/images/tarot/card-back.jpg'}
-                      alt={card.imageDescription}
-                      fill
-                      className="object-cover rounded-lg shadow-lg"
-                    />
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2 text-center">
-                    {card.imageDescription}
-                  </p>
-                </div>
 
-                {/* 방향 선택 */}
-                <div className="flex justify-center mb-6">
-                  <div className="flex rounded-lg border p-1">
+                {/* 카드 기본 정보 */}
+                <div className="p-6">
+                  <div className="text-center mb-6">
+                    <h1 className="text-3xl font-bold text-primary mb-2">{card.name}</h1>
+                    <p className="text-lg text-muted-foreground">{card.nameEn}</p>
+                  </div>
+
+                  {/* 방향 토글 */}
+                  <div className="flex gap-2 mb-6">
                     <Button
-                      variant={isUpright ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => handleOrientationChange('upright')}
-                      className="px-4"
+                      variant={currentOrientation === 'upright' ? 'default' : 'outline'}
+                      onClick={() => setCurrentOrientation('upright')}
+                      className="flex-1"
                     >
                       정방향
                     </Button>
                     <Button
-                      variant={!isUpright ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => handleOrientationChange('reversed')}
-                      className="px-4"
+                      variant={currentOrientation === 'reversed' ? 'default' : 'outline'}
+                      onClick={() => setCurrentOrientation('reversed')}
+                      className="flex-1"
                     >
-                      <RotateCcw className="mr-1 h-3 w-3" />
+                      <RotateCcw className="h-4 w-4 mr-2" />
                       역방향
                     </Button>
                   </div>
-                </div>
 
-                {/* 기본 정보 */}
-                <div className="space-y-4">
-                  {card.element && (
-                    <div>
-                      <h4 className="font-semibold mb-1">원소</h4>
-                      <Badge variant="outline">{card.element}</Badge>
+                  {/* 핵심 키워드 */}
+                  <div className="mb-6">
+                    <h3 className="font-semibold mb-3">핵심 키워드</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {card.keywords.map((keyword) => (
+                        <Badge key={keyword} variant="secondary">
+                          {keyword}
+                        </Badge>
+                      ))}
                     </div>
-                  )}
-                  
-                  {card.planet && (
-                    <div>
-                      <h4 className="font-semibold mb-1">행성</h4>
-                      <Badge variant="outline">{card.planet}</Badge>
-                    </div>
-                  )}
-                  
-                  {card.zodiac && (
-                    <div>
-                      <h4 className="font-semibold mb-1">별자리</h4>
-                      <Badge variant="outline">{card.zodiac}</Badge>
-                    </div>
-                  )}
+                  </div>
 
-                  {card.numerology && (
-                    <div>
-                      <h4 className="font-semibold mb-1">수비학</h4>
-                      <Badge variant="outline">{card.numerology}</Badge>
-                    </div>
-                  )}
+                  {/* 추가 정보 */}
+                  <div className="space-y-3 text-sm">
+                    {card.element && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">원소</span>
+                        <span className="flex items-center gap-1">
+                          <Sparkles className="h-3 w-3" />
+                          {card.element === 'fire' ? '불' : 
+                           card.element === 'water' ? '물' : 
+                           card.element === 'air' ? '바람' : '땅'}
+                        </span>
+                      </div>
+                    )}
+                    {card.planet && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">행성</span>
+                        <span>{card.planet}</span>
+                      </div>
+                    )}
+                    {card.zodiac && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">별자리</span>
+                        <span>{card.zodiac}</span>
+                      </div>
+                    )}
+                    {card.numerology && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">수비학</span>
+                        <span>{card.numerology}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* 상세 해석 */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* 핵심 의미 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-yellow-500" />
-                  핵심 의미
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-lg font-medium">
-                    {isUpright ? card.meaningShort.upright : card.meaningShort.reversed}
-                  </p>
-                </div>
-                <div className="mt-4">
+          {/* 오른쪽: 상세 해석 */}
+          <div className="lg:col-span-2">
+            <div className="space-y-8">
+              {/* 카드 설명 */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>카드 설명</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
-                    {isUpright ? card.meaningDetailed.upright : card.meaningDetailed.reversed}
+                    {card.description}
                   </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* 키워드 */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5 text-yellow-500" />
-                  키워드
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {(isUpright ? card.keywords.upright : card.keywords.reversed).map((keyword, index) => (
-                    <Badge key={index} variant="secondary">
-                      {keyword}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* 생활 영역별 해석 */}
-            <Card>
-              <CardHeader>
-                <CardTitle>생활 영역별 해석</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="love" className="w-full">
-                  <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="love" className="flex items-center gap-1">
-                      <Heart className="h-4 w-4" />
-                      연애
-                    </TabsTrigger>
-                    <TabsTrigger value="career" className="flex items-center gap-1">
-                      <Briefcase className="h-4 w-4" />
-                      직업
-                    </TabsTrigger>
-                    <TabsTrigger value="health" className="flex items-center gap-1">
-                      <Health className="h-4 w-4" />
-                      건강
-                    </TabsTrigger>
-                    <TabsTrigger value="spirituality" className="flex items-center gap-1">
-                      <Sparkles className="h-4 w-4" />
-                      영성
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="love" className="mt-4">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {isUpright ? card.love.upright : card.love.reversed}
-                    </p>
-                  </TabsContent>
-                  
-                  <TabsContent value="career" className="mt-4">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {isUpright ? card.career.upright : card.career.reversed}
-                    </p>
-                  </TabsContent>
-                  
-                  <TabsContent value="health" className="mt-4">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {isUpright ? card.health.upright : card.health.reversed}
-                    </p>
-                  </TabsContent>
-                  
-                  <TabsContent value="spirituality" className="mt-4">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {isUpright ? card.spirituality.upright : card.spirituality.reversed}
-                    </p>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-
-            {/* 상징과 조언 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>상징적 의미</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {card.symbolism.map((symbol, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">{symbol}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </CardContent>
               </Card>
 
+              {/* 의미 해석 */}
               <Card>
                 <CardHeader>
-                  <CardTitle>조언 및 확언</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">조언</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {isUpright ? card.advice.upright : card.advice.reversed}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">확언</h4>
-                    <div className="p-3 bg-muted rounded-lg">
-                      <p className="text-sm italic">
-                        {`"${isUpright ? card.affirmations.upright : card.affirmations.reversed}"`}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* 성찰 질문 */}
-            <Card>
-              <CardHeader>
-                <CardTitle>성찰을 위한 질문</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {card.questions.map((question, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 text-sm font-medium flex items-center justify-center flex-shrink-0">
-                        {index + 1}
-                      </span>
-                      <span className="text-muted-foreground">{question}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            {/* 관련 카드 */}
-            {relatedCards.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>관련 카드</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    {currentOrientation === 'upright' ? (
+                      <>정방향 의미</>
+                    ) : (
+                      <>
+                        <RotateCcw className="h-5 w-5" />
+                        역방향 의미
+                      </>
+                    )}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {relatedCards.map((relatedCard) => (
-                      <Link
-                        key={relatedCard.id}
-                        href={`/tarot/${relatedCard.id}`}
-                        className="group"
-                      >
-                        <div className="text-center p-3 rounded-lg border hover:shadow-md transition-shadow">
-                          <div className="w-16 h-24 mx-auto mb-2 relative">
-                            <Image
-                              src={relatedCard.imageUrl || '/images/tarot/card-back.jpg'}
-                              alt={relatedCard.nameKorean}
-                              fill
-                              className="object-cover rounded"
-                            />
-                          </div>
-                          <p className="text-sm font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
-                            {relatedCard.nameKorean}
+                  <Tabs defaultValue="general" className="w-full">
+                    <TabsList className="grid w-full grid-cols-4">
+                      <TabsTrigger value="general" className="flex items-center gap-1">
+                        <Lightbulb className="h-3 w-3" />
+                        전체
+                      </TabsTrigger>
+                      <TabsTrigger value="love" className="flex items-center gap-1">
+                        <Heart className="h-3 w-3" />
+                        연애
+                      </TabsTrigger>
+                      <TabsTrigger value="career" className="flex items-center gap-1">
+                        <Briefcase className="h-3 w-3" />
+                        사업
+                      </TabsTrigger>
+                      <TabsTrigger value="health" className="flex items-center gap-1">
+                        <Activity className="h-3 w-3" />
+                        건강
+                      </TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="general" className="mt-6">
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-semibold mb-2">일반적 의미</h4>
+                          <p className="text-muted-foreground leading-relaxed">
+                            {currentOrientation === 'upright' ? card.upright.meaning : card.reversed.meaning}
                           </p>
                         </div>
-                      </Link>
+                        <Separator />
+                        <div>
+                          <h4 className="font-semibold mb-2">조언</h4>
+                          <p className="text-muted-foreground leading-relaxed">
+                            {currentOrientation === 'upright' ? card.upright.advice : card.reversed.advice}
+                          </p>
+                        </div>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="love" className="mt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-4">
+                          <Heart className="h-5 w-5 text-red-500" />
+                          <h4 className="font-semibold">연애 운세</h4>
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">
+                          {currentOrientation === 'upright' ? card.upright.love : card.reversed.love}
+                        </p>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="career" className="mt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-4">
+                          <Briefcase className="h-5 w-5 text-blue-500" />
+                          <h4 className="font-semibold">사업 & 직업 운세</h4>
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">
+                          {currentOrientation === 'upright' ? card.upright.career : card.reversed.career}
+                        </p>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="health" className="mt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-4">
+                          <Activity className="h-5 w-5 text-green-500" />
+                          <h4 className="font-semibold">건강 운세</h4>
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">
+                          {currentOrientation === 'upright' ? card.upright.health : card.reversed.health}
+                        </p>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
+
+              {/* 상징과 의미 */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>상징과 의미</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {card.symbolism.map((symbol, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <p className="text-muted-foreground">{symbol}</p>
+                      </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
-            )}
+
+              {/* 관련 카드 */}
+              {relatedCards.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>같은 수트의 다른 카드들</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {relatedCards.map((relatedCard) => (
+                        <Link key={relatedCard.id} href={`/tarot/cards/${relatedCard.id}`}>
+                          <div className="group cursor-pointer">
+                            <div className="relative h-32 rounded-lg overflow-hidden mb-2">
+                              <Image
+                                src={relatedCard.image}
+                                alt={relatedCard.name}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-200"
+                                sizes="(max-width: 768px) 50vw, 25vw"
+                              />
+                            </div>
+                            <h4 className="text-sm font-medium group-hover:text-primary transition-colors">
+                              {relatedCard.name}
+                            </h4>
+                            <p className="text-xs text-muted-foreground">
+                              {relatedCard.nameEn}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
         </div>
       </div>
