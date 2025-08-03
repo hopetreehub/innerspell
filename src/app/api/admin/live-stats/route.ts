@@ -201,7 +201,7 @@ async function fetchRealtimeStats() {
     const responseTimeSum = 0;
     const errorCount = 0;
 
-    recentUsageSnapshot.forEach(doc => {
+    recentUsageSnapshot.forEach((doc: FirebaseFirestore.DocumentSnapshot) => {
       const data = doc.data();
       if (data.type === 'tarot') {
         tarotCount++;

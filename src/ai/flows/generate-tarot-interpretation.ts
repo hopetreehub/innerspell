@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getTarotPromptConfig, getEnhancedTarotPromptConfig } from '@/ai/services/prompt-service';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getTarotGuidelineBySpreadAndStyle } from '@/actions/tarotGuidelineActions';
+import type { PositionGuideline } from '@/types/tarot-guidelines';
 
 const GenerateTarotInterpretationInputSchema = z.object({
   question: z.string(),
@@ -98,7 +99,7 @@ async function tryGoogleAI(input: GenerateTarotInterpretationInput, prompt: stri
         const spreadGuideline = {
           name: guideline.spreadName,
           generalApproach: guideline.generalApproach,
-          positions: guideline.positions.map(pos => `
+          positions: guideline.positions.map((pos: PositionGuideline) => `
 - ${pos.positionName}: ${pos.interpretationFocus}
   핵심 질문: ${pos.keyQuestions.join(', ')}`).join('\n'),
           interpretationTips: guideline.interpretationTips.join(' ')
@@ -191,7 +192,7 @@ async function tryOpenAI(input: GenerateTarotInterpretationInput, prompt: string
         const spreadGuideline = {
           name: guideline.spreadName,
           generalApproach: guideline.generalApproach,
-          positions: guideline.positions.map(pos => `
+          positions: guideline.positions.map((pos: PositionGuideline) => `
 - ${pos.positionName}: ${pos.interpretationFocus}
   핵심 질문: ${pos.keyQuestions.join(', ')}`).join('\n'),
           interpretationTips: guideline.interpretationTips.join(' ')

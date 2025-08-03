@@ -52,7 +52,7 @@ async function getRealStats() {
     const dailyUsageMap = new Map<string, number>();
     const userDailyActivity = new Map<string, Set<string>>();
 
-    readingsSnapshot.forEach(doc => {
+    readingsSnapshot.forEach((doc: FirebaseFirestore.DocumentSnapshot) => {
       const data = doc.data();
       if (data.createdAt) {
         const date = data.createdAt.toDate();

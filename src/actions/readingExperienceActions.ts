@@ -240,7 +240,7 @@ export async function updateReadingExperience(
     
     // 검증된 데이터만 업데이트
     const fieldValue = await getFieldValue();
-    const updateData: any = {
+    const updateData: Record<string, any> = {
       updatedAt: fieldValue.serverTimestamp()
     };
     

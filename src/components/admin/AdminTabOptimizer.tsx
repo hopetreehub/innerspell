@@ -65,12 +65,12 @@ export function AdminTabOptimizerProvider({ children }: AdminTabOptimizerProvide
         preloadMultiple([
           {
             id: 'ai-providers',
-            import: () => import('@/components/admin/AIProviderManagement'),
+            import: () => import('@/components/admin/AIProviderManagement') as Promise<{ default: React.ComponentType<any> }>,
             options: { delay: 0, priority: 'high' }
           },
           {
             id: 'tarot-instructions',
-            import: () => import('@/components/admin/TarotGuidelineManagement'),
+            import: () => import('@/components/admin/TarotGuidelineManagement') as Promise<{ default: React.ComponentType<any> }>,
             options: { delay: 200, priority: 'high' }
           }
         ]);
@@ -81,12 +81,12 @@ export function AdminTabOptimizerProvider({ children }: AdminTabOptimizerProvide
         preloadMultiple([
           {
             id: 'user-management',
-            import: () => import('@/components/admin/UserManagement'),
+            import: () => import('@/components/admin/UserManagement') as Promise<{ default: React.ComponentType<any> }>,
             options: { delay: 0, priority: 'low' }
           },
           {
             id: 'blog-management',
-            import: () => import('@/components/admin/BlogManagement'),
+            import: () => import('@/components/admin/BlogManagement') as Promise<{ default: React.ComponentType<any> }>,
             options: { delay: 300, priority: 'low' }
           },
           {

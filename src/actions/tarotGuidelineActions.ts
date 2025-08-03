@@ -68,7 +68,7 @@ export async function getAllTarotGuidelines(forceRefresh = false): Promise<Tarot
         console.log('[tarotGuidelineActions] Querying Firestore for custom guidelines...');
         const customGuidelinesSnapshot = await firestore.collection('tarotGuidelines').get();
         
-        customGuidelinesSnapshot.docs.forEach(doc => {
+        customGuidelinesSnapshot.docs.forEach((doc: FirebaseFirestore.DocumentSnapshot) => {
           const data = doc.data() as TarotGuideline;
           customGuidelines.push({ ...data, id: doc.id });
         });
