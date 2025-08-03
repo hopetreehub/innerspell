@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from '@/lib/firebase/admin';
+import { getFirestore, getFieldValue } from '@/lib/firebase/admin-helpers';
 import { TarotReadingHistory, TarotReadingHistorySchema } from '@/types';
 import { cookies } from 'next/headers';
 
@@ -31,7 +31,8 @@ export async function saveTarotReading(data: Omit<TarotReadingHistory, 'id' | 'c
       userId,
     });
 
-    const docRef = await db
+    const firestore = await getFirestore();
+    const docRef = await firestore
       .collection('users')
       .doc(userId)
       .collection('tarotReadings')
@@ -55,7 +56,8 @@ export async function getTarotReadingHistory(limit = 10, startAfter?: string) {
       return { success: false, error: '로그인이 필요합니다.', readings: [] };
     }
 
-    let query = db
+    const firestore = await getFirestore();
+    let query = firestore
       .collection('users')
       .doc(userId)
       .collection('tarotReadings')
@@ -63,7 +65,7 @@ export async function getTarotReadingHistory(limit = 10, startAfter?: string) {
       .limit(limit);
 
     if (startAfter) {
-      const startDoc = await db
+      const startDoc = await firestore
         .collection('users')
         .doc(userId)
         .collection('tarotReadings')
@@ -101,7 +103,8 @@ export async function getTarotReading(readingId: string) {
       return { success: false, error: '로그인이 필요합니다.' };
     }
 
-    const doc = await db
+    const firestore = await getFirestore();
+    const doc = await firestore
       .collection('users')
       .doc(userId)
       .collection('tarotReadings')
@@ -133,7 +136,8 @@ export async function deleteTarotReading(readingId: string) {
       return { success: false, error: '로그인이 필요합니다.' };
     }
 
-    await db
+    const firestore = await getFirestore();
+    await firestore
       .collection('users')
       .doc(userId)
       .collection('tarotReadings')

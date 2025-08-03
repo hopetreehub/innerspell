@@ -26,8 +26,9 @@ export async function subscribeToNewsletter(
     const subscriberRef = firestore.collection('subscribers').doc(email);
     const doc = await subscriberRef.get();
 
+    const fieldValue = await getFieldValue();
+    
     if (doc.exists) {
-      const fieldValue = await getFieldValue();
       await subscriberRef.update({
         subscribedAt: fieldValue.serverTimestamp(),
         status: 'active', 
