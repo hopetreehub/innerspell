@@ -110,8 +110,13 @@ export function Navbar() {
             <ThemeToggle />
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Menu className="h-5 w-5" />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-11 w-11 touch-manipulation active:scale-95 transition-transform duration-150"
+                  aria-label="메뉴 열기"
+                >
+                  <Menu className="h-6 w-6" />
                   <span className="sr-only">메뉴 열기</span>
                 </Button>
               </SheetTrigger>
@@ -129,7 +134,7 @@ export function Navbar() {
                         <Link
                           key={item.label}
                           href={item.href}
-                          className="flex items-center rounded-lg px-4 py-3 text-base font-medium text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-200 border border-transparent hover:border-border/40"
+                          className="flex items-center rounded-lg px-4 py-4 min-h-[48px] text-base font-medium text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-200 border border-transparent hover:border-border/40 touch-manipulation active:scale-[0.98]"
                           onClick={() => setMobileMenuOpen(false)}
                           target={isExternal ? '_blank' : undefined}
                           rel={isExternal ? 'noopener noreferrer' : undefined}
@@ -147,7 +152,7 @@ export function Navbar() {
                         <Link
                           key={item.label}
                           href={item.href}
-                          className="flex items-center rounded-lg px-4 py-3 text-base font-medium text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-200 border border-transparent hover:border-border/40 gap-2"
+                          className="flex items-center rounded-lg px-4 py-4 min-h-[48px] text-base font-medium text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-200 border border-transparent hover:border-border/40 gap-2 touch-manipulation active:scale-[0.98]"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           {item.icon && <item.icon className="h-5 w-5" />}
