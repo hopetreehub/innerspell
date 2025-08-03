@@ -1,7 +1,51 @@
 import { MetadataRoute } from 'next'
+import { getAllMDXPosts } from '@/lib/blog/mdx-loader'
+import { getAllPosts } from '@/lib/blog/posts'
  
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://test-studio-firebase.vercel.app';
+  
+  // Get all blog posts
+  const [mdxPosts, regularPosts] = await Promise.all([
+    getAllMDXPosts(),
+    getAllPosts()
+  ]);
+  
+  // Blog post URLs
+  const mdxPostUrls = mdxPosts.map(post => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.publishedAt),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+  
+  const regularPostUrls = regularPosts.map(post => ({
+    url: `${baseUrl}/blog/${post.id}`,
+    lastModified: post.publishedAt,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+  
+  // Blog category URLs
+  const categories = ['타로-가이드', '점술-지식', '꿈해몽-정보', '영성-힐링', '자기계발', '성공전략', '직관력-개발'];
+  const categoryUrls = categories.map(category => ({
+    url: `${baseUrl}/blog/category/${category}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }));
+  
+  // Blog tag URLs - get unique tags from both MDX and regular posts
+  const allTags = new Set<string>();
+  mdxPosts.forEach(post => post.tags.forEach(tag => allTags.add(tag)));
+  regularPosts.forEach(post => post.tags.forEach(tag => allTags.add(tag)));
+  
+  const tagUrls = Array.from(allTags).map(tag => ({
+    url: `${baseUrl}/blog/tag/${encodeURIComponent(tag)}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.5,
+  }));
   
   return [
     {
@@ -58,5 +102,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.3,
     },
+    // Add all blog post URLs
+    ...mdxPostUrls,
+    ...regularPostUrls,
+    // Add blog category URLs
+    ...categoryUrls,
+    // Add blog tag URLs
+    ...tagUrls,
   ]
 }

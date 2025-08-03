@@ -173,3 +173,148 @@ export function BlogMainJsonLd() {
     />
   );
 }
+
+interface BlogCategoryJsonLdProps {
+  category: string;
+}
+
+export function BlogCategoryJsonLd({ category }: BlogCategoryJsonLdProps) {
+  const categoryDescriptions: Record<string, string> = {
+    '타로 가이드': '타로 카드 의미 해석, 스프레드 활용법, 초보자를 위한 타로 입문 가이드',
+    '점술 지식': '사주팔자, 동양 점술, 점술 역사와 문화에 대한 전문 지식',
+    '꿈해몽 정보': '꿈 상징 해석, 자주 꾸는 꿈의 의미, 꿈 기록 및 분석 팁',
+    '영성 및 힐링': '명상, 마음챙김, 차크라, 에너지 워크, 스트레스 관리',
+    '자기계발': 'AI 시대 개인 성장, 목표 달성, 성공 전략, 생산성 향상',
+    '성공 전략': '실전 성공 전략, 목표 설정, 습관 형성, 현실 창조',
+    '직관력 개발': '직감 향상, 감정 지능, 창의적 사고, 내면 지혜 개발'
+  };
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${category} - InnerSpell 블로그`,
+    description: categoryDescriptions[category] || `${category} 관련 전문 콘텐츠를 확인하세요.`,
+    url: `https://innerspell.com/blog/category/${encodeURIComponent(category)}`,
+    mainEntity: {
+      '@type': 'ItemList',
+      name: `${category} 포스트 목록`,
+      description: `${category} 카테고리의 블로그 포스트들`,
+    },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          item: {
+            '@id': 'https://innerspell.com',
+            name: 'InnerSpell'
+          }
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          item: {
+            '@id': 'https://innerspell.com/blog',
+            name: '블로그'
+          }
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          item: {
+            '@id': `https://innerspell.com/blog/category/${encodeURIComponent(category)}`,
+            name: category
+          }
+        }
+      ]
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'InnerSpell',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://innerspell.com/logo.png',
+      },
+      url: 'https://innerspell.com',
+    },
+    inLanguage: 'ko-KR',
+    isAccessibleForFree: true,
+  };
+
+  return (
+    <Script
+      id="blog-category-jsonld"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+interface BlogTagJsonLdProps {
+  tag: string;
+}
+
+export function BlogTagJsonLd({ tag }: BlogTagJsonLdProps) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `"${tag}" 태그 - InnerSpell 블로그`,
+    description: `${tag} 태그 관련 콘텐츠를 확인하세요. AI 시대 영적 성장과 자기계발을 위한 전문 가이드를 제공합니다.`,
+    url: `https://innerspell.com/blog/tag/${encodeURIComponent(tag)}`,
+    mainEntity: {
+      '@type': 'ItemList',
+      name: `"${tag}" 태그 포스트 목록`,
+      description: `${tag} 태그가 포함된 블로그 포스트들`,
+    },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          item: {
+            '@id': 'https://innerspell.com',
+            name: 'InnerSpell'
+          }
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          item: {
+            '@id': 'https://innerspell.com/blog',
+            name: '블로그'
+          }
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          item: {
+            '@id': `https://innerspell.com/blog/tag/${encodeURIComponent(tag)}`,
+            name: `"${tag}" 태그`
+          }
+        }
+      ]
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'InnerSpell',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://innerspell.com/logo.png',
+      },
+      url: 'https://innerspell.com',
+    },
+    keywords: [tag, '타로', '점술', '꿈해몽', '자기계발', 'InnerSpell'],
+    inLanguage: 'ko-KR',
+    isAccessibleForFree: true,
+  };
+
+  return (
+    <Script
+      id="blog-tag-jsonld"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
