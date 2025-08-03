@@ -18,18 +18,25 @@ import { CategoryTagManagement } from '@/components/admin/CategoryTagManagement'
 import { type BlogPost } from '@/types/blog';
 import { BlogCategory } from '@/types/category';
 import { getAllCategories } from '@/services/category-service';
+import { getAllMDXPosts, MDXBlogPost } from '@/lib/blog/mdx-loader';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useAuth } from '@/context/AuthContext';
 import { getApiHeaders } from '@/lib/csrf';
 
+type CombinedPost = (BlogPost | Omit<MDXBlogPost, 'content'>) & {
+  type: 'regular' | 'mdx';
+  publishedAt: Date;
+};
+
 export function BlogManagement() {
   const { user } = useAuth();
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<CombinedPost[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<CombinedPost[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedType, setSelectedType] = useState('all');
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('posts');
   
@@ -80,21 +87,42 @@ export function BlogManagement() {
     try {
       setLoading(true);
       const token = user && 'getIdToken' in user ? await (user as any).getIdToken() : null;
-      if (!token) {
-        throw new Error('Authentication required');
+      
+      // 병렬로 MDX 포스트와 일반 포스트 가져오기
+      const [mdxPosts, regularPostsResponse] = await Promise.all([
+        getAllMDXPosts().catch(() => []), // MDX 로딩 실패 시 빈 배열
+        token ? fetch('/api/blog/posts?published=false', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }).catch(() => null) : null
+      ]);
+      
+      // MDX 포스트 변환
+      const mdxPostsFormatted: CombinedPost[] = mdxPosts.map(post => ({
+        ...post,
+        id: post.slug,
+        type: 'mdx' as const,
+        publishedAt: new Date(post.publishedAt),
+      }));
+      
+      // 일반 포스트 가져오기
+      let regularPosts: CombinedPost[] = [];
+      if (regularPostsResponse && regularPostsResponse.ok) {
+        const data = await regularPostsResponse.json();
+        regularPosts = (data.posts || []).map((post: BlogPost) => ({
+          ...post,
+          type: 'regular' as const,
+        }));
       }
       
-      const response = await fetch('/api/blog/posts?published=false', {
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-      });
+      // 통합 및 날짜순 정렬
+      const allPosts = [...mdxPostsFormatted, ...regularPosts].sort((a, b) => 
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      );
       
-      if (!response.ok) throw new Error('Failed to fetch posts');
-      
-      const data = await response.json();
-      setPosts(data.posts || []);
-      setFilteredPosts(data.posts || []);
+      setPosts(allPosts);
+      setFilteredPosts(allPosts);
     } catch (error) {
       console.error('포스트 로딩 에러:', error);
       toast({
@@ -115,6 +143,10 @@ export function BlogManagement() {
       filtered = filtered.filter(post => post.category === selectedCategory);
     }
 
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(post => post.type === selectedType);
+    }
+
     if (searchTerm) {
       filtered = filtered.filter(post =>
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -124,7 +156,7 @@ export function BlogManagement() {
     }
 
     setFilteredPosts(filtered);
-  }, [searchTerm, selectedCategory, posts]);
+  }, [searchTerm, selectedCategory, selectedType, posts]);
 
   // 포스트 생성/수정 다이얼로그 열기
   const openDialog = (post?: BlogPost) => {
@@ -296,12 +328,22 @@ export function BlogManagement() {
                 <SelectValue placeholder="카테고리 선택" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
+                <SelectItem value="all">전체 카테고리</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.name}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedType} onValueChange={setSelectedType}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="타입 선택" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">전체 타입</SelectItem>
+                <SelectItem value="regular">일반 포스트</SelectItem>
+                <SelectItem value="mdx">MDX 포스트</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={() => openDialog()}>
@@ -328,6 +370,7 @@ export function BlogManagement() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>제목</TableHead>
+                    <TableHead>타입</TableHead>
                     <TableHead>카테고리</TableHead>
                     <TableHead>작성일</TableHead>
                     <TableHead>상태</TableHead>
@@ -340,8 +383,16 @@ export function BlogManagement() {
                     <TableRow key={post.id}>
                       <TableCell className="font-medium">{post.title}</TableCell>
                       <TableCell>
+                        <Badge 
+                          variant={post.type === 'mdx' ? 'default' : 'secondary'}
+                          className={post.type === 'mdx' ? 'bg-blue-500' : ''}
+                        >
+                          {post.type === 'mdx' ? 'MDX' : '일반'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
                         <Badge variant="outline">
-                          {categories.find(c => c.id === post.category)?.name}
+                          {categories.find(c => c.id === post.category)?.name || post.category}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -369,7 +420,9 @@ export function BlogManagement() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => openDialog(post)}
+                          onClick={() => openDialog(post as BlogPost)}
+                          disabled={post.type === 'mdx'} // MDX는 현재 편집 비활성화
+                          title={post.type === 'mdx' ? 'MDX 포스트는 파일에서 직접 편집하세요' : '포스트 편집'}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -377,6 +430,8 @@ export function BlogManagement() {
                           variant="ghost"
                           size="sm"
                           onClick={() => deletePost(post.id)}
+                          disabled={post.type === 'mdx'} // MDX는 현재 삭제 비활성화
+                          title={post.type === 'mdx' ? 'MDX 포스트는 파일에서 직접 삭제하세요' : '포스트 삭제'}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -395,7 +450,7 @@ export function BlogManagement() {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <Card>
               <CardHeader>
                 <CardTitle>총 포스트</CardTitle>
@@ -405,6 +460,9 @@ export function BlogManagement() {
                 <p className="text-sm text-muted-foreground">
                   게시됨: {posts.filter(p => p.published).length}
                 </p>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  일반: {posts.filter(p => p.type === 'regular').length} | MDX: {posts.filter(p => p.type === 'mdx').length}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -414,7 +472,7 @@ export function BlogManagement() {
               <CardContent>
                 <div className="text-3xl font-bold">{posts.filter(p => p.featured).length}</div>
                 <p className="text-sm text-muted-foreground">
-                  전체 대비 {Math.round((posts.filter(p => p.featured).length / posts.length) * 100)}%
+                  전체 대비 {posts.length > 0 ? Math.round((posts.filter(p => p.featured).length / posts.length) * 100) : 0}%
                 </p>
               </CardContent>
             </Card>
@@ -424,11 +482,29 @@ export function BlogManagement() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">
-                  {Math.round(posts.reduce((sum, p) => sum + p.readingTime, 0) / posts.length)}분
+                  {posts.length > 0 ? Math.round(posts.reduce((sum, p) => sum + (p.readingTime || 0), 0) / posts.length) : 0}분
                 </div>
                 <p className="text-sm text-muted-foreground">
                   전체 포스트 평균
                 </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>카테고리 분포</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-1">
+                  {categories.map(category => {
+                    const count = posts.filter(p => p.category === category.id || p.category === category.name).length;
+                    return count > 0 ? (
+                      <div key={category.id} className="flex justify-between text-sm">
+                        <span>{category.name}</span>
+                        <span className="font-medium">{count}</span>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
               </CardContent>
             </Card>
           </div>

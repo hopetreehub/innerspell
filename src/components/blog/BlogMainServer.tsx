@@ -10,15 +10,17 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { BlogPagination } from './BlogPagination';
 import { BlogSearchClient } from './BlogSearchClient';
+import { BlogSidebar } from './BlogSidebar';
 
 interface BlogMainServerProps {
   initialPosts: BlogPost[];
   currentPage?: number;
+  allPosts?: BlogPost[]; // 사이드바에서 사용할 전체 포스트
 }
 
 const POSTS_PER_PAGE = 6;
 
-export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServerProps) {
+export function BlogMainServer({ initialPosts, currentPage = 1, allPosts }: BlogMainServerProps) {
   const totalPages = Math.ceil(initialPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
@@ -31,8 +33,8 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 md:py-12">
-        {/* 헤더 섹션 */}
-        <header className="mb-12 text-center">
+        {/* 헤더 섹션 - 전체 너비 */}
+        <header className="mb-12 text-center lg:col-span-4">
           <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4 font-headline">
             InnerSpell 블로그
           </h1>
@@ -45,8 +47,8 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
           <BlogSearchClient />
         </header>
 
-        {/* 카테고리 필터 */}
-        <div className="flex flex-wrap gap-2 justify-center mb-8">
+        {/* 카테고리 필터 - 전체 너비 */}
+        <div className="flex flex-wrap gap-2 justify-center mb-8 lg:col-span-4">
           {['전체', '타로', '꿈해몽', '자기계발', '영성'].map((category) => (
             <Link
               key={category}
@@ -63,9 +65,11 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
           ))}
         </div>
 
-        {/* Featured 포스트 섹션 */}
-        {featuredPosts.length > 0 && (
-          <section className="mb-16">
+        {/* 메인 콘텐츠 영역 */}
+        <main className="lg:col-span-3">
+          {/* Featured 포스트 섹션 */}
+          {featuredPosts.length > 0 && (
+            <section className="mb-16">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <h2 className="text-2xl font-bold text-primary">🌟 주요 포스트</h2>
@@ -77,7 +81,7 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
                 {featuredPosts.length}개의 추천 포스트
               </p>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2">
               {featuredPosts.map((post, index) => (
                 <article key={post.id} className="group">
                   <Link href={`/blog/${post.id}`}>
@@ -154,7 +158,7 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
                 </p>
               </div>
             )}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2">
               {regularPosts.map((post, index) => (
                 <article key={post.id} className="group">
                   <Link href={`/blog/${post.id}`}>
@@ -215,8 +219,8 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
           </section>
         )}
 
-        {/* 포스트가 없는 경우 */}
-        {currentPosts.length === 0 && (
+          {/* 포스트가 없는 경우 */}
+          {currentPosts.length === 0 && (
           <div className="text-center py-16">
             <div className="max-w-md mx-auto">
               <div className="text-6xl mb-4">📝</div>
@@ -233,15 +237,21 @@ export function BlogMainServer({ initialPosts, currentPage = 1 }: BlogMainServer
               </Button>
             </div>
           </div>
-        )}
+          )}
 
-        {/* 페이지네이션 */}
-        {totalPages > 1 && (
-          <BlogPagination 
-            currentPage={currentPage} 
-            totalPages={totalPages}
-          />
-        )}
+          {/* 페이지네이션 */}
+          {totalPages > 1 && (
+            <BlogPagination 
+              currentPage={currentPage} 
+              totalPages={totalPages}
+            />
+          )}
+        </main>
+
+        {/* 사이드바 */}
+        <aside className="lg:col-span-1 mt-8 lg:mt-0">
+          <BlogSidebar posts={allPosts || initialPosts} />
+        </aside>
       </div>
     </div>
   );

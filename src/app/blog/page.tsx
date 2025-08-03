@@ -101,7 +101,11 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   return (
     <>
       <BlogMainJsonLd />
-      <BlogMainServer initialPosts={filteredPosts} currentPage={currentPage} />
+      <BlogMainServer 
+        initialPosts={filteredPosts} 
+        currentPage={currentPage}
+        allPosts={mockPosts.filter(post => post.published)}
+      />
     </>
   );
 }
