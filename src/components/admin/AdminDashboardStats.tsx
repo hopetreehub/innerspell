@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { getAllAIProviderConfigs, getAIFeatureMappings } from '@/actions/aiProviderActions';
 import { getAllTarotGuidelines } from '@/actions/tarotGuidelineActions';
+import { useAuth } from '@/context/AuthContext';
+import { auth } from '@/lib/firebase/client';
 
 interface DashboardStats {
   totalUsers: number;
@@ -26,6 +28,7 @@ interface DashboardStats {
 }
 
 export function AdminDashboardStats() {
+  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0,
     activeAIProviders: 0,
@@ -37,8 +40,10 @@ export function AdminDashboardStats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadDashboardStats();
-  }, []);
+    if (user) {
+      loadDashboardStats();
+    }
+  }, [user]);
 
   const loadDashboardStats = async () => {
     try {
@@ -67,8 +72,29 @@ export function AdminDashboardStats() {
       // 시스템 헬스 체크
       const systemHealth = activeProviders > 0 ? 'healthy' : 'warning';
       
+      // Fetch real user count from stats API
+      let totalUsers = 0;
+      try {
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const token = await currentUser.getIdToken();
+          const statsResponse = await fetch('/api/admin/stats', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (statsResponse.ok) {
+            const statsData = await statsResponse.json();
+            totalUsers = statsData.data?.summary?.totalUsers || 0;
+          }
+        }
+      } catch (statsError) {
+        console.error('Error fetching user stats:', statsError);
+      }
+      
       setStats({
-        totalUsers: 150, // 임시 데이터 (실제로는 Firestore에서 가져옴)
+        totalUsers,
         activeAIProviders: activeProviders,
         totalModels: totalModels,
         tarotGuidelines: guidelinesCount,
@@ -146,7 +172,7 @@ export function AdminDashboardStats() {
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              +12 from last month
+              실시간 데이터
             </p>
           </CardContent>
         </Card>

@@ -79,7 +79,10 @@ export function BlogManagement() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const token = (user as any)?.getIdToken ? await (user as any).getIdToken() : 'mock-token';
+      const token = user && 'getIdToken' in user ? await (user as any).getIdToken() : null;
+      if (!token) {
+        throw new Error('Authentication required');
+      }
       
       const response = await fetch('/api/blog/posts?published=false', {
         headers: {
@@ -150,7 +153,10 @@ export function BlogManagement() {
     if (!confirm('정말로 이 포스트를 삭제하시겠습니까?')) return;
 
     try {
-      const token = (user as any)?.getIdToken ? await (user as any).getIdToken() : 'mock-token';
+      const token = user && 'getIdToken' in user ? await (user as any).getIdToken() : null;
+      if (!token) {
+        throw new Error('Authentication required');
+      }
       
       const response = await fetch(`/api/blog/posts/${postId}`, {
         method: 'DELETE',
@@ -192,7 +198,10 @@ export function BlogManagement() {
     setSaving(true);
     
     try {
-      const token = (user as any)?.getIdToken ? await (user as any).getIdToken() : 'mock-token';
+      const token = user && 'getIdToken' in user ? await (user as any).getIdToken() : null;
+      if (!token) {
+        throw new Error('Authentication required');
+      }
       const isEditing = !!editingPost;
       
       const url = isEditing 
