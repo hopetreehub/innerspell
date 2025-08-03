@@ -71,7 +71,7 @@ export function DreamInterpretationClient() {
       
       const aiPromise = generateDreamClarificationQuestions({ dreamDescription: initialDescription });
       
-      const result = await Promise.race([aiPromise, timeoutPromise]);
+      const result = await Promise.race([aiPromise, timeoutPromise]) as Awaited<typeof aiPromise>;
       setClarificationQuestions(result.questions);
       setStep('clarifying');
     } catch (error: any) {
@@ -146,7 +146,7 @@ export function DreamInterpretationClient() {
         isGuestUser: !user,
       });
       
-      const result = await Promise.race([aiPromise, timeoutPromise]);
+      const result = await Promise.race([aiPromise, timeoutPromise]) as Awaited<typeof aiPromise>;
       setInterpretation(result.interpretation);
       setStep('done');
       
@@ -381,3 +381,5 @@ ${initialDescription.length > 100 ? initialDescription.substring(0, 100) + '...'
     </div>
   );
 }
+
+export default DreamInterpretationClient;

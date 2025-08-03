@@ -205,6 +205,11 @@ export async function deletePost(postId: string): Promise<void> {
 
 // 추천 포스트 가져오기
 export async function getFeaturedPosts(): Promise<BlogPost[]> {
+  if (!db) {
+    console.error('Firestore is not initialized');
+    return [];
+  }
+  
   try {
     const q = query(
       collection(db, POSTS_COLLECTION),
@@ -224,6 +229,11 @@ export async function getFeaturedPosts(): Promise<BlogPost[]> {
 
 // 카테고리별 포스트 수 가져오기
 export async function getPostCountByCategory(): Promise<Record<string, number>> {
+  if (!db) {
+    console.error('Firestore is not initialized');
+    return {};
+  }
+  
   try {
     const snapshot = await getDocs(collection(db, POSTS_COLLECTION));
     
@@ -242,6 +252,11 @@ export async function getPostCountByCategory(): Promise<Record<string, number>> 
 
 // 검색 기능 (간단한 버전 - 향후 Algolia나 ElasticSearch 연동 고려)
 export async function searchPosts(searchTerm: string): Promise<BlogPost[]> {
+  if (!db) {
+    console.error('Firestore is not initialized');
+    return [];
+  }
+  
   try {
     const snapshot = await getDocs(collection(db, POSTS_COLLECTION));
     
@@ -264,6 +279,11 @@ export async function searchPosts(searchTerm: string): Promise<BlogPost[]> {
 
 // 조회수 증가
 export async function incrementPostViews(postId: string): Promise<void> {
+  if (!db) {
+    console.error('Firestore is not initialized');
+    return;
+  }
+  
   try {
     const postRef = doc(db, POSTS_COLLECTION, postId);
     const postDoc = await getDoc(postRef);
@@ -281,6 +301,11 @@ export async function incrementPostViews(postId: string): Promise<void> {
 
 // 좋아요 토글
 export async function togglePostLike(postId: string, increment: boolean): Promise<void> {
+  if (!db) {
+    console.error('Firestore is not initialized');
+    return;
+  }
+  
   try {
     const postRef = doc(db, POSTS_COLLECTION, postId);
     const postDoc = await getDoc(postRef);

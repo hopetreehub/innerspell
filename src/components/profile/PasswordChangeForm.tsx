@@ -16,7 +16,7 @@ import {
 } from 'firebase/auth';
 
 export function PasswordChangeForm() {
-  const { user: firebaseUser } = useAuth();
+  const { firebaseUser } = useAuth();
   const { toast } = useToast();
   
   // State variables

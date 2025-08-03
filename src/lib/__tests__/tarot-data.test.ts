@@ -55,7 +55,10 @@ describe('Tarot Data', () => {
     });
 
     it('should have sequential numbers for Major Arcana', () => {
-      const numbers = majorArcana.map(card => card.number).sort((a, b) => a - b);
+      const numbers = majorArcana
+        .map(card => card.number)
+        .filter((num): num is number => num !== null)
+        .sort((a, b) => a - b);
       expect(numbers[0]).toBe(0); // The Fool
       
       // Check for gaps in sequence
@@ -163,10 +166,11 @@ describe('Tarot Data', () => {
     });
 
     it('should be able to find cards by number range', () => {
-      const lowNumberCards = tarotDeck.filter(card => card.number >= 0 && card.number <= 5);
+      const lowNumberCards = tarotDeck.filter(card => card.number !== null && card.number >= 0 && card.number <= 5);
       expect(lowNumberCards.length).toBeGreaterThan(0);
       
       lowNumberCards.forEach(card => {
+        expect(card.number).not.toBeNull();
         expect(card.number).toBeGreaterThanOrEqual(0);
         expect(card.number).toBeLessThanOrEqual(5);
       });

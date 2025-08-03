@@ -1,0 +1,400 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip smoke tests (not recommended)'
+        required: false
+        type: boolean
+        default: false
+      emergency_deployment:
+        description: 'Emergency deployment (skip approvals)'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  NODE_VERSION: '20'
+
+jobs:
+  # Pre-deployment checks
+  pre-checks:
+    name: Pre-deployment Validation
+    runs-on: ubuntu-latest
+    outputs:
+      staging_url: ${{ steps.staging.outputs.url }}
+      checks_passed: ${{ steps.validate.outputs.passed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if main branch is up to date
+        run: |
+          git fetch origin
+          LOCAL=$(git rev-parse HEAD)
+          REMOTE=$(git rev-parse origin/main)
+          
+          if [ "$LOCAL" != "$REMOTE" ]; then
+            echo "❌ Local main branch is not up to date with remote!"
+            exit 1
+          fi
+          
+          echo "✅ Main branch is up to date"
+
+      - name: Get staging deployment info
+        id: staging
+        run: |
+          # Install Vercel CLI
+          npm install -g vercel@latest
+          
+          # Get staging URL
+          STAGING_URL=$(vercel list --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }} --json | jq -r '.deployments[] | select(.target == "preview" and .state == "READY") | .url' | head -1)
+          
+          if [ -z "$STAGING_URL" ]; then
+            echo "❌ No staging deployment found!"
+            exit 1
+          fi
+          
+          echo "url=https://$STAGING_URL" >> $GITHUB_OUTPUT
+          echo "✅ Found staging deployment: https://$STAGING_URL"
+
+      - name: Validate staging deployment
+        id: validate
+        run: |
+          STAGING_URL="${{ steps.staging.outputs.url }}"
+          
+          # Check staging health
+          HTTP_STATUS=$(curl -o /dev/null -s -w '%{http_code}' "$STAGING_URL")
+          API_HEALTH=$(curl -s "$STAGING_URL/api/health" | jq -r '.status' || echo "failed")
+          
+          if [ "$HTTP_STATUS" = "200" ] && [ "$API_HEALTH" = "healthy" ]; then
+            echo "✅ Staging deployment is healthy"
+            echo "passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Staging deployment health check failed!"
+            echo "passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+  # Manual approval gate
+  approval:
+    name: Production Deployment Approval
+    runs-on: ubuntu-latest
+    needs: [pre-checks]
+    environment: production-approval
+    if: ${{ github.event.inputs.emergency_deployment != 'true' }}
+    steps:
+      - name: Request approval
+        run: |
+          echo "🚀 Production deployment requested"
+          echo "📍 Staging URL: ${{ needs.pre-checks.outputs.staging_url }}"
+          echo "👤 Requested by: ${{ github.actor }}"
+          echo "📝 Please review the staging deployment before approving"
+
+  # Production deployment
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [pre-checks, approval]
+    if: |
+      always() && 
+      needs.pre-checks.result == 'success' &&
+      (needs.approval.result == 'success' || github.event.inputs.emergency_deployment == 'true')
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+      deployment_id: ${{ steps.deploy.outputs.deployment_id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Create production backup
+        id: backup
+        run: |
+          # Get current production deployment
+          CURRENT_PROD=$(vercel list --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }} --json | jq -r '.deployments[] | select(.target == "production" and .state == "READY") | .url' | head -1)
+          
+          if [ -n "$CURRENT_PROD" ]; then
+            echo "backup_url=https://$CURRENT_PROD" >> $GITHUB_OUTPUT
+            echo "📸 Backup of current production: https://$CURRENT_PROD"
+          fi
+
+      - name: Deploy to production
+        id: deploy
+        run: |
+          echo "🚀 Starting production deployment..."
+          
+          # Pull environment information
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          
+          # Build for production
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          
+          # Deploy to production
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} | tail -1)
+          
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "deployment_id=${DEPLOYMENT_URL##*/}" >> $GITHUB_OUTPUT
+          echo "✅ Deployed to production: $DEPLOYMENT_URL"
+
+      - name: Tag release
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          
+          TAG="production-$(date +%Y%m%d-%H%M%S)"
+          git tag -a "$TAG" -m "Production deployment: ${{ steps.deploy.outputs.url }}"
+          git push origin "$TAG"
+
+  # Production smoke tests
+  production-tests:
+    name: Production Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: ${{ github.event.inputs.skip_tests != 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run production smoke tests
+        run: |
+          cat > production-tests.spec.ts << 'EOF'
+          import { test, expect } from '@playwright/test';
+
+          const productionUrl = '${{ needs.deploy-production.outputs.url }}';
+
+          test.describe('Production Smoke Tests', () => {
+            test('Critical user flows work', async ({ page }) => {
+              // Homepage
+              await page.goto(productionUrl);
+              await expect(page).toHaveTitle(/InnerSpell/);
+              
+              // Navigation works
+              await page.click('text=About');
+              await expect(page).toHaveURL(/.*\/about/);
+              
+              // Tarot section loads
+              await page.goto(`${productionUrl}/tarot`);
+              await expect(page.locator('h1')).toContainText(/Tarot/i);
+            });
+
+            test('API endpoints respond correctly', async ({ request }) => {
+              // Health check
+              const health = await request.get(`${productionUrl}/api/health`);
+              expect(health.ok()).toBeTruthy();
+              
+              // Other critical endpoints
+              const endpoints = ['/api/cards', '/api/posts'];
+              for (const endpoint of endpoints) {
+                const response = await request.get(`${productionUrl}${endpoint}`);
+                expect(response.status()).toBeLessThan(500);
+              }
+            });
+
+            test('Performance metrics are acceptable', async ({ page }) => {
+              await page.goto(productionUrl);
+              
+              const metrics = await page.evaluate(() => {
+                const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+                return {
+                  domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+                  loadComplete: navigation.loadEventEnd - navigation.loadEventStart
+                };
+              });
+              
+              expect(metrics.domContentLoaded).toBeLessThan(3000);
+              expect(metrics.loadComplete).toBeLessThan(5000);
+            });
+
+            test('No critical console errors', async ({ page }) => {
+              const criticalErrors: string[] = [];
+              
+              page.on('console', (msg) => {
+                if (msg.type() === 'error' && !msg.text().includes('favicon')) {
+                  criticalErrors.push(msg.text());
+                }
+              });
+
+              await page.goto(productionUrl);
+              await page.waitForLoadState('networkidle');
+              
+              expect(criticalErrors).toHaveLength(0);
+            });
+          });
+          EOF
+          
+          npx playwright test production-tests.spec.ts --reporter=list
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: production-test-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+  # Monitoring and alerting
+  post-deployment-monitoring:
+    name: Post-deployment Monitoring
+    runs-on: ubuntu-latest
+    needs: [deploy-production, production-tests]
+    if: always() && needs.deploy-production.result == 'success'
+    steps:
+      - name: Monitor production health
+        run: |
+          PROD_URL="${{ needs.deploy-production.outputs.url }}"
+          MONITORING_DURATION=300  # 5 minutes
+          CHECK_INTERVAL=30       # Every 30 seconds
+          
+          echo "🔍 Monitoring production for $MONITORING_DURATION seconds..."
+          
+          END_TIME=$(($(date +%s) + MONITORING_DURATION))
+          ERRORS=0
+          
+          while [ $(date +%s) -lt $END_TIME ]; do
+            HTTP_STATUS=$(curl -o /dev/null -s -w '%{http_code}' "$PROD_URL")
+            RESPONSE_TIME=$(curl -o /dev/null -s -w '%{time_total}' "$PROD_URL")
+            
+            if [ "$HTTP_STATUS" != "200" ]; then
+              ERRORS=$((ERRORS + 1))
+              echo "❌ Error: HTTP $HTTP_STATUS at $(date)"
+            else
+              echo "✅ OK: HTTP $HTTP_STATUS, Response time: ${RESPONSE_TIME}s"
+            fi
+            
+            if [ $ERRORS -gt 3 ]; then
+              echo "❌ Too many errors detected! Triggering alert..."
+              exit 1
+            fi
+            
+            sleep $CHECK_INTERVAL
+          done
+          
+          echo "✅ Monitoring completed successfully"
+
+  # Final notification
+  notify-deployment:
+    name: Notify Production Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-production, production-tests, post-deployment-monitoring]
+    if: always()
+    steps:
+      - name: Determine deployment status
+        id: status
+        run: |
+          if [ "${{ needs.post-deployment-monitoring.result }}" = "success" ]; then
+            echo "status=successful" >> $GITHUB_OUTPUT
+            echo "emoji=🎉" >> $GITHUB_OUTPUT
+            echo "color=3066993" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.production-tests.result }}" = "failure" ]; then
+            echo "status=failed (tests)" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "color=15158332" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.deploy-production.result }}" = "success" ]; then
+            echo "status=deployed (monitoring failed)" >> $GITHUB_OUTPUT
+            echo "emoji=⚠️" >> $GITHUB_OUTPUT
+            echo "color=16776960" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "color=15158332" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send comprehensive notification
+        if: vars.SLACK_WEBHOOK_URL != ''
+        uses: slackapi/slack-github-action@v1.24.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          payload: |
+            {
+              "text": "${{ steps.status.outputs.emoji }} Production Deployment ${{ steps.status.outputs.status }}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ steps.status.outputs.emoji }} Production Deployment Complete"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\n${{ steps.status.outputs.status }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Deployed by:*\n${{ github.actor }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Production URL:*\n<${{ needs.deploy-production.outputs.url }}|View Site>"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Deployment Time:*\n<!date^$(date +%s)^{date_short_pretty} at {time}|$(date)>"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Deployment Summary:*\n• Pre-checks: ${{ needs.pre-checks.result }}\n• Deployment: ${{ needs.deploy-production.result }}\n• Tests: ${{ needs.production-tests.result || 'skipped' }}\n• Monitoring: ${{ needs.post-deployment-monitoring.result }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Deployment"
+                      },
+                      "url": "${{ needs.deploy-production.outputs.url }}"
+                    },
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }

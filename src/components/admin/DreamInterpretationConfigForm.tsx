@@ -158,7 +158,10 @@ export function DreamInterpretationConfigForm() {
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setLoading(true);
     try {
-      const result = await configureDreamPromptSettings(data);
+      const result = await configureDreamPromptSettings({
+        model: data.model as 'googleai/gemini-1.5-pro-latest' | 'googleai/gemini-1.5-flash-latest',
+        promptTemplate: data.promptTemplate
+      });
       toast({
         variant: result.success ? 'default' : 'destructive',
         title: result.success ? '성공' : '오류',

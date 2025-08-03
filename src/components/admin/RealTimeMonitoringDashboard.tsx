@@ -248,7 +248,10 @@ export function RealTimeMonitoringDashboard() {
 
       {/* 실시간 알림 시스템 */}
       <RealTimeAlerts 
-        stats={data?.stats} 
+        stats={data?.stats ? {
+          ...data.stats,
+          errorRate: data.stats.errorRate ?? 0
+        } : undefined} 
         recentEvents={data?.recentEvents} 
       />
 

@@ -40,10 +40,11 @@ export function observePerformanceMetrics(callback: (metric: PerformanceMetrics)
     // Core Web Vitals 측정
     const observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
+        const value = (entry as any).value || (entry as any).processingStart || 0;
         const metric: PerformanceMetrics = {
           name: entry.name,
-          value: entry.value || (entry as any).processingStart || 0,
-          rating: getRating(entry.name, entry.value || 0),
+          value: value,
+          rating: getRating(entry.name, value),
           navigationType: (performance.navigation as any)?.type || 'navigate',
           timestamp: Date.now(),
         };

@@ -160,8 +160,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             try {
               const { createOrUpdateUserProfile } = await import('@/actions/userActions');
               await createOrUpdateUserProfile(currentFirebaseUser.uid, {
-                email: currentFirebaseUser.email,
-                name: currentFirebaseUser.displayName || currentFirebaseUser.email,
+                email: currentFirebaseUser.email || '',
+                name: currentFirebaseUser.displayName || currentFirebaseUser.email || '',
                 avatar: currentFirebaseUser.photoURL || undefined,
               });
               console.log('🔥 AuthContext: Background profile creation completed');

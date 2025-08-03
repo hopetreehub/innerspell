@@ -64,12 +64,14 @@ class PushNotificationManager {
 
     try {
       // Get service worker registration
-      this.swRegistration = await navigator.serviceWorker.getRegistration();
+      const registration = await navigator.serviceWorker.getRegistration();
       
-      if (!this.swRegistration) {
+      if (!registration) {
         console.warn('Service Worker not registered');
         return false;
       }
+      
+      this.swRegistration = registration;
 
       console.log('Push notification system initialized');
       return true;

@@ -155,7 +155,9 @@ export class BrowserCacheManager {
     // 캐시 크기 제한
     if (this.memoryCache.size >= this.MAX_MEMORY_CACHE_SIZE) {
       const firstKey = this.memoryCache.keys().next().value;
-      this.memoryCache.delete(firstKey);
+      if (firstKey !== undefined) {
+        this.memoryCache.delete(firstKey);
+      }
     }
 
     this.memoryCache.set(key, {
@@ -196,7 +198,12 @@ export class BrowserCacheManager {
       const db = await this.openCacheDB();
       const transaction = db.transaction(['cache'], 'readonly');
       const store = transaction.objectStore('cache');
-      const result = await store.get(key);
+      const request = store.get(key);
+      
+      const result = await new Promise<any>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
 
       if (!result) return null;
 
@@ -205,7 +212,7 @@ export class BrowserCacheManager {
         // 만료된 데이터 삭제
         const deleteTransaction = db.transaction(['cache'], 'readwrite');
         const deleteStore = deleteTransaction.objectStore('cache');
-        await deleteStore.delete(key);
+        deleteStore.delete(key);
         return null;
       }
 
@@ -248,16 +255,18 @@ export class BrowserCacheManager {
         const db = await this.openCacheDB();
         const transaction = db.transaction(['cache'], 'readwrite');
         const store = transaction.objectStore('cache');
-        const cursor = await store.openCursor();
+        const request = store.openCursor();
 
-        if (cursor) {
-          do {
+        request.onsuccess = (event) => {
+          const cursor = (event.target as IDBRequest<IDBCursorWithValue | null>).result;
+          if (cursor) {
             const cached = cursor.value;
             if (now - cached.timestamp > cached.maxAge) {
-              await cursor.delete();
+              cursor.delete();
             }
-          } while (cursor.continue());
-        }
+            cursor.continue();
+          }
+        };
       } catch (error) {
         console.warn('Failed to clear expired cache:', error);
       }

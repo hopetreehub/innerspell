@@ -15,9 +15,9 @@ import {
   AIModel, 
   AIProviderConfig, 
   AIFeatureMapping,
-  TarotCardInstruction,
-  PositionGuideline 
+  TarotCardInstruction
 } from '@/types';
+import { PositionGuideline } from '@/types/tarot-guidelines';
 
 /**
  * Get the configured AI provider and model for a specific feature

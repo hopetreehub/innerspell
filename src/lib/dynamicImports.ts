@@ -3,8 +3,8 @@
  */
 
 // 라이브러리 동적 임포트 타입 정의
-type ImportFunction<T = any> = () => Promise<{ default: T }>;
-type ImportedModule<T = any> = Promise<{ default: T }>;
+type ImportFunction<T = any> = () => Promise<{ default: T } | T>;
+type ImportedModule<T = any> = Promise<{ default: T } | T>;
 
 // 무거운 라이브러리들의 동적 임포트
 export const dynamicImports = {
@@ -22,7 +22,7 @@ export const dynamicImports = {
   framerMotion: (): ImportedModule => import('framer-motion'),
   
   // 날짜 라이브러리
-  dateFns: (): ImportedModule => import('date-fns'),
+  dateFns: (): Promise<typeof import('date-fns')> => import('date-fns'),
   
   // 마크다운 라이브러리
   reactMarkdown: (): ImportedModule => import('react-markdown'),
@@ -84,10 +84,10 @@ export class DynamicImportManager {
 
     // 새로운 임포트 시작
     const importPromise = importFn().then(module => {
-      const result = module.default;
-      this.cache.set(key, result);
+      const result = 'default' in module ? module.default : module;
+      this.cache.set(key, result as any);
       this.loadingPromises.delete(key);
-      return result;
+      return result as T;
     }).catch(error => {
       this.loadingPromises.delete(key);
       throw error;

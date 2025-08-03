@@ -91,4 +91,4 @@ export function getDoc(collectionPath: string, docId: string) {
 
 // Re-export types for convenience
 export type { admin };
-export { FirebaseFirestore } from 'firebase-admin/firestore';
+export { Firestore } from 'firebase-admin/firestore';

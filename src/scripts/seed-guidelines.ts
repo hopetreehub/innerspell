@@ -44,7 +44,7 @@ async function seedGuidelinesData() {
     console.log(`   - ID: ${trinityViewSpiritualGrowth.id}`);
     console.log(`   - Spread: ${trinityViewSpiritualGrowth.spreadId}`);
     console.log(`   - Style: ${trinityViewSpiritualGrowth.styleId}`);
-    console.log(`   - Positions: ${trinityViewSpiritualGrowth.positions?.length || 0}`);
+    console.log(`   - Positions: ${trinityViewSpiritualGrowth.positionGuidelines?.length || 0}`);
     
     // 저장된 데이터 확인
     const savedDoc = await docRef.get();

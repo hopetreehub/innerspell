@@ -191,9 +191,7 @@ const LazyTarotReading = lazy(() =>
 );
 
 const LazyDreamInterpretation = lazy(() =>
-  import('@/components/dream/DreamInterpretationClient').then(module => ({
-    default: module.DreamInterpretationClient || module.default
-  })).catch(() => ({
+  import('@/components/dream/DreamInterpretationClient').catch(() => ({
     default: () => <div>꿈해몽을 불러올 수 없습니다.</div>
   }))
 );

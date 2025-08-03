@@ -105,8 +105,8 @@ export default function GoogleAnalytics({ GA_MEASUREMENT_ID }: GoogleAnalyticsPr
   // 초기 설정
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // 개인정보 보호 설정
-      window.gtag('consent', 'default', {
+      // 개인정보 보호 설정 - gtag consent API 사용
+      (window as any).gtag('consent', 'default', {
         analytics_storage: 'granted',
         ad_storage: 'denied',
         personalization_storage: 'denied',

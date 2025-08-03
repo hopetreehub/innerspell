@@ -75,7 +75,7 @@ function getClientIp(request: NextRequest): string {
          'anonymous';
 }
 
-function isRateLimited(ip: string, config: typeof RATE_LIMIT_CONFIG | typeof RATE_LIMIT_CONFIG.api): boolean {
+function isRateLimited(ip: string, config: { windowMs: number; maxRequests: number }): boolean {
   const now = Date.now();
   const limit = rateLimitStore.get(ip);
   
@@ -162,11 +162,11 @@ export function middleware(request: NextRequest) {
   }
   
   // Apply different rate limits based on the path
-  let rateLimitConfig = RATE_LIMIT_CONFIG;
-  if (pathname.startsWith('/api/')) {
-    rateLimitConfig = RATE_LIMIT_CONFIG.api;
-  } else if (pathname.startsWith('/api/auth/') || pathname.startsWith('/auth/')) {
+  let rateLimitConfig = { windowMs: RATE_LIMIT_CONFIG.windowMs, maxRequests: RATE_LIMIT_CONFIG.maxRequests };
+  if (pathname.startsWith('/api/auth/') || pathname.startsWith('/auth/')) {
     rateLimitConfig = RATE_LIMIT_CONFIG.auth;
+  } else if (pathname.startsWith('/api/')) {
+    rateLimitConfig = RATE_LIMIT_CONFIG.api;
   }
   
   // Check rate limiting
@@ -215,8 +215,8 @@ export function middleware(request: NextRequest) {
 }
 
 // Clean up old rate limit entries periodically
-if (typeof global !== 'undefined' && !global.rateLimitCleanupInterval) {
-  global.rateLimitCleanupInterval = setInterval(() => {
+if (typeof global !== 'undefined' && !(global as any).rateLimitCleanupInterval) {
+  (global as any).rateLimitCleanupInterval = setInterval(() => {
     const now = Date.now();
     for (const [ip, limit] of rateLimitStore.entries()) {
       if (now > limit.resetTime) {
