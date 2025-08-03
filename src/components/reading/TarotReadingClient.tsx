@@ -1028,9 +1028,40 @@ export function TarotReadingClient() {
                   </div>
                 )}
                 <div
-                  className="prose dark:prose-invert prose-lg max-w-none prose-headings:font-headline prose-headings:text-accent prose-headings:text-xl sm:prose-headings:text-2xl prose-headings:mb-3 prose-headings:mt-5 prose-p:text-foreground dark:prose-p:text-white prose-strong:text-primary dark:prose-strong:text-white leading-relaxed"
+                  className="prose dark:prose-invert prose-lg max-w-none 
+                    prose-headings:font-headline prose-headings:text-accent 
+                    prose-headings:text-xl sm:prose-headings:text-2xl 
+                    prose-headings:mb-4 prose-headings:mt-6 
+                    prose-p:text-foreground/90 dark:prose-p:text-white/90 
+                    prose-p:leading-8 prose-p:mb-4
+                    prose-strong:text-primary dark:prose-strong:text-white 
+                    prose-strong:font-semibold
+                    prose-ul:my-4 prose-ul:space-y-2
+                    prose-li:text-foreground/90 dark:prose-li:text-white/90
+                    prose-li:leading-7
+                    [&>h1]:text-3xl [&>h1]:border-b [&>h1]:border-muted [&>h1]:pb-3
+                    [&>h2]:text-2xl [&>h2]:mt-8 [&>h2]:mb-4
+                    [&>h3]:text-xl [&>h3]:mt-6 [&>h3]:mb-3
+                    [&>p:first-of-type]:text-lg [&>p:first-of-type]:font-medium
+                    [&>blockquote]:border-l-4 [&>blockquote]:border-accent 
+                    [&>blockquote]:pl-4 [&>blockquote]:italic 
+                    [&>blockquote]:text-foreground/80 dark:[&>blockquote]:text-white/80"
                 >
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayedInterpretation}</ReactMarkdown>
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({children}) => <h1 className="first:mt-0">{children}</h1>,
+                      h2: ({children}) => <h2 className="first:mt-0">{children}</h2>,
+                      h3: ({children}) => <h3 className="first:mt-0">{children}</h3>,
+                      p: ({children}) => <p className="text-justify">{children}</p>,
+                      ul: ({children}) => <ul className="list-disc pl-6">{children}</ul>,
+                      li: ({children}) => <li className="mb-1">{children}</li>,
+                      strong: ({children}) => <strong className="font-bold text-primary">{children}</strong>,
+                      em: ({children}) => <em className="text-accent">{children}</em>,
+                    }}
+                  >
+                    {displayedInterpretation}
+                  </ReactMarkdown>
                 </div>
                 {!user && stage === 'interpretation_ready' && <SignUpPrompt />}
               </div>
