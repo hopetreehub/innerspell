@@ -19,8 +19,8 @@ const securityConfig: SecurityConfig = {
   requireApiKey: false,
   apiKeyHeader: 'x-api-key',
   
-  // Rate limiting - use write tier
-  rateLimit: 'write',
+  // Rate limiting - use communityPost tier
+  rateLimit: 'communityPost',
   
   // Input validation schema
   validateInput: apiSchemas.createCommunityPost,
