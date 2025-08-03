@@ -20,9 +20,9 @@ export async function importWithNamedExport<T extends string>(
   importFn: () => Promise<Record<T, React.ComponentType<any>>>,
   exportName: T
 ): Promise<ComponentModule> {
-  const module = await importFn();
+  const moduleExports = await importFn();
   return {
-    default: module[exportName]
+    default: moduleExports[exportName]
   };
 }
 
@@ -37,8 +37,8 @@ export async function importNamedExports<T extends Record<string, string>>(
 ): Promise<Record<keyof T, ComponentModule>> {
   const entries = await Promise.all(
     Object.entries(imports).map(async ([key, { importFn, exportName }]) => {
-      const module = await importFn();
-      return [key, { default: module[exportName] }];
+      const moduleExports = await importFn();
+      return [key, { default: moduleExports[exportName] }];
     })
   );
   

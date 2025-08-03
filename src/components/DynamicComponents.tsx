@@ -38,6 +38,15 @@ export const LazyGoogleAnalytics = dynamic(
   }
 );
 
+// Web Vitals 추적을 lazy load
+export const LazyWebVitalsTracker = dynamic(
+  () => import('@/components/performance/WebVitalsTracker'),
+  { 
+    ssr: false,
+    loading: () => null
+  }
+);
+
 // 관리자 컴포넌트들을 lazy load
 export const LazyBlogManagement = dynamic(
   () => import('@/components/admin/BlogManagement').then(mod => ({ default: mod.BlogManagement })),

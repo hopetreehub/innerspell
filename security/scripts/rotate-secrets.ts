@@ -311,7 +311,7 @@ if (require.main === module) {
       manager.generateReport();
       break;
     case 'check':
-      const compliant = manager.checkCompliance();
+      const compliant = await manager.checkCompliance();
       process.exit(compliant ? 0 : 1);
       break;
     default:

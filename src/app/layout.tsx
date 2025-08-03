@@ -12,7 +12,8 @@ import {
   LazyPerformanceMonitor, 
   LazyPerformanceManager, 
   LazyServiceWorkerRegistration,
-  LazyGoogleAnalytics 
+  LazyGoogleAnalytics,
+  LazyWebVitalsTracker
 } from '@/components/DynamicComponents';
 import { WebsiteStructuredData, OrganizationStructuredData } from '@/components/seo/StructuredData';
 
@@ -129,6 +130,7 @@ export default function RootLayout({
                 <LazyServiceWorkerRegistration />
                 <LazyPerformanceMonitor />
                 <LazyPerformanceManager />
+                <LazyWebVitalsTracker />
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
                   <LazyGoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
                 )}
