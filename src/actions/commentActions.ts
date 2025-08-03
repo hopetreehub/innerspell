@@ -69,14 +69,15 @@ export async function addComment(
       const postRef = firestore.collection('communityPosts').doc(postId);
       const commentRef = postRef.collection('comments').doc();
 
+      const fieldValue = await getFieldValue();
       const newComment = {
         authorId: author.uid,
         authorName: author.displayName || '익명',
         authorPhotoURL: author.photoURL || '',
         content: content,
         isSecret: isSecret || false,
-        createdAt: getFieldValue().serverTimestamp(),
-        updatedAt: getFieldValue().serverTimestamp(),
+        createdAt: fieldValue.serverTimestamp(),
+        updatedAt: fieldValue.serverTimestamp(),
       };
 
       console.log(`[DEBUG] Starting transaction for postId: ${postId}`);
@@ -84,8 +85,8 @@ export async function addComment(
         console.log(`[DEBUG] Inside transaction - setting comment and updating post`);
         transaction.set(commentRef, newComment);
         transaction.update(postRef, {
-          commentCount: getFieldValue().increment(1),
-          updatedAt: getFieldValue().serverTimestamp(),
+          commentCount: fieldValue.increment(1),
+          updatedAt: fieldValue.serverTimestamp(),
         });
       });
       console.log(`[DEBUG] Transaction completed for postId: ${postId}`);
@@ -123,10 +124,11 @@ export async function deleteComment(
       return { success: false, error: '댓글을 삭제할 권한이 없습니다.' };
     }
 
+    const fieldValue = await getFieldValue();
     await firestore.runTransaction(async (transaction: any) => {
       transaction.delete(commentRef);
       transaction.update(postRef, {
-        commentCount: getFieldValue().increment(-1),
+        commentCount: fieldValue.increment(-1),
       });
     });
 
@@ -159,9 +161,10 @@ export async function updateComment(
         return { success: false, error: '댓글을 수정할 권한이 없습니다.' };
       }
       
+      const fieldValue = await getFieldValue();
       await commentRef.update({
         content: validationResult.data.content,
-        updatedAt: getFieldValue().serverTimestamp(),
+        updatedAt: fieldValue.serverTimestamp(),
       });
 
       return { success: true };

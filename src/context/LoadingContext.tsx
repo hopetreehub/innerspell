@@ -62,7 +62,7 @@ export function LoadingProvider({ children }: LoadingProviderProps) {
     return Boolean(componentLoading[component]);
   }, [componentLoading]);
 
-  const withPageLoading = useCallback(async <T>(
+  const withPageLoading = useCallback(async <T,>(
     asyncFn: () => Promise<T>,
     message: string = '로딩 중...'
   ): Promise<T> => {
@@ -75,7 +75,7 @@ export function LoadingProvider({ children }: LoadingProviderProps) {
     }
   }, [startPageLoading, stopPageLoading]);
 
-  const withComponentLoading = useCallback(async <T>(
+  const withComponentLoading = useCallback(async <T,>(
     component: string,
     asyncFn: () => Promise<T>
   ): Promise<T> => {

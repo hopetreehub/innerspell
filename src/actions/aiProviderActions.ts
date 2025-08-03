@@ -50,7 +50,7 @@ function maskApiKey(apiKey: string): string {
 export async function saveAIProviderConfig(
   formData: AIProviderFormData
 ): Promise<{ success: boolean; message: string }> {
-  return safeFirestoreOperation(async (firestore) => {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const validation = AIProviderFormSchema.safeParse(formData);
     if (!validation.success) {
       throw new Error('유효하지 않은 데이터입니다.');
@@ -88,6 +88,12 @@ export async function saveAIProviderConfig(
 
     return { success: true, message: `${provider} 설정이 성공적으로 저장되었습니다. (환경변수에도 저장됨)` };
   });
+  
+  if (!result.success) {
+    return { success: false, message: result.error };
+  }
+  
+  return result.data;
 }
 
 export async function getAIProviderConfig(
