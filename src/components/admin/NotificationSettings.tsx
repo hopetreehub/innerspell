@@ -147,6 +147,7 @@ export function NotificationSettings() {
   const [config, setConfig] = useState<NotificationConfig>(defaultConfig);
   const [isLoading, setIsLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [originalConfig, setOriginalConfig] = useState<NotificationConfig>(defaultConfig);
 
   // 설정 불러오기
   useEffect(() => {
@@ -155,38 +156,83 @@ export function NotificationSettings() {
 
   // 변경사항 감지
   useEffect(() => {
-    setHasChanges(JSON.stringify(config) !== JSON.stringify(defaultConfig));
-  }, [config]);
+    setHasChanges(JSON.stringify(config) !== JSON.stringify(originalConfig));
+  }, [config, originalConfig]);
 
   const loadSettings = async () => {
     try {
-      // 실제 구현에서는 API 호출
-      const savedSettings = localStorage.getItem('notificationSettings');
-      if (savedSettings) {
-        setConfig(JSON.parse(savedSettings));
+      setIsLoading(true);
+      const response = await fetch('/api/admin/notification-settings', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        },
+        cache: 'no-store'
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          setConfig(result.data);
+          setOriginalConfig(result.data);
+        }
+      } else {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
       console.error('Failed to load notification settings:', error);
+      toast({
+        variant: 'destructive',
+        title: '설정 불러오기 실패',
+        description: '알림 설정을 불러오는데 실패했습니다. 기본값을 사용합니다.',
+      });
+      // 오류 시 기본값 사용
+      setConfig(defaultConfig);
+      setOriginalConfig(defaultConfig);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const saveSettings = async () => {
     setIsLoading(true);
     try {
-      // 실제 구현에서는 API 호출
-      localStorage.setItem('notificationSettings', JSON.stringify(config));
-      
-      toast({
-        title: '알림 설정 저장됨',
-        description: '알림 설정이 성공적으로 저장되었습니다.',
+      const response = await fetch('/api/admin/notification-settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ config })
       });
       
-      setHasChanges(false);
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          toast({
+            title: '알림 설정 저장땨',
+            description: result.message || '알림 설정이 성공적으로 저장되었습니다.',
+          });
+          
+          // 저장된 데이터로 업데이트
+          if (result.data) {
+            setConfig(result.data);
+            setOriginalConfig(result.data);
+          }
+          setHasChanges(false);
+        } else {
+          throw new Error(result.error || '알 수 없는 오류');
+        }
+      } else {
+        const errorResult = await response.json();
+        throw new Error(errorResult.error || `HTTP ${response.status}`);
+      }
     } catch (error) {
+      console.error('Failed to save notification settings:', error);
       toast({
         variant: 'destructive',
         title: '저장 실패',
-        description: '알림 설정을 저장하는데 실패했습니다.',
+        description: error instanceof Error ? error.message : '알림 설정을 저장하는데 실패했습니다.',
       });
     } finally {
       setIsLoading(false);
@@ -197,8 +243,42 @@ export function NotificationSettings() {
     setConfig(defaultConfig);
     toast({
       title: '설정 초기화',
-      description: '알림 설정이 기본값으로 초기화되었습니다.',
+      description: '알림 설정이 기본값으로 초기화되었습니다. 저장하려면 저장 버튼을 클릭하세요.',
     });
+  };
+  
+  const sendTestNotification = async (type: 'email' | 'slack' | 'push') => {
+    try {
+      const response = await fetch('/api/admin/notification-settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({
+          title: '테스트 알림 전송띈',
+          description: result.message,
+        });
+      } else {
+        toast({
+          variant: 'destructive',
+          title: '테스트 알림 실패',
+          description: result.message || '테스트 알림 전송에 실패했습니다.',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to send test notification:', error);
+      toast({
+        variant: 'destructive',
+        title: '테스트 알림 실패',
+        description: '테스트 알림을 전송에 실패했습니다.',
+      });
+    }
   };
 
   const updateConfig = (path: string, value: any) => {
@@ -646,39 +726,24 @@ export function NotificationSettings() {
               <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  disabled={!config.email.enabled || !config.email.address}
-                  onClick={() => {
-                    toast({
-                      title: '이메일 알림 전송됨',
-                      description: '테스트 이메일이 발송되었습니다.',
-                    });
-                  }}
+                  disabled={!config.email.enabled || !config.email.address || isLoading}
+                  onClick={() => sendTestNotification('email')}
                 >
                   <Mail className="h-4 w-4 mr-2" />
                   이메일 테스트
                 </Button>
                 <Button
                   variant="outline"
-                  disabled={!config.slack.enabled || !config.slack.webhookUrl}
-                  onClick={() => {
-                    toast({
-                      title: 'Slack 알림 전송됨',
-                      description: '테스트 메시지가 발송되었습니다.',
-                    });
-                  }}
+                  disabled={!config.slack.enabled || !config.slack.webhookUrl || isLoading}
+                  onClick={() => sendTestNotification('slack')}
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Slack 테스트
                 </Button>
                 <Button
                   variant="outline"
-                  disabled={!config.push.enabled}
-                  onClick={() => {
-                    toast({
-                      title: '푸시 알림 전송됨',
-                      description: '테스트 푸시 알림이 발송되었습니다.',
-                    });
-                  }}
+                  disabled={!config.push.enabled || isLoading}
+                  onClick={() => sendTestNotification('push')}
                 >
                   <Smartphone className="h-4 w-4 mr-2" />
                   푸시 테스트
@@ -696,16 +761,32 @@ export function NotificationSettings() {
             <Info className="h-5 w-5 text-muted-foreground mt-0.5" />
             <div className="space-y-1 text-sm text-muted-foreground">
               <p>
-                현재 {Object.values(config).filter(c => c.enabled).length}개의 알림 채널이 활성화되어 있습니다.
+                현재 {[config.email, config.slack, config.push].filter(c => c.enabled).length}개의 알림 채널이 활성화되어 있습니다.
               </p>
               {config.schedule.quietHours.enabled && (
                 <p>
                   방해금지 시간: {config.schedule.quietHours.start} - {config.schedule.quietHours.end}
                 </p>
               )}
+              {config.email.enabled && config.email.address && (
+                <p>
+                  이메일 알림: {config.email.address} ({config.email.frequency})
+                </p>
+              )}
+              {config.slack.enabled && config.slack.channel && (
+                <p>
+                  Slack 알림: {config.slack.channel}
+                </p>
+              )}
               {hasChanges && (
                 <p className="text-orange-600 dark:text-orange-400 font-medium">
                   저장되지 않은 변경사항이 있습니다.
+                </p>
+              )}
+              {isLoading && (
+                <p className="text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
+                  <div className="h-3 w-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  작업 중...
                 </p>
               )}
             </div>
