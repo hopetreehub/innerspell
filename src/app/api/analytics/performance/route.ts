@@ -20,11 +20,45 @@ const performanceStats = new Map<string, any>();
 
 export async function POST(request: NextRequest) {
   try {
+    // 개발 환경에서는 성능 모니터링 비활성화
+    if (process.env.NODE_ENV !== 'production') {
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Performance monitoring disabled in development' 
+      });
+    }
+
     const headersList = await headers();
     const forwarded = headersList.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : 'anonymous';
     
-    const data: PerformanceData = await request.json();
+    // 요청 본문 검증
+    const contentType = request.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      return NextResponse.json(
+        { error: 'Content-Type must be application/json' },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.text();
+    if (!body || body.trim() === '') {
+      return NextResponse.json(
+        { error: 'Empty request body' },
+        { status: 400 }
+      );
+    }
+
+    let data: PerformanceData;
+    try {
+      data = JSON.parse(body);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      return NextResponse.json(
+        { error: 'Invalid JSON format' },
+        { status: 400 }
+      );
+    }
     
     // 기본 검증
     if (!data.metrics || !Array.isArray(data.metrics)) {

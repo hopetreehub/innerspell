@@ -55,6 +55,10 @@ You should use the following configuration to guide your behavior.
 - **NO LOCAL TESTING**: 로컬에서 테스트하지 말고 바로 커밋하여 Vercel에서 확인
 - **변경 → 커밋 → 배포 → 확인**: 이 순서를 절대 벗어나지 않음
 - **실시간 배포 검증**: 모든 기능과 UI는 실제 Vercel 환경에서만 확인
+- **절대 규칙: Git 커밋은 반드시 사용자 승인 후에만 실행**
+- **ABSOLUTE RULE: Git commits MUST only be executed after user approval**
+- **커밋 전 항상 사용자에게 승인 요청**
+- **승인 없이는 절대 git commit 명령 실행 금지**
 
 ### 작업 검증 원칙 (Work Verification Rule) - 필수 준수
 - **각 단계 완료 시 Chromium으로 직접 확인 필수**

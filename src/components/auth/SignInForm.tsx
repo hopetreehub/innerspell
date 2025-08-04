@@ -22,7 +22,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, KeyRound, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
-import { DevAuthHelper } from '@/components/DevAuthHelper';
 
 const formSchema = z.object({
   email: z.string().email({ message: '유효한 이메일 주소를 입력해주세요.' }),
@@ -339,7 +338,6 @@ export function SignInForm() {
           회원가입
         </Link>
       </p>
-      <DevAuthHelper />
     </>
   );
 }
