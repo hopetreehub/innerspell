@@ -134,7 +134,7 @@ async function getRealRealtimeData() {
           { location: '대구광역시', count: Math.round(totalUsers * 0.08) },
           { location: '인천광역시', count: Math.round(totalUsers * 0.07) },
           { location: '기타 지역', count: Math.round(totalUsers * 0.13) }
-        ].filter(region => region.count > 0)
+        ].filter(region => region.count > 0),
         
         deviceTypes: {
           mobile: Math.round(55 + Math.random() * 10), // 55-65% 모바일 (현실적 추정)

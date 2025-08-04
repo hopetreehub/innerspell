@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { getTarotImagePath, TAROT_IMAGE_CONFIG } from '@/config/tarot-images';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getOptimizedImagePath, getOptimizedSrcSet } from '@/hooks/useOptimizedImage';
 
 interface TarotCardImageProps {
   cardId?: string;
@@ -43,9 +44,13 @@ export function TarotCardImage({
   const [hasError, setHasError] = useState(false);
   
   // Get the appropriate image source
-  const imageSrc = cardId 
+  const originalSrc = cardId 
     ? getTarotImagePath(feature, cardId, isCardBack)
     : TAROT_IMAGE_CONFIG.features[feature].cardBack;
+  
+  // Use optimized WebP version if available
+  const imageSrc = getOptimizedImagePath(originalSrc);
+  const srcSet = getOptimizedSrcSet(originalSrc);
   
   // Use configured sizes if not provided
   const imageSizes = sizes || TAROT_IMAGE_CONFIG.imageOptimization.sizes[feature];
@@ -65,10 +70,13 @@ export function TarotCardImage({
     console.error(`[TarotCardImage] Failed to load image: ${imageSrc}`);
   };
   
-  // Fallback to card back on error
+  // Fallback to card back on error, then to original if optimized fails
   const displaySrc = hasError 
-    ? TAROT_IMAGE_CONFIG.features[feature].cardBack 
+    ? getOptimizedImagePath(TAROT_IMAGE_CONFIG.features[feature].cardBack)
     : imageSrc;
+  
+  // Fallback srcSet
+  const displaySrcSet = hasError ? '' : srcSet;
   
   // Reset error state when card changes
   useEffect(() => {

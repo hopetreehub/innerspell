@@ -56,6 +56,13 @@ You should use the following configuration to guide your behavior.
 - **변경 → 커밋 → 배포 → 확인**: 이 순서를 절대 벗어나지 않음
 - **실시간 배포 검증**: 모든 기능과 UI는 실제 Vercel 환경에서만 확인
 
+### 작업 검증 원칙 (Work Verification Rule) - 필수 준수
+- **각 단계 완료 시 Chromium으로 직접 확인 필수**
+- **MUST VERIFY WITH CHROMIUM**: 모든 작업 단계가 끝나면 반드시 Playwright Chromium으로 실제 화면 확인
+- **스크린샷 촬영 및 보고**: 각 단계의 결과를 스크린샷으로 남기고 보고
+- **포트 4000번 서버 실행 상태 유지**: 작업 시작 전 포트 4000번을 열고 서버 실행
+- **시각적 검증 우선**: 코드 변경 후 실제 UI/UX 변화를 눈으로 확인
+
 ## Legend
 @include commands/shared/universal-constants.yml#Universal_Legend
 

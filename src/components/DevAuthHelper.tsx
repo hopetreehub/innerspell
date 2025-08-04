@@ -11,9 +11,13 @@ export function DevAuthHelper() {
   
   const handleAdminLogin = async () => {
     try {
-      // Admin credentials for development
-      const email = 'admin@innerspell.com';
-      const password = 'admin123';
+      // Admin credentials from environment variables
+      const email = process.env.NEXT_PUBLIC_DEV_ADMIN_EMAIL;
+      const password = process.env.NEXT_PUBLIC_DEV_ADMIN_PASSWORD;
+      
+      if (!email || !password) {
+        throw new Error('개발 환경 관리자 인증 정보가 설정되지 않았습니다.');
+      }
       
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
