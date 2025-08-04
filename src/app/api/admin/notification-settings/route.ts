@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { getFirestore } from 'firebase-admin/firestore';
-import { adminApp } from '@/lib/firebase/admin';
+import { admin } from '@/lib/firebase/admin';
 
 export interface NotificationConfig {
   // 이메일 알림

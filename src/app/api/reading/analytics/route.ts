@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { ReadingPattern, ReadingAnalytics } from '@/types/tarot';
+import { ReadingPattern, ReadingAnalytics, EnhancedTarotReading, ReadingCard, TarotCard, ReadingSummary } from '@/types/tarot';
 import { db } from '@/lib/firebase/admin';
 
 /**
@@ -9,7 +9,7 @@ import { db } from '@/lib/firebase/admin';
  */
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('session')?.value;
 
     if (!sessionCookie) {
@@ -103,21 +103,44 @@ async function generatePatternAnalysis(userId: string, startDate: Date, endDate:
   }));
 
   // 카드 빈도 분석
-  const cardFrequencyMap = new Map<string, any>();
-  const spreadFrequencyMap = new Map<string, any>();
-  const questionCategories = new Map<string, any>();
+  const cardFrequencyMap = new Map<string, {
+    cardId: string;
+    count: number;
+    upright: number;
+    reversed: number;
+    contexts: string[];
+    lastAppeared?: Date;
+  }>();
+  const spreadFrequencyMap = new Map<string, {
+    spreadType: string;
+    count: number;
+    satisfactions: number[];
+    lastUsed: Date;
+  }>();
+  const questionCategories = new Map<string, {
+    category: string;
+    count: number;
+    keywords: Set<string>;
+    sentiments: ('positive' | 'neutral' | 'negative')[];
+  }>();
   const timePatterns = new Array(24).fill(0);
-  const moodPatterns = new Map<string, any>();
+  const moodPatterns = new Map<string, {
+    mood: string;
+    count: number;
+    cards: Set<string>;
+    outcomes: string[];
+  }>();
 
-  readings.forEach((reading: any) => {
+  readings.forEach((reading: EnhancedTarotReading) => {
     // 카드 빈도
-    reading.cards?.forEach((card: any) => {
+    reading.cards?.forEach((card: ReadingCard) => {
       const existing = cardFrequencyMap.get(card.cardId) || {
         cardId: card.cardId,
         count: 0,
         upright: 0,
         reversed: 0,
-        contexts: []
+        contexts: [],
+        lastAppeared: undefined
       };
       
       existing.count++;
@@ -166,7 +189,7 @@ async function generatePatternAnalysis(userId: string, startDate: Date, endDate:
         outcomes: []
       };
       moodData.count++;
-      reading.cards?.forEach((card: any) => moodData.cards.add(card.cardId));
+      reading.cards?.forEach((card: ReadingCard) => moodData.cards.add(card.cardId));
       moodData.outcomes.push(reading.interpretation.slice(0, 100));
       moodPatterns.set(reading.mood, moodData);
     }
@@ -182,7 +205,7 @@ async function generatePatternAnalysis(userId: string, startDate: Date, endDate:
       .slice(0, 20)
       .map(card => ({
         cardId: card.cardId,
-        card: {} as any, // 실제로는 카드 정보 조회
+        card: {} as TarotCard, // 실제로는 카드 정보 조회
         count: card.count,
         lastAppeared: card.lastAppeared,
         orientation: {
@@ -199,7 +222,7 @@ async function generatePatternAnalysis(userId: string, startDate: Date, endDate:
         count: spread.count,
         lastUsed: spread.lastUsed,
         averageSatisfaction: spread.satisfactions.length > 0 
-          ? spread.satisfactions.reduce((a: number, b: number) => a + b, 0) / spread.satisfactions.length 
+          ? spread.satisfactions.reduce((a, b) => a + b, 0) / spread.satisfactions.length 
           : undefined
       })),
     
@@ -308,7 +331,7 @@ async function generateRecommendations(userId: string) {
 
   // 시간 패턴 기반 추천
   const hourCounts = new Array(24).fill(0);
-  readings.forEach((reading: any) => {
+  readings.forEach((reading: EnhancedTarotReading) => {
     hourCounts[reading.createdAt.getHours()]++;
   });
 
@@ -382,11 +405,11 @@ async function generateOverviewAnalysis(userId: string, startDate: Date, endDate
     summary: {
       totalReadings: readings.length,
       averagePerWeek: readings.length / Math.ceil((endDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000)),
-      uniqueCards: new Set(readings.flatMap((r: any) => r.cards?.map((c: any) => c.cardId) || [])).size,
+      uniqueCards: new Set(readings.flatMap((r: EnhancedTarotReading) => r.cards?.map((c: ReadingCard) => c.cardId) || [])).size,
       averageSatisfaction: readings
-        .filter((r: any) => r.satisfaction)
-        .reduce((sum: number, r: any) => sum + r.satisfaction, 0) / 
-        readings.filter((r: any) => r.satisfaction).length || 0
+        .filter((r: EnhancedTarotReading) => r.satisfaction)
+        .reduce((sum: number, r: EnhancedTarotReading) => sum + (r.satisfaction || 0), 0) / 
+        readings.filter((r: EnhancedTarotReading) => r.satisfaction).length || 0
     },
     topInsights: generateTopInsights(readings),
     growthHighlights: generateGrowthHighlights(readings),
@@ -435,9 +458,9 @@ function getMostCommonSentiment(sentiments: string[]): 'positive' | 'neutral' | 
   const counts = sentiments.reduce((acc, sentiment) => {
     acc[sentiment] = (acc[sentiment] || 0) + 1;
     return acc;
-  }, {} as any);
+  }, {} as Record<string, number>);
   
-  return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b) as any;
+  return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b) as 'positive' | 'neutral' | 'negative';
 }
 
 // 나머지 헬퍼 함수들은 간단히 구현
@@ -450,16 +473,24 @@ async function generatePeriodAnalysis(userId: string) {
   };
 }
 
-function generateTimelineAnalysis(readings: any[]) { return []; }
-function calculateSkillProgression(readings: any[]) { return {}; }
-function analyzeInsightEvolution(readings: any[]) { return []; }
-function trackThematicJourney(readings: any[]) { return []; }
-function generateMilestones(readings: any[]) { return []; }
-function generateGrowthProjections(readings: any[]) { return {}; }
-async function generatePeriodSummary(userId: string, start: Date, end: Date) { 
-  return { totalReadings: 0, averageSatisfaction: 0, uniqueCards: 0, themes: [] }; 
+function generateTimelineAnalysis(readings: EnhancedTarotReading[]) { return []; }
+function calculateSkillProgression(readings: EnhancedTarotReading[]) { return {}; }
+function analyzeInsightEvolution(readings: EnhancedTarotReading[]) { return []; }
+function trackThematicJourney(readings: EnhancedTarotReading[]) { return []; }
+function generateMilestones(readings: EnhancedTarotReading[]) { return []; }
+function generateGrowthProjections(readings: EnhancedTarotReading[]) { return {}; }
+async function generatePeriodSummary(userId: string, start: Date, end: Date): Promise<ReadingSummary> { 
+  return { 
+    totalReadings: 0, 
+    averageSatisfaction: 0, 
+    uniqueCards: 0, 
+    themes: [],
+    mostFrequentCard: '',
+    dominantThemes: [],
+    growthInsights: []
+  }; 
 }
-function generateComparisonInsights(prev: any, curr: any) { return []; }
-function generateTopInsights(readings: any[]) { return []; }
-function generateGrowthHighlights(readings: any[]) { return []; }
-function generateNextSteps(readings: any[]) { return []; }
+function generateComparisonInsights(prev: ReadingSummary, curr: ReadingSummary) { return []; }
+function generateTopInsights(readings: EnhancedTarotReading[]) { return []; }
+function generateGrowthHighlights(readings: EnhancedTarotReading[]) { return []; }
+function generateNextSteps(readings: EnhancedTarotReading[]) { return []; }

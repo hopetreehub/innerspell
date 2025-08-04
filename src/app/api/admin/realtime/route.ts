@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
-import { adminApp } from '@/lib/firebase/admin';
+import { admin } from '@/lib/firebase/admin';
 
 // 실시간 데이터를 Firebase에서 가져오는 함수
 async function getRealRealtimeData() {
   try {
-    const db = getFirestore(adminApp);
-    const auth = getAuth(adminApp);
+    const db = getFirestore(admin);
+    const auth = getAuth(admin);
     const now = new Date();
     const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
