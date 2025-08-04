@@ -6,60 +6,125 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ShieldCheck, Server, Database, BrainCircuit, CheckCircle, AlertTriangle, Info, Monitor } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EnvironmentManager } from './EnvironmentManager';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
-const initialSystemStatuses = [
-  { name: "애플리케이션 서버", status: "Online", icon: <Server className="h-5 w-5" />, variant: "default" as const },
-  { name: "데이터베이스 연결", status: "Connected", icon: <Database className="h-5 w-5" />, variant: "default" as const },
-  { name: "AI 생성 서비스 (Genkit)", status: "Operational", icon: <BrainCircuit className="h-5 w-5" />, variant: "default" as const },
-  { name: "최근 백업 상태", status: "Calculating...", icon: <CheckCircle className="h-5 w-5" />, variant: "default" as const, id: "backup-status" },
-  { name: "보안 경고", status: "없음", icon: <Info className="h-5 w-5" />, variant: "secondary" as const },
-];
+interface SystemStatus {
+  name: string;
+  status: string;
+  icon: string;
+  variant: 'default' | 'secondary' | 'destructive' | 'outline';
+  details?: string;
+  lastCheck?: string;
+}
+
+interface SystemLog {
+  timestamp: string;
+  level: 'INFO' | 'WARN' | 'ERROR' | 'DEBUG' | 'AI_GEN' | 'ADMIN' | 'SYSTEM';
+  message: string;
+  source?: string;
+}
+
+interface SystemHealthData {
+  statuses: SystemStatus[];
+  logs: SystemLog[];
+  timestamp: string;
+  error?: string;
+}
+
+// 아이콘 매핑 함수
+const getIcon = (iconName: string) => {
+  const iconMap: { [key: string]: React.ReactNode } = {
+    'Server': <Server className="h-5 w-5" />,
+    'Database': <Database className="h-5 w-5" />,
+    'BrainCircuit': <BrainCircuit className="h-5 w-5" />,
+    'CheckCircle': <CheckCircle className="h-5 w-5" />,
+    'Info': <Info className="h-5 w-5" />,
+    'AlertTriangle': <AlertTriangle className="h-5 w-5" />
+  };
+  return iconMap[iconName] || <Monitor className="h-5 w-5" />;
+};
+
+// 로그 레벨별 색상 함수
+const getLogLevelColor = (level: string) => {
+  switch (level) {
+    case 'ERROR': return 'text-red-500';
+    case 'WARN': return 'text-yellow-500';
+    case 'AI_GEN': return 'text-blue-500';
+    case 'ADMIN': return 'text-purple-500';
+    case 'SYSTEM': return 'text-green-500';
+    case 'INFO':
+    default: return 'text-foreground/70';
+  }
+};
 
 
 export function SystemManagement() {
-  const [systemStatuses, setSystemStatuses] = useState(initialSystemStatuses);
-  const [logs, setLogs] = useState<string[]>([]);
+  const [healthData, setHealthData] = useState<SystemHealthData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 
-  useEffect(() => {
-    // This effect runs only on the client, after hydration
-    const now = new Date();
-    const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000 - 15 * 60 * 1000);
-    
-    const diffMs = now.getTime() - twoHoursAgo.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+  // 시스템 상태 데이터 가져오기
+  const fetchSystemHealth = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch('/api/admin/system-status', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        },
+        cache: 'no-store'
+      });
 
-    let timeAgoMessage = "Success (";
-    if (diffHours > 0) {
-      timeAgoMessage += `${diffHours}시간 `;
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data: SystemHealthData = await response.json();
+      setHealthData(data);
+      setLastUpdate(new Date());
+    } catch (err) {
+      console.error('Failed to fetch system health:', err);
+      setError(err instanceof Error ? err.message : '시스템 상태를 가져오는데 실패했습니다.');
+      
+      // 오류 시 기본 상태 설정
+      setHealthData({
+        statuses: [
+          {
+            name: "시스템 상태 확인",
+            status: "확인 실패",
+            icon: "AlertTriangle",
+            variant: "destructive",
+            details: "상태 확인 API에 연결할 수 없습니다."
+          }
+        ],
+        logs: [
+          {
+            timestamp: new Date().toISOString(),
+            level: 'ERROR',
+            message: '시스템 상태 확인 실패',
+            source: 'system-monitor'
+          }
+        ],
+        timestamp: new Date().toISOString()
+      });
+    } finally {
+      setIsLoading(false);
     }
-    if (diffMinutes > 0 || diffHours === 0) {
-      timeAgoMessage += `${diffMinutes}분 `;
-    }
-    timeAgoMessage += "전)";
-    
-    if (diffHours === 0 && diffMinutes === 0) {
-      timeAgoMessage = "Success (방금 전)";
-    }
-
-    setSystemStatuses(prevStatuses => 
-      prevStatuses.map(item => 
-        item.id === "backup-status" ? { ...item, status: timeAgoMessage } : item
-      )
-    );
-
-    const clientNow = new Date();
-    setLogs([
-       `[${new Date(clientNow.getTime() - 3600000).toLocaleString('ko-KR')}] INFO: Application server started successfully on port 3000.`,
-        `[${new Date(clientNow.getTime() - 3540000).toLocaleString('ko-KR')}] INFO: Database connection established.`,
-        `[${new Date(clientNow.getTime() - 1800000).toLocaleString('ko-KR')}] INFO: User 'alice@example.com' logged in.`,
-        `[${new Date(clientNow.getTime() - 1200000).toLocaleString('ko-KR')}] AI_GEN: Tarot interpretation requested by user 'bob@example.com'.`,
-        `[${new Date(clientNow.getTime() - 1195000).toLocaleString('ko-KR')}] AI_GEN: Tarot interpretation generated successfully.`,
-        `[${new Date(clientNow.getTime() - 600000).toLocaleString('ko-KR')}] ADMIN: AI prompt configuration updated by 'alice@example.com'.`,
-        `[${clientNow.toLocaleString('ko-KR')}] SYSTEM: Health check OK.`,
-    ]);
   }, []);
+
+  // 컴포넌트 마운트 시 데이터 로드
+  useEffect(() => {
+    fetchSystemHealth();
+    
+    // 30초마다 자동 새로고침
+    const interval = setInterval(fetchSystemHealth, 30000);
+    
+    return () => clearInterval(interval);
+  }, [fetchSystemHealth]);
 
   return (
     <Card className="shadow-lg border-primary/10">
@@ -82,25 +147,92 @@ export function SystemManagement() {
 
           <TabsContent value="status" className="space-y-6">
         <div>
-          <h3 className="text-lg font-semibold mb-3 text-foreground/90">시스템 상태 개요</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-foreground/90">시스템 상태 개요</h3>
+            <div className="flex items-center gap-2">
+              {lastUpdate && (
+                <span className="text-xs text-muted-foreground">
+                  마지막 업데이트: {lastUpdate.toLocaleTimeString('ko-KR')}
+                </span>
+              )}
+              <button
+                onClick={fetchSystemHealth}
+                disabled={isLoading}
+                className="text-xs px-2 py-1 bg-muted hover:bg-muted/80 rounded text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+              >
+                {isLoading ? '확인 중...' : '새로고침'}
+              </button>
+            </div>
+          </div>
+          
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-destructive" />
+                <span className="text-sm text-destructive font-medium">연결 오류</span>
+              </div>
+              <p className="text-xs text-destructive/80 mt-1">{error}</p>
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {systemStatuses.map((item) => (
-              <Card key={item.name} className="p-4 bg-card/70 border-border/50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <span className={item.status.startsWith("Online") || item.status.startsWith("Connected") || item.status.startsWith("Success") || item.status.startsWith("Operational") || item.status === "없음" ? "text-green-500" : item.status === "Calculating..." ? "text-yellow-500" : "text-yellow-500"}>
-                       {item.icon}
-                    </span>
-                    <p className="text-sm font-medium text-foreground/80">{item.name}</p>
-                  </div>
-                  <Badge variant={item.variant} className={
-                     item.status.startsWith("Online") || item.status.startsWith("Connected") || item.status.startsWith("Success") || item.status.startsWith("Operational") || item.status === "없음" ? "bg-green-500/10 text-green-700 border-green-500/30" : item.status === "Calculating..." ? "bg-yellow-500/10 text-yellow-700 border-yellow-500/30" : "bg-yellow-500/10 text-yellow-700 border-yellow-500/30"
-                  }>
-                    {item.status}
-                  </Badge>
-                </div>
-              </Card>
-            ))}
+            {isLoading && !healthData ? (
+              <div className="col-span-2 text-center py-8">
+                <Monitor className="h-8 w-8 text-muted-foreground mx-auto mb-2 animate-pulse" />
+                <p className="text-sm text-muted-foreground">시스템 상태 확인 중...</p>
+              </div>
+            ) : (
+              healthData?.statuses.map((item) => {
+                const getStatusColor = (status: string) => {
+                  if (status.includes('Online') || status.includes('Connected') || 
+                      status.includes('Success') || status.includes('Operational') || status === '없음') {
+                    return 'text-green-500';
+                  }
+                  if (status.includes('Failed') || status.includes('Error') || item.variant === 'destructive') {
+                    return 'text-red-500';
+                  }
+                  if (status.includes('Idle') || item.variant === 'secondary') {
+                    return 'text-yellow-500';
+                  }
+                  return 'text-blue-500';
+                };
+                
+                const getBadgeClass = (status: string, variant: string) => {
+                  if (status.includes('Online') || status.includes('Connected') || 
+                      status.includes('Success') || status.includes('Operational') || status === '없음') {
+                    return 'bg-green-500/10 text-green-700 border-green-500/30';
+                  }
+                  if (status.includes('Failed') || status.includes('Error') || variant === 'destructive') {
+                    return 'bg-red-500/10 text-red-700 border-red-500/30';
+                  }
+                  if (status.includes('Idle') || variant === 'secondary') {
+                    return 'bg-yellow-500/10 text-yellow-700 border-yellow-500/30';
+                  }
+                  return 'bg-blue-500/10 text-blue-700 border-blue-500/30';
+                };
+                
+                return (
+                  <Card key={item.name} className="p-4 bg-card/70 border-border/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className={getStatusColor(item.status)}>
+                          {getIcon(item.icon)}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-foreground/80">{item.name}</p>
+                          {item.details && (
+                            <p className="text-xs text-muted-foreground">{item.details}</p>
+                          )}
+                        </div>
+                      </div>
+                      <Badge variant={item.variant} className={getBadgeClass(item.status, item.variant)}>
+                        {item.status}
+                      </Badge>
+                    </div>
+                  </Card>
+                );
+              })
+            )}
           </div>
         </div>
           </TabsContent>
@@ -121,16 +253,40 @@ export function SystemManagement() {
 
           <TabsContent value="logs" className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold mb-2 text-foreground/90">시스템 로그</h3>
-              <div className="bg-muted/50 p-3 rounded-md max-h-48 overflow-y-auto text-xs font-mono text-foreground/70">
-                {logs.length > 0 ? (
-                  logs.map((log, index) => <p key={index}>{log}</p>)
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-semibold text-foreground/90">시스템 로그</h3>
+                <span className="text-xs text-muted-foreground">
+                  실시간 로그 (최근 20개)
+                </span>
+              </div>
+              <div className="bg-muted/50 p-3 rounded-md max-h-48 overflow-y-auto text-xs font-mono">
+                {isLoading && !healthData ? (
+                  <p className="text-muted-foreground">로그를 불러오는 중...</p>
+                ) : healthData?.logs && healthData.logs.length > 0 ? (
+                  healthData.logs.map((log, index) => (
+                    <div key={index} className="mb-1">
+                      <span className="text-muted-foreground">
+                        [{new Date(log.timestamp).toLocaleString('ko-KR')}]
+                      </span>
+                      <span className={`ml-2 font-medium ${getLogLevelColor(log.level)}`}>
+                        {log.level}:
+                      </span>
+                      <span className="ml-1 text-foreground/70">
+                        {log.message}
+                      </span>
+                      {log.source && (
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          ({log.source})
+                        </span>
+                      )}
+                    </div>
+                  ))
                 ) : (
-                  <p>로그를 생성하는 중...</p>
+                  <p className="text-muted-foreground">로그 데이터가 없습니다.</p>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground mt-4">
-                참고: 현재 예시 로그를 표시하고 있습니다. 실제 로깅 시스템 연동이 필요합니다.
+              <p className="text-xs text-muted-foreground mt-2">
+                실시간 Firebase 활동 및 시스템 이벤트 로그입니다.
               </p>
             </div>
           </TabsContent>
