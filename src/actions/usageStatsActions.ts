@@ -1,7 +1,6 @@
 'use server';
 
-import { firestore } from '@/lib/firebase/admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import { safeFirestoreOperation, getFieldValue } from '@/lib/firebase/admin-helpers';
 
 export interface UsageStats {
   userId: string;
@@ -33,16 +32,17 @@ export async function recordTarotUsage(
   userId: string, 
   details?: { question?: string; spread?: string; interpretation?: string }
 ): Promise<{ success: boolean; message: string }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const batch = firestore.batch();
+    const fieldValue = await getFieldValue();
     
     // 사용 통계 업데이트
     const statsRef = firestore.collection('userUsageStats').doc(userId);
     batch.set(statsRef, {
       userId,
-      tarotReadings: FieldValue.increment(1),
+      tarotReadings: fieldValue.increment(1),
       lastTarotReading: new Date(),
-      totalUsage: FieldValue.increment(1),
+      totalUsage: fieldValue.increment(1),
       updatedAt: new Date()
     }, { merge: true });
     
@@ -59,10 +59,14 @@ export async function recordTarotUsage(
     
     console.log(`[UsageStats] Tarot usage recorded for user: ${userId}`);
     return { success: true, message: '타로 리딩 사용 기록이 저장되었습니다.' };
-  } catch (error) {
-    console.error('[UsageStats] Error recording tarot usage:', error);
-    return { success: false, message: '사용 기록 저장 중 오류가 발생했습니다.' };
+  });
+  
+  if (!result.success) {
+    console.error('[UsageStats] Error recording tarot usage:', result.error);
+    return { success: false, message: result.error };
   }
+  
+  return result.data;
 }
 
 // 사용자의 꿈해몽 사용 기록
@@ -70,16 +74,17 @@ export async function recordDreamUsage(
   userId: string,
   details?: { dreamContent?: string; interpretation?: string }
 ): Promise<{ success: boolean; message: string }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const batch = firestore.batch();
+    const fieldValue = await getFieldValue();
     
     // 사용 통계 업데이트
     const statsRef = firestore.collection('userUsageStats').doc(userId);
     batch.set(statsRef, {
       userId,
-      dreamInterpretations: FieldValue.increment(1),
+      dreamInterpretations: fieldValue.increment(1),
       lastDreamInterpretation: new Date(),
-      totalUsage: FieldValue.increment(1),
+      totalUsage: fieldValue.increment(1),
       updatedAt: new Date()
     }, { merge: true });
     
@@ -96,10 +101,14 @@ export async function recordDreamUsage(
     
     console.log(`[UsageStats] Dream usage recorded for user: ${userId}`);
     return { success: true, message: '꿈해몽 사용 기록이 저장되었습니다.' };
-  } catch (error) {
-    console.error('[UsageStats] Error recording dream usage:', error);
-    return { success: false, message: '사용 기록 저장 중 오류가 발생했습니다.' };
+  });
+  
+  if (!result.success) {
+    console.error('[UsageStats] Error recording dream usage:', result.error);
+    return { success: false, message: result.error };
   }
+  
+  return result.data;
 }
 
 // 모든 사용자의 사용 통계 조회
@@ -108,7 +117,7 @@ export async function getAllUsageStats(): Promise<{
   data?: UsageStats[];
   message?: string;
 }> {
-  try {
+  return safeFirestoreOperation(async (firestore) => {
     console.log('[UsageStats] Fetching all user usage statistics...');
     
     const statsSnapshot = await firestore.collection('userUsageStats').get();
@@ -145,11 +154,14 @@ export async function getAllUsageStats(): Promise<{
     stats.sort((a, b) => b.totalUsage - a.totalUsage);
     
     console.log(`[UsageStats] Successfully fetched usage stats for ${stats.length} users`);
-    return { success: true, data: stats };
-  } catch (error) {
-    console.error('[UsageStats] Error fetching usage statistics:', error);
-    return { success: false, message: '사용 통계를 불러오는 중 오류가 발생했습니다.' };
+    return stats;
+  });
+
+  if (!result.success) {
+    return { success: false, message: result.error };
   }
+
+  return { success: true, data: result.data };
 }
 
 // 특정 사용자의 상세 사용 기록 조회
@@ -161,7 +173,7 @@ export async function getUserUsageDetails(
   data?: DetailedUsageRecord[];
   message?: string;
 }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     console.log(`[UsageStats] Fetching detailed usage for user: ${userId}`);
     
     const usageSnapshot = await firestore
@@ -173,23 +185,28 @@ export async function getUserUsageDetails(
     
     const records: DetailedUsageRecord[] = [];
     
-    usageSnapshot.docs.forEach((doc: FirebaseFirestore.DocumentSnapshot) => {
+    usageSnapshot.docs.forEach((doc: any) => {
       const data = doc.data();
-      records.push({
-        id: doc.id,
-        userId: data.userId,
-        type: data.type,
-        timestamp: data.timestamp.toDate(),
-        details: data.details || {}
-      });
+      if (data) {
+        records.push({
+          id: doc.id,
+          userId: data.userId,
+          type: data.type,
+          timestamp: data.timestamp.toDate(),
+          details: data.details || {}
+        });
+      }
     });
     
     console.log(`[UsageStats] Found ${records.length} usage records for user ${userId}`);
-    return { success: true, data: records };
-  } catch (error) {
-    console.error(`[UsageStats] Error fetching user usage details for ${userId}:`, error);
-    return { success: false, message: '사용자 상세 기록을 불러오는 중 오류가 발생했습니다.' };
+    return records;
+  });
+
+  if (!result.success) {
+    return { success: false, message: result.error };
   }
+
+  return { success: true, data: result.data };
 }
 
 // 사용 통계 요약 정보
@@ -206,7 +223,7 @@ export async function getUsageStatsSummary(): Promise<{
   };
   message?: string;
 }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     console.log('[UsageStats] Generating usage summary...');
     
     const statsSnapshot = await firestore.collection('userUsageStats').get();
@@ -281,9 +298,12 @@ export async function getUsageStatsSummary(): Promise<{
     };
     
     console.log('[UsageStats] Usage summary generated:', summary);
-    return { success: true, data: summary };
-  } catch (error) {
-    console.error('[UsageStats] Error generating usage summary:', error);
-    return { success: false, message: '사용 통계 요약을 생성하는 중 오류가 발생했습니다.' };
+    return summary;
+  });
+
+  if (!result.success) {
+    return { success: false, message: result.error };
   }
+
+  return { success: true, data: result.data };
 }

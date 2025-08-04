@@ -12,7 +12,7 @@
 
 import {getAI} from '@/ai/genkit';
 import {z} from 'genkit';
-import { firestore } from '@/lib/firebase/admin';
+import { getCollection } from '@/lib/firebase/admin-helpers';
 
 const supportedModels = [
   'googleai/gemini-1.5-pro-latest',
@@ -56,7 +56,8 @@ export async function configureDreamPromptSettings(
         };
 
         // Use merge: true to avoid overwriting existing fields like safetySettings if they exist
-        await firestore.collection('aiConfiguration').doc('dreamPromptSettings').set(settingsToSave, { merge: true });
+        const collection = await getCollection('aiConfiguration');
+        await collection.doc('dreamPromptSettings').set(settingsToSave, { merge: true });
         
         console.log('Dream AI Prompt settings saved to Firestore:', settingsToSave);
 

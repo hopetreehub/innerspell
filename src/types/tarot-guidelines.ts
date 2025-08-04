@@ -125,6 +125,12 @@ export interface TarotGuidelinesResponse {
     styles: InterpretationStyle[];
     guidelines: TarotGuideline[];
     combinations: SpreadStyleCombination[];
+    stats?: {
+      totalGuidelines: number;
+      systemGuidelines: number;
+      customGuidelines: number;
+      lastUpdated: string;
+    };
   };
   message?: string;
 }

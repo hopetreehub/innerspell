@@ -87,19 +87,15 @@ export default function AdminDashboardPage() {
   const { preloadTab, preloadedTabs } = useTabPreloading();
 
   useEffect(() => {
-    console.log('🔍 Admin Page - Auth State Check:', { loading, user: user ? `${user.email} (${user.role})` : null });
     
     if (!loading) {
       if (!user) {
-        console.log('🚨 Admin Page: No user - redirecting to sign-in');
         // EMERGENCY: Clear cache before redirect for login issues
         cacheBuster.clearAuthLocalStorage();
         router.replace('/sign-in?redirect=/admin');
       } else if (user.role !== 'admin') {
-        console.log(`🚨 Admin Page: User ${user.email} has role "${user.role}" - not admin, redirecting to home`);
         router.replace('/');
       } else {
-        console.log(`✅ Admin Page: User ${user.email} has admin access`);
       }
     }
   }, [user, loading, router]);
@@ -113,7 +109,6 @@ export default function AdminDashboardPage() {
     
     // 캐시 버스팅 파라미터 있으면 캐시 클리어
     if (cacheBust || authRefresh) {
-      console.log('🚨 Cache busting parameters detected, clearing auth cache');
       cacheBuster.clearAuthLocalStorage();
     }
     
@@ -158,7 +153,6 @@ export default function AdminDashboardPage() {
           {loading && (
             <button 
               onClick={() => {
-                console.log('🚨 Manual cache refresh triggered');
                 refreshAuthWithCacheBust();
               }}
               className="mt-4 px-4 py-2 text-sm text-blue-600 underline hover:text-blue-800"

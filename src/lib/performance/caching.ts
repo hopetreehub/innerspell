@@ -237,7 +237,7 @@ export class BrowserCacheManager {
     // 메모리 캐시 정리
     const now = Date.now();
     for (const [key, cached] of this.memoryCache.entries()) {
-      if (now - cached.timestamp > cached.maxAge * 1000) {
+      if (cached && cached.timestamp && now - cached.timestamp > cached.maxAge * 1000) {
         this.memoryCache.delete(key);
       }
     }
@@ -253,7 +253,7 @@ export class BrowserCacheManager {
         if (cursor) {
           do {
             const cached = cursor.value;
-            if (now - cached.timestamp > cached.maxAge) {
+            if (cached && cached.timestamp && now - cached.timestamp > cached.maxAge) {
               await cursor.delete();
             }
           } while (cursor.continue());

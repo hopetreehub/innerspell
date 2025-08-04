@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { getFirestore, getFieldValue } from '@/lib/firebase/admin-helpers';
+import { safeFirestoreOperation, getFieldValue } from '@/lib/firebase/admin-helpers';
 
 const NewsletterSubscriptionSchema = z.object({
   email: z.string().email({ message: '유효한 이메일 주소를 입력해주세요.' }),
@@ -13,16 +13,14 @@ export type NewsletterSubscriptionFormData = z.infer<typeof NewsletterSubscripti
 export async function subscribeToNewsletter(
   formData: NewsletterSubscriptionFormData
 ): Promise<{ success: boolean; message: string }> {
-  try {
-    const firestore = await getFirestore();
+  const validationResult = NewsletterSubscriptionSchema.safeParse(formData);
+  if (!validationResult.success) {
+    return { success: false, message: validationResult.error.flatten().fieldErrors.email?.[0] || '유효하지 않은 이메일입니다.' };
+  }
 
-    const validationResult = NewsletterSubscriptionSchema.safeParse(formData);
-    if (!validationResult.success) {
-      return { success: false, message: validationResult.error.flatten().fieldErrors.email?.[0] || '유효하지 않은 이메일입니다.' };
-    }
+  const { email } = validationResult.data;
 
-    const { email } = validationResult.data;
-
+  const result = await safeFirestoreOperation(async (firestore) => {
     const subscriberRef = firestore.collection('subscribers').doc(email);
     const doc = await subscriberRef.get();
 
@@ -73,12 +71,14 @@ export async function subscribeToNewsletter(
       
       return { success: true, message: '뉴스레터 구독이 완료되었습니다! 환영합니다.' };
     }
+  });
 
-  } catch (error) {
-    console.error('Error subscribing to newsletter:', error);
-    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
-    return { success: false, message: `구독 처리 중 오류 발생: ${errorMessage}` };
+  if (!result.success) {
+    console.error('Error subscribing to newsletter:', result.error);
+    return { success: false, message: result.error };
   }
+  
+  return result.data;
 }
 
     

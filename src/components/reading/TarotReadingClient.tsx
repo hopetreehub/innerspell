@@ -432,12 +432,6 @@ export function TarotReadingClient() {
       const mappedSpreadId = spreadIdMapping[selectedSpread.id] || selectedSpread.id;
       const mappedStyleId = styleIdMapping[interpretationMethod] || interpretationMethod;
       
-      console.log('[TAROT] Using guideline IDs:', {
-        clientSpreadId: selectedSpread.id,
-        mappedSpreadId,
-        clientStyleId: interpretationMethod,
-        mappedStyleId
-      });
 
       const result = await generateTarotInterpretation({
         question: `${question} (해석 스타일: ${interpretationMethod})`,
@@ -465,7 +459,6 @@ export function TarotReadingClient() {
             spread: selectedSpread.name,
             interpretation: result.interpretation.substring(0, 200) // 첫 200자만 저장
           });
-          console.log('[TAROT] Usage recorded for user:', user.uid);
         } catch (error) {
           console.warn('[TAROT] Failed to record usage:', error);
         }
@@ -521,14 +514,6 @@ export function TarotReadingClient() {
         position: selectedSpread.positions?.[index] || `카드 ${index + 1}`,
       }));
 
-      console.log('📤 저장 요청 데이터:', {
-        userId: user.uid,
-        question: question.substring(0, 50) + '...',
-        spreadName: selectedSpread.name,
-        spreadNumCards: selectedSpread.numCards,
-        drawnCardsCount: drawnCardsToSave.length,
-        interpretationLength: interpretation.length
-      });
 
       // 🔧 개선: 서버 액션 사용으로 보안 강화
       const result = await saveUserReading({
@@ -568,7 +553,7 @@ export function TarotReadingClient() {
           errorMessage = `입력 오류: ${errorDetails}`;
         }
         
-        console.error('🚨 서버 액션 저장 실패:', result.error);
+        console.error('서버 액션 저장 실패:', result.error);
         
         toast({ 
           variant: 'destructive', 
@@ -578,7 +563,7 @@ export function TarotReadingClient() {
         });
       }
     } catch (error) {
-      console.error('🚨 저장 중 예외 발생:', error);
+      console.error('저장 중 예외 발생:', error);
       toast({ 
         variant: 'destructive', 
         title: '저장 오류', 

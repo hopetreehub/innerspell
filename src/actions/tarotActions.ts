@@ -1,6 +1,6 @@
 'use server';
 
-import { getFirestore, getFieldValue } from '@/lib/firebase/admin-helpers';
+import { getFirestore, getFieldValue, safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import { TarotReadingHistory, TarotReadingHistorySchema } from '@/types';
 import { cookies } from 'next/headers';
 
@@ -20,28 +20,36 @@ async function getCurrentUserId(): Promise<string | null> {
 
 // Save tarot reading to user's history
 export async function saveTarotReading(data: Omit<TarotReadingHistory, 'id' | 'createdAt' | 'userId'>) {
-  try {
-    const userId = await getCurrentUserId();
-    if (!userId) {
-      return { success: false, error: '로그인이 필요합니다.' };
-    }
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return { success: false, error: '로그인이 필요합니다.' };
+  }
 
+  try {
     const validated = TarotReadingHistorySchema.parse({
       ...data,
       userId,
     });
 
-    const firestore = await getFirestore();
-    const docRef = await firestore
-      .collection('users')
-      .doc(userId)
-      .collection('tarotReadings')
-      .add({
-        ...validated,
-        createdAt: new Date(),
-      });
+    const result = await safeFirestoreOperation(async (firestore) => {
+      const docRef = await firestore
+        .collection('users')
+        .doc(userId)
+        .collection('tarotReadings')
+        .add({
+          ...validated,
+          createdAt: new Date(),
+        });
 
-    return { success: true, id: docRef.id };
+      return { success: true, id: docRef.id };
+    });
+
+    if (!result.success) {
+      console.error('Error saving tarot reading:', result.error);
+      return { success: false, error: result.error };
+    }
+
+    return result.data;
   } catch (error) {
     console.error('Error saving tarot reading:', error);
     return { success: false, error: '저장 중 오류가 발생했습니다.' };
@@ -50,13 +58,12 @@ export async function saveTarotReading(data: Omit<TarotReadingHistory, 'id' | 'c
 
 // Get user's tarot reading history
 export async function getTarotReadingHistory(limit = 10, startAfter?: string) {
-  try {
-    const userId = await getCurrentUserId();
-    if (!userId) {
-      return { success: false, error: '로그인이 필요합니다.', readings: [] };
-    }
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return { success: false, error: '로그인이 필요합니다.', readings: [] };
+  }
 
-    const firestore = await getFirestore();
+  const result = await safeFirestoreOperation(async (firestore) => {
     let query = firestore
       .collection('users')
       .doc(userId)
@@ -89,21 +96,24 @@ export async function getTarotReadingHistory(limit = 10, startAfter?: string) {
     });
 
     return { success: true, readings };
-  } catch (error) {
-    console.error('Error getting tarot reading history:', error);
-    return { success: false, error: '데이터를 불러올 수 없습니다.', readings: [] };
+  });
+
+  if (!result.success) {
+    console.error('Error getting tarot reading history:', result.error);
+    return { success: false, error: result.error, readings: [] };
   }
+
+  return result.data;
 }
 
 // Get single tarot reading
 export async function getTarotReading(readingId: string) {
-  try {
-    const userId = await getCurrentUserId();
-    if (!userId) {
-      return { success: false, error: '로그인이 필요합니다.' };
-    }
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return { success: false, error: '로그인이 필요합니다.' };
+  }
 
-    const firestore = await getFirestore();
+  const result = await safeFirestoreOperation(async (firestore) => {
     const doc = await firestore
       .collection('users')
       .doc(userId)
@@ -112,7 +122,7 @@ export async function getTarotReading(readingId: string) {
       .get();
 
     if (!doc.exists) {
-      return { success: false, error: '리딩을 찾을 수 없습니다.' };
+      throw new Error('리딩을 찾을 수 없습니다.');
     }
 
     const reading: TarotReadingHistory = {
@@ -122,21 +132,24 @@ export async function getTarotReading(readingId: string) {
     } as TarotReadingHistory;
 
     return { success: true, reading };
-  } catch (error) {
-    console.error('Error getting tarot reading:', error);
-    return { success: false, error: '데이터를 불러올 수 없습니다.' };
+  });
+
+  if (!result.success) {
+    console.error('Error getting tarot reading:', result.error);
+    return { success: false, error: result.error };
   }
+
+  return result.data;
 }
 
 // Delete tarot reading
 export async function deleteTarotReading(readingId: string) {
-  try {
-    const userId = await getCurrentUserId();
-    if (!userId) {
-      return { success: false, error: '로그인이 필요합니다.' };
-    }
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return { success: false, error: '로그인이 필요합니다.' };
+  }
 
-    const firestore = await getFirestore();
+  const result = await safeFirestoreOperation(async (firestore) => {
     await firestore
       .collection('users')
       .doc(userId)
@@ -145,8 +158,12 @@ export async function deleteTarotReading(readingId: string) {
       .delete();
 
     return { success: true };
-  } catch (error) {
-    console.error('Error deleting tarot reading:', error);
-    return { success: false, error: '삭제 중 오류가 발생했습니다.' };
+  });
+
+  if (!result.success) {
+    console.error('Error deleting tarot reading:', result.error);
+    return { success: false, error: result.error };
   }
+
+  return result.data;
 }

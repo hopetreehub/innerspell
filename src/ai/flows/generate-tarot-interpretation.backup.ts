@@ -178,7 +178,7 @@ ${guidelineInstructions ? '다음 전문 지침을 따라 해석해주세요:\n\
 희망적이고 긍정적인 마무리`;
         safetySettings = [];
         
-        if (fallbackInfo.fallbackInfo.fallbackUsed) {
+        if (fallbackInfo && fallbackInfo.fallbackInfo && fallbackInfo.fallbackInfo.fallbackUsed) {
           console.log('[TAROT] Using fallback provider due to primary failure');
         }
       }

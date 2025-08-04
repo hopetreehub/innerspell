@@ -98,7 +98,6 @@ export function SignInForm() {
     try {
       // Always use real Firebase
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      console.log('🎉 Firebase 로그인 성공:', userCredential.user.email);
       
       toast({ title: '로그인 성공', description: 'InnerSpell에 오신 것을 환영합니다!' });
       
@@ -106,7 +105,6 @@ export function SignInForm() {
       const isAdmin = userCredential.user.email === 'admin@innerspell.com';
       const redirectUrl = searchParams.get('redirect') || (isAdmin ? '/admin' : '/');
       
-      console.log('🔄 페이지 리다이렉션:', redirectUrl);
       
       // 짧은 딜레이 후 리다이렉션 (AuthContext 업데이트 대기)
       setTimeout(() => {
@@ -165,7 +163,6 @@ export function SignInForm() {
     try {
       // Always use real Firebase
       const result = await signInWithPopup(auth, provider);
-      console.log('🎉 Google 로그인 성공:', result.user.email);
       
       toast({ title: 'Google 로그인 성공', description: 'InnerSpell에 오신 것을 환영합니다!' });
       
@@ -173,7 +170,6 @@ export function SignInForm() {
       const isAdmin = result.user.email === 'admin@innerspell.com';
       const redirectUrl = searchParams.get('redirect') || (isAdmin ? '/admin' : '/');
       
-      console.log('🔄 페이지 리다이렉션:', redirectUrl);
       
       // 짧은 딜레이 후 리다이렉션 (AuthContext 업데이트 대기)
       setTimeout(() => {

@@ -12,7 +12,7 @@
 
 import {getAI} from '@/ai/genkit';
 import {z} from 'genkit';
-import { firestore } from '@/lib/firebase/admin'; // Import Firestore admin instance
+import { getCollection } from '@/lib/firebase/admin-helpers'; // Import Firestore helper
 
 // Remove hardcoded model list - accept any model string
 // Models are now validated by the provider configuration
@@ -91,7 +91,8 @@ export async function configureAIPromptSettings(
           safetySettings: flowInput.safetySettings || [], // Ensure safetySettings is always an array
         };
 
-        await firestore.collection('aiConfiguration').doc('promptSettings').set(settingsToSave, { merge: true });
+        const collection = await getCollection('aiConfiguration');
+        await collection.doc('promptSettings').set(settingsToSave, { merge: true });
         
         console.log('AI Prompt settings saved to Firestore:', settingsToSave);
 

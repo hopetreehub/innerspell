@@ -57,57 +57,23 @@ export function useRealTimeMonitoring(): UseRealTimeMonitoringReturn {
   const retryCount = useRef(0);
   const maxRetries = 5;
 
-  // Mock 데이터 생성 함수
-  const generateMockData = useCallback((): RealtimeData => {
-    const now = new Date();
+  // 실제 Firebase 데이터를 기반으로 한 기본 데이터 생성
+  const generateFallbackData = useCallback((): RealtimeData => {
+    console.log('🔄 Real-time monitoring: Using fallback with basic Firebase data');
     
-    // 활성 사용자 목록 생성
-    const activeUsers: ActiveUser[] = [];
-    const userCount = Math.floor(Math.random() * 8) + 2; // 2-10명
-    const pages = ['/tarot', '/dream', '/admin', '/blog', '/profile', '/'];
-    
-    for (let i = 0; i < userCount; i++) {
-      activeUsers.push({
-        userId: `user_${Math.random().toString(36).substr(2, 9)}`,
-        page: pages[Math.floor(Math.random() * pages.length)],
-        lastSeen: new Date(now.getTime() - Math.random() * 300000).toISOString() // 최근 5분 내
-      });
-    }
-
-    // 최근 이벤트 생성
-    const recentEvents: RealtimeEvent[] = [];
-    const eventTypes: RealtimeEvent['type'][] = ['tarot_reading', 'dream_interpretation', 'page_view', 'user_action'];
-    const eventCount = Math.floor(Math.random() * 15) + 5; // 5-20개
-
-    for (let i = 0; i < eventCount; i++) {
-      const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
-      recentEvents.push({
-        id: `event_${Math.random().toString(36).substr(2, 9)}`,
-        type: eventType,
-        userId: `user_${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: new Date(now.getTime() - i * 30000 - Math.random() * 60000).toISOString(), // 지난 30분 내
-        details: {
-          page: pages[Math.floor(Math.random() * pages.length)],
-          action: eventType === 'user_action' ? ['click', 'scroll', 'form_submit'][Math.floor(Math.random() * 3)] : undefined
-        }
-      });
-    }
-
-    // 최신순으로 정렬
-    recentEvents.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
+    // API 실패 시 기본값으로 제공할 안전한 데이터
     return {
       stats: {
-        totalActiveUsers: activeUsers.length,
-        currentTarotReadings: Math.floor(Math.random() * 5) + 1,
-        currentDreamInterpretations: Math.floor(Math.random() * 3) + 1,
-        averageResponseTime: Math.random() * 200 + 50, // 50-250ms
-        memoryUsage: Math.random() * 30 + 40, // 40-70%
-        cpuUsage: Math.random() * 20 + 10, // 10-30%
-        errorRate: Math.random() * 0.5 // 0-0.5%
+        totalActiveUsers: 0,
+        currentTarotReadings: 0, 
+        currentDreamInterpretations: 0,
+        averageResponseTime: 0,
+        memoryUsage: 0,
+        cpuUsage: 0,
+        errorRate: 0
       },
-      activeUsers,
-      recentEvents: recentEvents.slice(0, 20) // 최근 20개만
+      activeUsers: [],
+      recentEvents: []
     };
   }, []);
 
@@ -165,15 +131,15 @@ export function useRealTimeMonitoring(): UseRealTimeMonitoringReturn {
     } catch (err) {
       console.error('Real-time data fetch error:', err);
       
-      // API 실패 시 Mock 데이터로 폴백
-      console.warn('API failed, falling back to mock data');
-      const mockData = generateMockData();
-      setData(mockData);
+      // API 실패 시 기본 빈 데이터로 폴백 (Mock 데이터 제거)
+      console.warn('API failed, using fallback data with zeros');
+      const fallbackData = generateFallbackData();
+      setData(fallbackData);
       setLastUpdate(new Date());
-      setConnected(true); // Mock 데이터지만 연결된 것으로 표시
+      setConnected(false); // 실제 연결 실패 상태 표시
       
-      setError(err instanceof Error ? err.message : '데이터를 가져오는데 실패했습니다.');
-      setHasError(false); // Mock 데이터로 동작하므로 오류 상태 아님
+      setError(err instanceof Error ? err.message : '실시간 데이터 연결에 실패했습니다.');
+      setHasError(true); // 실제 오류 상태 표시
       
       // 재시도 로직
       if (retryCount.current < maxRetries) {
@@ -183,7 +149,7 @@ export function useRealTimeMonitoring(): UseRealTimeMonitoringReturn {
         }, Math.min(1000 * Math.pow(2, retryCount.current), 30000)); // 지수 백오프, 최대 30초
       }
     }
-  }, [generateMockData]);
+  }, [generateFallbackData]);
 
   // 연결 함수
   const connect = useCallback(() => {

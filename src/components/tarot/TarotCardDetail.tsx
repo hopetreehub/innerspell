@@ -25,10 +25,12 @@ import { type TarotCard } from '@/data/tarot-cards';
 
 interface TarotCardDetailProps {
   card: TarotCard;
-  allCards: TarotCard[];
+  allCards?: TarotCard[];
+  relatedCards?: TarotCard[];
+  showBackButton?: boolean;
 }
 
-export function TarotCardDetail({ card, allCards }: TarotCardDetailProps) {
+export function TarotCardDetail({ card, allCards, relatedCards, showBackButton = false }: TarotCardDetailProps) {
   const [currentOrientation, setCurrentOrientation] = useState<'upright' | 'reversed'>('upright');
 
   // 수트별 색상 매핑
@@ -48,15 +50,15 @@ export function TarotCardDetail({ card, allCards }: TarotCardDetailProps) {
     pentacles: '펜타클 (금화)'
   };
 
-  // 이전/다음 카드 찾기
-  const currentIndex = allCards.findIndex(c => c.id === card.id);
-  const previousCard = currentIndex > 0 ? allCards[currentIndex - 1] : null;
-  const nextCard = currentIndex < allCards.length - 1 ? allCards[currentIndex + 1] : null;
+  // 이전/다음 카드 찾기 (방어 코드 추가)
+  const currentIndex = allCards?.findIndex(c => c.id === card.id) ?? -1;
+  const previousCard = (allCards && currentIndex > 0) ? allCards[currentIndex - 1] : null;
+  const nextCard = (allCards && currentIndex < allCards.length - 1) ? allCards[currentIndex + 1] : null;
 
-  // 관련 카드 (같은 수트의 카드들)
-  const relatedCards = allCards
-    .filter(c => c.suit === card.suit && c.id !== card.id)
-    .slice(0, 4);
+  // 관련 카드 (props에서 받거나 같은 수트의 카드들)
+  const displayRelatedCards = relatedCards || (allCards
+    ?.filter(c => c.suit === card.suit && c.id !== card.id)
+    ?.slice(0, 4)) || [];
 
   // 공유하기 함수
   const handleShare = () => {
@@ -348,14 +350,14 @@ export function TarotCardDetail({ card, allCards }: TarotCardDetailProps) {
               </Card>
 
               {/* 관련 카드 */}
-              {relatedCards.length > 0 && (
+              {displayRelatedCards.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle>같은 수트의 다른 카드들</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {relatedCards.map((relatedCard) => (
+                      {displayRelatedCards.map((relatedCard) => (
                         <Link key={relatedCard.id} href={`/tarot/cards/${relatedCard.id}`}>
                           <div className="group cursor-pointer">
                             <div className="relative h-32 rounded-lg overflow-hidden mb-2">

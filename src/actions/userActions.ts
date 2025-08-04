@@ -36,8 +36,8 @@ export async function createOrUpdateUserProfile(
         followingCount: 0,
         postsCount: 0,
         role: isAdmin ? 'admin' : 'user',
-        createdAt: getFieldValue().serverTimestamp(),
-        updatedAt: getFieldValue().serverTimestamp()
+        createdAt: (await getFieldValue()).serverTimestamp(),
+        updatedAt: (await getFieldValue()).serverTimestamp()
       };
 
       await userRef.set(newUserProfile);
@@ -50,7 +50,7 @@ export async function createOrUpdateUserProfile(
     } else {
       // 기존 사용자 프로필 업데이트 (이메일, 이름, 아바타만)
       const updateData: any = {
-        updatedAt: getFieldValue().serverTimestamp()
+        updatedAt: (await getFieldValue()).serverTimestamp()
       };
 
       // 변경된 필드만 업데이트
@@ -282,7 +282,7 @@ export async function updateUserProfile(
     }
 
     const updateFields: any = {
-      updatedAt: getFieldValue().serverTimestamp()
+      updatedAt: (await getFieldValue()).serverTimestamp()
     };
 
     // 변경된 필드만 업데이트

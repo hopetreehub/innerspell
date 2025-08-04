@@ -1,6 +1,6 @@
 'use server';
 
-import { firestore } from '@/lib/firebase/admin';
+import { getFirestore, getCollection, safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import { 
   TarotGuideline, 
   TarotSpread, 
@@ -27,8 +27,13 @@ if (typeof window !== 'undefined') {
 }
 
 // Firebase Admin이 사용할 수 없을 때의 폴백 처리
-const isFirebaseAdminAvailable = () => {
-  return firestore !== null;
+const isFirebaseAdminAvailable = async () => {
+  try {
+    await getFirestore();
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 // 캐시 관리
@@ -63,12 +68,13 @@ export async function getAllTarotGuidelines(forceRefresh = false): Promise<Tarot
     const customGuidelines: TarotGuideline[] = [];
     
     // Firebase Admin이 사용 가능할 때만 Firestore에서 데이터 가져오기
-    if (isFirebaseAdminAvailable() && firestore) {
+    if (await isFirebaseAdminAvailable()) {
       try {
         console.log('[tarotGuidelineActions] Querying Firestore for custom guidelines...');
-        const customGuidelinesSnapshot = await firestore.collection('tarotGuidelines').get();
+        const collection = await getCollection('tarotGuidelines');
+        const customGuidelinesSnapshot = await collection.get();
         
-        customGuidelinesSnapshot.docs.forEach((doc: FirebaseFirestore.DocumentSnapshot) => {
+        customGuidelinesSnapshot.docs.forEach((doc) => {
           const data = doc.data() as TarotGuideline;
           customGuidelines.push({ ...data, id: doc.id });
         });
@@ -269,7 +275,7 @@ export async function saveTarotGuideline(
 ): Promise<{ success: boolean; id?: string; message: string }> {
   try {
     // Firebase Admin이 사용 가능한지 확인
-    if (!isFirebaseAdminAvailable() || !firestore) {
+    if (!(await isFirebaseAdminAvailable())) {
       console.warn('[tarotGuidelineActions] Firebase Admin not available for saving');
       return {
         success: false,
@@ -283,7 +289,8 @@ export async function saveTarotGuideline(
       updatedAt: new Date()
     };
     
-    const docRef = await firestore.collection('tarotGuidelines').add(guideline);
+    const collection = await getCollection('tarotGuidelines');
+    const docRef = await collection.add(guideline);
     
     console.log('[tarotGuidelineActions] Saved new guideline:', docRef.id);
     
@@ -306,7 +313,7 @@ export async function updateTarotGuideline(
   request: UpdateGuidelineRequest
 ): Promise<{ success: boolean; message: string }> {
   try {
-    if (!isFirebaseAdminAvailable() || !firestore) {
+    if (!(await isFirebaseAdminAvailable())) {
       return {
         success: false,
         message: 'Firebase Admin이 초기화되지 않았습니다. 데이터베이스 연결을 확인해주세요.'
@@ -318,7 +325,8 @@ export async function updateTarotGuideline(
       updatedAt: new Date()
     };
     
-    await firestore.collection('tarotGuidelines').doc(request.id).update(updates);
+    const collection = await getCollection('tarotGuidelines');
+    await collection.doc(request.id).update(updates);
     
     console.log('[tarotGuidelineActions] Updated guideline:', request.id);
     
@@ -340,14 +348,15 @@ export async function deleteTarotGuideline(
   id: string
 ): Promise<{ success: boolean; message: string }> {
   try {
-    if (!isFirebaseAdminAvailable() || !firestore) {
+    if (!(await isFirebaseAdminAvailable())) {
       return {
         success: false,
         message: 'Firebase Admin이 초기화되지 않았습니다. 데이터베이스 연결을 확인해주세요.'
       };
     }
 
-    await firestore.collection('tarotGuidelines').doc(id).delete();
+    const collection = await getCollection('tarotGuidelines');
+    await collection.doc(id).delete();
     
     console.log('[tarotGuidelineActions] Deleted guideline:', id);
     
@@ -384,7 +393,7 @@ export async function toggleGuidelineStatus(
       };
     }
     
-    if (!isFirebaseAdminAvailable() || !firestore) {
+    if (!(await isFirebaseAdminAvailable())) {
       // Firebase Admin이 사용 불가능하면 로컬 상태만 변경
       console.warn('[tarotGuidelineActions] Firebase Admin not available, simulating toggle');
       
@@ -397,7 +406,8 @@ export async function toggleGuidelineStatus(
       };
     }
 
-    await firestore.collection('tarotGuidelines').doc(id).update({
+    const collection = await getCollection('tarotGuidelines');
+    await collection.doc(id).update({
       isActive,
       updatedAt: new Date()
     });

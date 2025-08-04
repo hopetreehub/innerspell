@@ -2,8 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Pretendard 폰트 CDN에서 로드 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
 body {
-  font-family: var(--font-inter), 'Noto Sans KR', sans-serif;
+  font-family: 'Pretendard', var(--font-inter), -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
 }
 
 code, pre {

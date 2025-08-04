@@ -34,9 +34,13 @@ export function DevAuthHelper() {
     }
   };
   
-  // TEMP: Always show for testing purposes
-  // 절대 추정금지 원칙에 따른 실제 테스트를 위해 임시로 항상 표시
-  const isDevelopment = true; // 임시로 항상 true로 설정
+  // Only show in development environment
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  // Don't render anything in production
+  if (!isDevelopment) {
+    return null;
+  }
   
   return (
     <div className="mt-4 p-4 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
@@ -52,7 +56,7 @@ export function DevAuthHelper() {
         🔐 관리자로 로그인
       </Button>
       <p className="text-xs text-gray-600 mt-2 text-center">
-        이 버튼은 개발 환경에서만 표시됩니다 (테스트용 활성화됨)
+        이 버튼은 개발 환경에서만 표시됩니다
       </p>
     </div>
   );

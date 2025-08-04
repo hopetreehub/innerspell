@@ -1,6 +1,6 @@
 'use server';
 
-import { firestore } from '@/lib/firebase/admin';
+import { safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import { 
   TarotCardInstruction, 
   TarotCardInstructionFormData,
@@ -15,12 +15,12 @@ export async function saveTarotCardInstruction(
   userId: string,
   instructionId?: string
 ): Promise<{ success: boolean; message: string; id?: string }> {
-  try {
-    const validation = TarotCardInstructionFormSchema.safeParse(formData);
-    if (!validation.success) {
-      return { success: false, message: '유효하지 않은 데이터입니다.' };
-    }
+  const validation = TarotCardInstructionFormSchema.safeParse(formData);
+  if (!validation.success) {
+    return { success: false, message: '유효하지 않은 데이터입니다.' };
+  }
 
+  const result = await safeFirestoreOperation(async (firestore) => {
     const { cardId, interpretationMethod, uprightInstruction, reversedInstruction, contextualHints, combinationHints } = validation.data;
 
     const instruction: TarotCardInstruction = {
@@ -47,17 +47,21 @@ export async function saveTarotCardInstruction(
       message: '타로 카드 지침이 성공적으로 저장되었습니다.',
       id: docRef.id
     };
-  } catch (error) {
-    console.error('Error saving tarot card instruction:', error);
-    return { success: false, message: '타로 카드 지침 저장 중 오류가 발생했습니다.' };
+  });
+  
+  if (!result.success) {
+    console.error('Error saving tarot card instruction:', result.error);
+    return { success: false, message: result.error };
   }
+  
+  return result.data;
 }
 
 export async function getTarotCardInstructions(
   cardId?: string,
   interpretationMethod?: TarotInterpretationMethod
 ): Promise<{ success: boolean; data?: TarotCardInstruction[]; message?: string }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     let query = firestore.collection('tarotCardInstructions');
 
     if (cardId) {
@@ -76,18 +80,21 @@ export async function getTarotCardInstructions(
       instructions.push({ ...data, id: doc.id });
     });
 
-    return { success: true, data: instructions };
-  } catch (error) {
-    console.error('Error getting tarot card instructions:', error);
-    return { success: false, message: '타로 카드 지침을 불러오는 중 오류가 발생했습니다.' };
+    return instructions;
+  });
+
+  if (!result.success) {
+    return { success: false, message: result.error };
   }
+
+  return { success: true, data: result.data };
 }
 
 export async function getTarotCardInstruction(
   cardId: string,
   interpretationMethod: TarotInterpretationMethod
 ): Promise<{ success: boolean; data?: TarotCardInstruction; message?: string }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const snapshot = await firestore.collection('tarotCardInstructions')
       .where('cardId', '==', cardId)
       .where('interpretationMethod', '==', interpretationMethod)
@@ -95,33 +102,40 @@ export async function getTarotCardInstruction(
       .get();
 
     if (snapshot.empty) {
-      return { success: false, message: '지침을 찾을 수 없습니다.' };
+      throw new Error('지침을 찾을 수 없습니다.');
     }
 
     const doc = snapshot.docs[0];
     const data = doc.data() as TarotCardInstruction;
     
-    return { success: true, data: { ...data, id: doc.id } };
-  } catch (error) {
-    console.error('Error getting tarot card instruction:', error);
-    return { success: false, message: '타로 카드 지침을 불러오는 중 오류가 발생했습니다.' };
+    return { ...data, id: doc.id };
+  });
+
+  if (!result.success) {
+    return { success: false, message: result.error };
   }
+
+  return { success: true, data: result.data };
 }
 
 export async function deleteTarotCardInstruction(
   instructionId: string
 ): Promise<{ success: boolean; message: string }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('tarotCardInstructions').doc(instructionId);
     await docRef.delete();
 
     console.log(`[DEV MOCK] Deleted tarot card instruction:`, instructionId);
 
     return { success: true, message: '타로 카드 지침이 성공적으로 삭제되었습니다.' };
-  } catch (error) {
-    console.error('Error deleting tarot card instruction:', error);
-    return { success: false, message: '타로 카드 지침 삭제 중 오류가 발생했습니다.' };
+  });
+  
+  if (!result.success) {
+    console.error('Error deleting tarot card instruction:', result.error);
+    return { success: false, message: result.error };
   }
+  
+  return result.data;
 }
 
 export async function batchUpdateTarotInstructions(
@@ -129,7 +143,7 @@ export async function batchUpdateTarotInstructions(
   instructionIds: string[],
   userId: string
 ): Promise<{ success: boolean; message: string }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const batch = firestore.batch();
 
     for (const instructionId of instructionIds) {
@@ -159,17 +173,21 @@ export async function batchUpdateTarotInstructions(
       success: true, 
       message: `${instructionIds.length}개의 지침이 성공적으로 ${operationNames[operation]}되었습니다.`
     };
-  } catch (error) {
-    console.error('Error batch updating tarot instructions:', error);
-    return { success: false, message: '일괄 작업 중 오류가 발생했습니다.' };
+  });
+  
+  if (!result.success) {
+    console.error('Error batch updating tarot instructions:', result.error);
+    return { success: false, message: result.error };
   }
+  
+  return result.data;
 }
 
 export async function importTarotInstructionTemplate(
   template: TarotInstructionBatch[],
   userId: string
 ): Promise<{ success: boolean; message: string }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const batch = firestore.batch();
     let totalInstructions = 0;
 
@@ -193,10 +211,14 @@ export async function importTarotInstructionTemplate(
       success: true, 
       message: `${totalInstructions}개의 지침이 성공적으로 가져왔습니다.`
     };
-  } catch (error) {
-    console.error('Error importing tarot instruction template:', error);
-    return { success: false, message: '템플릿 가져오기 중 오류가 발생했습니다.' };
+  });
+  
+  if (!result.success) {
+    console.error('Error importing tarot instruction template:', result.error);
+    return { success: false, message: result.error };
   }
+  
+  return result.data;
 }
 
 export async function exportTarotInstructionTemplate(
@@ -204,7 +226,7 @@ export async function exportTarotInstructionTemplate(
   templateName: string,
   description: string
 ): Promise<{ success: boolean; data?: any; message?: string }> {
-  try {
+  return safeFirestoreOperation(async (firestore) => {
     const snapshot = await firestore.collection('tarotCardInstructions')
       .where('interpretationMethod', '==', interpretationMethod)
       .get();
@@ -235,10 +257,7 @@ export async function exportTarotInstructionTemplate(
     };
 
     return { success: true, data: exportData };
-  } catch (error) {
-    console.error('Error exporting tarot instruction template:', error);
-    return { success: false, message: '템플릿 내보내기 중 오류가 발생했습니다.' };
-  }
+  });
 }
 
 export async function getTarotInstructionStats(): Promise<{
@@ -251,7 +270,7 @@ export async function getTarotInstructionStats(): Promise<{
   };
   message?: string;
 }> {
-  try {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const snapshot = await firestore.collection('tarotCardInstructions').get();
     
     const stats = {
@@ -281,9 +300,12 @@ export async function getTarotInstructionStats(): Promise<{
     const totalPossibleInstructions = 78 * 6;
     stats.completionPercentage = (stats.totalInstructions / totalPossibleInstructions) * 100;
 
-    return { success: true, data: stats };
-  } catch (error) {
-    console.error('Error getting tarot instruction stats:', error);
-    return { success: false, message: '통계를 불러오는 중 오류가 발생했습니다.' };
+    return stats;
+  });
+
+  if (!result.success) {
+    return { success: false, message: result.error };
   }
+
+  return { success: true, data: result.data };
 }

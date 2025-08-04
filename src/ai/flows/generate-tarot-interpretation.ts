@@ -97,17 +97,17 @@ async function tryGoogleAI(input: GenerateTarotInterpretationInput, prompt: stri
         
         // Create structured guideline information
         const spreadGuideline = {
-          name: guideline.spreadName,
+          name: guideline.name,
           generalApproach: guideline.generalApproach,
-          positions: guideline.positions.map((pos: PositionGuideline) => `
+          positions: guideline.positionGuidelines.map((pos: PositionGuideline) => `
 - ${pos.positionName}: ${pos.interpretationFocus}
   핵심 질문: ${pos.keyQuestions.join(', ')}`).join('\n'),
           interpretationTips: guideline.interpretationTips.join(' ')
         };
         
         const styleGuideline = {
-          name: guideline.styleName,
-          description: guideline.styleDescription || '',
+          name: guideline.name,
+          description: guideline.description || '',
           keyFocusAreas: guideline.keyFocusAreas.join(', '),
           interpretationTips: guideline.interpretationTips.join(' ')
         };
@@ -190,17 +190,17 @@ async function tryOpenAI(input: GenerateTarotInterpretationInput, prompt: string
         
         // Create structured guideline information
         const spreadGuideline = {
-          name: guideline.spreadName,
+          name: guideline.name,
           generalApproach: guideline.generalApproach,
-          positions: guideline.positions.map((pos: PositionGuideline) => `
+          positions: guideline.positionGuidelines.map((pos: PositionGuideline) => `
 - ${pos.positionName}: ${pos.interpretationFocus}
   핵심 질문: ${pos.keyQuestions.join(', ')}`).join('\n'),
           interpretationTips: guideline.interpretationTips.join(' ')
         };
         
         const styleGuideline = {
-          name: guideline.styleName,
-          description: guideline.styleDescription || '',
+          name: guideline.name,
+          description: guideline.description || '',
           keyFocusAreas: guideline.keyFocusAreas.join(', '),
           interpretationTips: guideline.interpretationTips.join(' ')
         };

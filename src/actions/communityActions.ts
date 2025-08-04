@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { getFirestore, getFieldValue } from '@/lib/firebase/admin-helpers';
+import { getFirestore, getFieldValue, safeFirestoreOperation } from '@/lib/firebase/admin-helpers';
 import { Timestamp } from 'firebase-admin/firestore';
 import type { CommunityPost, CommunityPostCategory } from '@/types';
 import { FreeDiscussionPostFormSchema, type FreeDiscussionPostFormData, type ReadingSharePostFormData, ReadingSharePostFormSchema } from '@/types';
@@ -37,15 +37,14 @@ export async function getCommunityPosts(
   category: CommunityPostCategory,
   page: number = 1
 ): Promise<{ posts: CommunityPost[]; totalPages: number }> {
-  try {
-    console.log('[DEBUG] getCommunityPosts called with:', { category, page });
-    
-    // Check global mock storage
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[DEBUG] Mock storage state:', (global as any).mockStorage);
-    }
-    
-    const firestore = await getFirestore();
+  console.log('[DEBUG] getCommunityPosts called with:', { category, page });
+  
+  // Check global mock storage
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[DEBUG] Mock storage state:', (global as any).mockStorage);
+  }
+  
+  const result = await safeFirestoreOperation(async (firestore) => {
     const postsRef = firestore.collection('communityPosts');
     const queryByCategory = postsRef.where('category', '==', category);
     
@@ -81,17 +80,19 @@ export async function getCommunityPosts(
     });
     
     return { posts, totalPages };
+  });
 
-  } catch (error) {
-    console.error(`Error fetching community posts for category ${category}:`, error);
+  if (!result.success) {
+    console.error(`Error fetching community posts for category ${category}:`, result.error);
     // Return empty state on error to prevent UI crash
     return { posts: [], totalPages: 1 };
   }
+  
+  return result.data;
 }
 
 export async function getCommunityPostById(postId: string): Promise<CommunityPost | null> {
-  try {
-    const firestore = await getFirestore();
+  const result = await safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('communityPosts').doc(postId);
     const doc = await docRef.get();
 
@@ -106,26 +107,30 @@ export async function getCommunityPostById(postId: string): Promise<CommunityPos
     });
 
     return mapDocToCommunityPost(doc);
-  } catch (error) {
-    console.error(`Error fetching post by ID ${postId}:`, error);
+  });
+
+  if (!result.success) {
+    console.error(`Error fetching post by ID ${postId}:`, result.error);
     return null;
   }
+  
+  return result.data;
 }
 
 export async function createFreeDiscussionPost(
   formData: FreeDiscussionPostFormData,
   author: { uid: string; displayName?: string | null; photoURL?: string | null }
 ): Promise<{ success: boolean; postId?: string; error?: string | object }> {
-  try {
-    console.log('[DEBUG] createFreeDiscussionPost called with:', { formData, author });
-    
-    const validationResult = FreeDiscussionPostFormSchema.safeParse(formData);
-    if (!validationResult.success) {
-      return { success: false, error: validationResult.error.flatten().fieldErrors };
-    }
+  console.log('[DEBUG] createFreeDiscussionPost called with:', { formData, author });
+  
+  const validationResult = FreeDiscussionPostFormSchema.safeParse(formData);
+  if (!validationResult.success) {
+    return { success: false, error: validationResult.error.flatten().fieldErrors };
+  }
 
-    const { title, content, imageUrl } = validationResult.data;
+  const { title, content, imageUrl } = validationResult.data;
 
+  const result = await safeFirestoreOperation(async (firestore) => {
     const fieldValue = await getFieldValue();
     const newPostData = {
       authorId: author.uid,
@@ -142,31 +147,29 @@ export async function createFreeDiscussionPost(
     };
 
     console.log('[DEBUG] Saving post data:', newPostData);
-    const firestore = await getFirestore();
     const docRef = await firestore.collection('communityPosts').add(newPostData);
     console.log('[DEBUG] Post created with ID:', docRef.id);
     
     // Verify post was saved
-    if (!firestore) {
-      throw new Error('Firestore is not initialized');
-    }
     const verification = await firestore.collection('communityPosts').doc(docRef.id).get();
     console.log('[DEBUG] Post verification - exists:', verification.exists);
     
     return { success: true, postId: docRef.id };
+  });
 
-  } catch (error) {
-    console.error('Error creating free discussion post:', error);
-    return { success: false, error: '게시물 생성 중 오류가 발생했습니다.' };
+  if (!result.success) {
+    console.error('Error creating free discussion post:', result.error);
+    return { success: false, error: result.error };
   }
+  
+  return result.data;
 }
 
 export async function deleteCommunityPost(
   postId: string,
   userId: string
 ): Promise<{ success: boolean; error?: string }> {
-  try {
-    const firestore = await getFirestore();
+  return safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('communityPosts').doc(postId);
     const doc = await docRef.get();
 
@@ -182,10 +185,7 @@ export async function deleteCommunityPost(
     await docRef.delete();
 
     return { success: true };
-  } catch (error) {
-    console.error(`Error deleting post ${postId}:`, error);
-    return { success: false, error: '게시물 삭제 중 오류가 발생했습니다.' };
-  }
+  });
 }
 // Generic function to create community posts
 export async function createCommunityPost(
@@ -193,14 +193,14 @@ export async function createCommunityPost(
   author: { uid: string; displayName?: string | null; photoURL?: string | null },
   category?: CommunityPostCategory
 ): Promise<{ success: boolean; postId?: string; error?: string | object }> {
-  try {
-    const validationResult = FreeDiscussionPostFormSchema.safeParse(formData);
-    if (!validationResult.success) {
-      return { success: false, error: validationResult.error.flatten().fieldErrors };
-    }
+  const validationResult = FreeDiscussionPostFormSchema.safeParse(formData);
+  if (!validationResult.success) {
+    return { success: false, error: validationResult.error.flatten().fieldErrors };
+  }
 
-    const { title, content, imageUrl } = validationResult.data;
+  const { title, content, imageUrl } = validationResult.data;
 
+  const result = await safeFirestoreOperation(async (firestore) => {
     const fieldValue = await getFieldValue();
     const newPostData = {
       authorId: author.uid,
@@ -216,14 +216,16 @@ export async function createCommunityPost(
       updatedAt: fieldValue.serverTimestamp(),
     };
 
-    const firestore = await getFirestore();
     const docRef = await firestore.collection('communityPosts').add(newPostData);
     return { success: true, postId: docRef.id };
+  });
 
-  } catch (error) {
-    console.error('Error creating community post:', error);
-    return { success: false, error: '게시물 생성 중 오류가 발생했습니다.' };
+  if (!result.success) {
+    console.error('Error creating community post:', result.error);
+    return { success: false, error: result.error };
   }
+  
+  return result.data;
 }
 
 // Function to create reading share posts
@@ -231,14 +233,14 @@ export async function createReadingSharePost(
   formData: ReadingSharePostFormData,
   author: { uid: string; displayName?: string | null; photoURL?: string | null }
 ): Promise<{ success: boolean; postId?: string; error?: string | object }> {
-  try {
-    const validationResult = ReadingSharePostFormSchema.safeParse(formData);
-    if (!validationResult.success) {
-      return { success: false, error: validationResult.error.flatten().fieldErrors };
-    }
+  const validationResult = ReadingSharePostFormSchema.safeParse(formData);
+  if (!validationResult.success) {
+    return { success: false, error: validationResult.error.flatten().fieldErrors };
+  }
 
-    const { title, content, imageUrl, readingQuestion, cardsInfo } = validationResult.data;
+  const { title, content, imageUrl, readingQuestion, cardsInfo } = validationResult.data;
 
+  const result = await safeFirestoreOperation(async (firestore) => {
     const fieldValue = await getFieldValue();
     const newPostData = {
       authorId: author.uid,
@@ -256,12 +258,14 @@ export async function createReadingSharePost(
       updatedAt: fieldValue.serverTimestamp(),
     };
 
-    const firestore = await getFirestore();
     const docRef = await firestore.collection('communityPosts').add(newPostData);
     return { success: true, postId: docRef.id };
+  });
 
-  } catch (error) {
-    console.error('Error creating reading share post:', error);
-    return { success: false, error: '리딩 공유 게시물 생성 중 오류가 발생했습니다.' };
+  if (!result.success) {
+    console.error('Error creating reading share post:', result.error);
+    return { success: false, error: result.error };
   }
+  
+  return result.data;
 }

@@ -591,7 +591,7 @@ async function testHuggingFaceConnection(
 export async function saveAIFeatureMapping(
   mappings: AIFeatureMapping[]
 ): Promise<{ success: boolean; message: string }> {
-  return safeFirestoreOperation(async (firestore) => {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     await docRef.set({ mappings, updatedAt: new Date() });
 
@@ -599,6 +599,12 @@ export async function saveAIFeatureMapping(
 
     return { success: true, message: '기능별 AI 모델 매핑이 성공적으로 저장되었습니다.' };
   });
+
+  if (!result.success) {
+    return { success: false, message: result.error };
+  }
+
+  return result.data;
 }
 
 export async function getAIFeatureMappings(): Promise<{
@@ -606,17 +612,23 @@ export async function getAIFeatureMappings(): Promise<{
   data?: AIFeatureMapping[];
   message?: string;
 }> {
-  return safeFirestoreOperation(async (firestore) => {
+  const result = await safeFirestoreOperation(async (firestore) => {
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     const doc = await docRef.get();
 
     if (!doc.exists) {
-      return { success: true, data: [] };
+      return [];
     }
 
     const data = doc.data();
-    return { success: true, data: data?.mappings || [] };
+    return data?.mappings || [];
   });
+
+  if (!result.success) {
+    return { success: false, message: result.error };
+  }
+
+  return { success: true, data: result.data };
 }
 
 // Helper function to save API key to environment file
@@ -703,11 +715,13 @@ export async function getAIConfiguration(): Promise<{
 
     // Get global settings
     const globalDoc = await firestore.collection('aiConfiguration').doc('globalSettings').get();
-    const globalSettings = globalDoc.exists ? globalDoc.data() : {
-      defaultTemperature: 0.7,
-      defaultMaxTokens: 1000,
-      enableFallback: true,
-    } as { defaultTemperature: number; defaultMaxTokens: number; enableFallback: boolean; fallbackProvider?: AIProvider };
+    const globalData = globalDoc.exists ? globalDoc.data() : undefined;
+    const globalSettings: { defaultTemperature: number; defaultMaxTokens: number; enableFallback: boolean; fallbackProvider?: AIProvider } = {
+      defaultTemperature: globalData?.defaultTemperature || 0.7,
+      defaultMaxTokens: globalData?.defaultMaxTokens || 1000,
+      enableFallback: globalData?.enableFallback ?? true,
+      fallbackProvider: globalData?.fallbackProvider
+    };
 
     const configuration: AIConfiguration = {
       providers: providersResult.data || [],
