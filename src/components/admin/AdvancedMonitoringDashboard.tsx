@@ -142,11 +142,17 @@ export function AdvancedMonitoringDashboard() {
           <h3 className="text-lg font-semibold">고급 모니터링 대시보드</h3>
           <p className="text-sm text-muted-foreground">
             마지막 업데이트: {lastUpdate ? lastUpdate.toLocaleTimeString('ko-KR') : '알 수 없음'}
+            {loading && <span className="ml-2 inline-flex items-center">• 업데이트 중...</span>}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={fetchAdvancedStats}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          새로고침
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={fetchAdvancedStats}
+          disabled={loading}
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          {loading ? '업데이트 중' : '새로고침'}
         </Button>
       </div>
 
@@ -230,15 +236,36 @@ export function AdvancedMonitoringDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={advancedStats.analytics.topPages}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="page" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="views" fill="#8B5CF6" />
-              </BarChart>
-            </ResponsiveContainer>
+            {advancedStats.analytics.topPages.length > 0 ? (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={advancedStats.analytics.topPages}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="page" 
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => {
+                      if (value.length > 8) {
+                        return value.substring(0, 8) + '...';
+                      }
+                      return value;
+                    }}
+                  />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip 
+                    formatter={["조회수", "페이지"]}
+                    labelFormatter={(label) => `페이지: ${label}`}
+                  />
+                  <Bar dataKey="views" fill="#8B5CF6" radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[200px]">
+                <div className="text-center">
+                  <BarChart3 className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">페이지 조회 데이터 수집 중...</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -267,7 +294,9 @@ export function AdvancedMonitoringDashboard() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  formatter={(value, name) => [`${value}%`, name]}
+                />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -290,15 +319,23 @@ export function AdvancedMonitoringDashboard() {
                 <span className="text-sm">방문자 → 회원</span>
                 <span className="text-sm font-medium">{advancedStats.analytics.conversionMetrics.visitorToUser.toFixed(1)}%</span>
               </div>
-              <Progress value={advancedStats.analytics.conversionMetrics.visitorToUser} />
+              <Progress 
+                value={Math.min(advancedStats.analytics.conversionMetrics.visitorToUser, 100)} 
+                className="h-2"
+              />
+              <p className="text-xs text-muted-foreground">웹사이트 방문자 중 회원가입하는 비율</p>
             </div>
             
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm">회원 → 리딩</span>
-                <span className="text-sm font-medium">{advancedStats.analytics.conversionMetrics.userToReading.toFixed(1)}%</span>
+                <span className="text-sm font-medium">{Math.min(advancedStats.analytics.conversionMetrics.userToReading, 100).toFixed(1)}%</span>
               </div>
-              <Progress value={advancedStats.analytics.conversionMetrics.userToReading} />
+              <Progress 
+                value={Math.min(advancedStats.analytics.conversionMetrics.userToReading, 100)} 
+                className="h-2"
+              />
+              <p className="text-xs text-muted-foreground">가입 회원 중 타로/꿈해몽 서비스를 이용하는 비율</p>
             </div>
             
             <div className="space-y-2">
@@ -306,7 +343,11 @@ export function AdvancedMonitoringDashboard() {
                 <span className="text-sm">완료율</span>
                 <span className="text-sm font-medium">{advancedStats.analytics.conversionMetrics.completionRate.toFixed(1)}%</span>
               </div>
-              <Progress value={advancedStats.analytics.conversionMetrics.completionRate} />
+              <Progress 
+                value={Math.min(advancedStats.analytics.conversionMetrics.completionRate, 100)} 
+                className="h-2"
+              />
+              <p className="text-xs text-muted-foreground">시작된 세션 중 성공적으로 결과를 받은 비율</p>
             </div>
           </CardContent>
         </Card>
@@ -321,17 +362,29 @@ export function AdvancedMonitoringDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {advancedStats.analytics.userGeography.map((region, index) => (
-                <div key={region.location} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="text-sm">{region.location}</span>
+              {advancedStats.analytics.userGeography.length > 0 ? (
+                advancedStats.analytics.userGeography.slice(0, 6).map((region, index) => (
+                  <div key={region.location} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-2 w-2 rounded-full bg-primary" style={{ 
+                        backgroundColor: `hsl(${(index * 360) / advancedStats.analytics.userGeography.length}, 60%, 50%)` 
+                      }} />
+                      <span className="text-sm">{region.location}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline">{region.count}명</Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {Math.round((region.count / advancedStats.analytics.userGeography.reduce((sum, r) => sum + r.count, 0)) * 100)}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="outline">{region.count}명</Badge>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4">
+                  <Globe className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">지역별 데이터 수집 중...</p>
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>
