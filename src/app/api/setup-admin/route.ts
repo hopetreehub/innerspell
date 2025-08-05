@@ -4,18 +4,25 @@ import { FieldValue } from 'firebase-admin/firestore';
 
 export async function POST(request: NextRequest) {
   try {
-    // 보안을 위해 특정 키가 필요
-    const { secretKey } = await request.json();
+    // 환경 변수에서 보안 설정 읽기
+    const { secretKey, adminEmail, adminPassword } = await request.json();
     
-    if (secretKey !== 'setup-innerspell-admin-2024') {
+    // 환경 변수로 관리되는 시크릿 키 검증
+    const expectedSecretKey = process.env.ADMIN_SETUP_SECRET_KEY;
+    if (!expectedSecretKey || secretKey !== expectedSecretKey) {
       return NextResponse.json(
         { error: '유효하지 않은 키입니다.' },
         { status: 401 }
       );
     }
 
-    const adminEmail = 'admin@innerspell.com';
-    const adminPassword = 'admin123';
+    // 관리자 계정 정보 검증
+    if (!adminEmail || !adminPassword) {
+      return NextResponse.json(
+        { error: '관리자 이메일과 비밀번호가 필요합니다.' },
+        { status: 400 }
+      );
+    }
 
     // 기존 사용자 확인
     try {
@@ -38,8 +45,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: '관리자 계정 비밀번호가 업데이트되었습니다.',
-        email: adminEmail,
-        password: adminPassword
+        email: adminEmail
       });
       
     } catch (error: any) {
@@ -68,8 +74,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: '관리자 계정이 생성되었습니다.',
-          email: adminEmail,
-          password: adminPassword
+          email: adminEmail
         });
       }
       throw error;

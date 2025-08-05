@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarot Keywords Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .keyword {
+            background: #e0e0e0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tarot Card Keywords Test</h1>
+    
+    <div class="card">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Card Data</h2>
+        <div id="card-info"></div>
+        
+        <div>
+            <button onclick="testOrientation('upright')">Test Upright</button>
+            <button onclick="testOrientation('reversed')">Test Reversed</button>
+        </div>
+        
+        <h3>Current Orientation: <span id="current-orientation">upright</span></h3>
+        <div id="keywords-display"></div>
+    </div>
+
+    <script>
+        // Mock card data similar to what's in the actual app
+        const mockCard = {
+            id: 'major-21-world',
+            number: 21,
+            name: 'The World',
+            nameKorean: '세계',
+            keywords: {
+                upright: ['완성', '성취', '통합', '성공', '만족', '완전함', '순환의 완성'],
+                reversed: ['미완성', '지연', '부분적 성공', '만족 부족', '새로운 시작 필요']
+            }
+        };
+
+        let currentOrientation = 'upright';
+        const resultsDiv = document.getElementById('test-results');
+        const cardInfoDiv = document.getElementById('card-info');
+        const keywordsDiv = document.getElementById('keywords-display');
+
+        // Display card info
+        cardInfoDiv.innerHTML = `
+            <h3>${mockCard.nameKorean} (${mockCard.name})</h3>
+            <p>Card ID: ${mockCard.id}</p>
+            <p>Card Number: ${mockCard.number}</p>
+        `;
+
+        // Test function similar to the React component
+        function testKeywordsAccess() {
+            const tests = [];
+            
+            // Test 1: Check if keywords exist
+            tests.push({
+                name: 'Keywords object exists',
+                passed: mockCard.keywords !== undefined,
+                message: mockCard.keywords ? 'Keywords found' : 'Keywords missing'
+            });
+            
+            // Test 2: Check if upright keywords exist
+            tests.push({
+                name: 'Upright keywords exist',
+                passed: mockCard.keywords?.upright !== undefined,
+                message: mockCard.keywords?.upright ? `Found ${mockCard.keywords.upright.length} upright keywords` : 'Upright keywords missing'
+            });
+            
+            // Test 3: Check if reversed keywords exist
+            tests.push({
+                name: 'Reversed keywords exist',
+                passed: mockCard.keywords?.reversed !== undefined,
+                message: mockCard.keywords?.reversed ? `Found ${mockCard.keywords.reversed.length} reversed keywords` : 'Reversed keywords missing'
+            });
+            
+            // Test 4: Test the actual component logic
+            let componentTestPassed = true;
+            let componentTestMessage = '';
+            try {
+                // This simulates the component's code
+                const keywords = (mockCard.keywords?.[currentOrientation] || []);
+                keywords.map((keyword) => keyword);
+                componentTestMessage = 'Component logic works correctly';
+            } catch (error) {
+                componentTestPassed = false;
+                componentTestMessage = `Error: ${error.message}`;
+            }
+            
+            tests.push({
+                name: 'Component keyword rendering logic',
+                passed: componentTestPassed,
+                message: componentTestMessage
+            });
+            
+            // Display results
+            resultsDiv.innerHTML = tests.map(test => `
+                <div class="${test.passed ? 'success' : 'error'}">
+                    ${test.name}: ${test.passed ? '✅ PASSED' : '❌ FAILED'} - ${test.message}
+                </div>
+            `).join('');
+            
+            return tests.every(test => test.passed);
+        }
+
+        // Display keywords function
+        function displayKeywords() {
+            try {
+                const keywords = (mockCard.keywords?.[currentOrientation] || []);
+                keywordsDiv.innerHTML = `
+                    <h4>Keywords (${currentOrientation}):</h4>
+                    <div class="keywords">
+                        ${keywords.map(keyword => `<span class="keyword">${keyword}</span>`).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                keywordsDiv.innerHTML = `<div class="error">Error displaying keywords: ${error.message}</div>`;
+            }
+        }
+
+        // Test orientation switching
+        function testOrientation(orientation) {
+            currentOrientation = orientation;
+            document.getElementById('current-orientation').textContent = orientation;
+            displayKeywords();
+            testKeywordsAccess();
+        }
+
+        // Run initial tests
+        testKeywordsAccess();
+        displayKeywords();
+    </script>
+</body>
+</html>

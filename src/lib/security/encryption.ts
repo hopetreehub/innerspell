@@ -8,9 +8,12 @@ const algorithm = 'aes-256-gcm';
 export function getEncryptionKey(): Buffer {
   const key = process.env.ENCRYPTION_KEY;
   if (!key) {
-    // 개발 환경에서는 기본 키 사용 (프로덕션에서는 반드시 환경변수 설정 필요)
-    console.warn('ENCRYPTION_KEY not found in environment variables. Using default key for development.');
-    return crypto.scryptSync('innerspell-default-key-2024', 'salt', 32);
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('ENCRYPTION_KEY must be set in production environment');
+    }
+    // 개발 환경에서만 임시 키 생성
+    console.warn('ENCRYPTION_KEY not found in environment variables. Generating temporary key for development.');
+    return crypto.randomBytes(32);
   }
   return Buffer.from(key, 'hex');
 }

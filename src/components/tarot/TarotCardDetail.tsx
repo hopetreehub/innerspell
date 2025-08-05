@@ -33,6 +33,22 @@ interface TarotCardDetailProps {
 export function TarotCardDetail({ card, allCards, relatedCards, showBackButton = false }: TarotCardDetailProps) {
   const [currentOrientation, setCurrentOrientation] = useState<'upright' | 'reversed'>('upright');
 
+  // Card가 없으면 로딩 또는 에러 상태 표시
+  if (!card) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-8 text-center">
+            <p className="text-muted-foreground">카드를 찾을 수 없습니다.</p>
+            <Button asChild className="mt-4">
+              <Link href="/tarot">타로 카드 목록으로 돌아가기</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // 수트별 색상 매핑
   const suitColors = {
     major: 'bg-gradient-to-br from-purple-500 to-indigo-600',
@@ -280,14 +296,18 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                         <div>
                           <h4 className="font-semibold mb-2">일반적 의미</h4>
                           <p className="text-muted-foreground leading-relaxed">
-                            {currentOrientation === 'upright' ? card.meaningDetailed?.upright : card.meaningDetailed?.reversed}
+                            {currentOrientation === 'upright' 
+                              ? card.meaningDetailed?.upright || card.meaning?.upright || '정방향 의미가 준비 중입니다.'
+                              : card.meaningDetailed?.reversed || card.meaning?.reversed || '역방향 의미가 준비 중입니다.'}
                           </p>
                         </div>
                         <Separator />
                         <div>
                           <h4 className="font-semibold mb-2">조언</h4>
                           <p className="text-muted-foreground leading-relaxed">
-                            {currentOrientation === 'upright' ? card.advice?.upright : card.advice?.reversed}
+                            {currentOrientation === 'upright' 
+                              ? card.advice?.upright || '정방향 조언이 준비 중입니다.'
+                              : card.advice?.reversed || '역방향 조언이 준비 중입니다.'}
                           </p>
                         </div>
                       </div>
@@ -300,7 +320,9 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                           <h4 className="font-semibold">연애 운세</h4>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
-                          {currentOrientation === 'upright' ? card.love?.upright : card.love?.reversed}
+                          {currentOrientation === 'upright' 
+                            ? card.love?.upright || '정방향 연애 운세가 준비 중입니다.'
+                            : card.love?.reversed || '역방향 연애 운세가 준비 중입니다.'}
                         </p>
                       </div>
                     </TabsContent>
@@ -312,7 +334,9 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                           <h4 className="font-semibold">사업 & 직업 운세</h4>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
-                          {currentOrientation === 'upright' ? card.career?.upright : card.career?.reversed}
+                          {currentOrientation === 'upright' 
+                            ? card.career?.upright || '정방향 직업 운세가 준비 중입니다.'
+                            : card.career?.reversed || '역방향 직업 운세가 준비 중입니다.'}
                         </p>
                       </div>
                     </TabsContent>
@@ -324,7 +348,9 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                           <h4 className="font-semibold">건강 운세</h4>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
-                          {currentOrientation === 'upright' ? card.health?.upright : card.health?.reversed}
+                          {currentOrientation === 'upright' 
+                            ? card.health?.upright || '정방향 건강 운세가 준비 중입니다.'
+                            : card.health?.reversed || '역방향 건강 운세가 준비 중입니다.'}
                         </p>
                       </div>
                     </TabsContent>

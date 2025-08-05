@@ -3,6 +3,7 @@
 import { db } from '@/lib/firebase/client';
 import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
 import { BlogCategory, BlogTag, CreateCategoryRequest, UpdateCategoryRequest, CreateTagRequest, UpdateTagRequest, CategoryStats, TagStats } from '@/types/category';
+import { shouldUseDevelopmentFallback, developmentMockData, developmentLog, handleFirebaseError } from '@/lib/firebase/development-mode';
 
 // 프로덕션에서는 실제 Firestore만 사용
 
@@ -19,6 +20,19 @@ function generateSlug(name: string): string {
 
 export async function getAllCategories(): Promise<BlogCategory[]> {
   try {
+    // 개발 모드 fallback 체크
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('CategoryService', 'Using development mock categories');
+      return developmentMockData.categories.map(cat => ({
+        ...cat,
+        slug: generateSlug(cat.name),
+        isActive: true,
+        postCount: Math.floor(Math.random() * 10),
+        createdAt: new Date(Date.now() - Math.random() * 86400000 * 30), // 지난 30일 내
+        updatedAt: new Date()
+      })) as BlogCategory[];
+    }
+
     // 실제 Firestore
     const categoriesRef = collection(db as any, 'blog-categories');
     const q = query(categoriesRef, orderBy('name'));
@@ -31,8 +45,14 @@ export async function getAllCategories(): Promise<BlogCategory[]> {
       updatedAt: doc.data().updatedAt?.toDate() || new Date(),
     })) as BlogCategory[];
   } catch (error) {
-    console.error('카테고리 조회 실패:', error);
-    throw error;
+    return handleFirebaseError(error, 'CategoryService', developmentMockData.categories.map(cat => ({
+      ...cat,
+      slug: generateSlug(cat.name),
+      isActive: true,
+      postCount: Math.floor(Math.random() * 10),
+      createdAt: new Date(Date.now() - Math.random() * 86400000 * 30),
+      updatedAt: new Date()
+    })));
   }
 }
 
