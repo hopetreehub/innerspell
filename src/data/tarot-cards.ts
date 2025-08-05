@@ -67,7 +67,7 @@ export const majorArcana: TarotCard[] = [
     astrology: '천왕성의 영향으로 혁신과 자유로움을 상징',
     element: 'air',
     planet: '천왕성',
-    image: '/images/tarot/major/00-the-fool.jpg',
+    image: '/images/tarot/major/00-fool.jpg',
     featured: true
   },
   {
@@ -104,7 +104,7 @@ export const majorArcana: TarotCard[] = [
     astrology: '수성의 영향으로 소통과 지성을 상징',
     element: 'air',
     planet: '수성',
-    image: '/images/tarot/major/01-the-magician.jpg',
+    image: '/images/tarot/major/01-magician.jpg',
     featured: true
   },
   {
@@ -141,7 +141,7 @@ export const majorArcana: TarotCard[] = [
     astrology: '달의 영향으로 직감과 감정을 상징',
     element: 'water',
     planet: '달',
-    image: '/images/tarot/major/02-the-high-priestess.jpg',
+    image: '/images/tarot/major/02-high-priestess.jpg',
     featured: true
   }
 ];

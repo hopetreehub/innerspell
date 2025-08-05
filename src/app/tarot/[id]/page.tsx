@@ -4,6 +4,7 @@ import { TarotCardDetail } from '@/components/tarot/TarotCardDetail';
 import { getMajorArcanaCardById, allMajorArcanaCards } from '@/data/all-major-arcana';
 import { findCardById, allTarotCards } from '@/data/all-tarot-cards';
 import { TarotCard } from '@/types/tarot';
+import { adaptNewToOldCard } from '@/utils/tarot-card-adapter';
 
 interface TarotCardPageProps {
   params: Promise<{
@@ -45,10 +46,14 @@ export default async function TarotCardPage({ params }: TarotCardPageProps) {
   // 관련 카드 찾기
   const relatedCards = getRelatedCards(card);
 
+  // 카드 타입 변환
+  const adaptedCard = adaptNewToOldCard(card);
+  const adaptedRelatedCards = relatedCards.map(adaptNewToOldCard);
+
   return (
     <TarotCardDetail 
-      card={card} 
-      relatedCards={relatedCards}
+      card={adaptedCard} 
+      relatedCards={adaptedRelatedCards}
       showBackButton={true}
     />
   );
