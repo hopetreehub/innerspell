@@ -18,7 +18,7 @@ import { CategoryTagManagement } from '@/components/admin/CategoryTagManagement'
 import { type BlogPost } from '@/types/blog';
 import { BlogCategory } from '@/types/category';
 import { getAllCategories } from '@/services/category-service';
-import { getAllMDXPosts, MDXBlogPost } from '@/lib/blog/mdx-loader';
+import { MDXBlogPost } from '@/lib/blog/mdx-loader';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -89,14 +89,21 @@ export function BlogManagement() {
       const token = user && 'getIdToken' in user ? await (user as any).getIdToken() : null;
       
       // 병렬로 MDX 포스트와 일반 포스트 가져오기
-      const [mdxPosts, regularPostsResponse] = await Promise.all([
-        getAllMDXPosts().catch(() => []), // MDX 로딩 실패 시 빈 배열
+      const [mdxPostsResponse, regularPostsResponse] = await Promise.all([
+        fetch('/api/blog/mdx-posts').catch(() => null), // MDX API 호출
         token ? fetch('/api/blog/posts?published=false', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         }).catch(() => null) : null
       ]);
+
+      // MDX 포스트 처리
+      let mdxPosts: Omit<MDXBlogPost, 'content'>[] = [];
+      if (mdxPostsResponse && mdxPostsResponse.ok) {
+        const mdxData = await mdxPostsResponse.json();
+        mdxPosts = mdxData.posts || [];
+      }
       
       // MDX 포스트 변환
       const mdxPostsFormatted: CombinedPost[] = mdxPosts.map(post => ({

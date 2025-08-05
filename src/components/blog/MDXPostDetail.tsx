@@ -16,7 +16,7 @@ import { BlogComments } from './BlogComments';
 import { RecommendedPostsSidebar } from './RecommendedPostsSidebar';
 import { BlogPostJsonLd } from './BlogJsonLd';
 import { MDXRenderer } from './MDXRenderer';
-import { getAllMDXPosts } from '@/lib/blog/mdx-loader';
+// import { getAllMDXPosts } from '@/lib/blog/mdx-loader'; // Moved to API
 
 interface MDXPostDetailProps {
   post: MDXBlogPost;
@@ -28,22 +28,34 @@ export function MDXPostDetail({ post }: MDXPostDetailProps) {
 
   useEffect(() => {
     const fetchRelatedPosts = async () => {
-      const allPosts = await getAllMDXPosts();
-      const related = allPosts
-        .filter(p => p.slug !== post.slug)
-        .filter(p => 
-          p.category === post.category || 
-          p.tags.some(tag => post.tags.includes(tag))
-        )
-        .sort((a, b) => {
-          const aScore = (a.category === post.category ? 2 : 0) +
-                        a.tags.filter(tag => post.tags.includes(tag)).length;
-          const bScore = (b.category === post.category ? 2 : 0) +
-                        b.tags.filter(tag => post.tags.includes(tag)).length;
-          return bScore - aScore;
-        })
-        .slice(0, 5);
-      setRelatedPosts(related);
+      try {
+        const response = await fetch('/api/blog/mdx-posts');
+        if (!response.ok) {
+          console.error('Failed to fetch MDX posts');
+          return;
+        }
+        
+        const data = await response.json();
+        const allPosts = data.posts || [];
+        
+        const related = allPosts
+          .filter(p => p.slug !== post.slug)
+          .filter(p => 
+            p.category === post.category || 
+            p.tags.some(tag => post.tags.includes(tag))
+          )
+          .sort((a, b) => {
+            const aScore = (a.category === post.category ? 2 : 0) +
+                          a.tags.filter(tag => post.tags.includes(tag)).length;
+            const bScore = (b.category === post.category ? 2 : 0) +
+                          b.tags.filter(tag => post.tags.includes(tag)).length;
+            return bScore - aScore;
+          })
+          .slice(0, 5);
+        setRelatedPosts(related);
+      } catch (error) {
+        console.error('Error fetching related posts:', error);
+      }
     };
 
     fetchRelatedPosts();
