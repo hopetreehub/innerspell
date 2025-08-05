@@ -1,8 +1,6 @@
 
-import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
-import {openAI} from 'genkitx-openai';
-import {anthropic} from 'genkitx-anthropic';
+// Dynamic imports to prevent webpack bundling issues
+// These will only be loaded when actually needed
 import { getAllAIProviderConfigsForGenkit } from '@/actions/aiProviderActions';
 import { decrypt } from '@/lib/encryption';
 
@@ -119,6 +117,20 @@ let aiInstance: ReturnType<typeof genkit> | null = null;
 export async function getAI() {
   if (!aiInstance) {
     console.log('[GENKIT] Initializing AI instance...');
+    
+    // Dynamic imports to prevent webpack issues during SSR
+    const [
+      { genkit },
+      { googleAI },
+      { openAI },
+      { anthropic }
+    ] = await Promise.all([
+      import('genkit'),
+      import('@genkit-ai/googleai'),
+      import('genkitx-openai'),
+      import('genkitx-anthropic')
+    ]);
+    
     const keys = await getAIProviderKeys();
     
     const plugins = [];
@@ -166,17 +178,33 @@ export async function getAI() {
   return aiInstance;
 }
 
-// For backward compatibility
+// Server-side only check to prevent client-side loading
+function isServerSide() {
+  return typeof window === 'undefined';
+}
+
+// For backward compatibility with enhanced error handling
 export const ai = {
   defineFlow: (config: any, flowFn: any) => {
     // Return a function that can be called directly
     return async (input: any) => {
+      // Only load AI on server-side to prevent webpack issues
+      if (!isServerSide()) {
+        console.warn('[GENKIT] AI features are only available on server-side');
+        throw new Error('AI features not available on client-side');
+      }
+      
       const instance = await getAI();
       const flow = instance.defineFlow(config, flowFn);
       return flow(input);
     };
   },
-  definePrompt: async (...args: Parameters<ReturnType<typeof genkit>['definePrompt']>) => {
+  definePrompt: async (...args: any[]) => {
+    if (!isServerSide()) {
+      console.warn('[GENKIT] AI features are only available on server-side');
+      throw new Error('AI features not available on client-side');
+    }
+    
     const instance = await getAI();
     return instance.definePrompt(...args);
   }

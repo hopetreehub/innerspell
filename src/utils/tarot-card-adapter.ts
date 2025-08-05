@@ -45,7 +45,7 @@ export function adaptNewToOldCard(newCard: NewTarotCard): ExtendedOldTarotCard {
     number: newCard.number,
     type: newCard.arcana === 'major' ? 'major' : 
           newCard.number && newCard.number <= 10 ? 'pip' : 'court',
-    keywords: [...newCard.keywords.upright, ...newCard.keywords.reversed],
+    keywords: [...(newCard.keywords?.upright || []), ...(newCard.keywords?.reversed || [])],
     upright: {
       meaning: newCard.meaningDetailed.upright || newCard.meaningShort.upright,
       love: newCard.love.upright,

@@ -6,6 +6,10 @@ import { findCardById, allTarotCards } from '@/data/all-tarot-cards';
 import { TarotCard } from '@/types/tarot';
 import { adaptNewToOldCard } from '@/utils/tarot-card-adapter';
 
+// Enable static generation for better performance
+export const dynamic = 'force-static';
+export const revalidate = 3600; // Revalidate every hour
+
 interface TarotCardPageProps {
   params: Promise<{
     id: string;
@@ -35,28 +39,40 @@ function getRelatedCards(card: TarotCard): TarotCard[] {
 export default async function TarotCardPage({ params }: TarotCardPageProps) {
   const { id } = await params;
   
-  // 모든 카드(메이저 + 마이너)에서 찾기
-  const card = findCardById(id);
-  
-  // 카드가 없으면 404
-  if (!card) {
+  try {
+    // 모든 카드(메이저 + 마이너)에서 찾기
+    const card = findCardById(id);
+    
+    // 카드가 없으면 404
+    if (!card) {
+      console.log(`Card not found: ${id}`);
+      notFound();
+    }
+
+    // 관련 카드 찾기 (에러 방지)
+    let relatedCards: TarotCard[] = [];
+    try {
+      relatedCards = getRelatedCards(card);
+    } catch (error) {
+      console.warn('Failed to load related cards:', error);
+      relatedCards = [];
+    }
+
+    // 카드 타입 변환
+    const adaptedCard = adaptNewToOldCard(card);
+    const adaptedRelatedCards = relatedCards.map(adaptNewToOldCard);
+
+    return (
+      <TarotCardDetail 
+        card={adaptedCard} 
+        relatedCards={adaptedRelatedCards}
+        showBackButton={true}
+      />
+    );
+  } catch (error) {
+    console.error('Error loading tarot card page:', error);
     notFound();
   }
-
-  // 관련 카드 찾기
-  const relatedCards = getRelatedCards(card);
-
-  // 카드 타입 변환
-  const adaptedCard = adaptNewToOldCard(card);
-  const adaptedRelatedCards = relatedCards.map(adaptNewToOldCard);
-
-  return (
-    <TarotCardDetail 
-      card={adaptedCard} 
-      relatedCards={adaptedRelatedCards}
-      showBackButton={true}
-    />
-  );
 }
 
 // Generate static params for all tarot cards
