@@ -3,11 +3,11 @@ import {genkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 import {openAI} from 'genkitx-openai';
 import {anthropic} from 'genkitx-anthropic';
-import {config} from 'dotenv';
 import { getAllAIProviderConfigsForGenkit } from '@/actions/aiProviderActions';
 import { decrypt } from '@/lib/encryption';
 
-config();
+// Next.js automatically loads environment variables from .env files
+// No need for dotenv package
 
 // Cache for AI provider configs
 let aiConfigCache: { 
