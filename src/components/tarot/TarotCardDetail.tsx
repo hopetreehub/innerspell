@@ -180,7 +180,7 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                   <div className="mb-6">
                     <h3 className="font-semibold mb-3">핵심 키워드</h3>
                     <div className="flex flex-wrap gap-2">
-                      {card.keywords.map((keyword) => (
+                      {(card.keywords?.[currentOrientation] || []).map((keyword) => (
                         <Badge key={keyword} variant="secondary">
                           {keyword}
                         </Badge>
