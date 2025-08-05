@@ -339,7 +339,7 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {card.symbolism.map((symbol, index) => (
+                    {(card.symbolism || []).map((symbol, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <p className="text-muted-foreground">{symbol}</p>
