@@ -280,14 +280,14 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                         <div>
                           <h4 className="font-semibold mb-2">일반적 의미</h4>
                           <p className="text-muted-foreground leading-relaxed">
-                            {currentOrientation === 'upright' ? card.upright.meaning : card.reversed.meaning}
+                            {currentOrientation === 'upright' ? card.meaningDetailed?.upright : card.meaningDetailed?.reversed}
                           </p>
                         </div>
                         <Separator />
                         <div>
                           <h4 className="font-semibold mb-2">조언</h4>
                           <p className="text-muted-foreground leading-relaxed">
-                            {currentOrientation === 'upright' ? card.upright.advice : card.reversed.advice}
+                            {currentOrientation === 'upright' ? card.advice?.upright : card.advice?.reversed}
                           </p>
                         </div>
                       </div>
@@ -300,7 +300,7 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                           <h4 className="font-semibold">연애 운세</h4>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
-                          {currentOrientation === 'upright' ? card.upright.love : card.reversed.love}
+                          {currentOrientation === 'upright' ? card.love?.upright : card.love?.reversed}
                         </p>
                       </div>
                     </TabsContent>
@@ -312,7 +312,7 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                           <h4 className="font-semibold">사업 & 직업 운세</h4>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
-                          {currentOrientation === 'upright' ? card.upright.career : card.reversed.career}
+                          {currentOrientation === 'upright' ? card.career?.upright : card.career?.reversed}
                         </p>
                       </div>
                     </TabsContent>
@@ -324,7 +324,7 @@ export function TarotCardDetail({ card, allCards, relatedCards, showBackButton =
                           <h4 className="font-semibold">건강 운세</h4>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
-                          {currentOrientation === 'upright' ? card.upright.health : card.reversed.health}
+                          {currentOrientation === 'upright' ? card.health?.upright : card.health?.reversed}
                         </p>
                       </div>
                     </TabsContent>
