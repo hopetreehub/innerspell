@@ -38,7 +38,7 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
     const timeout = setTimeout(() => {
       console.warn('⚡ RootLayoutClient: Auth loading timeout - forcing skip auth check');
       setForceSkipAuth(true);
-    }, 2000); // 2초 후 강제 스킵
+    }, 500); // 🚨 0.5초로 단축하여 빠른 복구
     return () => clearTimeout(timeout);
   }, []);
   

@@ -1,114 +1,72 @@
-
 'use server';
 
 /**
- * @fileOverview A flow for configuring AI prompt settings related to tarot card interpretations.
- *
- * This file exports:
- * - `configureAIPromptSettings`: A function to update AI prompt settings.
- * - `ConfigureAIPromptSettingsInput`: The input type for the configureAIPromptSettings function.
- * - `ConfigureAIPromptSettingsOutput`: The output type for the configureAIPromptSettings function.
+ * @fileOverview AI 프롬프트 설정을 위한 서버 액션 (Genkit 의존성 제거 버전)
+ * 
+ * Genkit 의존성 없이 직접 Firestore에 설정을 저장하는 방식으로 재구현
  */
 
-import {getAI} from '@/ai/genkit';
-import {z} from 'genkit';
-import { getCollection } from '@/lib/firebase/admin-helpers'; // Import Firestore helper
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAdminApp } from '@/lib/firebase/admin';
 
-// Remove hardcoded model list - accept any model string
-// Models are now validated by the provider configuration
+export interface ConfigureAIPromptSettingsInput {
+  model: string;
+  promptTemplate: string;
+  safetySettings?: Array<{
+    category: string;
+    threshold: string;
+  }>;
+}
 
-const ConfigureAIPromptSettingsInputSchema = z.object({
-  model: z.string().describe('The AI model to use for generating interpretations. Must include provider prefix (e.g., openai/gpt-4, googleai/gemini-1.5-pro).'),
-  promptTemplate: z
-    .string()
-    .describe('The new prompt template to use for generating tarot card interpretations.'),
-  safetySettings: z
-    .array(
-      z.object({
-        category: z.enum([
-          'HARM_CATEGORY_HATE_SPEECH',
-          'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-          'HARM_CATEGORY_HARASSMENT',
-          'HARM_CATEGORY_DANGEROUS_CONTENT',
-          'HARM_CATEGORY_CIVIC_INTEGRITY',
-        ]),
-        threshold: z.enum([
-          'BLOCK_LOW_AND_ABOVE',
-          'BLOCK_MEDIUM_AND_ABOVE',
-          'BLOCK_ONLY_HIGH',
-          'BLOCK_NONE',
-        ]),
-      })
-    )
-    .optional()
-    .describe('Optional safety settings to apply to the prompt. Only applicable to Google AI models.'),
-});
-export type ConfigureAIPromptSettingsInput = z.infer<
-  typeof ConfigureAIPromptSettingsInputSchema
->;
-
-const ConfigureAIPromptSettingsOutputSchema = z.object({
-  success: z.boolean().describe('Whether the prompt settings were updated successfully.'),
-  message: z.string().describe('A message indicating the result of the update.'),
-});
-export type ConfigureAIPromptSettingsOutput = z.infer<
-  typeof ConfigureAIPromptSettingsOutputSchema
->;
+export interface ConfigureAIPromptSettingsOutput {
+  success: boolean;
+  message: string;
+}
 
 export async function configureAIPromptSettings(
   input: ConfigureAIPromptSettingsInput
 ): Promise<ConfigureAIPromptSettingsOutput> {
-  const ai = await getAI();
-  
-  const configureAIPromptSettingsFlow = ai.defineFlow(
-    {
-      name: 'configureAIPromptSettingsFlow',
-      inputSchema: ConfigureAIPromptSettingsInputSchema,
-      outputSchema: ConfigureAIPromptSettingsOutputSchema,
-    },
-    async (flowInput: ConfigureAIPromptSettingsInput) => {
-      try {
-        // Ensure model has provider prefix
-        let modelWithPrefix = flowInput.model;
-        if (!modelWithPrefix.includes('/')) {
-          // Auto-detect provider based on model name
-          if (modelWithPrefix.includes('gpt') || modelWithPrefix.includes('o1')) {
-            modelWithPrefix = `openai/${modelWithPrefix}`;
-          } else if (modelWithPrefix.includes('gemini')) {
-            modelWithPrefix = `googleai/${modelWithPrefix}`;
-          } else if (modelWithPrefix.includes('claude')) {
-            modelWithPrefix = `anthropic/${modelWithPrefix}`;
-          } else {
-            // Default to OpenAI for unknown models
-            modelWithPrefix = `openai/${modelWithPrefix}`;
-          }
-          console.log(`[AI Config] Added provider prefix: ${flowInput.model} -> ${modelWithPrefix}`);
-        }
-        
-        const settingsToSave = {
-          model: modelWithPrefix,
-          promptTemplate: flowInput.promptTemplate,
-          safetySettings: flowInput.safetySettings || [], // Ensure safetySettings is always an array
-        };
-
-        const collection = await getCollection('aiConfiguration');
-        await collection.doc('promptSettings').set(settingsToSave, { merge: true });
-        
-        console.log('AI Prompt settings saved to Firestore:', settingsToSave);
-
-        return {
-          success: true,
-          message: 'AI 프롬프트 설정이 Firestore에 성공적으로 저장되었습니다.',
-        };
-      } catch (error: any) {
-        console.error('Failed to save AI Prompt settings to Firestore:', error);
-        return {
-          success: false,
-          message: `AI 프롬프트 설정 저장 실패: ${error.message}`,
-        };
+  try {
+    // Firebase Admin 초기화
+    const adminApp = await getAdminApp();
+    const db = getFirestore(adminApp);
+    
+    // 모델에 프로바이더 접두사 추가
+    let modelWithPrefix = input.model;
+    if (!modelWithPrefix.includes('/')) {
+      if (modelWithPrefix.includes('gpt') || modelWithPrefix.includes('o1')) {
+        modelWithPrefix = `openai/${modelWithPrefix}`;
+      } else if (modelWithPrefix.includes('gemini')) {
+        modelWithPrefix = `googleai/${modelWithPrefix}`;
+      } else if (modelWithPrefix.includes('claude')) {
+        modelWithPrefix = `anthropic/${modelWithPrefix}`;
+      } else {
+        modelWithPrefix = `openai/${modelWithPrefix}`;
       }
+      console.log(`[AI Config] Added provider prefix: ${input.model} -> ${modelWithPrefix}`);
     }
-  );
-  
-  return configureAIPromptSettingsFlow(input);
+    
+    const settingsToSave = {
+      model: modelWithPrefix,
+      promptTemplate: input.promptTemplate,
+      safetySettings: input.safetySettings || [],
+      updatedAt: new Date().toISOString()
+    };
+
+    // Firestore에 설정 저장
+    await db.collection('aiConfiguration').doc('promptSettings').set(settingsToSave, { merge: true });
+    
+    console.log('AI Prompt settings saved to Firestore:', settingsToSave);
+
+    return {
+      success: true,
+      message: 'AI 프롬프트 설정이 성공적으로 저장되었습니다.',
+    };
+  } catch (error: any) {
+    console.error('Failed to save AI Prompt settings to Firestore:', error);
+    return {
+      success: false,
+      message: `AI 프롬프트 설정 저장 실패: ${error.message}`,
+    };
+  }
 }

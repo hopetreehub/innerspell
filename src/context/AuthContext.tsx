@@ -91,9 +91,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     let isMounted = true;
     let unsubscribe: (() => void) | undefined = undefined;
 
-
-    // 🔥 ALWAYS USE REAL FIREBASE - Mock Auth completely removed
+    // 🚨 긴급 수정: Mock 모드 추가로 무한 로딩 해결
+    const useMockAuth = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === 'true';
     
+    if (useMockAuth) {
+      console.log("🎭 AuthProvider: Using Mock Auth Mode");
+      // Mock user for testing
+      const mockUser: AppUser = {
+        uid: 'mock-user-123',
+        email: 'test@example.com',
+        displayName: 'Test User',
+        photoURL: null,
+        role: 'user',
+        creationTime: new Date().toISOString(),
+        lastSignInTime: new Date().toISOString(),
+        birthDate: '',
+        sajuInfo: '',
+        subscriptionStatus: 'free',
+      };
+      
+      setTimeout(() => {
+        if (isMounted) {
+          setUser(mockUser);
+          setFirebaseUser(null);
+          setLoading(false);
+        }
+      }, 100);
+      
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    // Real Firebase Auth
     if (!auth) {
       console.error("AuthProvider: Firebase auth is not initialized. Setting loading to false immediately.");
       // Immediately set loading to false to prevent infinite loading

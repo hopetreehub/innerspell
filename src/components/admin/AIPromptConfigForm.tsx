@@ -32,7 +32,6 @@ import {
   configureAIPromptSettings,
   ConfigureAIPromptSettingsInput,
 } from '@/ai/flows/configure-ai-prompt-settings';
-// import { getActiveAIModels } from '@/ai/services/ai-provider-service'; // Removed to avoid dependency issues
 
 const safetySettingSchema = z.object({
   category: z.enum([
@@ -191,6 +190,7 @@ export function AIPromptConfigForm() {
         safetySettings: values.safetySettings || [],
       };
       const result = await configureAIPromptSettings(submissionValues);
+      
       toast({
         variant: result.success ? 'default' : 'destructive',
         title: result.success ? '성공' : '오류',

@@ -1,7 +1,24 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Webpack 설정
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
+    // 🚨 긴급 수정: Chunk loading 문제 해결
+    if (!isServer && dev) {
+      // Development에서 chunk splitting 비활성화
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          minSize: 0,
+          maxSize: 0,
+          cacheGroups: {
+            vendor: false,
+            default: false,
+          },
+        },
+      };
+    }
+    
     // 클라이언트 사이드에서 Node.js 모듈 사용 시 fallback 제공
     if (!isServer) {
       config.resolve.fallback = {
@@ -10,6 +27,9 @@ const nextConfig = {
         path: false,
         os: false,
         crypto: false,
+        // 🚨 Genkit/OpenTelemetry 모듈 해결
+        '@opentelemetry/exporter-jaeger': false,
+        'handlebars': false,
       };
     }
     return config;

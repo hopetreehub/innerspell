@@ -27,8 +27,8 @@ import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   configureDreamPromptSettings,
+  ConfigureDreamPromptSettingsInput,
 } from '@/ai/flows/configure-dream-prompt-settings';
-// import { getActiveAIModels } from '@/ai/services/ai-provider-service'; // Removed to avoid dependency issues
 
 const DEFAULT_PROMPT = `[SYSTEM INSTRUCTIONS START]
 You are a sophisticated dream interpretation expert, integrating Eastern and Western symbolism, Jungian/Freudian psychology, spiritual philosophy, and, when provided, Saju (Four Pillars of Destiny) analysis. Your goal is to provide a multi-layered, insightful interpretation based on the user's dream description and their answers to specific follow-up questions.
@@ -159,6 +159,7 @@ export function DreamInterpretationConfigForm() {
     setLoading(true);
     try {
       const result = await configureDreamPromptSettings(data);
+      
       toast({
         variant: result.success ? 'default' : 'destructive',
         title: result.success ? '성공' : '오류',
