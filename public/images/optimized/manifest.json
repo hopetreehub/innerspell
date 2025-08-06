@@ -1,0 +1,226 @@
+{
+  "1ai": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/1ai-md.webp",
+        "size": 51324
+      },
+      "sm": {
+        "path": "/images/optimized/1ai-sm.webp",
+        "size": 26064
+      },
+      "original": {
+        "path": "/images/optimized/1ai.webp",
+        "size": 298466
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "2road": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/2road-md.webp",
+        "size": 27748
+      },
+      "sm": {
+        "path": "/images/optimized/2road-sm.webp",
+        "size": 13086
+      },
+      "original": {
+        "path": "/images/optimized/2road.webp",
+        "size": 209158
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "3wisdom": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/3wisdom-md.webp",
+        "size": 41594
+      },
+      "sm": {
+        "path": "/images/optimized/3wisdom-sm.webp",
+        "size": 23438
+      },
+      "original": {
+        "path": "/images/optimized/3wisdom.webp",
+        "size": 282228
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "blog-og-image": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/blog-og-image-md.webp",
+        "size": 46322
+      },
+      "sm": {
+        "path": "/images/optimized/blog-og-image-sm.webp",
+        "size": 24086
+      },
+      "original": {
+        "path": "/images/optimized/blog-og-image.webp",
+        "size": 224644
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "blog1": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/blog1-md.webp",
+        "size": 46322
+      },
+      "sm": {
+        "path": "/images/optimized/blog1-sm.webp",
+        "size": 24086
+      },
+      "original": {
+        "path": "/images/optimized/blog1.webp",
+        "size": 224644
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "blog2": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/blog2-md.webp",
+        "size": 26368
+      },
+      "sm": {
+        "path": "/images/optimized/blog2-sm.webp",
+        "size": 13238
+      },
+      "original": {
+        "path": "/images/optimized/blog2.webp",
+        "size": 198622
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "blog3": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/blog3-md.webp",
+        "size": 50456
+      },
+      "sm": {
+        "path": "/images/optimized/blog3-sm.webp",
+        "size": 26008
+      },
+      "original": {
+        "path": "/images/optimized/blog3.webp",
+        "size": 313664
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "blog4": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/blog4-md.webp",
+        "size": 81794
+      },
+      "sm": {
+        "path": "/images/optimized/blog4-sm.webp",
+        "size": 41956
+      },
+      "original": {
+        "path": "/images/optimized/blog4.webp",
+        "size": 443768
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "blog5": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/blog5-md.webp",
+        "size": 46322
+      },
+      "sm": {
+        "path": "/images/optimized/blog5-sm.webp",
+        "size": 24086
+      },
+      "original": {
+        "path": "/images/optimized/blog5.webp",
+        "size": 224644
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "blog6": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/blog6-md.webp",
+        "size": 26368
+      },
+      "sm": {
+        "path": "/images/optimized/blog6-sm.webp",
+        "size": 13238
+      },
+      "original": {
+        "path": "/images/optimized/blog6.webp",
+        "size": 198622
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "blog7": {
+    "sizes": {
+      "md": {
+        "path": "/images/optimized/blog7-md.webp",
+        "size": 50456
+      },
+      "sm": {
+        "path": "/images/optimized/blog7-sm.webp",
+        "size": 26008
+      },
+      "original": {
+        "path": "/images/optimized/blog7.webp",
+        "size": 313664
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  },
+  "back": {
+    "sizes": {
+      "thumb": {
+        "path": "/images/optimized/tarot/back-thumb.webp",
+        "size": 12818
+      },
+      "original": {
+        "path": "/images/optimized/tarot/back.webp",
+        "size": 33290
+      }
+    },
+    "formats": [
+      "webp"
+    ]
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "common": {
+    "appName": "InnerSpell",
+    "tagline": "당신의 내면을 탐험하세요",
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도",
+    "cancel": "취소",
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "수정",
+    "close": "닫기",
+    "back": "뒤로",
+    "next": "다음",
+    "previous": "이전",
+    "search": "검색",
+    "filter": "필터",
+    "sort": "정렬",
+    "share": "공유",
+    "copy": "복사",
+    "copied": "복사됨",
+    "required": "필수",
+    "optional": "선택"
+  },
+  "navigation": {
+    "home": "홈",
+    "reading": "타로리딩",
+    "tarot": "타로카드",
+    "cards": "카드사전",
+    "dream": "꿈해몽",
+    "blog": "블로그",
+    "community": "커뮤니티",
+    "dashboard": "대시보드",
+    "profile": "프로필",
+    "admin": "관리자 설정",
+    "signIn": "로그인",
+    "signUp": "회원가입",
+    "signOut": "로그아웃"
+  },
+  "home": {
+    "hero": {
+      "title": "AI와 함께하는 영적 여정",
+      "subtitle": "현대 기술과 고대의 지혜가 만나 당신의 내면을 탐험합니다",
+      "cta": "타로 리딩 시작하기",
+      "features": {
+        "ai": {
+          "title": "AI 기반 해석",
+          "description": "최신 AI 기술로 더 깊이 있는 타로 해석을 제공합니다"
+        },
+        "community": {
+          "title": "커뮤니티",
+          "description": "다른 사용자들과 경험을 공유하고 인사이트를 얻으세요"
+        },
+        "privacy": {
+          "title": "프라이버시 보호",
+          "description": "당신의 개인정보와 리딩 내용은 안전하게 보호됩니다"
+        }
+      }
+    },
+    "stats": {
+      "readings": "총 리딩 수",
+      "users": "활성 사용자",
+      "interpretations": "AI 해석",
+      "satisfaction": "만족도"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "로그인",
+      "subtitle": "InnerSpell에 오신 것을 환영합니다",
+      "email": "이메일",
+      "password": "비밀번호",
+      "rememberMe": "로그인 상태 유지",
+      "forgotPassword": "비밀번호를 잊으셨나요?",
+      "submit": "로그인",
+      "noAccount": "계정이 없으신가요?",
+      "signUp": "회원가입",
+      "or": "또는",
+      "continueWith": "{provider}로 계속하기",
+      "errors": {
+        "invalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다",
+        "tooManyAttempts": "너무 많은 시도가 있었습니다. 잠시 후 다시 시도해주세요",
+        "networkError": "네트워크 오류가 발생했습니다"
+      }
+    },
+    "signUp": {
+      "title": "회원가입",
+      "subtitle": "InnerSpell과 함께 영적 여정을 시작하세요",
+      "name": "이름",
+      "email": "이메일",
+      "password": "비밀번호",
+      "confirmPassword": "비밀번호 확인",
+      "terms": "이용약관에 동의합니다",
+      "privacy": "개인정보 처리방침에 동의합니다",
+      "submit": "회원가입",
+      "hasAccount": "이미 계정이 있으신가요?",
+      "signIn": "로그인",
+      "errors": {
+        "emailExists": "이미 사용 중인 이메일입니다",
+        "passwordMismatch": "비밀번호가 일치하지 않습니다",
+        "weakPassword": "비밀번호는 최소 6자 이상이어야 합니다",
+        "termsRequired": "이용약관에 동의해주세요"
+      }
+    }
+  },
+  "reading": {
+    "title": "타로 리딩",
+    "subtitle": "카드를 선택하고 당신의 질문에 대한 답을 찾아보세요",
+    "selectSpread": "스프레드 선택",
+    "spreads": {
+      "single": {
+        "name": "원 카드",
+        "description": "하루의 지침이나 간단한 질문에 대한 답"
+      },
+      "threeCard": {
+        "name": "쓰리 카드",
+        "description": "과거, 현재, 미래 또는 상황, 행동, 결과"
+      },
+      "celtic": {
+        "name": "켈틱 크로스",
+        "description": "복잡한 상황에 대한 깊이 있는 분석"
+      }
+    },
+    "question": {
+      "placeholder": "마음속 질문을 입력하세요...",
+      "tips": "구체적이고 열린 질문일수록 더 나은 인사이트를 얻을 수 있습니다"
+    },
+    "actions": {
+      "shuffle": "카드 섞기",
+      "draw": "카드 뽑기",
+      "reset": "다시 시작",
+      "save": "리딩 저장",
+      "share": "공유하기"
+    },
+    "interpretation": {
+      "title": "해석",
+      "aiInsight": "AI 인사이트",
+      "traditional": "전통적 의미",
+      "personal": "개인적 해석",
+      "loading": "AI가 카드를 해석하고 있습니다..."
+    }
+  },
+  "tarot": {
+    "cards": {
+      "title": "타로 카드 사전",
+      "subtitle": "78장의 타로 카드에 대해 알아보세요",
+      "majorArcana": "메이저 아르카나",
+      "minorArcana": "마이너 아르카나",
+      "suits": {
+        "wands": "완드",
+        "cups": "컵",
+        "swords": "소드",
+        "pentacles": "펜타클"
+      },
+      "search": {
+        "placeholder": "카드 이름 또는 키워드로 검색...",
+        "noResults": "검색 결과가 없습니다"
+      },
+      "detail": {
+        "upright": "정방향",
+        "reversed": "역방향",
+        "keywords": "키워드",
+        "element": "원소",
+        "planet": "행성",
+        "zodiac": "별자리",
+        "number": "숫자",
+        "relatedCards": "관련 카드"
+      }
+    }
+  },
+  "community": {
+    "title": "커뮤니티",
+    "subtitle": "다른 사용자들과 경험을 공유하세요",
+    "categories": {
+      "all": "전체",
+      "readings": "리딩 공유",
+      "insights": "인사이트",
+      "questions": "질문",
+      "stories": "스토리"
+    },
+    "post": {
+      "create": "글쓰기",
+      "edit": "수정",
+      "delete": "삭제",
+      "report": "신고",
+      "like": "좋아요",
+      "comment": "댓글",
+      "share": "공유",
+      "views": "조회수",
+      "anonymous": "익명"
+    },
+    "form": {
+      "title": "제목",
+      "content": "내용",
+      "category": "카테고리",
+      "tags": "태그",
+      "isAnonymous": "익명으로 작성",
+      "submit": "게시",
+      "cancel": "취소"
+    }
+  },
+  "profile": {
+    "title": "프로필",
+    "settings": "설정",
+    "stats": {
+      "totalReadings": "총 리딩 수",
+      "savedReadings": "저장된 리딩",
+      "communityPosts": "커뮤니티 글",
+      "joinedDate": "가입일"
+    },
+    "tabs": {
+      "overview": "개요",
+      "readings": "내 리딩",
+      "posts": "내 글",
+      "favorites": "즐겨찾기",
+      "settings": "설정"
+    },
+    "settings": {
+      "account": "계정 설정",
+      "privacy": "프라이버시",
+      "notifications": "알림 설정",
+      "appearance": "테마 설정",
+      "language": "언어 설정"
+    }
+  },
+  "errors": {
+    "404": {
+      "title": "페이지를 찾을 수 없습니다",
+      "message": "요청하신 페이지가 존재하지 않습니다",
+      "action": "홈으로 돌아가기"
+    },
+    "500": {
+      "title": "서버 오류",
+      "message": "일시적인 오류가 발생했습니다",
+      "action": "새로고침"
+    },
+    "offline": {
+      "title": "오프라인",
+      "message": "인터넷 연결을 확인해주세요",
+      "action": "다시 시도"
+    }
+  },
+  "footer": {
+    "about": "소개",
+    "terms": "이용약관",
+    "privacy": "개인정보처리방침",
+    "contact": "문의하기",
+    "copyright": "© 2024 InnerSpell. All rights reserved."
+  }
+}

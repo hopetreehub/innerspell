@@ -10,19 +10,18 @@ import { DreamInterpretationConfigForm } from '@/components/admin/DreamInterpret
 import { UserManagement } from '@/components/admin/UserManagement';
 import { SystemManagement } from '@/components/admin/SystemManagement';
 import { AIProviderManagement } from '@/components/admin/AIProviderManagement';
-import { GEOGuidelinesManager } from '@/components/admin/GEOGuidelinesManager';
 import { BlogManagement } from '@/components/admin/BlogManagement';
 import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, Target, PenTool } from 'lucide-react';
+import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 
 
 export default function AdminDashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('ai-providers');
+  const [activeTab, setActiveTab] = useState('tarot-guidelines');
 
   useEffect(() => {
     console.log('🔍 Admin Page - Auth State Check:', { loading, user: user ? `${user.email} (${user.role})` : null });
@@ -55,7 +54,7 @@ export default function AdminDashboardPage() {
       cacheBuster.clearAuthLocalStorage();
     }
     
-    if (tab && ['ai-providers', 'tarot-instructions', 'tarot-ai-config', 'dream-ai-config', 'geo-guidelines', 'blog-management', 'user-management', 'system-management'].includes(tab)) {
+    if (tab && ['ai-providers', 'tarot-guidelines', 'tarot-ai-config', 'dream-ai-config', 'blog-management', 'user-management', 'system-management'].includes(tab)) {
       setActiveTab(tab);
     }
   }, []);
@@ -99,11 +98,11 @@ export default function AdminDashboardPage() {
       </header>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 mb-6">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 mb-6">
           <TabsTrigger value="ai-providers" className="text-sm sm:text-base">
             <Bot className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> AI 공급자
           </TabsTrigger>
-          <TabsTrigger value="tarot-instructions" className="text-sm sm:text-base">
+          <TabsTrigger value="tarot-guidelines" className="text-sm sm:text-base">
             <BookOpen className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 타로 지침
           </TabsTrigger>
           <TabsTrigger value="tarot-ai-config" className="text-sm sm:text-base">
@@ -111,9 +110,6 @@ export default function AdminDashboardPage() {
           </TabsTrigger>
           <TabsTrigger value="dream-ai-config" className="text-sm sm:text-base">
             <MoonStar className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 꿈해몽 AI
-          </TabsTrigger>
-          <TabsTrigger value="geo-guidelines" className="text-sm sm:text-base">
-            <Target className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> GEO 가이드
           </TabsTrigger>
           <TabsTrigger value="blog-management" className="text-sm sm:text-base">
             <PenTool className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 블로그 관리
@@ -142,14 +138,14 @@ export default function AdminDashboardPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="tarot-instructions">
+        <TabsContent value="tarot-guidelines">
           <Card className="shadow-lg border-primary/10">
             <CardHeader>
               <CardTitle className="font-headline text-2xl text-primary flex items-center">
-                <BookOpen className="mr-2 h-6 w-6" /> 타로 해석 지침 관리
+                <BookOpen className="mr-2 h-6 w-6" /> 타로 지침 가이드 관리
               </CardTitle>
               <CardDescription>
-                스프레드별, 해석 스타일별 타로 지침을 체계적으로 관리합니다.
+                6개 스프레드 × 6개 해석 스타일로 구성된 36개 전문 지침을 관리합니다. 관리자만 보고 수정할 수 있습니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -186,22 +182,6 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <DreamInterpretationConfigForm />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="geo-guidelines">
-          <Card className="shadow-lg border-primary/10">
-            <CardHeader>
-              <CardTitle className="font-headline text-2xl text-primary flex items-center">
-                <Target className="mr-2 h-6 w-6" /> GEO (생성형 엔진 최적화) 가이드라인
-              </CardTitle>
-              <CardDescription>
-                AI 검색 엔진에서 콘텐츠가 인용되도록 최적화하는 블로그 작성 가이드라인을 관리합니다.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <GEOGuidelinesManager />
             </CardContent>
           </Card>
         </TabsContent>

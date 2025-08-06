@@ -33,6 +33,55 @@ You should use the following configuration to guide your behavior.
 
 ## 프로젝트 특별 지침 (Project Specific Rules)
 
+## ⚡ SWARM PM 워크플로우 지침 (SWARM PM Workflow Guidelines) - 절대 준수
+
+### SWARM PM 관장 원칙 (SWARM PM Management Principle)
+- **SWARM의 PM이 모든 작업을 관장한다**
+- **PM MANAGES ALL TASKS**: The SWARM PM has complete authority over all project tasks and workflows
+- **작업지시서 기반**: 모든 작업은 PM의 작업지시서를 토대로 진행
+- **PM 지휘 하에**: 모든 팀원과 개발자는 PM의 지휘 하에 작업
+- **통합 관리**: 프로젝트의 모든 의사결정과 작업 우선순위는 PM이 결정
+
+### PM 작업지시서 준수 원칙 (PM Work Order Compliance)
+- **작업지시서 필수**: 모든 작업은 PM이 작성한 작업지시서에 따라 수행
+- **승인 없는 독단 금지**: PM의 승인 없이 독단적인 작업이나 변경 절대 금지
+- **단계별 보고**: 각 작업 단계별로 PM에게 진행상황 보고 필수
+- **작업 우선순위**: PM이 지정한 작업 우선순위를 절대적으로 준수
+- **변경사항 승인**: 모든 변경사항은 PM의 사전 승인 필수
+
+### GitHub 커밋 절대 금지 원칙 (GitHub Commit Absolute Prohibition)
+- **🚨 절대적 금지**: 사용자의 명시적 동의 없이 GitHub에 커밋 절대 금지**
+- **ABSOLUTE PROHIBITION**: NEVER commit to GitHub without explicit user consent
+- **동의 확인 필수**: 모든 Git 커밋 전에 반드시 사용자의 명시적 승인 요청
+- **커밋 전 승인**: "GitHub에 커밋하시겠습니까?"와 같은 명시적 승인 절차 필수
+- **무단 커밋 금지**: 어떤 상황에서도 사용자 동의 없는 자동 커밋 금지
+- **작업 완료 후 대기**: 모든 작업 완료 후 사용자의 커밋 지시를 대기
+
+### Playwright 필수 검증 원칙 (Playwright Mandatory Verification)
+- **매 단계 필수 확인**: 모든 작업 단계 완료 시 반드시 Playwright로 직접 확인**
+- **MANDATORY PLAYWRIGHT CHECK**: Every work stage MUST be verified with Playwright
+- **모든 페이지 확인**: 변경사항이 있는 모든 페이지를 Playwright로 직접 확인
+- **스크린샷 증명**: 각 확인 단계마다 Playwright 스크린샷으로 증명
+- **추정 절대 금지**: "잘 될 것이다", "정상 작동할 것이다" 등의 추정 절대 금지
+- **실제 확인만**: 반드시 Playwright로 실제 브라우저에서 확인한 결과만 보고
+
+### 추정 금지 강화 원칙 (Enhanced No-Assumption Rule)
+- **🚫 추정 절대 금지**: 어떤 상황에서도 "잘되었을 것이다" 같은 추정 절대 금지**
+- **NO ASSUMPTIONS EVER**: Never assume anything works without direct verification
+- **실제 확인만**: 모든 것을 실제로 확인한 후에만 결과 보고
+- **Playwright 필수**: UI/UX 관련 모든 사항은 Playwright로만 확인
+- **도구 기반 확인**: curl, 브라우저 테스트, API 호출 등 실제 도구로만 확인
+- **추측 보고 금지**: 추측이나 가정에 기반한 보고 절대 금지
+
+### SWARM PM 워크플로우 단계 (SWARM PM Workflow Steps)
+1. **PM 작업지시서 접수**: PM으로부터 명확한 작업지시서 접수
+2. **작업 계획 승인**: 작업 계획을 PM에게 보고하고 승인 받기
+3. **단계별 실행**: 승인된 계획에 따라 단계별로 작업 실행
+4. **Playwright 검증**: 각 단계별로 Playwright로 실제 확인
+5. **PM 중간 보고**: 단계별 결과를 PM에게 보고
+6. **최종 확인**: 모든 작업 완료 후 PM과 함께 최종 확인
+7. **커밋 승인 대기**: 사용자의 GitHub 커밋 승인 대기
+
 ### 포트 사용 규칙 (Port Usage Rule) - 절대 준수
 - **이 프로젝트는 반드시 포트 4000번을 사용해야 한다**
 - **MUST USE PORT 4000 ONLY**: This project MUST always use port 4000
@@ -41,20 +90,12 @@ You should use the following configuration to guide your behavior.
 - 포트 3000번대는 절대 사용하지 않음
 - 모든 개발 및 테스트는 포트 4000에서만 진행
 
-### Vercel 배포 우선 원칙 (Vercel Deployment First Rule) - 절대 준수
-- **모든 작업과 확인은 Vercel 배포 기준으로 한다**
-- **ALL WORK MUST BE BASED ON VERCEL DEPLOYMENT**: Always prioritize Vercel deployment over local development
-- **필수 워크플로우**: 코드 수정 → Git 커밋 → Vercel 자동 배포 → Vercel에서 확인
-- **로컬 테스트 금지**: 로컬 개발 서버로 테스트하지 않고 반드시 Vercel에서 확인
-- **변경사항 확인**: 모든 UI/기능 변경은 Vercel 배포 후에만 확인하고 보고
-- **Git 커밋 필수**: 어떤 수정사항이든 반드시 Git 커밋하여 Vercel 배포로 확인
-- **배포 우선 검증**: Playwright나 다른 테스트도 Vercel 배포 URL 기준으로 실행
-
-### Git 커밋 의무화 원칙 (Mandatory Git Commit Rule)
-- **모든 변경사항은 즉시 Git 커밋해야 한다**
-- **NO LOCAL TESTING**: 로컬에서 테스트하지 말고 바로 커밋하여 Vercel에서 확인
-- **변경 → 커밋 → 배포 → 확인**: 이 순서를 절대 벗어나지 않음
-- **실시간 배포 검증**: 모든 기능과 UI는 실제 Vercel 환경에서만 확인
+### 배포 및 테스트 원칙 (Deployment and Testing Rules)
+- **로컬 개발 우선**: 포트 4000에서 로컬 테스트 후 배포 고려
+- **LOCAL DEVELOPMENT FIRST**: Always test locally on port 4000 before considering deployment
+- **Playwright 검증**: 로컬 환경에서 Playwright로 충분히 검증 후 배포
+- **단계적 접근**: 로컬 확인 → PM 승인 → 사용자 동의 → 커밋 → 배포
+- **사용자 승인 후 배포**: 모든 배포는 사용자의 명시적 승인 후에만 진행
 
 ## Legend
 @include commands/shared/universal-constants.yml#Universal_Legend
