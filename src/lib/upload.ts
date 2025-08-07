@@ -50,8 +50,27 @@ export async function uploadImageFile(
   folder: string = 'blog-images'
 ): Promise<string> {
   try {
-    if (!storage) {
-      throw new Error('Storage가 초기화되지 않았습니다.');
+    // 개발 모드이거나 Storage가 없는 경우 API 프록시 사용
+    const isDevelopmentMode = process.env.NODE_ENV === 'development' && 
+      (process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
+       process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false');
+    
+    // 🎯 API 프록시 강제 사용 (CORS 문제 해결을 위해)
+    console.log('🔍 Upload conditions:', {
+      storageExists: !!storage,
+      isDevelopmentMode,
+      NODE_ENV: process.env.NODE_ENV,
+      ENABLE_DEV_AUTH: process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH,
+      USE_REAL_AUTH: process.env.NEXT_PUBLIC_USE_REAL_AUTH
+    });
+    
+    console.log('📤 Force using API proxy for CORS fix');
+    return await uploadViaAPI(file, folder);
+    
+    // 기존 Firebase Storage 코드는 임시로 비활성화
+    if (false && (!storage || isDevelopmentMode)) {
+      console.log('📤 Using API proxy for image upload');
+      return await uploadViaAPI(file, folder);
     }
 
     // 파일 유효성 검증
@@ -78,9 +97,58 @@ export async function uploadImageFile(
     
     return downloadURL;
   } catch (error) {
-    console.error('❌ Image upload failed:', error);
-    throw error;
+    console.error('❌ Image upload failed, trying API proxy:', error);
+    // Firebase 업로드 실패 시 API 프록시로 폴백
+    return await uploadViaAPI(file, folder);
   }
+}
+
+// API 프록시를 통한 이미지 업로드
+async function uploadViaAPI(file: File, folder: string): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('folder', folder);
+  
+  // CSRF 토큰 가져오기
+  const getCsrfToken = (): string | null => {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === 'csrf-token') {
+        return value;
+      }
+    }
+    return null;
+  };
+  
+  const csrfToken = getCsrfToken();
+  const headers: HeadersInit = {
+    // API secret for development
+    'x-api-secret': process.env.NEXT_PUBLIC_BLOG_API_SECRET || 'c3UqPIMPMcos5QJPHcKMVDH4TQBUQ01rqDkmDLLT02c=',
+  };
+  
+  // CSRF 토큰이 있으면 추가
+  if (csrfToken) {
+    headers['x-csrf-token'] = csrfToken;
+  }
+  
+  const response = await fetch('/api/upload/image', {
+    method: 'POST',
+    body: formData,
+    headers,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'API 업로드 실패');
+  }
+
+  const result = await response.json();
+  if (!result.success) {
+    throw new Error(result.error || 'API 업로드 응답 오류');
+  }
+
+  return result.url;
 }
 
 // Base64 이미지 업로드

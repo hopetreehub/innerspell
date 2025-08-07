@@ -209,6 +209,8 @@ export function BlogManagement() {
         body: JSON.stringify({
           ...newPost,
           publishedAt: newPost.publishedAt || new Date().toISOString(),
+          // image 필드로 통일
+          image: newPost.image || newPost.featuredImage || '/images/blog1.png',
         }),
       });
 

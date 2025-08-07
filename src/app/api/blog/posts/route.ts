@@ -91,6 +91,8 @@ export async function GET(request: NextRequest) {
 // POST: 새 포스트 생성 (관리자만)
 export async function POST(request: NextRequest) {
   try {
+    console.log('📝 POST /api/blog/posts - 포스트 생성 시작');
+    
     const { isAdmin, userId } = await verifyAdmin(request);
     
     if (!isAdmin) {
@@ -101,7 +103,61 @@ export async function POST(request: NextRequest) {
     }
 
     const postData = await request.json();
+    console.log('📋 받은 포스트 데이터:', {
+      title: postData.title,
+      category: postData.category,
+      published: postData.published,
+      hasContent: !!postData.content,
+      hasExcerpt: !!postData.excerpt
+    });
     
+    // 개발 모드에서는 Mock 저장
+    const isDevelopmentMode = process.env.NODE_ENV === 'development' && 
+      (process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
+       process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false');
+    
+    if (isDevelopmentMode) {
+      // Mock 포스트 생성
+      const mockPostId = `mock-post-${Date.now()}`;
+      const now = new Date();
+      
+      const newPost = {
+        id: mockPostId,
+        title: postData.title || '제목 없음',
+        excerpt: postData.excerpt || '',
+        content: postData.content || '',
+        category: postData.category || 'tarot',
+        tags: postData.tags || [],
+        author: postData.author || 'InnerSpell Team',
+        authorId: userId,
+        image: postData.image || '/images/blog1.png',
+        featured: postData.featured || false,
+        published: postData.published || false,
+        publishedAt: postData.publishedAt ? new Date(postData.publishedAt) : now,
+        createdAt: now,
+        updatedAt: now,
+        readingTime: Math.ceil((postData.content || '').trim().split(/\s+/).length / 200),
+        views: 0,
+        likes: 0
+      };
+      
+      console.log('✅ Mock 포스트 생성 완료:', {
+        id: mockPostId,
+        title: newPost.title,
+        published: newPost.published
+      });
+      
+      // Mock 저장소에 추가 (실제로는 메모리에만 저장)
+      // 다음 요청 시 mockPosts에 포함되도록 처리 필요
+      
+      return NextResponse.json({ 
+        success: true, 
+        postId: mockPostId,
+        message: '포스트가 성공적으로 생성되었습니다. (개발 모드)'
+      });
+    }
+    
+    // 프로덕션 모드
     // 날짜 문자열을 Date 객체로 변환
     if (postData.publishedAt && typeof postData.publishedAt === 'string') {
       postData.publishedAt = new Date(postData.publishedAt);
@@ -115,9 +171,9 @@ export async function POST(request: NextRequest) {
     postData.readingTime = Math.ceil(words / wordsPerMinute);
 
     // 작성자 정보 추가
-    postData.author = 'InnerSpell Team';
+    postData.author = postData.author || 'InnerSpell Team';
     postData.authorId = userId;
-    postData.image = postData.featuredImage || '/images/blog1.png';
+    postData.image = postData.image || postData.featuredImage || '/images/blog1.png';
     postData.views = 0;
     postData.likes = 0;
 
@@ -130,9 +186,9 @@ export async function POST(request: NextRequest) {
       message: '포스트가 성공적으로 생성되었습니다.'
     });
   } catch (error) {
-    console.error('Error creating post:', error);
+    console.error('❌ Error creating post:', error);
     return NextResponse.json(
-      { error: '포스트 생성에 실패했습니다.' },
+      { error: '포스트 생성에 실패했습니다.', details: error.message },
       { status: 500 }
     );
   }
