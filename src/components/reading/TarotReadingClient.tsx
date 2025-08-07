@@ -48,7 +48,7 @@ import { shareReadingClient } from '@/lib/firebase/client-share';
 import { useAuth } from '@/context/AuthContext';
 
 
-import Image from 'next/image';
+import { OptimizedImage } from '@/components/OptimizedImage';
 import Link from 'next/link';
 import {
   Sparkles,
@@ -613,7 +613,7 @@ export function TarotReadingClient() {
             rotate: 0,
           }}
         >
-          <Image
+          <OptimizedImage
             src={CARD_BACK_IMAGE}
             alt="카드 뒷면 뭉치"
             width={IMAGE_ORIGINAL_WIDTH}
@@ -621,6 +621,7 @@ export function TarotReadingClient() {
             className="h-full w-auto object-contain rounded-lg"
             sizes={CARD_IMAGE_SIZES}
             priority={i < N_ANIMATING_CARDS_FOR_SHUFFLE}
+            aspectRatio="portrait"
           />
         </motion.div>
       ))}
@@ -826,7 +827,7 @@ export function TarotReadingClient() {
                           <motion.div
                             className={`relative h-full w-full overflow-hidden rounded-lg transition-all duration-200 ease-in-out`}
                           >
-                            <Image
+                            <OptimizedImage
                               src={CARD_BACK_IMAGE}
                               alt={`카드 뒷면`}
                               width={IMAGE_ORIGINAL_WIDTH}
@@ -834,6 +835,7 @@ export function TarotReadingClient() {
                               className="h-full w-auto object-contain rounded-lg"
                               sizes={CARD_IMAGE_SIZES}
                               priority={index < 10}
+                              aspectRatio="portrait"
                             />
                           </motion.div>
                         </motion.div>
@@ -896,7 +898,7 @@ export function TarotReadingClient() {
                         transition={{ duration: 0.4, ease: "easeInOut" }}
                       >
                         <div style={{ backfaceVisibility: 'hidden' }}>
-                           <Image
+                           <OptimizedImage
                             src={card.imageSrc}
                             alt={`${card.name} (${card.isReversed ? '역방향' : '정방향'})`}
                             width={IMAGE_ORIGINAL_WIDTH}
@@ -904,6 +906,7 @@ export function TarotReadingClient() {
                             className={`h-full w-full object-contain rounded-lg ${card.isReversed ? 'rotate-180 transform' : ''}`}
                             data-ai-hint={card.dataAiHint}
                             sizes={CARD_IMAGE_SIZES}
+                            aspectRatio="portrait"
                           />
                         </div>
                       </motion.div>

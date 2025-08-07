@@ -43,6 +43,12 @@ import { ko } from 'date-fns/locale';
 import { DashboardSkeleton } from '@/components/ui/loading-skeletons';
 import { LoadingError } from '@/components/ui/error-states';
 import { 
+  EmptyUsageStats, 
+  EmptyChartState, 
+  DevelopmentModeState,
+  EmptyCard 
+} from '@/components/ui/empty-states';
+import { 
   getUsageStats, 
   getServiceUsageBreakdown, 
   getEnvironmentInfo, 
@@ -123,6 +129,14 @@ export default function UsageStatsCharts() {
 
   if (error && !usageData) {
     return <LoadingError resource="사용량 통계" onRetry={loadData} />;
+  }
+
+  // 데이터가 없는 경우 (빈 상태)
+  if (!loading && (!usageData || (usageData.totalUsers === 0 && usageData.totalSessions === 0))) {
+    if (environmentInfo?.usingMockData) {
+      return <DevelopmentModeState onRefresh={handleRefresh} />;
+    }
+    return <EmptyUsageStats onRefresh={handleRefresh} />;
   }
 
   return (
@@ -303,45 +317,54 @@ export default function UsageStatsCharts() {
               <CardTitle>일별 사용자 및 세션 추이</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={350}>
-                <AreaChart data={usageData?.dailyStats}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={formatDate}
-                  />
-                  <YAxis yAxisId="left" orientation="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip 
-                    labelFormatter={formatTooltipDate}
-                    formatter={(value: any, name: string) => [
-                      value.toLocaleString(),
-                      name
-                    ]}
-                  />
-                  <Legend />
-                  <Area
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="users"
-                    stackId="1"
-                    stroke="#8B5CF6"
-                    fill="#8B5CF6"
-                    fillOpacity={0.3}
-                    name="사용자"
-                  />
-                  <Area
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="sessions"
-                    stackId="2"
-                    stroke="#3B82F6"
-                    fill="#3B82F6"
-                    fillOpacity={0.3}
-                    name="세션"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {usageData?.dailyStats && usageData.dailyStats.length > 0 ? (
+                <ResponsiveContainer width="100%" height={350}>
+                  <AreaChart data={usageData?.dailyStats}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={formatDate}
+                    />
+                    <YAxis yAxisId="left" orientation="left" />
+                    <YAxis yAxisId="right" orientation="right" />
+                    <Tooltip 
+                      labelFormatter={formatTooltipDate}
+                      formatter={(value: any, name: string) => [
+                        value.toLocaleString(),
+                        name
+                      ]}
+                    />
+                    <Legend />
+                    <Area
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="users"
+                      stackId="1"
+                      stroke="#8B5CF6"
+                      fill="#8B5CF6"
+                      fillOpacity={0.3}
+                      name="사용자"
+                    />
+                    <Area
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="sessions"
+                      stackId="2"
+                      stroke="#3B82F6"
+                      fill="#3B82F6"
+                      fillOpacity={0.3}
+                      name="세션"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChartState 
+                  title="사용자 및 세션 데이터가 없습니다"
+                  description="아직 수집된 일별 사용자 및 세션 데이터가 없습니다."
+                  onRefresh={handleRefresh}
+                  chartType="area"
+                />
+              )}
             </CardContent>
           </Card>
 
@@ -350,42 +373,51 @@ export default function UsageStatsCharts() {
               <CardTitle>서비스별 일별 사용량</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={usageData?.dailyStats}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={formatDate}
-                  />
-                  <YAxis />
-                  <Tooltip 
-                    labelFormatter={formatTooltipDate}
-                    formatter={(value: any) => value.toLocaleString()}
-                  />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="tarotReadings" 
-                    stroke="#10B981" 
-                    name="타로 리딩"
-                    strokeWidth={2}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="dreamInterpretations" 
-                    stroke="#F59E0B" 
-                    name="꿈 해석"
-                    strokeWidth={2}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="yesNoReadings" 
-                    stroke="#EF4444" 
-                    name="예스/노 타로"
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {usageData?.dailyStats && usageData.dailyStats.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={usageData?.dailyStats}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={formatDate}
+                    />
+                    <YAxis />
+                    <Tooltip 
+                      labelFormatter={formatTooltipDate}
+                      formatter={(value: any) => value.toLocaleString()}
+                    />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="tarotReadings" 
+                      stroke="#10B981" 
+                      name="타로 리딩"
+                      strokeWidth={2}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="dreamInterpretations" 
+                      stroke="#F59E0B" 
+                      name="꿈 해석"
+                      strokeWidth={2}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="yesNoReadings" 
+                      stroke="#EF4444" 
+                      name="예스/노 타로"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptyChartState 
+                  title="서비스 사용량 데이터가 없습니다"
+                  description="타로 리딩, 꿈 해석 등의 서비스 사용 기록이 없습니다."
+                  onRefresh={handleRefresh}
+                  chartType="line"
+                />
+              )}
             </CardContent>
           </Card>
         </TabsContent>

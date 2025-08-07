@@ -9,6 +9,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DashboardSkeleton } from '@/components/ui/loading-skeletons';
 import { LoadingError } from '@/components/ui/error-states';
 import { 
+  EmptyActivityLogs, 
+  DevelopmentModeState,
+  EmptyCard 
+} from '@/components/ui/empty-states';
+import { 
   Activity, 
   Users, 
   Zap, 
@@ -163,9 +168,19 @@ export default function RealTimeMonitoringDashboard() {
     return <DashboardSkeleton />;
   }
 
-  if (error && !realTimeData) {
-    return <LoadingError resource="실시간 모니터링 데이터" onRetry={loadData} />;
+  // 오류 발생 시
+  if (error) {
+    return <LoadingError resource="실시간 모니터링" onRetry={loadData} />;
   }
+
+  // 데이터가 없는 경우 (빈 상태)
+  if (!realTimeData || (realTimeData.activeUsers === 0 && activityLogs.length === 0 && sessions.length === 0)) {
+    if (environmentInfo?.usingMockData) {
+      return <DevelopmentModeState onRefresh={loadData} />;
+    }
+    return <EmptyActivityLogs onRefresh={loadData} />;
+  }
+
 
   return (
     <div className="space-y-6">
@@ -413,9 +428,22 @@ export default function RealTimeMonitoringDashboard() {
                     <AlertDescription>{streamError}</AlertDescription>
                   </Alert>
                 ) : streamActivities.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    최근 활동이 없습니다.
-                  </p>
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <Activity className="h-12 w-12 text-muted-foreground opacity-30 mb-3" />
+                    <h4 className="text-base font-medium text-foreground mb-2">최근 활동이 없습니다</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      사용자 활동이 시작되면 여기에 실시간으로 표시됩니다.
+                    </p>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={loadData}
+                      className="flex items-center space-x-2"
+                    >
+                      <RefreshCw className="h-3 w-3" />
+                      <span>새로고침</span>
+                    </Button>
+                  </div>
                 ) : (
                   streamActivities.map((activity) => (
                     <div key={activity.id} className="flex items-start space-x-3 pb-3 border-b last:border-0">

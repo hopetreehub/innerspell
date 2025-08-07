@@ -1444,100 +1444,67 @@ export async function getRealTimeStats(): Promise<RealTimeStats> {
   };
 }
 
-// 개선된 서비스별 사용량 분석 (환경별 분기 + 동적 데이터)
+// 개선된 서비스별 사용량 분석 (파일 저장소 우선 + 빈 데이터 반환)
 export async function getServiceUsageBreakdown(): Promise<{
   services: ServiceUsage[];
   userDistribution: UserDistribution[];
   topFeatures: Array<{ feature: string; usage: number }>;
 }> {
-  // 개발 환경에서는 동적 Mock 데이터 사용
+  // 개발 환경에서는 파일 저장소에서 실제 서비스 사용량 데이터 조회 시도
   if (shouldUseDevelopmentFallback()) {
-    developmentLog('ServiceUsageBreakdown', 'Generating dynamic mock service usage data');
-    
-    const generator = MockDataGenerator.getInstance();
-    
-    // 동적 서비스 사용량 계산
-    const baseTotalCount = generator['getDynamicBaseline']('totalServiceUsage', 1200);
-    const totalCount = Math.floor(baseTotalCount * (0.9 + Math.random() * 0.2));
-    
-    // 서비스별 비율 (시간에 따라 변화)
-    const tarotRatio = 0.45 + (Math.sin(Date.now() / (1000 * 60 * 60 * 24)) * 0.1); // 일일 주기
-    const dreamRatio = 0.35 + (Math.sin(Date.now() / (1000 * 60 * 60 * 12)) * 0.05); // 반일 주기
-    const yesNoRatio = 1 - tarotRatio - dreamRatio;
-    
-    const tarotCount = Math.floor(totalCount * tarotRatio);
-    const dreamCount = Math.floor(totalCount * dreamRatio);
-    const yesNoCount = totalCount - tarotCount - dreamCount;
-    
-    const services: ServiceUsage[] = [
-      {
-        service: '타로 리딩',
-        count: tarotCount,
-        percentage: Number((tarotCount / totalCount * 100).toFixed(1)),
-      },
-      {
-        service: '꿈 해석',
-        count: dreamCount,
-        percentage: Number((dreamCount / totalCount * 100).toFixed(1)),
-      },
-      {
-        service: '예스/노 타로',
-        count: yesNoCount,
-        percentage: Number((yesNoCount / totalCount * 100).toFixed(1)),
-      },
-    ];
-    
-    // 동적 사용자 분포
-    const baseTotalUsers = generator['getDynamicBaseline']('totalUsers', 650);
-    const totalUsers = Math.floor(baseTotalUsers * (0.95 + Math.random() * 0.1));
-    
-    const newUserRatio = 0.25 + (Math.random() * 0.1);
-    const returningUserRatio = 0.55 + (Math.random() * 0.1);
-    const activeUserRatio = 1 - newUserRatio - returningUserRatio;
-    
-    const newUsers = Math.floor(totalUsers * newUserRatio);
-    const returningUsers = Math.floor(totalUsers * returningUserRatio);
-    const activeUsers = totalUsers - newUsers - returningUsers;
-    
-    const userDistribution: UserDistribution[] = [
-      {
-        type: '신규 사용자',
-        count: newUsers,
-        percentage: Number((newUsers / totalUsers * 100).toFixed(1)),
-      },
-      {
-        type: '재방문 사용자',
-        count: returningUsers,
-        percentage: Number((returningUsers / totalUsers * 100).toFixed(1)),
-      },
-      {
-        type: '활성 사용자',
-        count: activeUsers,
-        percentage: Number((activeUsers / totalUsers * 100).toFixed(1)),
-      },
-    ];
-    
-    // 동적 인기 기능 (시간에 따라 변화)
-    const featureBase = {
-      '3카드 스프레드': 500,
-      '켈틱 크로스': 350,
-      '연애운 타로': 300,
-      '꿈 사전': 280,
-      '예스/노 질문': 220,
-      '과거-현재-미래 스프레드': 180,
-      '직업운 타로': 160,
-    };
-    
-    const topFeatures = Object.entries(featureBase).map(([feature, base]) => ({
-      feature,
-      usage: Math.floor(base * (0.8 + Math.random() * 0.4))
-    })).sort((a, b) => b.usage - a.usage).slice(0, 5);
-    
-    return {
-      services,
-      userDistribution,
-      topFeatures,
-    };
+    try {
+      // 파일 저장소에서 사용량 통계 읽기
+      const { readJSON } = await import('@/services/file-storage-service');
+      const usageData = await readJSON<{
+        services: ServiceUsage[];
+        userDistribution: UserDistribution[];
+        topFeatures: Array<{ feature: string; usage: number }>;
+        lastUpdated: string;
+      }>('service-usage-breakdown.json');
+      
+      if (usageData && usageData.services && usageData.services.length > 0) {
+        developmentLog('ServiceUsageBreakdown', `Loaded real service usage data from file`);
+        return {
+          services: usageData.services,
+          userDistribution: usageData.userDistribution || [],
+          topFeatures: usageData.topFeatures || []
+        };
+      }
+      
+      // 파일에 데이터가 없으면 기본 빈 데이터 반환 (Mock 데이터 사용하지 않음)
+      developmentLog('ServiceUsageBreakdown', 'No service usage data found, returning empty data');
+      return {
+        services: [
+          { service: '타로 리딩', count: 0, percentage: 0 },
+          { service: '꿈 해석', count: 0, percentage: 0 },
+          { service: '예스/노 타로', count: 0, percentage: 0 }
+        ],
+        userDistribution: [
+          { type: '신규 사용자', count: 0, percentage: 0 },
+          { type: '재방문 사용자', count: 0, percentage: 0 },
+          { type: '활성 사용자', count: 0, percentage: 0 }
+        ],
+        topFeatures: []
+      };
+      
+    } catch (error) {
+      console.warn('Failed to read service usage data from file storage:', error);
+      // 파일 저장소 실패 시 빈 데이터 반환 (Mock 데이터 사용하지 않음)
+      developmentLog('ServiceUsageBreakdown', 'File storage failed, returning empty data');
+      return {
+        services: [
+          { service: '타로 리딩', count: 0, percentage: 0 },
+          { service: '꿈 해석', count: 0, percentage: 0 },
+          { service: '예스/노 타로', count: 0, percentage: 0 }
+        ],
+        userDistribution: [
+          { type: '신규 사용자', count: 0, percentage: 0 },
+          { type: '재방문 사용자', count: 0, percentage: 0 },
+          { type: '활성 사용자', count: 0, percentage: 0 }
+        ],
+        topFeatures: []
+      };
+    }
   }
   
   // 프로덕션 환경에서는 실제 데이터 시도
@@ -1643,7 +1610,7 @@ export async function getActiveSessions(): Promise<Array<{
   }));
 }
 
-// 개선된 최근 활동 로그 조회 (환경별 분기 + 현실적 로그)
+// 개선된 최근 활동 로그 조회 (파일 저장소 우선 + 빈 데이터 반환)
 export async function getRecentActivityLogs(limit: number = 25): Promise<Array<{
   id: string;
   timestamp: string;
@@ -1652,12 +1619,38 @@ export async function getRecentActivityLogs(limit: number = 25): Promise<Array<{
   details: string;
   status: 'success' | 'warning' | 'error';
 }>> {
-  // 개발 환경에서는 현실적인 Mock 데이터 사용
+  // 개발 환경에서는 파일 저장소에서 실제 활동 로그 조회 시도
   if (shouldUseDevelopmentFallback()) {
-    developmentLog('ActivityLogs', `Generating ${limit} mock activity logs`);
-    
-    const generator = MockDataGenerator.getInstance();
-    return generator.generateActivityLogs(limit);
+    try {
+      // 파일 저장소에서 활동 로그 읽기 (실제 사용자 활동 기록)
+      const { readJSON } = await import('@/services/file-storage-service');
+      const activityData = await readJSON<Array<{
+        id: string;
+        timestamp: string;
+        userId: string;
+        action: string;
+        details: string;
+        status: 'success' | 'warning' | 'error';
+      }>>('activity-logs.json');
+      
+      if (activityData && activityData.length > 0) {
+        developmentLog('ActivityLogs', `Loaded ${activityData.length} real activity logs from file`);
+        // 최신 순으로 정렬하고 제한
+        return activityData
+          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+          .slice(0, limit);
+      }
+      
+      // 파일에 데이터가 없으면 빈 배열 반환 (Mock 데이터 사용하지 않음)
+      developmentLog('ActivityLogs', 'No real activity logs found, returning empty array');
+      return [];
+      
+    } catch (error) {
+      console.warn('Failed to read activity logs from file storage:', error);
+      // 파일 저장소 실패 시 빈 배열 반환 (Mock 데이터 사용하지 않음) 
+      developmentLog('ActivityLogs', 'File storage failed, returning empty array');
+      return [];
+    }
   }
   
   // 프로덕션 환경에서는 실제 데이터 시도

@@ -28,6 +28,32 @@ firebase-debug.log
 /test-results/
 /coverage/
 *.log
+server.log
+dev.log
+
+# 개발 데이터
+data/
+community-posts*.json
+community-comments*.json
+
+# 테스트 파일
+test-*.js
+performance-*.js
+screenshots/
+test-screenshots/
+admin-qa-test-results*.json
+api-proxy-final-test-result.json
+blog-api-test-log.json
+direct-api-test-log.json
+focused-api-test-log.json
+post-data.json
+cookies.txt
+
+# 임시 보고서
+*-report.md
+deployment-guide.md
+qa-screenshots/
+performance-screenshots/
 dev_server*.log
 build.log
 

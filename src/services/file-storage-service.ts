@@ -265,6 +265,12 @@ export async function initializeFileStorage(): Promise<void> {
     await ensureDirectory(DATA_DIR);
     await ensureDirectory(BACKUP_DIR);
     console.log('✅ File storage service initialized');
+    
+    // AI 공급자 데이터 초기화
+    if (isFileStorageEnabled) {
+      const { initializeAIProviderData } = await import('./ai-provider-service-file');
+      await initializeAIProviderData();
+    }
   } catch (error) {
     console.error('❌ File storage initialization failed:', error);
     throw error;

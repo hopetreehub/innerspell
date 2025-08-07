@@ -6,6 +6,7 @@ import { firestore, FieldValue } from '@/lib/firebase/admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import type { CommunityPost, CommunityPostCategory } from '@/types';
 import { FreeDiscussionPostFormSchema, type FreeDiscussionPostFormData, type ReadingSharePostFormData, ReadingSharePostFormSchema } from '@/types';
+import { shouldUseDevelopmentFallback, developmentLog } from '@/lib/firebase/development-mode';
 
 const POSTS_PER_PAGE = 15;
 
@@ -40,9 +41,11 @@ export async function getCommunityPosts(
   try {
     console.log('[DEBUG] getCommunityPosts called with:', { category, page });
     
-    // Check global mock storage
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[DEBUG] Mock storage state:', (global as any).mockStorage);
+    // 개발 환경 폴백
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('Community', `Using file storage for category: ${category}`);
+      const { getCommunityPostsFromFile } = await import('@/services/community-service-file');
+      return await getCommunityPostsFromFile(category, page);
     }
     
     const postsRef = firestore.collection('communityPosts');
@@ -90,6 +93,13 @@ export async function getCommunityPosts(
 
 export async function getCommunityPostById(postId: string): Promise<CommunityPost | null> {
   try {
+    // 개발 환경 폴백
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('Community', `Getting post by ID from file: ${postId}`);
+      const { getCommunityPostByIdFromFile } = await import('@/services/community-service-file');
+      return await getCommunityPostByIdFromFile(postId);
+    }
+    
     const docRef = firestore.collection('communityPosts').doc(postId);
     const doc = await docRef.get();
 
@@ -129,16 +139,27 @@ export async function createFreeDiscussionPost(
       authorPhotoURL: author.photoURL || '',
       title,
       content,
-      ...imageUrl && { imageUrl }, // Conditionally add imageUrl only if it exists
+      imageUrl: imageUrl || null,
       category: 'free-discussion' as CommunityPostCategory,
       viewCount: 0,
       commentCount: 0,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
     };
 
     console.log('[DEBUG] Saving post data:', newPostData);
-    const docRef = await firestore.collection('communityPosts').add(newPostData);
+    
+    // 개발 환경 폴백
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('Community', 'Creating post in file storage');
+      const { createCommunityPostInFile } = await import('@/services/community-service-file');
+      const postId = await createCommunityPostInFile(newPostData);
+      return { success: true, postId };
+    }
+    
+    const docRef = await firestore.collection('communityPosts').add({
+      ...newPostData,
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
     console.log('[DEBUG] Post created with ID:', docRef.id);
     
     // Verify post was saved

@@ -84,7 +84,7 @@ const nextConfig = {
     return config;
   },
   
-  // 보안 헤더
+  // 보안 헤더 및 캐싱 설정
   async headers() {
     return [
       {
@@ -113,6 +113,46 @@ const nextConfig = {
           {
             key: 'Cross-Origin-Embedder-Policy',
             value: 'unsafe-none'
+          },
+        ],
+      },
+      // 정적 자산 캐싱
+      {
+        source: '/images/:all*(svg|jpg|jpeg|png|gif|webp)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // 폰트 캐싱
+      {
+        source: '/fonts/:all*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // API 캐싱
+      {
+        source: '/api/blog/posts',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
+          },
+        ],
+      },
+      // 타로 데이터 캐싱
+      {
+        source: '/api/tarot/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=3600, stale-while-revalidate=86400',
           },
         ],
       },

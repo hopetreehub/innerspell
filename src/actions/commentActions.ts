@@ -6,6 +6,7 @@ import { firestore } from '@/lib/firebase/admin';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import type { CommunityComment } from '@/types';
 import { CommunityCommentFormSchema, CommunityCommentFormData } from '@/types';
+import { shouldUseDevelopmentFallback, developmentLog } from '@/lib/development-helpers';
 
 // Helper to map Firestore doc to CommunityComment type
 function mapDocToCommunityComment(doc: FirebaseFirestore.DocumentSnapshot): CommunityComment {
@@ -30,6 +31,14 @@ function mapDocToCommunityComment(doc: FirebaseFirestore.DocumentSnapshot): Comm
 // Get all comments for a specific post
 export async function getCommentsForPost(postId: string): Promise<CommunityComment[]> {
   try {
+    // Use file storage in development mode
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('Comments', `Using file storage for post: ${postId}`);
+      const { getCommentsFromFile, initializeCommentsIfNeeded } = await import('@/services/comment-service-file');
+      await initializeCommentsIfNeeded();
+      return await getCommentsFromFile(postId);
+    }
+
     const snapshot = await firestore
       .collection('communityPosts')
       .doc(postId)
@@ -60,6 +69,13 @@ export async function addComment(
     const validationResult = CommunityCommentFormSchema.safeParse(formData);
     if (!validationResult.success) {
       return { success: false, error: validationResult.error.flatten().fieldErrors };
+    }
+
+    // Use file storage in development mode
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('Comments', `Creating comment in file storage for post: ${postId}`);
+      const { addCommentToFile } = await import('@/services/comment-service-file');
+      return await addCommentToFile(postId, validationResult.data, author);
     }
 
     const { content, isSecret } = validationResult.data;
@@ -101,6 +117,13 @@ export async function deleteComment(
   userId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    // Use file storage in development mode
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('Comments', `Deleting comment from file: ${commentId}`);
+      const { deleteCommentFromFile } = await import('@/services/comment-service-file');
+      return await deleteCommentFromFile(postId, commentId, userId);
+    }
+
     const postRef = firestore.collection('communityPosts').doc(postId);
     const commentRef = postRef.collection('comments').doc(commentId);
     
@@ -138,6 +161,13 @@ export async function updateComment(
     const validationResult = CommunityCommentFormSchema.safeParse({ content });
     if (!validationResult.success) {
       return { success: false, error: validationResult.error.flatten().fieldErrors };
+    }
+
+    // Use file storage in development mode
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('Comments', `Updating comment in file: ${commentId}`);
+      const { updateCommentInFile } = await import('@/services/comment-service-file');
+      return await updateCommentInFile(postId, commentId, validationResult.data.content, userId);
     }
 
     const commentRef = firestore.collection('communityPosts').doc(postId).collection('comments').doc(commentId);

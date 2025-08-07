@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { encrypt, decrypt } from '@/lib/encryption';
 import { writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
+import { shouldUseDevelopmentFallback, developmentLog } from '@/lib/firebase/development-mode';
 
 export async function saveAIProviderConfig(
   formData: AIProviderFormData
@@ -44,6 +45,14 @@ export async function saveAIProviderConfig(
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+
+    // 개발 환경에서는 파일 저장소 사용
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('AIProvider', `Saving AI provider config for ${provider} to file storage`);
+      const { saveAIProviderConfig: saveToFile } = await import('@/services/ai-provider-service-file');
+      await saveToFile(provider, providerConfig);
+      return { success: true, message: '[개발모드] AI 공급자 설정이 파일에 저장되었습니다.' };
+    }
 
     // Save to Firestore - using unified collection name
     const docRef = firestore.collection('aiProviderConfigs').doc(provider);
@@ -92,6 +101,19 @@ export async function getAllAIProviderConfigs(): Promise<{
   message?: string;
 }> {
   try {
+    // 개발 환경에서는 파일 저장소 사용
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('AIProvider', 'Getting all AI provider configs from file storage');
+      const { getAllAIProviderConfigs: getFromFile } = await import('@/services/ai-provider-service-file');
+      const configs = await getFromFile();
+      // API 키 마스킹
+      const maskedConfigs = configs.map(config => ({
+        ...config,
+        apiKey: config.apiKey ? config.apiKey.replace(/./g, '*') : ''
+      }));
+      return { success: true, data: maskedConfigs };
+    }
+
     const snapshot = await firestore.collection('aiProviderConfigs').get();
     const configs: AIProviderConfig[] = [];
 
@@ -210,6 +232,14 @@ export async function getAIFeatureMappings(): Promise<{
   message?: string;
 }> {
   try {
+    // 개발 환경에서는 파일 저장소 사용
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('AIProvider', 'Getting AI feature mappings from file storage');
+      const { getAIFeatureMappings: getFromFile } = await import('@/services/ai-provider-service-file');
+      const mappings = await getFromFile();
+      return { success: true, data: mappings };
+    }
+
     const docRef = firestore.collection('aiConfiguration').doc('featureMappings');
     const doc = await docRef.get();
 
