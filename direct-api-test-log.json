@@ -1,0 +1,457 @@
+{
+  "timestamp": "2025-08-07T02:42:12.275Z",
+  "testType": "Direct Image Upload API Test",
+  "summary": {
+    "totalRequests": 33,
+    "uploadRequests": 0,
+    "localApiRequests": 2,
+    "firebaseRequests": 6
+  },
+  "uploadRequests": [],
+  "localApiRequests": [
+    {
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer mock-token",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:23.979Z"
+    },
+    {
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer mock-token",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:23.979Z"
+    }
+  ],
+  "allRequests": [
+    {
+      "url": "http://localhost:4000/admin",
+      "method": "GET",
+      "headers": {
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
+      "timestamp": "2025-08-07T02:41:16.939Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/css/app/layout.css?v=1754534477226",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.379Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/webpack.js?v=1754534477226",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.379Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/main-app.js?v=1754534477226",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.379Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app-pages-internals.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.379Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/error.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.379Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/layout.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.379Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/not-found.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.379Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/admin/page.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.379Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.380Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Belleza&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.380Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.380Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/belleza/v17/0nkoC9_pNeMfhX4BhcH4ag.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.989Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/alegreya/v38/4UaBrEBBsBhlBjvfkSLhx6g.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.989Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.116.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.989Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.119.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.990Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.118.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.990Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.115.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.990Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.112.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.990Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.111.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.990Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.117.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.991Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.114.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.991Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.113.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.991Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Flogo.png&w=32&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.991Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Flogo.png&w=48&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:17.991Z"
+    },
+    {
+      "url": "http://localhost:4000/admin",
+      "method": "POST",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "next-action": "007fcc0379cf5076d6be5f21dae96aa34c6da8158a",
+        "referer": "http://localhost:4000/admin",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22admin%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2C%22%2Fadmin%22%2C%22refresh%22%5D%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "accept": "text/x-component",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "timestamp": "2025-08-07T02:41:18.921Z"
+    },
+    {
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer mock-token",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:23.979Z"
+    },
+    {
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer mock-token",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:23.979Z"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?VER=8&database=projects%2Finnerspell-an7ce%2Fdatabases%2F(default)&RID=26069&CVER=22&X-HTTP-Session-Id=gsessionid&zx=rn9ejfhfay9f&t=1",
+      "method": "POST",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "content-type": "application/x-www-form-urlencoded",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:23.986Z"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=VNg2gioHBgQjjNbzQydDGgbw4K56FpzMIsjNmjet9_c&VER=8&database=projects%2Finnerspell-an7ce%2Fdatabases%2F(default)&RID=rpc&SID=y03qv7fTxU3oTZxdaiJBRQ&AID=0&CI=0&TYPE=xmlhttp&zx=k60fkg7zf51d&t=1",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:24.076Z"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?VER=8&database=projects%2Finnerspell-an7ce%2Fdatabases%2F(default)&gsessionid=VNg2gioHBgQjjNbzQydDGgbw4K56FpzMIsjNmjet9_c&SID=y03qv7fTxU3oTZxdaiJBRQ&RID=26070&AID=4&zx=l1nl7mdfkgtf&t=1",
+      "method": "POST",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "content-type": "application/x-www-form-urlencoded",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:24.138Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.107.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:24.299Z"
+    },
+    {
+      "url": "http://localhost:4000/images/blog1.png",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:41:28.109Z"
+    }
+  ]
+}

@@ -371,6 +371,25 @@ export function TarotReadingClient() {
     setDisplayedInterpretation('');
     setIsInterpretationDialogOpen(true);
     setReadingJustSaved(false);
+    
+    // 타로 리딩 활동 기록
+    try {
+      await fetch('/api/admin/activities', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.uid || 'guest',
+          action: 'tarot_reading',
+          details: {
+            spreadType: selectedSpread.name,
+            cardCount: selectedSpread.numCards,
+            interpretationMethod: interpretationMethod
+          }
+        })
+      });
+    } catch (error) {
+      console.error('Failed to record activity:', error);
+    }
 
 
     const cardInterpretationsText = selectedCardsForReading

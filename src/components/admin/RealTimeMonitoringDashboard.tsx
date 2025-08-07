@@ -40,8 +40,10 @@ import {
   getAdminPerformanceMetrics,
   getSystemAlerts 
 } from '@/actions/usageStatsActions';
+import { useActivityStream } from '@/hooks/useActivityStream';
 
 export default function RealTimeMonitoringDashboard() {
+  const { activities: streamActivities, isConnected, lastUpdate: streamLastUpdate, error: streamError } = useActivityStream();
   const [realTimeData, setRealTimeData] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
   const [activityLogs, setActivityLogs] = useState<any[]>([]);
@@ -363,7 +365,7 @@ export default function RealTimeMonitoringDashboard() {
                       </div>
                       <div className="text-xs text-muted-foreground space-y-1">
                         <div>현재 페이지: <span className="text-foreground">{session.currentPage}</span></div>
-                        <div>마지막 활동: <span className="text-foreground">{session.lastActivity}</span></div>
+                        <div>마지막 활동: <span className="text-foreground">{session.lastActivity || '페이지 보기'}</span></div>
                         <div>시작 시간: {new Date(session.startTime).toLocaleTimeString('ko-KR')}</div>
                       </div>
                     </div>
@@ -377,34 +379,61 @@ export default function RealTimeMonitoringDashboard() {
         {/* 최근 활동 로그 */}
         <Card>
           <CardHeader>
-            <CardTitle>최근 활동 로그</CardTitle>
-            <CardDescription>실시간 사용자 활동 및 시스템 이벤트</CardDescription>
+            <CardTitle className="flex items-center justify-between">
+              <span>실시간 활동 스트림</span>
+              <Badge variant={isConnected ? "default" : "destructive"}>
+                {isConnected ? (
+                  <>
+                    <Wifi className="h-3 w-3 mr-1" />
+                    연결됨
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="h-3 w-3 mr-1" />
+                    연결 끊김
+                  </>
+                )}
+              </Badge>
+            </CardTitle>
+            <CardDescription>
+              실시간 사용자 활동 및 시스템 이벤트
+              {streamLastUpdate && (
+                <span className="ml-2 text-xs">
+                  (마지막 업데이트: {formatDistanceToNow(streamLastUpdate, { locale: ko, addSuffix: true })})
+                </span>
+              )}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[400px] pr-4">
               <div className="space-y-3">
-                {activityLogs.length === 0 ? (
+                {streamError ? (
+                  <Alert>
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>{streamError}</AlertDescription>
+                  </Alert>
+                ) : streamActivities.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
-                    최근 활동 로그가 없습니다.
+                    최근 활동이 없습니다.
                   </p>
                 ) : (
-                  activityLogs.map((log) => (
-                    <div key={log.id} className="flex items-start space-x-3 pb-3 border-b last:border-0">
+                  streamActivities.map((activity) => (
+                    <div key={activity.id} className="flex items-start space-x-3 pb-3 border-b last:border-0">
                       <div className="flex-shrink-0 mt-0.5">
-                        {getLogStatusIcon(log.status)}
+                        {getLogStatusIcon(activity.action)}
                       </div>
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium">{log.action}</p>
+                          <p className="text-sm font-medium">{activity.action}</p>
                           <time className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(log.timestamp), { 
+                            {formatDistanceToNow(new Date(activity.timestamp), { 
                               addSuffix: true, 
                               locale: ko 
                             })}
                           </time>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          사용자: {log.userId} • {log.details}
+                          사용자: {activity.userId} • {activity.details ? JSON.stringify(activity.details) : ''}
                         </p>
                       </div>
                     </div>

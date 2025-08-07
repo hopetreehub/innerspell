@@ -1,0 +1,745 @@
+{
+  "timestamp": "2025-08-07T02:38:50.716Z",
+  "totalRequests": 64,
+  "imageUploadRequests": [],
+  "allRequests": [
+    {
+      "url": "http://localhost:4000/",
+      "method": "GET",
+      "headers": {
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
+      "timestamp": "2025-08-07T02:38:27.530Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Fimages%2Ftarothome.png%3Fv%3D1&w=640&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.977Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/css/app/layout.css?v=1754534307852",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.977Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/webpack.js?v=1754534307852",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.978Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/main-app.js?v=1754534307852",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.978Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app-pages-internals.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.978Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/error.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.978Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/layout.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.978Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/not-found.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.979Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/page.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.980Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.980Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Belleza&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.980Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:27.980Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/belleza/v17/0nkoC9_pNeMfhX4BhcH4ag.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.611Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/alegreya/v38/4UaBrEBBsBhlBjvfkSLhx6g.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.612Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.116.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.612Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.119.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.612Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.118.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.612Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.115.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.613Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.112.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.613Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.111.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.615Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.117.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.616Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.114.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.616Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.113.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.616Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.110.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.616Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.107.woff2",
+      "method": "GET",
+      "headers": {
+        "origin": "http://localhost:4000",
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "https://fonts.googleapis.com/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.617Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Flogo.png&w=32&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.617Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Fimages%2F1ai.png&w=640&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.617Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Fimages%2F2road.png&w=640&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.617Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Fimages%2F3wisdom.png&w=640&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:28.617Z"
+    },
+    {
+      "url": "http://localhost:4000/admin",
+      "method": "GET",
+      "headers": {
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
+      "timestamp": "2025-08-07T02:38:32.198Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/css/app/layout.css?v=1754534312887",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.695Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/webpack.js?v=1754534312887",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.696Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/main-app.js?v=1754534312887",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.696Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app-pages-internals.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.696Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/error.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.696Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/layout.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.697Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/not-found.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.697Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/static/chunks/app/admin/page.js",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.697Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.697Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Belleza&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.698Z"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.698Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/alegreya/v38/4UaBrEBBsBhlBjvfkSLhx6g.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.949Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/belleza/v17/0nkoC9_pNeMfhX4BhcH4ag.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.956Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.107.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.958Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.110.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.958Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.111.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.959Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.112.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.960Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.113.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.960Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.114.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.961Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.115.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.961Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.116.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.961Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.117.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.962Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.118.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.962Z"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/notosanskr/v37/PbykFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.119.woff2",
+      "method": "GET",
+      "headers": {
+        "referer": ""
+      },
+      "timestamp": "2025-08-07T02:38:33.972Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Flogo.png&w=32&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "if-none-match": "EMi9KfyYCGj9MNnkGrNX6ThlJRG37lWu9let29k8F3E",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.973Z"
+    },
+    {
+      "url": "http://localhost:4000/_next/image?url=%2Flogo.png&w=48&q=75",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:33.973Z"
+    },
+    {
+      "url": "http://localhost:4000/admin",
+      "method": "POST",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "next-action": "007fcc0379cf5076d6be5f21dae96aa34c6da8158a",
+        "referer": "http://localhost:4000/admin",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22admin%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2C%22%2Fadmin%22%2C%22refresh%22%5D%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "accept": "text/x-component",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "timestamp": "2025-08-07T02:38:34.937Z"
+    },
+    {
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer mock-token",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:38.840Z"
+    },
+    {
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer mock-token",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:38.841Z"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?VER=8&database=projects%2Finnerspell-an7ce%2Fdatabases%2F(default)&RID=83269&CVER=22&X-HTTP-Session-Id=gsessionid&zx=stbvtp98vstd&t=1",
+      "method": "POST",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "content-type": "application/x-www-form-urlencoded",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:38.849Z"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?gsessionid=2wUNVVuwfviaYigKfSjhn2GfYTSfrZT3fVb58U5EQqI&VER=8&database=projects%2Finnerspell-an7ce%2Fdatabases%2F(default)&RID=rpc&SID=Mzc3jGHHt0hAxW1tJynQFQ&AID=0&CI=0&TYPE=xmlhttp&zx=t00qsneqwvvg&t=1",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:38.944Z"
+    },
+    {
+      "url": "https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?VER=8&database=projects%2Finnerspell-an7ce%2Fdatabases%2F(default)&gsessionid=2wUNVVuwfviaYigKfSjhn2GfYTSfrZT3fVb58U5EQqI&SID=Mzc3jGHHt0hAxW1tJynQFQ&RID=83270&AID=4&zx=7lnqot2jy0ac&t=1",
+      "method": "POST",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "content-type": "application/x-www-form-urlencoded",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:39.022Z"
+    },
+    {
+      "url": "http://localhost:4000/images/blog1.png",
+      "method": "GET",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:38:42.699Z"
+    }
+  ]
+}

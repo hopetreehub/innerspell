@@ -1,5 +1,7 @@
 import { db, initAdmin } from '@/lib/firebase/admin';
 import { BlogPost, BlogCategory, BlogComment } from '@/types/blog';
+import * as blogFileService from './blog-service-file';
+import { isFileStorageEnabled, initializeFileStorage } from './file-storage-service';
 
 const POSTS_COLLECTION = 'blog_posts';
 const CATEGORIES_COLLECTION = 'blog_categories';
@@ -7,6 +9,11 @@ const COMMENTS_COLLECTION = 'blog_comments';
 
 // Mock 저장소 (서버용)
 const mockBlogPosts = new Map<string, any>();
+
+// 파일 저장소 초기화
+if (isFileStorageEnabled) {
+  initializeFileStorage().catch(console.error);
+}
 
 // 서버 초기화
 let isInitialized = false;
@@ -46,16 +53,23 @@ export async function getAllPostsServer(
   categoryFilter?: string
 ): Promise<BlogPost[]> {
   try {
-    // 강제 Mock 데이터 사용 - 블로그 새글 표시 (2025-07-26 v3)
-    console.log('🚀 FORCE MOCK DATA MODE - 12개 블로그 포스트 표시');
-    console.log('📅 Deployment timestamp:', new Date().toISOString());
-    console.log('🔧 Version: 0.1.3 - Cache busted deployment');
+    // 파일 저장소 사용 가능한 경우
+    if (isFileStorageEnabled) {
+      console.log('📁 Using file storage for blog posts');
+      const posts = await blogFileService.getFilteredPosts({
+        published: onlyPublished ? true : undefined,
+        category: categoryFilter,
+        limit: 20
+      });
+      return posts;
+    }
     
+    // 기존 Mock 데이터 폴백
+    console.log('🚀 Using mock data (file storage disabled)');
     const { mockPosts } = await import('@/lib/blog/posts');
     let posts = mockPosts.map(post => ({ ...post }));
     
     console.log(`📊 Raw mockPosts 수: ${posts.length}`);
-    console.log('🔍 처음 3개 포스트 ID:', posts.slice(0, 3).map(p => p.id));
     
     // 필터링 적용
     if (onlyPublished) {
@@ -77,7 +91,6 @@ export async function getAllPostsServer(
     
     const finalPosts = posts.slice(0, 20);
     console.log(`✅ 최종 반환: ${finalPosts.length}개 포스트`);
-    console.log('🎯 반환될 포스트 제목들:', finalPosts.slice(0, 3).map(p => p.title));
     
     return finalPosts;
 
@@ -182,6 +195,12 @@ export async function getAllPostsServer(
 // 단일 포스트 가져오기 (서버용)
 export async function getPostByIdServer(postId: string): Promise<BlogPost | null> {
   try {
+    // 파일 저장소 사용 가능한 경우
+    if (isFileStorageEnabled) {
+      console.log('📁 Getting post from file storage:', postId);
+      return await blogFileService.getPostByIdFromFile(postId);
+    }
+    
     // Mock 환경에서는 Mock API 사용
     if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
       const data = mockBlogPosts.get(postId);
@@ -215,6 +234,12 @@ export async function getPostByIdServer(postId: string): Promise<BlogPost | null
 // 포스트 생성 (서버용)
 export async function createPostServer(post: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
   try {
+    // 파일 저장소 사용 가능한 경우
+    if (isFileStorageEnabled) {
+      console.log('📁 Creating post in file storage');
+      return await blogFileService.createPostInFile(post);
+    }
+    
     const now = new Date();
     const postData = {
       ...post,
@@ -258,6 +283,12 @@ export async function createPostServer(post: Omit<BlogPost, 'id' | 'createdAt' |
 // 포스트 업데이트 (서버용)
 export async function updatePostServer(postId: string, updates: Partial<BlogPost>): Promise<void> {
   try {
+    // 파일 저장소 사용 가능한 경우
+    if (isFileStorageEnabled) {
+      console.log('📁 Updating post in file storage:', postId);
+      return await blogFileService.updatePostInFile(postId, updates);
+    }
+    
     const updateData: any = {
       ...updates,
       updatedAt: new Date(),
@@ -288,6 +319,12 @@ export async function updatePostServer(postId: string, updates: Partial<BlogPost
 // 포스트 삭제 (서버용)
 export async function deletePostServer(postId: string): Promise<void> {
   try {
+    // 파일 저장소 사용 가능한 경우
+    if (isFileStorageEnabled) {
+      console.log('📁 Deleting post from file storage:', postId);
+      return await blogFileService.deletePostFromFile(postId);
+    }
+    
     // Mock 환경에서는 Mock API 사용
     if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
       mockBlogPosts.delete(postId);

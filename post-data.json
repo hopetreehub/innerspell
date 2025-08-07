@@ -1,0 +1,8 @@
+{
+  "title": "테스트 포스트",
+  "excerpt": "테스트 설명",
+  "content": "테스트 내용입니다",
+  "category": "tarot",
+  "tags": ["test"],
+  "published": false
+}

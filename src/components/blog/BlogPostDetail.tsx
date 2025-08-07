@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { BlogComments } from './BlogComments';
 import { RecommendedPostsSidebar } from './RecommendedPostsSidebar';
 import { BlogPostJsonLd } from './BlogJsonLd';
+import { useAuth } from '@/context/AuthContext';
 
 interface BlogPostDetailProps {
   post: BlogPost;
@@ -22,6 +23,7 @@ interface BlogPostDetailProps {
 
 export function BlogPostDetail({ post }: BlogPostDetailProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
@@ -45,7 +47,30 @@ export function BlogPostDetail({ post }: BlogPostDetailProps) {
     };
 
     fetchRelatedPosts();
-  }, [post]);
+    
+    // 블로그 조회 활동 기록
+    const recordBlogView = async () => {
+      try {
+        await fetch('/api/admin/activities', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user?.uid || 'guest',
+            action: 'blog_view',
+            details: {
+              postId: post.id,
+              postTitle: post.title,
+              category: post.category
+            }
+          })
+        });
+      } catch (error) {
+        console.error('Failed to record blog view:', error);
+      }
+    };
+    
+    recordBlogView();
+  }, [post, user]);
 
   const handleShare = async () => {
     const url = `${window.location.origin}/blog/${post.id}`;

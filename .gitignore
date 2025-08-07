@@ -44,3 +44,8 @@ playwright-report/
 
 # Vercel
 .vercel
+
+# Data files (but keep samples)
+data/*.json
+data/backups/
+!data/*.sample.json

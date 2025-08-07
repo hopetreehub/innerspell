@@ -7,6 +7,7 @@ import {
   developmentLog, 
   handleFirebaseError 
 } from '@/lib/firebase/development-mode';
+import { getUsageStats as getUsageStatsFromService } from '@/services/usage-stats-service';
 
 export interface UsageStats {
   userId: string;
@@ -730,10 +731,7 @@ export async function getDevelopmentModeStatus(): Promise<{
   };
 }
 
-// 환경 정보 조회 - 컴포넌트에서 사용하기 위한 별칭
-export async function getEnvironmentInfo() {
-  return await getDevelopmentModeStatus();
-}
+// getEnvironmentInfo 함수는 파일 하단에 정의되어 있습니다 (실시간 모니터링 서비스 사용)
 
 // 에러 리포팅 및 복구 상태 확인
 export async function getSystemHealthReport(): Promise<{
@@ -1308,28 +1306,56 @@ export async function getUsageStats(dateRange: 'daily' | 'weekly' | 'monthly'): 
 }> {
   const envStatus = await detectEnvironment();
   
-  // 개발 환경에서는 동적 Mock 데이터 사용
+  // 개발 환경에서는 파일 저장소 또는 Mock 데이터 사용
   if (shouldUseDevelopmentFallback()) {
-    developmentLog('UsageStats', `Generating dynamic mock usage stats for ${dateRange} range`);
+    developmentLog('UsageStats', `Getting usage stats for ${dateRange} range`);
     
-    const days = dateRange === 'daily' ? 7 : dateRange === 'weekly' ? 28 : 90;
-    const dailyStats = generateMockDailyStats(days);
-    
-    const totalUsers = dailyStats.reduce((sum, stat) => sum + stat.users, 0);
-    const totalSessions = dailyStats.reduce((sum, stat) => sum + stat.sessions, 0);
-    
-    return {
-      dailyStats,
-      totalUsers,
-      totalSessions,
-      avgSessionsPerUser: totalUsers > 0 ? Number((totalSessions / totalUsers).toFixed(2)) : 0,
-      metadata: {
-        environment: 'development',
-        dataSource: 'mock_generator',
-        cacheStatus: 'generated',
-        lastUpdated: new Date().toISOString()
-      }
-    };
+    try {
+      // 파일 저장소에서 실제 데이터 가져오기 시도
+      const stats = await getUsageStatsFromService();
+      
+      const days = dateRange === 'daily' ? 7 : dateRange === 'weekly' ? 28 : 90;
+      const dailyStats = generateMockDailyStats(days); // 일단 Mock 데이터 사용
+      
+      // 실제 통계 데이터 반영
+      const totalUsers = stats.totalUsers;
+      const totalSessions = stats.totalSessions;
+      
+      return {
+        dailyStats,
+        totalUsers,
+        totalSessions,
+        avgSessionsPerUser: totalUsers > 0 ? Number((totalSessions / totalUsers).toFixed(2)) : 0,
+        metadata: {
+          environment: 'development',
+          dataSource: 'file_storage',
+          cacheStatus: 'fresh',
+          lastUpdated: stats.lastUpdated.toISOString()
+        }
+      };
+    } catch (error) {
+      console.warn('Failed to get stats from file storage, using mock data:', error);
+      
+      // 파일 저장소 실패 시 Mock 데이터 사용
+      const days = dateRange === 'daily' ? 7 : dateRange === 'weekly' ? 28 : 90;
+      const dailyStats = generateMockDailyStats(days);
+      
+      const totalUsers = dailyStats.reduce((sum, stat) => sum + stat.users, 0);
+      const totalSessions = dailyStats.reduce((sum, stat) => sum + stat.sessions, 0);
+      
+      return {
+        dailyStats,
+        totalUsers,
+        totalSessions,
+        avgSessionsPerUser: totalUsers > 0 ? Number((totalSessions / totalUsers).toFixed(2)) : 0,
+        metadata: {
+          environment: 'development',
+          dataSource: 'mock_generator',
+          cacheStatus: 'generated',
+          lastUpdated: new Date().toISOString()
+        }
+      };
+    }
   }
   
   // 프로덕션 환경에서는 실제 Firebase 데이터 시도
@@ -1404,69 +1430,18 @@ export async function getUsageStats(dateRange: 'daily' | 'weekly' | 'monthly'): 
 
 // 개선된 실시간 통계 조회 (환경별 분기 + 동적 데이터)
 export async function getRealTimeStats(): Promise<RealTimeStats> {
-  // 개발 환경에서는 동적 Mock 데이터 사용
-  if (shouldUseDevelopmentFallback()) {
-    developmentLog('RealTimeStats', 'Generating dynamic mock real-time stats');
-    
-    const generator = MockDataGenerator.getInstance();
-    return generator.generateRealTimeStats();
-  }
+  // 실시간 모니터링 서비스 사용
+  const { getRealTimeStats: getStatsFromService } = await import('@/services/realtime-monitoring-service');
+  const stats = await getStatsFromService();
   
-  // 프로덕션 환경에서는 실제 데이터 시도
-  try {
-    const result = await safeFirestoreOperation(async (firestore) => {
-      developmentLog('RealTimeStats', 'Fetching real-time stats from Firebase');
-      
-      // 실제 실시간 통계 쿼리 (예시)
-      const now = new Date();
-      const dayStart = startOfDay(now);
-      
-      // 활성 사용자 수 조회
-      const activeUsersQuery = await firestore
-        .collection('userSessions')
-        .where('lastActivity', '>=', new Date(now.getTime() - 30 * 60 * 1000)) // 30분 내 활동
-        .where('isActive', '==', true)
-        .get();
-      
-      // 오늘의 리딩 수 조회
-      const todayReadingsQuery = await firestore
-        .collection('usageRecords')
-        .where('timestamp', '>=', dayStart)
-        .where('timestamp', '<=', endOfDay(now))
-        .get();
-      
-      // 시스템 상태 확인 (예: 최근 에러 로그)
-      const recentErrorsQuery = await firestore
-        .collection('systemLogs')
-        .where('level', '==', 'error')
-        .where('timestamp', '>=', new Date(now.getTime() - 60 * 60 * 1000)) // 1시간 내 에러
-        .get();
-      
-      const systemStatus: 'healthy' | 'warning' | 'critical' = 
-        recentErrorsQuery.size > 10 ? 'critical' :
-        recentErrorsQuery.size > 5 ? 'warning' : 'healthy';
-      
-      return {
-        activeUsers: activeUsersQuery.size,
-        activeSessions: activeUsersQuery.size, // 간단히 동일하게 처리
-        todayReadings: todayReadingsQuery.size,
-        avgResponseTime: Number((Math.random() * 2 + 0.5).toFixed(2)), // 실제로는 성능 메트릭에서
-        systemStatus,
-        lastUpdated: now.toISOString(),
-      };
-    });
-    
-    if (result.success) {
-      return result.data;
-    }
-    throw new Error(result.error);
-    
-  } catch (error) {
-    // Firebase 실패 시 Mock 데이터로 폴백
-    console.warn('[RealTimeStats] Firebase connection failed, falling back to mock data:', error);
-    const generator = MockDataGenerator.getInstance();
-    return handleFirebaseError(error, 'RealTimeStats', generator.generateRealTimeStats());
-  }
+  return {
+    activeUsers: stats.activeUsers,
+    activeSessions: stats.activeSessions,
+    todayReadings: stats.todayReadings,
+    avgResponseTime: stats.avgResponseTime,
+    systemStatus: stats.systemStatus,
+    lastUpdated: stats.lastUpdated.toISOString()
+  };
 }
 
 // 개선된 서비스별 사용량 분석 (환경별 분기 + 동적 데이터)
@@ -1645,7 +1620,7 @@ export async function getServiceUsageBreakdown(): Promise<{
   }
 }
 
-// 개선된 활성 세션 목록 조회 (환경별 분기 + 현실적 데이터)
+// 개선된 활성 세션 목록 조회 (실시간 모니터링 서비스 사용)
 export async function getActiveSessions(): Promise<Array<{
   id: string;
   userId: string;
@@ -1654,68 +1629,18 @@ export async function getActiveSessions(): Promise<Array<{
   currentPage: string;
   lastActivity: string;
 }>> {
-  // 개발 환경에서는 현실적인 Mock 데이터 사용
-  if (shouldUseDevelopmentFallback()) {
-    developmentLog('ActiveSessions', 'Generating realistic mock active sessions');
-    
-    const generator = MockDataGenerator.getInstance();
-    return generator.generateActiveSessions();
-  }
+  // 실시간 모니터링 서비스 사용
+  const { getActiveSessions: getSessionsFromService } = await import('@/services/realtime-monitoring-service');
+  const sessions = await getSessionsFromService();
   
-  // 프로덕션 환경에서는 실제 데이터 시도
-  try {
-    const result = await safeFirestoreOperation(async (firestore) => {
-      developmentLog('ActiveSessions', 'Fetching real active sessions from Firebase');
-      
-      const now = new Date();
-      const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000);
-      
-      const activeSessionsQuery = await firestore
-        .collection('userSessions')
-        .where('lastActivity', '>=', thirtyMinutesAgo)
-        .where('isActive', '==', true)
-        .orderBy('lastActivity', 'desc')
-        .limit(20)
-        .get();
-      
-      const sessions: Array<{
-        id: string;
-        userId: string;
-        startTime: string;
-        duration: number;
-        currentPage: string;
-        lastActivity: string;
-      }> = [];
-      
-      activeSessionsQuery.docs.forEach(doc => {
-        const data = doc.data();
-        const startTime = data.startTime.toDate();
-        const duration = Math.floor((now.getTime() - startTime.getTime()) / 1000);
-        
-        sessions.push({
-          id: doc.id,
-          userId: data.userId,
-          startTime: startTime.toISOString(),
-          duration,
-          currentPage: data.currentPage || '/unknown',
-          lastActivity: data.lastActivityDescription || '활동 중',
-        });
-      });
-      
-      return sessions.sort((a, b) => b.duration - a.duration);
-    });
-    
-    if (result.success) {
-      return result.data;
-    }
-    throw new Error(result.error);
-    
-  } catch (error) {
-    // Firebase 실패 시 Mock 데이터로 폴백
-    console.warn('[ActiveSessions] Firebase connection failed, falling back to mock data:', error);
-    const generator = MockDataGenerator.getInstance();
-    return handleFirebaseError(error, 'ActiveSessions', generator.generateActiveSessions());
-  }
+  return sessions.map(session => ({
+    id: session.id,
+    userId: session.userId,
+    startTime: session.startTime.toISOString(),
+    duration: session.duration,
+    currentPage: session.currentPage,
+    lastActivity: session.lastActivityType || '페이지 보기'
+  }));
 }
 
 // 개선된 최근 활동 로그 조회 (환경별 분기 + 현실적 로그)
@@ -2125,68 +2050,47 @@ export async function getAdminPerformanceMetrics(): Promise<{
   endpointUsage: Array<{ endpoint: string; requests: number }>;
   errorTypes: Array<{ type: string; count: number; percentage: number }>;
 }> {
-  const env = detectEnvironment();
+  // 실시간 모니터링 서비스 사용
+  const { getAdminPerformanceMetrics: getMetricsFromService } = await import('@/services/realtime-monitoring-service');
+  const metrics = await getMetricsFromService();
   
-  if (env.shouldUseMockData) {
-    // Mock 성능 데이터 생성
-    const hourlyData = [];
-    for (let hour = 0; hour < 24; hour++) {
-      hourlyData.push({
-        hour: hour.toString().padStart(2, '0') + ':00',
-        responseTime: 300 + Math.random() * 200 + Math.sin(hour / 4) * 50
-      });
-    }
-    
-    const endpointData = [
-      { endpoint: '/api/tarot/reading', requests: 1250 },
-      { endpoint: '/api/dream/interpret', requests: 890 },
-      { endpoint: '/api/auth/login', requests: 650 },
-      { endpoint: '/api/tarot/yes-no', requests: 420 },
-      { endpoint: '/api/user/profile', requests: 380 }
-    ];
-    
-    const errorData = [
-      { type: 'Network Timeout', count: 12, percentage: 45 },
-      { type: 'API Rate Limit', count: 8, percentage: 30 },
-      { type: 'Auth Error', count: 4, percentage: 15 },
-      { type: 'Server Error', count: 3, percentage: 10 }
-    ];
-    
-    return {
-      averageResponseTime: 420,
-      successRate: 98.2,
-      totalRequests: 3590,
-      errorRate: 1.8,
-      requestsPerMinute: 45,
-      memoryUsage: 68,
-      cpuUsage: 42,
-      averageSessionDuration: 12,
-      hourlyResponseTimes: hourlyData,
-      endpointUsage: endpointData,
-      errorTypes: errorData
-    };
+  // 추가 Mock 데이터 (상세 차트용)
+  const hourlyData = [];
+  for (let hour = 0; hour < 24; hour++) {
+    hourlyData.push({
+      hour: hour.toString().padStart(2, '0') + ':00',
+      responseTime: 300 + Math.random() * 200 + Math.sin(hour / 4) * 50
+    });
   }
   
-  // 실제 Firebase에서 성능 데이터 조회
-  try {
-    // 실제 구현에서는 Firebase Performance Monitoring API 사용
-    return {
-      averageResponseTime: 350,
-      successRate: 99.1,
-      totalRequests: 2450,
-      errorRate: 0.9,
-      requestsPerMinute: 32,
-      memoryUsage: 45,
-      cpuUsage: 28,
-      averageSessionDuration: 8,
-      hourlyResponseTimes: [],
-      endpointUsage: [],
-      errorTypes: []
-    };
-  } catch (error) {
-    developmentLog('Performance metrics fetch failed:', error);
-    throw new Error('Failed to fetch performance metrics');
-  }
+  const endpointData = [
+    { endpoint: '/api/tarot/reading', requests: 1250 },
+    { endpoint: '/api/dream/interpret', requests: 890 },
+    { endpoint: '/api/auth/login', requests: 650 },
+    { endpoint: '/api/tarot/yes-no', requests: 420 },
+    { endpoint: '/api/user/profile', requests: 380 }
+  ];
+  
+  const errorData = [
+    { type: 'Network Timeout', count: 12, percentage: 45 },
+    { type: 'API Rate Limit', count: 8, percentage: 30 },
+    { type: 'Auth Error', count: 4, percentage: 15 },
+    { type: 'Server Error', count: 3, percentage: 10 }
+  ];
+  
+  return {
+    averageResponseTime: metrics.averageResponseTime,
+    successRate: metrics.successRate,
+    totalRequests: metrics.totalRequests,
+    errorRate: metrics.errorRate,
+    requestsPerMinute: metrics.requestsPerMinute,
+    memoryUsage: metrics.memoryUsage,
+    cpuUsage: metrics.cpuUsage,
+    averageSessionDuration: metrics.averageSessionDuration,
+    hourlyResponseTimes: hourlyData,
+    endpointUsage: endpointData,
+    errorTypes: errorData
+  };
 }
 
 // 시스템 알림 조회
@@ -2198,41 +2102,21 @@ export async function getSystemAlerts(): Promise<Array<{
   timestamp: string;
   resolved: boolean;
 }>> {
-  const env = detectEnvironment();
-  
-  if (env.shouldUseMockData) {
-    // Mock 알림 데이터
-    const alerts = [];
-    const alertTemplates = [
-      { title: '높은 응답 시간 감지', message: 'API 응답 시간이 평균보다 20% 증가했습니다.', severity: 'warning' as const },
-      { title: 'CPU 사용량 임계값 초과', message: 'CPU 사용량이 80%를 초과했습니다.', severity: 'critical' as const },
-      { title: '메모리 사용량 증가', message: '메모리 사용량이 70%에 도달했습니다.', severity: 'warning' as const },
-      { title: '에러율 증가', message: '지난 1시간 동안 에러율이 2%를 초과했습니다.', severity: 'warning' as const }
-    ];
-    
-    // 랜덤하게 0-2개의 알림 생성
-    const alertCount = Math.floor(Math.random() * 3);
-    for (let i = 0; i < alertCount; i++) {
-      const template = alertTemplates[Math.floor(Math.random() * alertTemplates.length)];
-      alerts.push({
-        id: `alert-${Date.now()}-${i}`,
-        title: template.title,
-        message: template.message,
-        severity: template.severity,
-        timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(), // 지난 1시간 내
-        resolved: Math.random() > 0.7 // 30% 확률로 해결됨
-      });
-    }
-    
-    return alerts.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-  }
-  
-  // 실제 Firebase에서 시스템 알림 조회
-  try {
-    // 실제 구현에서는 Firebase Functions로 시스템 모니터링 데이터 조회
-    return [];
-  } catch (error) {
-    developmentLog('System alerts fetch failed:', error);
-    return [];
-  }
+  // 실시간 모니터링 서비스 사용
+  const { getSystemAlerts: getAlertsFromService } = await import('@/services/realtime-monitoring-service');
+  return await getAlertsFromService();
+}
+
+
+
+// 환경 정보 조회
+export async function getEnvironmentInfo(): Promise<{
+  nodeEnv: string;
+  usingMockData: boolean;
+  fileStorageEnabled: boolean;
+  buildVersion: string;
+  serverUptime: number;
+}> {
+  const { getEnvironmentInfo: getEnvFromService } = await import('@/services/realtime-monitoring-service');
+  return await getEnvFromService();
 }
