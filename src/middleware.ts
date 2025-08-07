@@ -99,9 +99,20 @@ export async function middleware(request: NextRequest) {
       
       // Allow requests with valid CSRF token or with specific API secret
       const apiSecret = request.headers.get('x-api-secret');
-      const validApiSecret = process.env.BLOG_API_SECRET_KEY === apiSecret;
+      const expectedSecret = (process.env.BLOG_API_SECRET_KEY || '').trim();
+      const validApiSecret = expectedSecret === apiSecret;
       
-      if (!validApiSecret && headerToken !== csrfToken) {
+      // 개발 모드에서 특정 엔드포인트는 CSRF 검증 건너뛰기
+      const isDevelopmentMode = process.env.NODE_ENV === 'development';
+      const isUploadApi = request.nextUrl.pathname.startsWith('/api/upload/');
+      const isBlogApi = request.nextUrl.pathname.startsWith('/api/blog/');
+      
+      // 개발 모드에서 블로그 API는 CSRF 검증 완화
+      if (isDevelopmentMode && (isUploadApi || isBlogApi)) {
+        console.log('🎯 Development mode: Skipping CSRF check for', request.nextUrl.pathname);
+        // 개발 모드에서는 블로그 API와 업로드 API에 대해 CSRF 검증 완전히 건너뛰기
+        // continue to next without CSRF validation
+      } else if (!validApiSecret && headerToken !== csrfToken) {
         return new NextResponse(
           JSON.stringify({ error: 'Invalid CSRF token' }),
           { 

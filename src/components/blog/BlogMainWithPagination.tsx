@@ -363,7 +363,7 @@ export function BlogMainWithPagination() {
           {/* Sidebar - Right Side */}
           <div className="lg:col-span-1 space-y-6">
             {/* Popular Posts - 인기 포스트를 위로 */}
-            <div className="sticky top-4 rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div className="sticky top-4 z-10 rounded-lg border bg-card text-card-foreground shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="font-headline font-bold text-lg">인기 포스트</h3>
               </div>
