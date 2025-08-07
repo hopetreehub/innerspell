@@ -4,6 +4,7 @@
 import { z } from 'zod';
 import { firestore } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { shouldUseDevelopmentFallback, developmentLog } from '@/lib/development-helpers';
 
 const NewsletterSubscriptionSchema = z.object({
   email: z.string().email({ message: '유효한 이메일 주소를 입력해주세요.' }),
@@ -21,6 +22,12 @@ export async function subscribeToNewsletter(
     }
 
     const { email } = validationResult.data;
+
+    // Development fallback - skip Firestore in development
+    if (shouldUseDevelopmentFallback()) {
+      developmentLog('Newsletter', `Mock subscribing email: ${email}`);
+      return { success: true, message: '뉴스레터 구독이 완료되었습니다! (개발 모드)' };
+    }
 
     const subscriberRef = firestore.collection('subscribers').doc(email);
     const doc = await subscriberRef.get();
