@@ -76,14 +76,14 @@ type ReadingStage =
   | 'interpreting'
   | 'interpretation_ready';
 
-const CARD_BACK_IMAGE = '/images/tarot/back.png';
+const CARD_BACK_IMAGE = '/images/tarot-spread/back/back.png';
 const NUM_VISUAL_CARDS_IN_STACK = 20;
 const N_ANIMATING_CARDS_FOR_SHUFFLE = 20;
 
-const TARGET_CARD_HEIGHT_CLASS = "h-60";
-const IMAGE_ORIGINAL_WIDTH = 275;
-const IMAGE_ORIGINAL_HEIGHT = 475;
-const CARD_IMAGE_SIZES = "140px";
+const TARGET_CARD_HEIGHT_CLASS = "h-80"; // 512x819 비율 적용 (약 320px 높이)
+const IMAGE_ORIGINAL_WIDTH = 512;
+const IMAGE_ORIGINAL_HEIGHT = 819;
+const CARD_IMAGE_SIZES = "200px";
 
 const SignUpPrompt = () => (
   <div className="mt-6 p-4 bg-primary/10 border border-primary/20 rounded-lg text-center animate-fade-in">
@@ -777,7 +777,7 @@ export function TarotReadingClient() {
                 role="group"
                 aria-labelledby="spread-instruction"
               >
-                <div className="flex space-x-[-125px]">
+                <div className="flex space-x-[-188px]">
                   <AnimatePresence>
                     {displayableRevealedCards.map((cardInSpread, index) => (
                         <motion.div
