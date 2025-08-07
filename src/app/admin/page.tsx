@@ -14,17 +14,33 @@ import { BlogManagement } from '@/components/admin/BlogManagement';
 import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool } from 'lucide-react';
+import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool, BarChart3, Activity } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
+import { UsageStatsCharts } from '@/components/admin/UsageStatsCharts';
+import { RealTimeMonitoringDashboard } from '@/components/admin/RealTimeMonitoringDashboard';
 
 
 export default function AdminDashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('tarot-guidelines');
+  
+  // 개발 환경 확인
+  const isDevMode = process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true';
 
   useEffect(() => {
-    console.log('🔍 Admin Page - Auth State Check:', { loading, user: user ? `${user.email} (${user.role})` : null });
+    console.log('🔍 Admin Page - Auth State Check:', { 
+      loading, 
+      user: user ? `${user.email} (${user.role})` : null,
+      isDevMode,
+      NEXT_PUBLIC_ENABLE_DEV_AUTH: process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH
+    });
+    
+    // 개발 환경에서는 인증 체크 우회
+    if (isDevMode) {
+      console.log('🚀 Dev Mode: Bypassing auth check for admin page');
+      return;
+    }
     
     if (!loading) {
       if (!user) {
@@ -39,7 +55,7 @@ export default function AdminDashboardPage() {
         console.log(`✅ Admin Page: User ${user.email} has admin access`);
       }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isDevMode]);
 
   // URL 쿼리 파라미터에서 탭 확인 + 캐시 버스팅 처리
   useEffect(() => {
@@ -54,14 +70,15 @@ export default function AdminDashboardPage() {
       cacheBuster.clearAuthLocalStorage();
     }
     
-    if (tab && ['ai-providers', 'tarot-guidelines', 'tarot-ai-config', 'dream-ai-config', 'blog-management', 'user-management', 'system-management'].includes(tab)) {
+    if (tab && ['ai-providers', 'tarot-guidelines', 'tarot-ai-config', 'dream-ai-config', 'blog-management', 'user-management', 'system-management', 'usage-stats', 'real-time-monitoring'].includes(tab)) {
       setActiveTab(tab);
     }
   }, []);
 
 
   
-  if (loading || !user || user.role !== 'admin') {
+  // 개발 환경에서는 로딩 스킵
+  if (!isDevMode && (loading || !user || user.role !== 'admin')) {
     return (
       <div className="flex h-[calc(100vh-200px)] w-full items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -98,27 +115,51 @@ export default function AdminDashboardPage() {
       </header>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 mb-6">
-          <TabsTrigger value="ai-providers" className="text-sm sm:text-base">
-            <Bot className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> AI 공급자
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-9 mb-6 gap-2">
+          <TabsTrigger value="ai-providers" className="text-xs sm:text-sm">
+            <Bot className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">AI 공급자</span>
+            <span className="sm:hidden">AI</span>
           </TabsTrigger>
-          <TabsTrigger value="tarot-guidelines" className="text-sm sm:text-base">
-            <BookOpen className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 타로 지침
+          <TabsTrigger value="tarot-guidelines" className="text-xs sm:text-sm">
+            <BookOpen className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">타로 지침</span>
+            <span className="sm:hidden">지침</span>
           </TabsTrigger>
-          <TabsTrigger value="tarot-ai-config" className="text-sm sm:text-base">
-            <Cog className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 타로 AI
+          <TabsTrigger value="tarot-ai-config" className="text-xs sm:text-sm">
+            <Cog className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">타로 AI</span>
+            <span className="sm:hidden">타로</span>
           </TabsTrigger>
-          <TabsTrigger value="dream-ai-config" className="text-sm sm:text-base">
-            <MoonStar className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 꿈해몽 AI
+          <TabsTrigger value="dream-ai-config" className="text-xs sm:text-sm">
+            <MoonStar className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">꿈해몽 AI</span>
+            <span className="sm:hidden">꿈</span>
           </TabsTrigger>
-          <TabsTrigger value="blog-management" className="text-sm sm:text-base">
-            <PenTool className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 블로그 관리
+          <TabsTrigger value="blog-management" className="text-xs sm:text-sm">
+            <PenTool className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">블로그 관리</span>
+            <span className="sm:hidden">블로그</span>
           </TabsTrigger>
-          <TabsTrigger value="user-management" className="text-sm sm:text-base">
-            <Users className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 회원 관리
+          <TabsTrigger value="user-management" className="text-xs sm:text-sm">
+            <Users className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">회원 관리</span>
+            <span className="sm:hidden">회원</span>
           </TabsTrigger>
-          <TabsTrigger value="system-management" className="text-sm sm:text-base">
-            <ShieldCheck className="mr-1.5 h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" /> 시스템 관리
+          <TabsTrigger value="system-management" className="text-xs sm:text-sm">
+            <ShieldCheck className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">시스템 관리</span>
+            <span className="sm:hidden">시스템</span>
+          </TabsTrigger>
+          <TabsTrigger value="usage-stats" className="text-xs sm:text-sm">
+            <BarChart3 className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">사용통계</span>
+            <span className="sm:hidden">통계</span>
+          </TabsTrigger>
+          <TabsTrigger value="real-time-monitoring" className="text-xs sm:text-sm">
+            <Activity className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">실시간 모니터링</span>
+            <span className="sm:hidden">실시간</span>
           </TabsTrigger>
         </TabsList>
 
@@ -208,6 +249,38 @@ export default function AdminDashboardPage() {
 
         <TabsContent value="system-management">
           <SystemManagement />
+        </TabsContent>
+
+        <TabsContent value="usage-stats">
+          <Card className="shadow-lg border-primary/10">
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl text-primary flex items-center">
+                <BarChart3 className="mr-2 h-6 w-6" /> 사용통계 분석
+              </CardTitle>
+              <CardDescription>
+                서비스 사용량 추이와 사용자 행동 패턴을 분석합니다.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <UsageStatsCharts />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="real-time-monitoring">
+          <Card className="shadow-lg border-primary/10">
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl text-primary flex items-center">
+                <Activity className="mr-2 h-6 w-6" /> 실시간 모니터링
+              </CardTitle>
+              <CardDescription>
+                현재 접속자, 활성 세션, 시스템 상태를 실시간으로 모니터링합니다.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RealTimeMonitoringDashboard />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

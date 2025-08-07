@@ -19,11 +19,46 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AppUser | null>(null);
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  // 🚀 개발 환경 Mock 인증 확인
+  const enableDevAuth = process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true';
+  
+  // Mock 관리자 사용자 데이터
+  const mockAdminUser: AppUser = {
+    uid: 'dev-admin-123',
+    email: 'dev-admin@innerspell.com',
+    displayName: 'Dev Admin',
+    photoURL: undefined,
+    role: 'admin',
+    creationTime: new Date().toISOString(),
+    lastSignInTime: new Date().toISOString(),
+    birthDate: '',
+    sajuInfo: '',
+    subscriptionStatus: 'premium' as const,
+  };
+  
+  const mockFirebaseUser = {
+    uid: 'dev-admin-123',
+    email: 'dev-admin@innerspell.com',
+    displayName: 'Dev Admin',
+    photoURL: null,
+    metadata: {
+      creationTime: new Date().toISOString(),
+      lastSignInTime: new Date().toISOString(),
+    },
+  } as unknown as FirebaseUser;
+  
+  // 개발 환경에서는 Mock 사용자로 초기화
+  const [user, setUser] = useState<AppUser | null>(enableDevAuth ? mockAdminUser : null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(enableDevAuth ? mockFirebaseUser : null);
+  const [loading, setLoading] = useState(!enableDevAuth); // Mock 사용 시 로딩 없음
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isLoggedOut, setIsLoggedOut] = useState(false);
+  
+  // 개발 환경 확인 로그
+  if (typeof window !== 'undefined' && enableDevAuth) {
+    console.log('🚀 DEV AUTH ENABLED - Using Mock Admin User');
+    console.log('✅ Mock Admin:', mockAdminUser.email, '- Role:', mockAdminUser.role);
+  }
 
   const refreshUser = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -93,7 +128,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     let isMounted = true;
     let unsubscribe: (() => void) | undefined;
 
-    // 🔥 ALWAYS USE REAL FIREBASE - Mock Auth completely removed
+    // 🔥 개발 환경에서 Mock 인증 사용 시 Firebase 건너뛰기
+    if (enableDevAuth) {
+      console.log('🎉 Dev Auth Active - Skipping Firebase setup');
+      return () => {
+        console.log('🔥 Dev Auth: Cleanup');
+      };
+    }
+
+    // 🔥 프로덕션에서는 실제 Firebase 사용
     
     if (!auth) {
       console.warn("AuthProvider: Firebase auth is not initialized. Skipping auth state listener.");

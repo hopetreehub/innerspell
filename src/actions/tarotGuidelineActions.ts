@@ -18,16 +18,27 @@ export async function getAllTarotGuidelines(): Promise<TarotGuidelinesResponse> 
   try {
     console.log('[tarotGuidelineActions] Fetching all tarot guidelines...');
     
-    // Firestore에서 커스텀 지침들 가져오기
-    const customGuidelinesSnapshot = await firestore.collection('tarotGuidelines').get();
-    const customGuidelines: TarotGuideline[] = [];
+    // 개발 환경에서는 로컬 데이터만 사용
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    let customGuidelines: TarotGuideline[] = [];
     
-    customGuidelinesSnapshot.docs.forEach(doc => {
-      const data = doc.data() as TarotGuideline;
-      customGuidelines.push({ ...data, id: doc.id });
-    });
-    
-    console.log('[tarotGuidelineActions] Found custom guidelines:', customGuidelines.length);
+    if (!isDevelopment) {
+      try {
+        // Firestore에서 커스텀 지침들 가져오기
+        const customGuidelinesSnapshot = await firestore.collection('tarotGuidelines').get();
+        
+        customGuidelinesSnapshot.docs.forEach(doc => {
+          const data = doc.data() as TarotGuideline;
+          customGuidelines.push({ ...data, id: doc.id });
+        });
+        
+        console.log('[tarotGuidelineActions] Found custom guidelines:', customGuidelines.length);
+      } catch (firestoreError) {
+        console.warn('[tarotGuidelineActions] Firestore error, using local data only:', firestoreError);
+      }
+    } else {
+      console.log('[tarotGuidelineActions] Development mode: using local data only');
+    }
     
     // 시스템 기본 데이터와 커스텀 데이터 합치기
     const allGuidelines = [...TAROT_GUIDELINES, ...customGuidelines];
@@ -43,9 +54,15 @@ export async function getAllTarotGuidelines(): Promise<TarotGuidelinesResponse> 
     };
   } catch (error) {
     console.error('[tarotGuidelineActions] Error fetching tarot guidelines:', error);
+    // 에러 시에도 로컬 데이터는 반환
     return {
-      success: false,
-      message: '타로 지침을 불러오는 중 오류가 발생했습니다.'
+      success: true,
+      data: {
+        spreads: TAROT_SPREADS,
+        styles: INTERPRETATION_STYLES,
+        guidelines: TAROT_GUIDELINES,
+        combinations: SPREAD_STYLE_COMBINATIONS
+      }
     };
   }
 }

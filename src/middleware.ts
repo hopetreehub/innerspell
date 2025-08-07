@@ -27,7 +27,11 @@ export async function middleware(request: NextRequest) {
     if (rateLimitResponse.status === 429) return rateLimitResponse;
   }
   
-  if (pathname.startsWith('/api/reading') || pathname.includes('tarot') || pathname.includes('dream')) {
+  // AI API 엔드포인트에만 레이트 리미터 적용 (페이지 라우트는 제외)
+  if (pathname.startsWith('/api/reading') || 
+      pathname.startsWith('/api/generate-tarot') || 
+      pathname.startsWith('/api/dream') ||
+      pathname.startsWith('/api/ai/')) {
     const rateLimitResponse = await aiRateLimiter(request);
     if (rateLimitResponse.status === 429) return rateLimitResponse;
   }
