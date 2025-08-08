@@ -46,7 +46,6 @@ export const metadata: Metadata = {
 };
 
 import { BlogMainWithPagination } from '@/components/blog/BlogMainWithPagination';
-import { mockPosts } from '@/lib/blog/posts';
 
 // 서버 사이드에서 직접 블로그 데이터 제공
 export const dynamic = 'force-dynamic';
@@ -55,8 +54,7 @@ export const revalidate = 0;
 export default function BlogPage() {
   // 2025-07-26: 서버 사이드 데이터 디버깅
   console.log('🚀 Blog 페이지 서버 렌더링');
-  console.log(`📊 서버에서 mockPosts 수: ${mockPosts?.length || 0}`);
-  console.log('🎯 첫 3개 포스트 제목:', mockPosts?.slice(0, 3).map(p => p.title) || []);
+  console.log('📊 API를 통해 데이터를 가져옵니다');
   console.log('🕐 Deployment timestamp:', new Date().toISOString());
   
   return (
@@ -66,8 +64,7 @@ export default function BlogPage() {
       
       {/* 임시 디버그 정보 (숨김) */}
       <div style={{ display: 'none' }}>
-        <p>Debug: Total posts = {mockPosts?.length || 0}</p>
-        <p>Debug: First post title = {mockPosts?.[0]?.title || 'No posts'}</p>
+        <p>Debug: API data will be loaded</p>
         <p>Debug: Timestamp = {new Date().toISOString()}</p>
         <p>Debug: Build timestamp = {process.env.NEXT_PUBLIC_BUILD_TIMESTAMP}</p>
       </div>

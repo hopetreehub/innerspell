@@ -1,32 +1,31 @@
 import { BlogPost } from '@/types/blog';
 import * as fileStorage from './file-storage-service';
-import { mockPosts } from '@/lib/blog/posts';
 
 const BLOG_POSTS_FILE = 'blog-posts.json';
 
 interface BlogPostsData {
   posts: BlogPost[];
-  lastUpdated: string;
-  version: string;
+  lastUpdated?: string;
+  version?: string;
 }
 
 /**
- * 초기 Mock 데이터로 파일 생성
+ * 블로그 포스트 파일 초기화 (빈 배열로 시작)
  */
 async function initializeBlogPostsFile(): Promise<void> {
   const exists = await fileStorage.fileExists(BLOG_POSTS_FILE);
   
   if (!exists) {
-    console.log('📝 Initializing blog posts file with mock data...');
+    console.log('📝 Initializing empty blog posts file...');
     
     const initialData: BlogPostsData = {
-      posts: mockPosts,
+      posts: [],
       lastUpdated: new Date().toISOString(),
       version: '1.0.0'
     };
     
     await fileStorage.writeJSON(BLOG_POSTS_FILE, initialData, false);
-    console.log('✅ Blog posts file initialized with', mockPosts.length, 'posts');
+    console.log('✅ Blog posts file initialized (empty)');
   }
 }
 
@@ -35,7 +34,7 @@ async function initializeBlogPostsFile(): Promise<void> {
  */
 export async function getAllPostsFromFile(): Promise<BlogPost[]> {
   if (!fileStorage.isFileStorageEnabled) {
-    return mockPosts;
+    return [];
   }
 
   try {
@@ -43,8 +42,8 @@ export async function getAllPostsFromFile(): Promise<BlogPost[]> {
     
     const data = await fileStorage.readJSON<BlogPostsData>(BLOG_POSTS_FILE);
     if (!data || !data.posts) {
-      console.warn('⚠️ No posts found in file, returning mock data');
-      return mockPosts;
+      console.warn('⚠️ No posts found in file, returning empty array');
+      return [];
     }
     
     // Date 객체로 변환
@@ -59,7 +58,7 @@ export async function getAllPostsFromFile(): Promise<BlogPost[]> {
     return posts;
   } catch (error) {
     console.error('❌ Error loading posts from file:', error);
-    return mockPosts;
+    return [];
   }
 }
 

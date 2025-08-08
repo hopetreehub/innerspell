@@ -39,34 +39,38 @@ export function BlogMainWithPagination() {
     setIsMounted(true);
   }, []);
 
-  // Mock 데이터 직접 사용 (API 우회)
+  // API를 통해 블로그 포스트 가져오기
   useEffect(() => {
-    const loadMockPosts = async () => {
+    const loadPosts = async () => {
       try {
         setIsLoading(true);
-        console.log('🚀 클라이언트에서 Mock 데이터 직접 로드...');
+        console.log('🚀 API를 통해 블로그 포스트 로드...');
         
-        // Mock 데이터 직접 import
-        const { mockPosts } = await import('@/lib/blog/posts');
-        console.log(`📊 Raw mockPosts 수: ${mockPosts.length}`);
+        // API 호출
+        const response = await fetch('/api/blog/posts?published=true');
+        if (!response.ok) {
+          throw new Error('Failed to fetch posts');
+        }
         
-        // published 필터링
-        const publishedPosts = mockPosts.filter(post => post.published);
-        console.log(`📝 published 필터 후: ${publishedPosts.length}개`);
+        const data = await response.json();
+        console.log(`📊 API에서 받은 포스트 수: ${data.posts?.length || 0}`);
         
-        // 날짜순 정렬
-        const sortedPosts = publishedPosts.sort((a, b) => {
-          const dateA = new Date(a.publishedAt);
-          const dateB = new Date(b.publishedAt);
-          return dateB.getTime() - dateA.getTime();
-        });
-        
-        console.log('🎯 로드된 포스트 제목들:', sortedPosts.slice(0, 3).map(p => p.title));
-        console.log(`✅ ${sortedPosts.length}개 포스트 로드 완료`);
-        
-        setPosts(sortedPosts);
+        if (data.posts) {
+          // 날짜 객체로 변환
+          const postsWithDates = data.posts.map((post: BlogPost) => ({
+            ...post,
+            publishedAt: new Date(post.publishedAt),
+            updatedAt: post.updatedAt ? new Date(post.updatedAt) : undefined,
+            createdAt: post.createdAt ? new Date(post.createdAt) : undefined
+          }));
+          
+          console.log('🎯 로드된 포스트 제목들:', postsWithDates.slice(0, 3).map((p: BlogPost) => p.title));
+          console.log(`✅ ${postsWithDates.length}개 포스트 로드 완료`);
+          
+          setPosts(postsWithDates);
+        }
       } catch (error) {
-        console.error('❌ Mock 데이터 로드 실패:', error);
+        console.error('❌ 포스트 로드 실패:', error);
         setPosts([]); // 에러 시 빈 배열
       } finally {
         setIsLoading(false);
@@ -74,7 +78,7 @@ export function BlogMainWithPagination() {
       }
     };
 
-    loadMockPosts();
+    loadPosts();
   }, []);
   
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);

@@ -23,8 +23,7 @@ export interface BlogPost {
   views?: number;
 }
 
-// Mock 데이터는 더 이상 사용하지 않음 (파일 스토리지로 이전됨)
-// 이전 mockPosts는 migrate-blog-posts-to-admin.ts로 마이그레이션됨
+// 간단한 테스트 포스트 데이터
 export const mockPosts: BlogPost[] = [
   {
     id: 'tarot-basics-2025',
@@ -1681,30 +1680,29 @@ AI는 전통 타로를 대체하는 것이 아니라 보완하는 도구입니�
 ];
 
 // 필요한 함수들 export
-// 이전 동기 함수들은 아래의 비동기 함수로 대체됨
-// export const getAllPosts = () => {
-//   return mockPosts.filter(post => post.published);
-// };
+export const getAllPosts = () => {
+  return mockPosts.filter(post => post.published);
+};
 
-// export const getPostById = (id: string) => {
-//   return mockPosts.find(post => post.id === id);
-// };
+export const getPostById = (id: string) => {
+  return mockPosts.find(post => post.id === id);
+};
 
-// export const getFeaturedPosts = () => {
-//   return mockPosts.filter(post => post.featured && post.published);
-// };
+export const getFeaturedPosts = () => {
+  return mockPosts.filter(post => post.featured && post.published);
+};
 
-// export const searchPosts = (query: string) => {
-//   const lowercaseQuery = query.toLowerCase();
-//   return mockPosts.filter(post => 
-//     post.published && (
-//       post.title.toLowerCase().includes(lowercaseQuery) ||
-//       post.excerpt.toLowerCase().includes(lowercaseQuery) ||
-//       post.content.toLowerCase().includes(lowercaseQuery) ||
-//       post.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
-//     )
-//   );
-// };
+export const searchPosts = (query: string) => {
+  const lowercaseQuery = query.toLowerCase();
+  return mockPosts.filter(post => 
+    post.published && (
+      post.title.toLowerCase().includes(lowercaseQuery) ||
+      post.excerpt.toLowerCase().includes(lowercaseQuery) ||
+      post.content.toLowerCase().includes(lowercaseQuery) ||
+      post.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+    )
+  );
+};
 
 /*
 // 기존 복잡한 포스트 데이터는 임시로 주석 처리
@@ -4100,64 +4098,46 @@ A: 전혀 문제없습니다. 자책하지 말고 다음 날 다시 시작하면
 // 개발 환경에서는 Mock 데이터 사용으로 강제 설정
 const USE_FIRESTORE = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_USE_FIRESTORE === 'true';
 
-// 포스트 데이터 가져오기 함수 (파일 스토리지 우선)
+// 포스트 데이터 가져오기 함수
 export const getAllPosts = async (): Promise<BlogPost[]> => {
-  // 개발 환경에서는 파일 스토리지 우선 사용
-  if (process.env.NODE_ENV === 'development') {
-    try {
-      const { posts } = await getFirestorePosts(true);
-      console.log('📄 파일 스토리지에서', posts.length, '개의 포스트 로드');
-      
-      // 카테고리별 집계
-      const categoryCount: Record<string, number> = {};
-      posts.forEach(post => {
-        categoryCount[post.category] = (categoryCount[post.category] || 0) + 1;
-      });
-      console.log('📊 카테고리별 포스트 수:', categoryCount);
-      
-      return posts;
-    } catch (error) {
-      console.error('파일 스토리지 에러:', error);
-    }
-  }
-  
-  // 프로덕션 환경에서는 Firestore 사용
   if (USE_FIRESTORE) {
     try {
       const { posts } = await getFirestorePosts(true);
       return posts;
     } catch (error) {
-      console.error('Firestore 에러:', error);
+      console.error('Firestore 에러, Mock 데이터 사용:', error);
+      // Firestore 실패 시 Mock 데이터로 폴백
     }
   }
   
-  // 폴백: 빈 배열 반환
-  console.log('⚠️ 포스트 데이터를 찾을 수 없음, 빈 배열 반환');
-  return [];
+  // Mock 데이터 사용
+  const publishedPosts = mockPosts.filter(post => post.published);
+  
+  console.log('getAllPosts - 전체 목 포스트 수:', mockPosts.length);
+  console.log('getAllPosts - published 포스트 수:', publishedPosts.length);
+  
+  // 카테고리별 집계
+  const categoryCount: Record<string, number> = {};
+  publishedPosts.forEach(post => {
+    categoryCount[post.category] = (categoryCount[post.category] || 0) + 1;
+  });
+  console.log('getAllPosts - 카테고리별 포스트 수:', categoryCount);
+  
+  return publishedPosts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 };
 
 export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
-  // 개발 환경에서는 파일 스토리지 우선 사용
-  if (process.env.NODE_ENV === 'development') {
-    try {
-      const posts = await getAllPosts();
-      const post = posts.find(p => p.id === slug);
-      return post || null;
-    } catch (error) {
-      console.error('파일 스토리지 에러:', error);
-    }
-  }
-  
-  // 프로덕션 환경에서는 Firestore 사용
   if (USE_FIRESTORE) {
     try {
       return await getFirestorePost(slug);
     } catch (error) {
-      console.error('Firestore 에러:', error);
+      console.error('Firestore 에러, Mock 데이터 사용:', error);
     }
   }
   
-  return null;
+  // Mock 데이터 사용
+  const post = mockPosts.find(post => post.id === slug && post.published);
+  return post || null;
 };
 
 export const getPostsByCategory = async (category: string): Promise<BlogPost[]> => {

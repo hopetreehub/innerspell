@@ -66,6 +66,21 @@ export async function getAllPosts(
   lastDoc?: QueryDocumentSnapshot<DocumentData>
 ): Promise<{ posts: BlogPost[]; lastDoc?: QueryDocumentSnapshot<DocumentData> }> {
   try {
+    // 개발 환경에서는 API 라우트 사용
+    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
+      const params = new URLSearchParams();
+      if (onlyPublished) params.append('published', 'true');
+      if (categoryFilter && categoryFilter !== 'all') params.append('category', categoryFilter);
+      
+      const response = await fetch(`/api/blog/posts?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      
+      const data = await response.json();
+      return { posts: data.posts || [] };
+    }
+    
     if (!db) {
       console.log('📝 Firestore not initialized, returning empty posts');
       return { posts: [] };
@@ -243,6 +258,21 @@ export async function getPostCountByCategory(): Promise<Record<string, number>> 
 // 검색 기능 (간단한 버전 - 향후 Algolia나 ElasticSearch 연동 고려)
 export async function searchPosts(searchTerm: string): Promise<BlogPost[]> {
   try {
+    // 개발 환경에서는 API 라우트 사용
+    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
+      const params = new URLSearchParams();
+      params.append('search', searchTerm);
+      params.append('published', 'true');
+      
+      const response = await fetch(`/api/blog/posts?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to search posts');
+      }
+      
+      const data = await response.json();
+      return data.posts || [];
+    }
+    
     const snapshot = await getDocs(collection(db, POSTS_COLLECTION));
     
     const lowerSearchTerm = searchTerm.toLowerCase();
