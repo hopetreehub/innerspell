@@ -50,6 +50,7 @@ import { useAuth } from '@/context/AuthContext';
 
 import { OptimizedImage } from '@/components/OptimizedImage';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Sparkles,
   Loader2,
@@ -58,6 +59,7 @@ import {
   BookOpenText,
   Save,
   Share2,
+  Edit3,
 } from 'lucide-react';
 import { ToastAction } from '@/components/ui/toast';
 import ReactMarkdown from 'react-markdown';
@@ -103,6 +105,7 @@ const SignUpPrompt = () => (
 
 export function TarotReadingClient() {
   const { user } = useAuth();
+  const router = useRouter();
   const [question, setQuestion] = useState<string>('');
   const [selectedSpread, setSelectedSpread] = useState<SpreadConfiguration>(
     tarotSpreads[1], // Default to Trinity View (3 cards)
@@ -540,8 +543,6 @@ export function TarotReadingClient() {
       return;
     }
 
-    // ✅ Real Firebase enabled - no need to check for mock mode anymore
-
     setIsSharingReading(true);
 
     try {
@@ -559,18 +560,35 @@ export function TarotReadingClient() {
         timestamp: new Date().toISOString(),
       };
 
-      // 클라이언트에서 직접 공유 링크 생성
+      // 먼저 공유 링크 생성
       const result = await shareReadingClient(shareData);
       
       if (result.success && result.shareUrl) {
-        // Copy the share URL to clipboard
-        await navigator.clipboard.writeText(result.shareUrl);
-        
+        // 리딩 데이터와 공유 URL을 포함한 커뮤니티 공유용 데이터 생성
+        const communityShareData = {
+          question,
+          spreadName: selectedSpread.name,
+          spreadNumCards: selectedSpread.numCards,
+          shareUrl: result.shareUrl,
+          cards: selectedCardsForReading.map(card => card.name),
+          timestamp: new Date().toISOString(),
+        };
+
+        // 세션 스토리지에 임시 저장 (페이지 이동 시 사용)
+        sessionStorage.setItem('pendingReadingShare', JSON.stringify(communityShareData));
+
+        // 커뮤니티 경험 공유 페이지로 이동
         toast({
-          title: '공유 링크 생성됨',
-          description: '리딩 공유 링크가 클립보드에 복사되었습니다. 30일간 유효합니다.',
-          duration: 5000,
+          title: '커뮤니티로 이동합니다',
+          description: '경험 공유 페이지에서 내용을 확인하고 게시해주세요.',
+          duration: 3000,
         });
+
+        // 잠깐 기다린 후 페이지 이동 (토스트 메시지를 보여주기 위해)
+        setTimeout(() => {
+          router.push('/community/reading-share/new');
+        }, 1000);
+
       } else {
         throw new Error(result.error || 'Failed to create share link');
       }
@@ -581,9 +599,8 @@ export function TarotReadingClient() {
         title: '공유 실패',
         description: '리딩 공유 중 오류가 발생했습니다.',
       });
+      setIsSharingReading(false);
     }
-
-    setIsSharingReading(false);
   };
 
   const cardStack = (
@@ -979,8 +996,8 @@ export function TarotReadingClient() {
                     disabled={isSharingReading}
                     className="w-full sm:w-auto"
                   >
-                    {isSharingReading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
-                    {isSharingReading ? '공유 중...' : '리딩 공유하기'}
+                    {isSharingReading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Edit3 className="mr-2 h-4 w-4" />}
+                    {isSharingReading ? '이동 중...' : '경험 공유하기'}
                   </Button>
                 )}
                 {!user && stage === 'interpretation_ready' && (
@@ -1046,8 +1063,8 @@ export function TarotReadingClient() {
                   onClick={handleShareReading}
                   disabled={isSharingReading}
                 >
-                  {isSharingReading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
-                  {isSharingReading ? '공유 중...' : '리딩 공유'}
+                  {isSharingReading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Edit3 className="mr-2 h-4 w-4" />}
+                  {isSharingReading ? '이동 중...' : '경험 공유'}
                 </Button>
                 {/* 🎯 개선: 모든 사용자에게 저장 버튼 표시 */}
                 {!readingJustSaved && (

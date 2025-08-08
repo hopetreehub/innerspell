@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft,
@@ -59,6 +59,68 @@ export default function NewReadingSharePage() {
   const [newTag, setNewTag] = useState('');
   const [isPreview, setIsPreview] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 리딩 공유 데이터 자동 입력
+  useEffect(() => {
+    const pendingData = sessionStorage.getItem('pendingReadingShare');
+    
+    if (pendingData) {
+      try {
+        const readingData = JSON.parse(pendingData);
+        
+        // 자동 생성된 제목
+        const autoTitle = `🔮 ${readingData.spreadName} 타로 리딩 경험!`;
+        
+        // 자동 생성된 내용
+        const autoContent = `타로 리딩 경험을 공유합니다!
+
+📋 **질문**: ${readingData.question}
+🃏 **스프레드**: ${readingData.spreadName} (${readingData.spreadNumCards}장)
+📅 **리딩 날짜**: ${new Date(readingData.timestamp).toLocaleDateString('ko-KR')}
+
+🔗 **리딩 결과 보기**: ${readingData.shareUrl}
+
+위 링크를 클릭하시면 제가 받은 실제 타로 리딩 결과를 볼 수 있어요!
+정말 놀라운 해석이 나왔네요 ✨
+
+여러분도 한번 확인해보시고 의견을 남겨주세요!`;
+
+        // 스프레드 타입 매핑
+        const spreadTypeMapping: { [key: string]: string } = {
+          '삼위일체 조망': 'three-card',
+          '상황-행동-결과': 'three-card', 
+          '정신-몸-영혼': 'three-card',
+          '십자 스프레드': 'custom',
+          '관계 스프레드': 'relationship',
+          '켈틱 크로스': 'celtic-cross'
+        };
+
+        // 폼 데이터 자동 설정
+        setFormData({
+          title: autoTitle,
+          spreadType: spreadTypeMapping[readingData.spreadName] || 'custom',
+          content: autoContent,
+          cards: readingData.cards || [],
+          tags: ['타로리딩', '타로경험', readingData.spreadName.replace(/\s+/g, '')]
+        });
+
+        // 세션 스토리지에서 데이터 제거
+        sessionStorage.removeItem('pendingReadingShare');
+        
+        // 성공 토스트
+        toast({
+          title: '리딩 정보 자동 입력됨',
+          description: '타로 리딩 정보가 자동으로 입력되었습니다. 내용을 확인하고 수정하세요.',
+          duration: 5000,
+        });
+
+      } catch (error) {
+        console.error('Failed to parse pending reading data:', error);
+        // 에러 시 데이터 정리
+        sessionStorage.removeItem('pendingReadingShare');
+      }
+    }
+  }, [toast]);
 
   const handleAddCard = () => {
     if (newCard.trim() && !formData.cards.includes(newCard.trim())) {

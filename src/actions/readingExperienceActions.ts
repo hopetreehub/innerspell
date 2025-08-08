@@ -20,7 +20,7 @@ import {
   Timestamp,
   DocumentSnapshot
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase/admin';
+import { db, firestore, admin } from '@/lib/firebase/admin';
 import { 
   ReadingExperience, 
   ReadingExperienceFormData, 
@@ -40,9 +40,61 @@ export async function createReadingExperience(
     // 폼 데이터 검증
     const validatedData = ReadingExperienceFormSchema.parse(formData);
     
-    // 사용자 정보 조회
-    const userDoc = await getDoc(doc(db, 'users', userId));
-    if (!userDoc.exists()) {
+    // 개발 환경에서는 파일 저장 시스템 사용
+    if (process.env.NODE_ENV === 'development') {
+      const { writeJSON, readJSON } = await import('@/services/file-storage-service');
+      
+      // 리딩 경험 데이터 생성
+      const experienceData = {
+        id: `exp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        title: validatedData.title,
+        content: validatedData.content,
+        authorId: userId,
+        author: {
+          id: userId,
+          name: 'Developer User',
+          avatar: null,
+          level: 1
+        },
+        spreadType: validatedData.spreadType,
+        cards: validatedData.cards,
+        tags: validatedData.tags,
+        likes: 0,
+        commentsCount: 0,
+        views: 0,
+        isPublished: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      // 기존 리딩 경험들 읽기
+      const fileName = 'reading-experiences.json';
+      let experiences = await readJSON<ReadingExperience[]>(fileName) || [];
+      
+      // 새 경험 추가
+      experiences.unshift(experienceData);
+      
+      // 파일에 저장
+      await writeJSON(fileName, experiences);
+      
+      console.log('✅ Reading experience saved to file storage');
+      
+      revalidatePath('/community/reading-share');
+      return { success: true, id: experienceData.id };
+    }
+    
+    // 프로덕션 환경에서는 Firebase 사용
+    // Firestore 인스턴스 확인
+    if (!firestore || typeof firestore.collection !== 'function') {
+      console.error('❌ Firestore 인스턴스가 올바르지 않습니다:', firestore);
+      throw new Error('데이터베이스 연결에 문제가 있습니다.');
+    }
+    
+    // 사용자 정보 조회 (Firebase Admin SDK 방식)
+    const userRef = firestore.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+    
+    if (!userDoc.exists) {
       throw new Error('사용자를 찾을 수 없습니다.');
     }
 
@@ -60,19 +112,19 @@ export async function createReadingExperience(
       commentsCount: 0,
       views: 0,
       isPublished: true,
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now()
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
-    // Firestore에 저장
-    const docRef = await addDoc(collection(db, 'reading-experiences'), experienceData);
+    // Firestore에 저장 (Firebase Admin SDK 방식)
+    const docRef = await firestore.collection('reading-experiences').add(experienceData);
     
-    // 사용자 게시글 수 증가
-    await runTransaction(db, async (transaction) => {
-      const userRef = doc(db, 'users', userId);
+    // 사용자 게시글 수 증가 (Firebase Admin SDK 방식)
+    await firestore.runTransaction(async (transaction) => {
+      const userRef = firestore.collection('users').doc(userId);
       transaction.update(userRef, {
-        postsCount: increment(1),
-        updatedAt: Timestamp.now()
+        postsCount: admin.firestore.FieldValue.increment(1),
+        updatedAt: new Date()
       });
     });
 
