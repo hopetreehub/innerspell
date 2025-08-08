@@ -14,7 +14,7 @@ import { BlogManagement } from '@/components/admin/BlogManagement';
 import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool, BarChart3, Activity } from 'lucide-react';
+import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool, BarChart3, Activity, GraduationCap } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { UsageStatsCharts } from '@/components/admin/UsageStatsCharts';
 import { RealTimeMonitoringDashboard } from '@/components/admin/RealTimeMonitoringDashboard';
@@ -115,7 +115,7 @@ export default function AdminDashboardPage() {
       </header>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-9 mb-6 gap-2">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-10 mb-6 gap-2">
           <TabsTrigger value="ai-providers" className="text-xs sm:text-sm">
             <Bot className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">AI 공급자</span>
@@ -160,6 +160,11 @@ export default function AdminDashboardPage() {
             <Activity className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">실시간 모니터링</span>
             <span className="sm:hidden">실시간</span>
+          </TabsTrigger>
+          <TabsTrigger value="education-inquiries" className="text-xs sm:text-sm">
+            <GraduationCap className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">교육 문의</span>
+            <span className="sm:hidden">교육</span>
           </TabsTrigger>
         </TabsList>
 
@@ -279,6 +284,29 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <RealTimeMonitoringDashboard />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="education-inquiries">
+          <Card className="shadow-lg border-primary/10">
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl text-primary flex items-center">
+                <GraduationCap className="mr-2 h-6 w-6" /> 교육 문의 관리
+              </CardTitle>
+              <CardDescription>
+                타로 교육 프로그램에 대한 문의를 확인하고 관리합니다.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <a 
+                  href="/admin/education-inquiries" 
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                >
+                  교육 문의 목록 보기
+                </a>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
