@@ -10,7 +10,7 @@ import { DreamInterpretationConfigForm } from '@/components/admin/DreamInterpret
 import { UserManagement } from '@/components/admin/UserManagement';
 import { SystemManagement } from '@/components/admin/SystemManagement';
 import { AIProviderManagement } from '@/components/admin/AIProviderManagement';
-import { BlogManagement } from '@/components/admin/BlogManagement';
+import { SimpleBlogManagement } from '@/components/admin/SimpleBlogManagement';
 import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <BlogManagement />
+              <SimpleBlogManagement />
             </CardContent>
           </Card>
         </TabsContent>

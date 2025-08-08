@@ -346,6 +346,53 @@ export const EducationInquiryFormSchema = z.object({
 
 export type EducationInquiryFormData = z.infer<typeof EducationInquiryFormSchema>;
 
+// Blog Post Types
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string; // URL-friendly 제목
+  content: string; // HTML 형태의 콘텐츠
+  excerpt: string; // 요약
+  featuredImage?: string; // 대표 이미지 URL
+  author: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  categories: string[]; // 카테고리
+  tags: string[]; // 태그
+  status: 'draft' | 'published' | 'archived';
+  publishedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  viewCount: number;
+  seoTitle?: string; // SEO 제목
+  seoDescription?: string; // SEO 설명
+}
+
+export interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  postCount: number;
+}
+
+export const BlogPostFormSchema = z.object({
+  title: z.string().min(1, '제목을 입력해주세요.').max(200, '제목은 200자를 초과할 수 없습니다.'),
+  slug: z.string().min(1, 'URL 슬러그를 입력해주세요.').max(100, '슬러그는 100자를 초과할 수 없습니다.'),
+  content: z.string().min(10, '내용을 최소 10자 이상 입력해주세요.'),
+  excerpt: z.string().max(500, '요약은 500자를 초과할 수 없습니다.').optional(),
+  featuredImage: z.string().url('올바른 이미지 URL을 입력해주세요.').optional(),
+  categories: z.array(z.string()).max(5, '카테고리는 최대 5개까지 선택할 수 있습니다.'),
+  tags: z.array(z.string()).max(10, '태그는 최대 10개까지 추가할 수 있습니다.'),
+  status: z.enum(['draft', 'published', 'archived']),
+  seoTitle: z.string().max(60, 'SEO 제목은 60자를 초과할 수 없습니다.').optional(),
+  seoDescription: z.string().max(160, 'SEO 설명은 160자를 초과할 수 없습니다.').optional(),
+});
+
+export type BlogPostFormData = z.infer<typeof BlogPostFormSchema>;
+
 export type ReadingSharePostFormData = z.infer<typeof ReadingSharePostFormSchema>;
 
 // This schema is specifically for sharing a reading to the community
