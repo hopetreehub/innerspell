@@ -31,7 +31,8 @@ export type TarotInterpretationMethod =
   | "심리학적 원형 탐구"
   | "영적 성장과 자기 성찰"
   | "실질적 행동 지침"
-  | "내면의 그림자 작업";
+  | "내면의 그림자 작업"
+  | "현실적 통찰";
 
 export type InterpretationStyleInfo = {
   id: TarotInterpretationMethod;
@@ -69,6 +70,11 @@ export const tarotInterpretationStyles: InterpretationStyleInfo[] = [
     id: "내면의 그림자 작업",
     name: "내면의 그림자 작업",
     description: "무의식 속 숨겨진 그림자 발견 및 통합 과정 지원.",
+  },
+  {
+    id: "현실적 통찰",
+    name: "현실적 통찰",
+    description: "미화하지 않은 직설적 해석으로 현실적 상황과 도전 과제를 명확히 제시.",
   },
 ];
 

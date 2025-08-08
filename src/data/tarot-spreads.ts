@@ -421,6 +421,22 @@ export const INTERPRETATION_STYLES: InterpretationStyle[] = [
       '생태적 관점 통합',
       '순환과 변화의 이해'
     ]
+  },
+  {
+    id: 'realistic-insight',
+    name: '현실적 통찰',
+    nameEn: 'Realistic Insight',
+    description: '직설적이고 현실적인 관점에서 상황을 있는 그대로 분석',
+    approach: 'modern',
+    deckType: 'any',
+    philosophy: '미화하지 않은 진실과 현실적 도전을 직시하여 실질적 해결책 제시',
+    keyPrinciples: [
+      '상황의 현실적 제약과 한계 인정',
+      '부정적 측면과 위험 요소 명확히 지적',
+      '감정적 미화 없는 객관적 분석',
+      '실패 가능성과 대비책 제시',
+      '직설적이지만 건설적인 피드백'
+    ]
   }
 ];
 
