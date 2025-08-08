@@ -7,18 +7,21 @@ import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import type { SavedReading, SavedReadingCard } from '@/types';
 import { findCardById } from '@/data/all-tarot-cards';
 import { SaveReadingInputSchema, type SaveReadingInput } from '@/types';
+import { 
+  saveReadingToFile, 
+  getUserReadingsFromFile, 
+  getReadingByIdFromFile,
+  deleteReadingFromFile 
+} from '@/services/tarot-reading-service-file';
 
 
 export async function saveUserReading(
   input: SaveReadingInput
 ): Promise<{ success: boolean; readingId?: string; error?: string | object }> {
   try {
-    // ✅ Firebase 기본 설정 확인 (운영 환경에서는 자동 설정됨)
-    console.log('🔥 Firebase Admin 저장 시도 시작');
+    console.log('💾 리딩 저장 시작');
     console.log('📤 저장 요청 데이터:', input);
     
-    // Firebase Admin이 이미 초기화되어 있으므로 바로 진행
-
     // Validate the input using the centralized schema from types/index.ts
     const validationResult = SaveReadingInputSchema.safeParse(input);
     if (!validationResult.success) {
@@ -28,6 +31,42 @@ export async function saveUserReading(
 
     const { userId, question, spreadName, spreadNumCards, drawnCards, interpretationText } = validationResult.data;
 
+    // 개발 환경에서는 파일 저장 사용
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      console.log('📁 개발 환경: 파일 시스템에 저장');
+      
+      // drawnCards를 전체 카드 정보로 확장
+      const enrichedCards = drawnCards.map((card, index) => {
+        const cardDetails = findCardById(card.id);
+        return {
+          id: card.id,
+          name: cardDetails?.nameKorean || cardDetails?.name || card.id,
+          imageSrc: cardDetails?.imageUrl || `/images/tarot/${card.id}.png`,
+          isReversed: card.isReversed,
+          position: card.position || `카드 ${index + 1}`
+        };
+      });
+      
+      const result = await saveReadingToFile(userId, {
+        question,
+        spreadName,
+        spreadNumCards,
+        drawnCards: enrichedCards,
+        interpretationText,
+        interpretationStyle: (input as any).interpretationStyle // 해석 스타일 정보도 저장
+      });
+      
+      if (result.success) {
+        console.log(`✅ 파일 저장 성공: ${result.readingId}`);
+      }
+      return result;
+    }
+    
+    // 프로덕션 환경: Firebase 사용
+    console.log('🔥 프로덕션 환경: Firebase에 저장');
+    
     // Ensure position has a fallback value
     const drawnCardsWithPosition = drawnCards.map((card, index) => ({
       ...card,
@@ -75,6 +114,19 @@ export async function getUserReadings(userId: string): Promise<SavedReading[]> {
   }
   
   console.log(`🔍 getUserReadings called with userId: ${userId}`);
+  
+  // 개발 환경에서는 파일에서 읽기
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  if (isDevelopment) {
+    console.log('📁 개발 환경: 파일에서 리딩 목록 읽기');
+    const readings = await getUserReadingsFromFile(userId);
+    console.log(`📊 파일에서 ${readings.length}개의 리딩 발견`);
+    return readings;
+  }
+  
+  // 프로덕션 환경: Firebase 사용
+  console.log('🔥 프로덕션 환경: Firebase에서 리딩 목록 읽기');
   
   try {
     const snapshot = await firestore
@@ -141,6 +193,18 @@ export async function deleteUserReading(userId: string, readingId: string): Prom
   if (!userId || !readingId) {
     return { success: false, error: '사용자 ID 또는 리딩 ID가 제공되지 않았습니다.' };
   }
+  
+  // 개발 환경에서는 파일에서 삭제
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  if (isDevelopment) {
+    console.log('📁 개발 환경: 파일에서 리딩 삭제');
+    return await deleteReadingFromFile(userId, readingId);
+  }
+  
+  // 프로덕션 환경: Firebase 사용
+  console.log('🔥 프로덕션 환경: Firebase에서 리딩 삭제');
+  
   try {
     const readingRef = firestore.collection('userReadings').doc(readingId);
     const doc = await readingRef.get();

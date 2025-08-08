@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUserReadings } from '@/actions/readingActions';
+import { getUserReadings, deleteUserReading } from '@/actions/readingActions';
 import { getUserReadingsClient, deleteUserReadingClient } from '@/lib/firebase/client-read';
 import { SavedReading } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,9 +46,18 @@ export function TarotReadingHistory() {
     
     setLoading(true);
     try {
-      // 클라이언트 사이드에서 직접 Firestore 조회
-      const result = await getUserReadingsClient(user.uid);
-      setReadings(result);
+      // 개발 환경에서는 서버 액션 사용, 프로덕션에서는 클라이언트 Firebase 사용
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      
+      if (isDevelopment) {
+        // 개발 환경: 서버 액션으로 파일에서 읽기
+        const result = await getUserReadings(user.uid);
+        setReadings(result);
+      } else {
+        // 프로덕션 환경: 클라이언트 사이드에서 직접 Firestore 조회
+        const result = await getUserReadingsClient(user.uid);
+        setReadings(result);
+      }
     } catch (error) {
       console.error('Failed to load readings:', error);
       toast({
@@ -65,7 +74,18 @@ export function TarotReadingHistory() {
     if (!user) return;
     
     try {
-      const result = await deleteUserReadingClient(user.uid, readingId);
+      // 개발 환경에서는 서버 액션 사용, 프로덕션에서는 클라이언트 Firebase 사용
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      
+      let result;
+      if (isDevelopment) {
+        // 개발 환경: 서버 액션으로 파일에서 삭제
+        result = await deleteUserReading(user.uid, readingId);
+      } else {
+        // 프로덕션 환경: 클라이언트 사이드에서 직접 Firestore 삭제
+        result = await deleteUserReadingClient(user.uid, readingId);
+      }
+      
       if (result.success) {
         toast({
           title: '삭제 완료',
