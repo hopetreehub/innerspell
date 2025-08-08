@@ -98,20 +98,20 @@ async function getRealRealtimeData() {
         errorRate: Math.round(errorRate * 100) / 100,
         requestsPerMinute: Math.round(recentReadings.length / 60), // 최근 1시간을 분당으로 환산
         
-        // 시스템 메트릭스 (활동량 기반 추정값)
-        cpuUsage: Math.min(Math.round((recentReadings.length / 10) * 15 + Math.random() * 10), 100), // 활동량 기반 CPU 추정
-        memoryUsage: Math.min(Math.round((totalUsers / 50) * 20 + Math.random() * 15), 100), // 사용자 수 기반 메모리 추정
-        diskUsage: Math.min(Math.round((totalUsers * 0.1) + (recentReadings.length * 0.5) + Math.random() * 5), 100), // 데이터량 기반 디스크 추정
+        // 시스템 메트릭스 (초기값 0)
+        cpuUsage: 0,
+        memoryUsage: 0,
+        diskUsage: 0
         networkLatency: Math.round(averageResponseTime / 10), // 응답시간 기반 네트워크 지연
         activeConnections: estimatedActiveUsers
       },
       activeUsers: [], // 실시간 사용자 추적은 별도 구현 필요
       recentEvents,
       serverMetrics: {
-        cpuUsage: Math.min(Math.round((recentReadings.length / 10) * 15 + Math.random() * 10), 100),
-        memoryUsage: Math.min(Math.round((totalUsers / 50) * 20 + Math.random() * 15), 100),
-        diskUsage: Math.min(Math.round((totalUsers * 0.1) + (recentReadings.length * 0.5) + Math.random() * 5), 100),
-        networkLatency: Math.round(averageResponseTime / 10),
+        cpuUsage: 0,
+        memoryUsage: 0,
+        diskUsage: 0,
+        networkLatency: 0,
         activeConnections: estimatedActiveUsers,
         requestsPerMinute: Math.round(recentReadings.length / 60)
       },
@@ -137,9 +137,9 @@ async function getRealRealtimeData() {
         ].filter(region => region.count > 0),
         
         deviceTypes: {
-          mobile: Math.round(55 + Math.random() * 10), // 55-65% 모바일 (현실적 추정)
-          desktop: Math.round(30 + Math.random() * 10), // 30-40% 데스크톱
-          tablet: Math.round(5 + Math.random() * 10)    // 5-15% 태블릿
+          mobile: 0,
+          desktop: 0,
+          tablet: 0
         },
         
         conversionMetrics: {

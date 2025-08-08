@@ -232,10 +232,11 @@ async function fetchRealtimeStats() {
 // 성능 데이터 가져오기 (기존 성능 API에서)
 function getPerformanceData() {
   // 실제 구현에서는 성능 모니터링 시스템에서 데이터를 가져와야 함
+  // 현재는 초기값 0으로 반환
   return {
-    averageResponseTime: Math.random() * 1000 + 200, // 200-1200ms
-    errorRate: Math.random() * 5, // 0-5%
-    memoryUsage: Math.random() * 100, // 0-100%
-    cpuUsage: Math.random() * 100 // 0-100%
+    averageResponseTime: 0,
+    errorRate: 0,
+    memoryUsage: 0,
+    cpuUsage: 0
   };
 }
