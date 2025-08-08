@@ -715,3 +715,1711 @@ Import trace for requested module:
 ./src/ai/flows/generate-tarot-interpretation.ts
  GET /community/reading-share 200 in 4802ms
  GET /community/reading-share 200 in 240ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /reading 200 in 1002ms
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ GET /favicon.ico 200 in 3702ms
+📁 File storage service loaded. Enabled: true
+[GENKIT] Initializing AI instance...
+[GENKIT] Development mode detected - using environment variables directly
+[GENKIT] Development mode keys: { googleKeyLength: 39, openaiKeyLength: 164, anthropicKeyLength: 0 }
+[GENKIT] Adding Google AI plugin
+[GENKIT] Adding OpenAI plugin
+[GENKIT] Initializing Genkit with 2 plugins
+Firestore에서 타로 프롬프트 설정을 불러오는 중 오류 발생. 기본값을 사용합니다: Error: Could not load the default credentials. Browse to https://cloud.google.com/docs/authentication/getting-started for more information.
+    at getTarotPromptConfig (src/ai/services/prompt-service.ts:86:90)
+    at eval (src/ai/flows/generate-tarot-interpretation.ts:57:49)
+  84 | export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
+  85 |   try {
+> 86 |     const configDoc = await firestore.collection('aiConfiguration').doc('promptSettings').get();
+     |                                                                                          ^
+  87 |
+  88 |     // Get active AI models to find a suitable default
+  89 |     const activeModels = await getActiveAIModels();
+[getActiveAIModels] Starting to fetch AI provider configs...
+🔧 [DEV-FALLBACK] AIProvider: Getting all AI provider configs from file storage 
+[getActiveAIModels] getAllAIProviderConfigs result: {
+  success: true,
+  data: [
+    {
+      provider: 'openai',
+      apiKey: '********************************************************************************************************************************************************************',
+      baseUrl: 'https://api.openai.com/v1',
+      isActive: true,
+      maxRequestsPerMinute: 60,
+      models: [],
+      createdAt: '2025-08-07T14:19:42.131Z',
+      updatedAt: '2025-08-07T14:19:42.131Z',
+      id: 'openai'
+    },
+    {
+      provider: 'gemini',
+      apiKey: '***************************************',
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+      isActive: true,
+      maxRequestsPerMinute: 60,
+      models: [],
+      createdAt: '2025-08-07T14:19:42.131Z',
+      updatedAt: '2025-08-07T14:19:42.131Z',
+      id: 'gemini'
+    }
+  ]
+}
+[getActiveAIModels] Processing provider configs: [
+  {
+    provider: 'openai',
+    apiKey: '********************************************************************************************************************************************************************',
+    baseUrl: 'https://api.openai.com/v1',
+    isActive: true,
+    maxRequestsPerMinute: 60,
+    models: [],
+    createdAt: '2025-08-07T14:19:42.131Z',
+    updatedAt: '2025-08-07T14:19:42.131Z',
+    id: 'openai'
+  },
+  {
+    provider: 'gemini',
+    apiKey: '***************************************',
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+    isActive: true,
+    maxRequestsPerMinute: 60,
+    models: [],
+    createdAt: '2025-08-07T14:19:42.131Z',
+    updatedAt: '2025-08-07T14:19:42.131Z',
+    id: 'gemini'
+  }
+]
+[getActiveAIModels] Processing config for openai: {
+  provider: 'openai',
+  apiKey: '********************************************************************************************************************************************************************',
+  baseUrl: 'https://api.openai.com/v1',
+  isActive: true,
+  maxRequestsPerMinute: 60,
+  models: [],
+  createdAt: '2025-08-07T14:19:42.131Z',
+  updatedAt: '2025-08-07T14:19:42.131Z',
+  id: 'openai'
+}
+[getActiveAIModels] Processing config for gemini: {
+  provider: 'gemini',
+  apiKey: '***************************************',
+  baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+  isActive: true,
+  maxRequestsPerMinute: 60,
+  models: [],
+  createdAt: '2025-08-07T14:19:42.131Z',
+  updatedAt: '2025-08-07T14:19:42.131Z',
+  id: 'gemini'
+}
+[getActiveAIModels] Active models found: []
+[getActiveAIModels] No active models found, using defaults
+[getActiveAIModels] Final models to return: [
+  {
+    id: 'openai/gpt-3.5-turbo',
+    name: 'GPT-3.5 Turbo (OpenAI)',
+    provider: 'openai'
+  },
+  { id: 'openai/gpt-4', name: 'GPT-4 (OpenAI)', provider: 'openai' },
+  {
+    id: 'googleai/gemini-1.5-pro-latest',
+    name: 'Gemini 1.5 Pro (Google AI)',
+    provider: 'googleai'
+  },
+  {
+    id: 'googleai/gemini-1.5-flash-latest',
+    name: 'Gemini 1.5 Flash (Google AI)',
+    provider: 'googleai'
+  }
+]
+[TAROT] Creating prompt with model: googleai/gemini-1.5-pro-latest
+[TAROT] Calling AI with input: {
+  questionLength: 36,
+  cardSpread: '삼위일체 조망 (Trinity View)',
+  cardsCount: 3,
+  isGuestUser: false
+}
+[TAROT] AI interpretation generated successfully, length: 1447
+ POST /reading 200 in 29161ms
+ GET /community/reading-share/new 200 in 574ms
+ GET /favicon.ico 200 in 293ms
+ GET /favicon.ico 200 in 499ms
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 3991ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 254ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 268ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 242ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 541ms
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ GET /favicon.ico 200 in 1727ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 532ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 258ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 557ms
+ GET /favicon.ico 200 in 193ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 273ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 259ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 384ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 272ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 241ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 504ms
+ GET /favicon.ico 200 in 217ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 266ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 236ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 434ms
+ GET /favicon.ico 200 in 176ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 264ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 231ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 460ms
+ GET /favicon.ico 200 in 185ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 313ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 268ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 449ms
+ GET /favicon.ico 200 in 181ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 261ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 241ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 503ms
+ GET /favicon.ico 200 in 181ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 259ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 235ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 447ms
+ GET /favicon.ico 200 in 180ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 250ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 239ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 472ms
+ GET /favicon.ico 200 in 187ms
+리딩 경험 생성 오류: [Error [FirebaseError]: Expected first argument to collection() to be a CollectionReference, a DocumentReference or FirebaseFirestore] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+ POST /community/reading-share/new 200 in 686ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 267ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 258ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 436ms
+ GET /favicon.ico 200 in 176ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 499ms
+ GET /favicon.ico 200 in 191ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 815ms
+ GET /favicon.ico 200 in 374ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share 200 in 726ms
+ GET /favicon.ico 200 in 213ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 465ms
+ GET /favicon.ico 200 in 177ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 465ms
+ GET /favicon.ico 200 in 178ms
+리딩 경험 생성 오류: [Error [FirebaseError]: Expected first argument to collection() to be a CollectionReference, a DocumentReference or FirebaseFirestore] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+ POST /community/reading-share/new 200 in 249ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share 200 in 403ms
+ GET /favicon.ico 200 in 215ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 536ms
+ GET /favicon.ico 200 in 204ms
+리딩 경험 생성 오류: [Error [FirebaseError]: Expected first argument to collection() to be a CollectionReference, a DocumentReference or FirebaseFirestore] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+ POST /community/reading-share/new 200 in 282ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share 200 in 466ms
+ GET /favicon.ico 200 in 235ms
+Shutting down all Genkit servers...
+Shutting down all Genkit servers...
+[?25h
+
+> nextn@1.0.0 dev
+> next dev --hostname 0.0.0.0 --port 4000
+
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:4000
+   - Network:      http://0.0.0.0:4000
+   - Environments: .env.local, .env.development
+   - Experiments (use with caution):
+     ✓ optimizeCss
+
+ ✓ Starting...
+ ⚠ Duplicate page detected. src/app/robots.ts and src/app/robots.txt/route.ts resolve to /robots.txt
+ ⚠ Duplicate page detected. src/app/sitemap.ts and src/app/sitemap.xml/route.ts resolve to /sitemap.xml
+ ✓ Compiled /instrumentation in 2.6s (30 modules)
+🚀 Initializing server instrumentation...
+📁 File storage service loaded. Enabled: true
+✅ File storage service initialized
+✅ Server instrumentation completed
+ ⚠ Duplicate page detected. src/app/robots.ts and src/app/robots.txt/route.ts resolve to /robots.txt
+ ⚠ Duplicate page detected. src/app/sitemap.ts and src/app/sitemap.xml/route.ts resolve to /sitemap.xml
+ ✓ Ready in 24.5s
+ ✓ Compiled /middleware in 405ms (160 modules)
+ ○ Compiling /community/reading-share/new ...
+ ✓ Compiled /community/reading-share/new in 21.1s (1670 modules)
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ ✓ Compiled in 4.4s (544 modules)
+ GET /community/reading-share/new 200 in 25669ms
+ ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 3.1s (1142 modules)
+ GET /favicon.ico 200 in 3899ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share/new 200 in 890ms
+ GET /favicon.ico 200 in 191ms
+🔧 Development mode detected - using mock Firebase Admin
+🔥 Firebase Admin SDK initialized successfully
+📝 리딩 경험 저장 시작 {
+  NODE_ENV: 'development',
+  ENABLE_FILE_STORAGE: 'true',
+  isDevelopment: true,
+  userId: 'dev-admin-123',
+  title: '테스트 리딩 경험 공유'
+}
+📁 개발 환경 - 파일 시스템 사용
+📁 File storage service loaded. Enabled: true
+📦 Backup created: reading-experiences_2025-08-08T17-11-03-029Z.json
+✅ Successfully wrote reading-experiences.json
+✅ Reading experience saved to file storage {
+  fileName: 'reading-experiences.json',
+  totalExperiences: 1,
+  newExperienceId: 'exp_1754673063014_1u2p55o1t'
+}
+ POST /community/reading-share/new 200 in 17659ms
+ ○ Compiling /community/reading-share ...
+ ✓ Compiled /community/reading-share in 4s (2817 modules)
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/reading-share 200 in 4968ms
+ GET /community/reading-share 200 in 5296ms
+ GET /favicon.ico 200 in 299ms
+ ○ Compiling /api/reading-experiences ...
+ ✓ Compiled /api/reading-experiences in 1682ms (2824 modules)
+📁 File storage service loaded. Enabled: true
+ GET /api/reading-experiences?sortBy=latest&pageSize=20 200 in 2085ms
+ ○ Compiling /community/reading-share/[id] ...
+ ✓ Compiled /community/reading-share/[id] in 1423ms (2850 modules)
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ ○ Compiling /reading/shared/[shareId] ...
+ GET /community/reading-share 200 in 1232ms
+ ✓ Compiled /api/reading-experiences in 8.1s (3392 modules)
+📁 File storage service loaded. Enabled: true
+ GET /api/reading-experiences?sortBy=latest&pageSize=20 200 in 2786ms
+ ○ Compiling /community/reading-share/[id] ...
+ ✓ Compiled /community/reading-share/[id] in 617ms (2021 modules)
+ GET /community/reading-share/exp_1754673063014_1u2p55o1t 200 in 1165ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1216ms (3406 modules)
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /avatars/user2.jpg 404 in 1526ms
+ GET /avatars/user1.jpg 404 in 1896ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /reading/shared/tarot_1754667429163_8bptqno8i 200 in 20346ms
+📁 File storage service loaded. Enabled: true
+ GET /api/reading-experiences?sortBy=latest&pageSize=20 200 in 229ms
+ GET /api/reading-experiences?sortBy=latest&pageSize=20 200 in 160ms
+ ○ Compiling /community ...
+ ✓ Compiled /community in 1185ms (3414 modules)
+ GET /community 200 in 1630ms
+ ○ Compiling /community/free-discussion ...
+ ✓ Compiled /community/free-discussion in 2.4s (3506 modules)
+[DEBUG] getCommunityPosts called with: { category: 'free-discussion', page: 1 }
+🔧 [DEV-FALLBACK] Community: Using file storage for category: free-discussion 
+📁 File storage service loaded. Enabled: true
+🔧 [DEV-FALLBACK] Community: Getting posts from file for category: free-discussion, page: 1 
+🔧 [DEV-FALLBACK] Community: Found 6 posts for category free-discussion 
+ GET /community/free-discussion 200 in 3221ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.4s (3507 modules)
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 3379ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 321ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 278ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 262ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 257ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 255ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 248ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 248ms
+ ○ Compiling /community/tarot-education ...
+ ✓ Compiled /community/tarot-education in 4.3s (3522 modules)
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 5638ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1356ms (2104 modules)
+ GET /favicon.ico 200 in 1809ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 824ms
+ GET /favicon.ico 200 in 193ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 459ms
+ GET /favicon.ico 200 in 208ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 343ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 374ms
+ GET /favicon.ico 200 in 178ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 274ms
+ GET /favicon.ico 200 in 180ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1493ms (1908 modules)
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 2539ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 232ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 228ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 242ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 257ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 258ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 469ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1795ms (1924 modules)
+ GET /favicon.ico 200 in 2267ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 646ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET / 200 in 227ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ HEAD /community/tarot-education 200 in 393ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 404ms
+ GET /favicon.ico 200 in 181ms
+🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
+🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+🔍 UserNav state: {
+  mounted: false,
+  loading: false,
+  user: 'dev-admin@innerspell.com (admin)'
+}
+🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /community/tarot-education 200 in 412ms
+ GET /favicon.ico 200 in 164ms
+[?25h

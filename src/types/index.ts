@@ -319,6 +319,33 @@ export const CommentFormSchema = z.object({
 
 export type CommentFormData = z.infer<typeof CommentFormSchema>;
 
+// Education Inquiry Types
+export interface EducationInquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  course: 'beginner' | 'intermediate' | 'professional';
+  experience: 'none' | 'hobby' | 'professional';
+  purpose?: string;
+  questions?: string;
+  status: 'pending' | 'contacted' | 'completed';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const EducationInquiryFormSchema = z.object({
+  name: z.string().min(1, '이름을 입력해주세요.').max(50, '이름은 50자를 초과할 수 없습니다.'),
+  email: z.string().email('올바른 이메일 주소를 입력해주세요.'),
+  phone: z.string().optional(),
+  course: z.enum(['beginner', 'intermediate', 'professional']),
+  experience: z.enum(['none', 'hobby', 'professional']),
+  purpose: z.string().max(500, '수강 목적은 500자를 초과할 수 없습니다.').optional(),
+  questions: z.string().max(500, '궁금한 점은 500자를 초과할 수 없습니다.').optional(),
+});
+
+export type EducationInquiryFormData = z.infer<typeof EducationInquiryFormSchema>;
+
 export type ReadingSharePostFormData = z.infer<typeof ReadingSharePostFormSchema>;
 
 // This schema is specifically for sharing a reading to the community

@@ -21,6 +21,13 @@ export class ReadingExperienceService {
   private static readonly PAGE_SIZE = 20;
 
   /**
+   * 개발 환경 여부 확인
+   */
+  private static isDevelopment() {
+    return process.env.NODE_ENV === 'development';
+  }
+
+  /**
    * 리딩 경험 목록을 가져옵니다 (클라이언트 사이드)
    */
   static async getExperiences(
@@ -29,6 +36,37 @@ export class ReadingExperienceService {
     lastDoc?: DocumentSnapshot
   ) {
     try {
+      // 개발 환경에서는 API 사용
+      if (this.isDevelopment()) {
+        const params = new URLSearchParams({
+          sortBy,
+          ...(filterTag && { tag: filterTag }),
+          pageSize: this.PAGE_SIZE.toString()
+        });
+
+        const response = await fetch(`/api/reading-experiences?${params}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || '데이터를 불러오는데 실패했습니다.');
+        }
+
+        // 날짜 문자열을 Date 객체로 변환
+        const experiences = data.experiences.map((exp: any) => ({
+          ...exp,
+          createdAt: new Date(exp.createdAt),
+          updatedAt: new Date(exp.updatedAt)
+        }));
+
+        return {
+          success: true,
+          experiences,
+          lastDoc: null, // 파일 시스템에서는 사용하지 않음
+          hasMore: data.hasMore
+        };
+      }
+
+      // 프로덕션에서는 Firebase 사용
       // 인덱스 문제 해결을 위해 단순화된 쿼리 사용
       let q = query(collection(db, this.COLLECTION_NAME));
 
@@ -137,6 +175,26 @@ export class ReadingExperienceService {
    */
   static async getExperience(experienceId: string) {
     try {
+      // 개발 환경에서는 API 사용
+      if (this.isDevelopment()) {
+        const response = await fetch(`/api/reading-experiences/${experienceId}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || '게시글을 불러오는데 실패했습니다.');
+        }
+
+        // 날짜 문자열을 Date 객체로 변환
+        const experience = {
+          ...data.experience,
+          createdAt: new Date(data.experience.createdAt),
+          updatedAt: new Date(data.experience.updatedAt)
+        };
+
+        return { success: true, experience };
+      }
+
+      // 프로덕션에서는 Firebase 사용
       const docRef = doc(db, this.COLLECTION_NAME, experienceId);
       const docSnapshot = await getDoc(docRef);
       

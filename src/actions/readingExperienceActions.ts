@@ -20,7 +20,8 @@ import {
   Timestamp,
   DocumentSnapshot
 } from 'firebase/firestore';
-import { db, firestore, admin } from '@/lib/firebase/admin';
+// Firebase Admin SDK는 프로덕션에서만 사용
+// import { db, firestore, admin } from '@/lib/firebase/admin';
 import { 
   ReadingExperience, 
   ReadingExperienceFormData, 
@@ -40,8 +41,19 @@ export async function createReadingExperience(
     // 폼 데이터 검증
     const validatedData = ReadingExperienceFormSchema.parse(formData);
     
-    // 개발 환경에서는 파일 저장 시스템 사용
-    if (process.env.NODE_ENV === 'development') {
+    // 개발 환경 체크 - NEXT_PUBLIC_ENABLE_FILE_STORAGE 사용
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
+    
+    console.log('📝 리딩 경험 저장 시작', {
+      NODE_ENV: process.env.NODE_ENV,
+      ENABLE_FILE_STORAGE: process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE,
+      isDevelopment,
+      userId,
+      title: validatedData.title
+    });
+    
+    if (isDevelopment) {
+      console.log('📁 개발 환경 - 파일 시스템 사용');
       const { writeJSON, readJSON } = await import('@/services/file-storage-service');
       
       // 리딩 경험 데이터 생성
@@ -77,13 +89,22 @@ export async function createReadingExperience(
       // 파일에 저장
       await writeJSON(fileName, experiences);
       
-      console.log('✅ Reading experience saved to file storage');
+      console.log('✅ Reading experience saved to file storage', {
+        fileName,
+        totalExperiences: experiences.length,
+        newExperienceId: experienceData.id
+      });
       
       revalidatePath('/community/reading-share');
       return { success: true, id: experienceData.id };
     }
     
     // 프로덕션 환경에서는 Firebase 사용
+    console.log('🔥 프로덕션 환경 - Firebase 사용 시도');
+    
+    // Firebase Admin SDK 동적 import
+    const { db, firestore, admin } = await import('@/lib/firebase/admin');
+    
     // Firestore 인스턴스 확인
     if (!firestore || typeof firestore.collection !== 'function') {
       console.error('❌ Firestore 인스턴스가 올바르지 않습니다:', firestore);
@@ -147,6 +168,54 @@ export async function getReadingExperiences(
   filterTag?: string
 ) {
   try {
+    // 개발 환경 체크
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      // 개발 환경에서는 파일 시스템 사용
+      const { readJSON } = await import('@/services/file-storage-service');
+      const experiences = await readJSON<ReadingExperience[]>('reading-experiences.json') || [];
+      
+      // 필터링 및 정렬
+      let filteredExperiences = experiences.filter(exp => exp.isPublished);
+      
+      if (filterTag) {
+        filteredExperiences = filteredExperiences.filter(exp => 
+          exp.tags.includes(filterTag)
+        );
+      }
+      
+      // 정렬
+      switch (sortBy) {
+        case 'popular':
+          filteredExperiences.sort((a, b) => (b.views || 0) - (a.views || 0));
+          break;
+        case 'likes':
+          filteredExperiences.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+          break;
+        case 'comments':
+          filteredExperiences.sort((a, b) => (b.commentsCount || 0) - (a.commentsCount || 0));
+          break;
+        default: // latest
+          filteredExperiences.sort((a, b) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+      }
+      
+      // 페이지네이션
+      const paginatedExperiences = filteredExperiences.slice(0, pageSize);
+      
+      return {
+        success: true,
+        experiences: paginatedExperiences,
+        lastDoc: null,
+        hasMore: filteredExperiences.length > pageSize
+      };
+    }
+    
+    // 프로덕션 환경 - Firebase 사용
+    const { db } = await import('@/lib/firebase/admin');
+    
     // 인덱스 문제 해결을 위해 단순화된 쿼리 사용
     let q = query(collection(db, 'reading-experiences'));
 
@@ -247,6 +316,43 @@ export async function getReadingExperiences(
 // 특정 리딩 경험 조회
 export async function getReadingExperience(experienceId: string, userId?: string) {
   try {
+    // 개발 환경 체크
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      // 개발 환경에서는 파일 시스템 사용
+      const { readJSON } = await import('@/services/file-storage-service');
+      const experiences = await readJSON<ReadingExperience[]>('reading-experiences.json') || [];
+      
+      const experience = experiences.find(exp => exp.id === experienceId);
+      
+      if (!experience) {
+        return { success: false, error: '게시글을 찾을 수 없습니다.' };
+      }
+      
+      // 조회수 증가 (작성자 본인 제외)
+      if (userId && userId !== experience.authorId) {
+        experience.views = (experience.views || 0) + 1;
+        experience.updatedAt = new Date();
+        
+        // 파일에 다시 저장
+        const { writeJSON } = await import('@/services/file-storage-service');
+        await writeJSON('reading-experiences.json', experiences);
+      }
+      
+      return { 
+        success: true, 
+        experience: {
+          ...experience,
+          isLiked: false,
+          isBookmarked: false
+        }
+      };
+    }
+    
+    // 프로덕션 환경 - Firebase 사용
+    const { db } = await import('@/lib/firebase/admin');
+    
     const docRef = doc(db, 'reading-experiences', experienceId);
     const docSnapshot = await getDoc(docRef);
     
@@ -328,6 +434,32 @@ export async function getReadingExperience(experienceId: string, userId?: string
 // 좋아요 토글
 export async function toggleLike(experienceId: string, userId: string) {
   try {
+    // 개발 환경 체크
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      // 개발 환경에서는 파일 시스템 사용
+      const { readJSON, writeJSON } = await import('@/services/file-storage-service');
+      const experiences = await readJSON<ReadingExperience[]>('reading-experiences.json') || [];
+      
+      const experience = experiences.find(exp => exp.id === experienceId);
+      if (!experience) {
+        return { success: false, error: '게시글을 찾을 수 없습니다.' };
+      }
+      
+      // 간단한 좋아요 토글 구현
+      experience.likes = (experience.likes || 0) + 1;
+      experience.updatedAt = new Date();
+      
+      await writeJSON('reading-experiences.json', experiences);
+      
+      revalidatePath(`/community/reading-share/${experienceId}`);
+      return { success: true, isLiked: true };
+    }
+    
+    // 프로덕션 환경 - Firebase 사용
+    const { db } = await import('@/lib/firebase/admin');
+    
     const result = await runTransaction(db, async (transaction) => {
       const experienceRef = doc(db, 'reading-experiences', experienceId);
       const experienceDoc = await transaction.get(experienceRef);

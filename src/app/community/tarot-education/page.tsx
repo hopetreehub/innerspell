@@ -24,6 +24,8 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from 'sonner';
+import { createEducationInquiry } from '@/actions/educationInquiryActions';
+import type { EducationInquiryFormData } from '@/types';
 
 const faqs = [
   {
@@ -90,26 +92,36 @@ export default function TarotEducationPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // 실제로는 API 호출
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // 서버 액션 호출
+      const result = await createEducationInquiry(formData as EducationInquiryFormData);
 
-    setIsSubmitting(false);
-    setShowSuccess(true);
-    toast.success('교육 상담 신청이 완료되었습니다!');
+      if (result.success) {
+        setShowSuccess(true);
+        toast.success('교육 상담 신청이 완료되었습니다!');
 
-    // 폼 초기화
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      course: 'beginner',
-      experience: 'none',
-      purpose: '',
-      questions: ''
-    });
+        // 폼 초기화
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          course: 'beginner',
+          experience: 'none',
+          purpose: '',
+          questions: ''
+        });
 
-    // 3초 후 성공 메시지 숨기기
-    setTimeout(() => setShowSuccess(false), 3000);
+        // 3초 후 성공 메시지 숨기기
+        setTimeout(() => setShowSuccess(false), 3000);
+      } else {
+        toast.error(result.error || '신청 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('교육 상담 신청 오류:', error);
+      toast.error('신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
