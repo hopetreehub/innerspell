@@ -2047,29 +2047,26 @@ export async function getAdminPerformanceMetrics(): Promise<{
   const { getAdminPerformanceMetrics: getMetricsFromService } = await import('@/services/realtime-monitoring-service');
   const metrics = await getMetricsFromService();
   
-  // 추가 Mock 데이터 (상세 차트용)
+  // 실제 데이터 수집 전까지는 빈 데이터로 초기화
   const hourlyData = [];
   for (let hour = 0; hour < 24; hour++) {
     hourlyData.push({
       hour: hour.toString().padStart(2, '0') + ':00',
-      responseTime: 300 + Math.random() * 200 + Math.sin(hour / 4) * 50
+      responseTime: 0 // 초기값 0
     });
   }
   
+  // 엔드포인트 사용량 - 초기값 0
   const endpointData = [
-    { endpoint: '/api/tarot/reading', requests: 1250 },
-    { endpoint: '/api/dream/interpret', requests: 890 },
-    { endpoint: '/api/auth/login', requests: 650 },
-    { endpoint: '/api/tarot/yes-no', requests: 420 },
-    { endpoint: '/api/user/profile', requests: 380 }
+    { endpoint: '/api/tarot/reading', requests: 0 },
+    { endpoint: '/api/dream/interpret', requests: 0 },
+    { endpoint: '/api/auth/login', requests: 0 },
+    { endpoint: '/api/tarot/yes-no', requests: 0 },
+    { endpoint: '/api/user/profile', requests: 0 }
   ];
   
-  const errorData = [
-    { type: 'Network Timeout', count: 12, percentage: 45 },
-    { type: 'API Rate Limit', count: 8, percentage: 30 },
-    { type: 'Auth Error', count: 4, percentage: 15 },
-    { type: 'Server Error', count: 3, percentage: 10 }
-  ];
+  // 에러 타입 - 초기에는 에러 없음
+  const errorData: Array<{ type: string; count: number; percentage: number }> = [];
   
   return {
     averageResponseTime: metrics.averageResponseTime,
