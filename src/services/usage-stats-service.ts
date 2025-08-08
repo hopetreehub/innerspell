@@ -1,40 +1,18 @@
 import { UsageStats, UserActivity } from '@/types/admin';
 import * as fileService from './usage-stats-file';
 
-// Mock 데이터 (파일 저장소가 비활성화된 경우 사용)
+// 초기 데이터 (파일 저장소가 비활성화된 경우 사용)
 const mockStats: UsageStats = {
-  totalUsers: 1234,
-  activeUsers: 342,
-  newUsers: 87,
-  totalSessions: 5678,
-  totalReadings: 12345,
-  avgSessionDuration: 4.5,
+  totalUsers: 0,
+  activeUsers: 0,
+  newUsers: 0,
+  totalSessions: 0,
+  totalReadings: 0,
+  avgSessionDuration: 0,
   lastUpdated: new Date()
 };
 
-const mockActivities: UserActivity[] = [
-  {
-    id: '1',
-    userId: 'user1',
-    action: 'tarot_reading',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    details: { spreadType: '켈틱 크로스' }
-  },
-  {
-    id: '2',
-    userId: 'user2',
-    action: 'blog_view',
-    timestamp: new Date(Date.now() - 1000 * 60 * 10),
-    details: { postId: 'post1', postTitle: '타로 카드 기초 가이드' }
-  },
-  {
-    id: '3',
-    userId: 'user3',
-    action: 'session_start',
-    timestamp: new Date(Date.now() - 1000 * 60 * 15),
-    details: { source: 'web' }
-  }
-];
+const mockActivities: UserActivity[] = [];
 
 /**
  * 사용 통계 가져오기
