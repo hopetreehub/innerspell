@@ -34,8 +34,41 @@ export type GenerateDreamClarificationQuestionsOutput = z.infer<typeof GenerateD
 export async function generateDreamClarificationQuestions(
   input: GenerateDreamClarificationQuestionsInput
 ): Promise<GenerateDreamClarificationQuestionsOutput> {
-  const ai = await getAI();
-  return generateDreamClarificationQuestionsFlow(ai, input);
+  try {
+    const ai = await getAI();
+    if (!ai) {
+      console.error('[DREAM FLOW] Failed to initialize AI instance');
+      // 개발 모드 폴백 - 기본 질문 반환
+      return {
+        questions: [
+          {
+            question: "꿈에서 가장 인상 깊었던 감정은 무엇이었나요?",
+            options: ["행복감", "불안감", "호기심", "평온함"]
+          },
+          {
+            question: "꿈의 배경은 어디였나요?",
+            options: ["집", "자연", "도시", "알 수 없는 곳"]
+          }
+        ]
+      };
+    }
+    return generateDreamClarificationQuestionsFlow(ai, input);
+  } catch (error) {
+    console.error('[DREAM FLOW] Error in generateDreamClarificationQuestions:', error);
+    // 개발 모드 폴백 - 기본 질문 반환
+    return {
+      questions: [
+        {
+          question: "꿈에서 가장 인상 깊었던 감정은 무엇이었나요?",
+          options: ["행복감", "불안감", "호기심", "평온함"]
+        },
+        {
+          question: "꿈의 배경은 어디였나요?",
+          options: ["집", "자연", "도시", "알 수 없는 곳"]
+        }
+      ]
+    };
+  }
 }
 
 const DEFAULT_SAFETY_SETTINGS = [
@@ -92,8 +125,36 @@ async function generateDreamClarificationQuestionsFlow(ai: any, input: GenerateD
       } catch (e: any) {
         console.error('Error generating clarification questions:', e);
         
-        let userMessage = 'AI 질문 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
         const errorMessage = e.toString();
+        
+        // API 키 오류 처리 - 개발 모드에서는 폴백 질문 반환
+        if (errorMessage.includes('401') || errorMessage.includes('Incorrect API key')) {
+          console.log('[DREAM FLOW] API key error detected, returning fallback questions');
+          if (process.env.NODE_ENV === 'development') {
+            return {
+              questions: [
+                {
+                  question: "꿈에서 가장 기억에 남는 장면은 무엇이었나요?",
+                  options: ["시작 부분", "중간 부분", "결말 부분", "전체적인 분위기"]
+                },
+                {
+                  question: "꿈속에서 당신의 역할은 무엇이었나요?",
+                  options: ["주인공", "관찰자", "조력자", "기타"]
+                },
+                {
+                  question: "꿈의 전반적인 색감은 어땠나요?",
+                  options: ["밝고 화사함", "어둡고 침침함", "선명하고 강렬함", "흐릿하고 몽환적"]
+                }
+              ]
+            };
+          } else {
+            // 프로덕션에서는 API 키 오류 메시지
+            throw new Error("AI API 키가 올바르지 않습니다. 관리자에게 문의해주세요.");
+          }
+        }
+        
+        // 다른 오류들 처리
+        let userMessage = 'AI 질문 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
 
         if (errorMessage.includes('429')) {
           userMessage = 'Gemini API 사용량 한도를 초과했습니다. 잠시 후 다시 시도하거나, 관리자에게 문의하여 API 키를 확인해주세요. (오류 코드: 429)';

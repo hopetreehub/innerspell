@@ -29,6 +29,35 @@ async function getAIProviderKeys() {
   }
   
   try {
+    // 개발 모드에서 먼저 환경 변수 확인
+    const isDevelopmentMode = process.env.NODE_ENV === 'development';
+    const fileStorageEnabled = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true';
+    const useMockAuth = process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false';
+    
+    if (isDevelopmentMode && fileStorageEnabled && useMockAuth) {
+      console.log('[GENKIT] Development mode detected - using environment variables directly');
+      const envKeys = {
+        googleApiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY,
+        openaiApiKey: process.env.OPENAI_API_KEY,
+        anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+        grokApiKey: process.env.GROK_API_KEY,
+        openrouterApiKey: process.env.OPENROUTER_API_KEY,
+        huggingfaceApiKey: process.env.HUGGINGFACE_API_KEY,
+        timestamp: Date.now()
+      };
+      
+      console.log('[GENKIT] Development mode keys:', {
+        googleKeyLength: envKeys.googleApiKey?.length || 0,
+        openaiKeyLength: envKeys.openaiApiKey?.length || 0,
+        anthropicKeyLength: envKeys.anthropicApiKey?.length || 0
+      });
+      
+      if (envKeys.openaiApiKey || envKeys.googleApiKey) {
+        aiConfigCache = envKeys;
+        return envKeys;
+      }
+    }
+    
     console.log('[GENKIT] Fetching AI provider configs from Firestore...');
     const result = await getAllAIProviderConfigsForGenkit();
     console.log('[GENKIT] Fetch result:', { success: result.success, dataCount: result.data?.length || 0 });

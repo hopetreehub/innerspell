@@ -16,7 +16,7 @@ interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
 const aspectRatioClasses = {
   square: 'aspect-square',
   video: 'aspect-video',
-  portrait: 'aspect-[3/4]',
+  portrait: 'aspect-[512/819]', // 타로 카드 비율 (약 1:1.6)
   landscape: 'aspect-[4/3]'
 };
 

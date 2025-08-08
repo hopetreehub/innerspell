@@ -87,9 +87,10 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
 
     // Get active AI models to find a suitable default
     const activeModels = await getActiveAIModels();
-    // Prefer OpenAI models if available
+    // Prefer Gemini models if available
+    const geminiModel = activeModels.find(m => m.provider === 'gemini' || m.provider === 'googleai');
     const openaiModel = activeModels.find(m => m.provider === 'openai');
-    const defaultModel = openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL);
+    const defaultModel = geminiModel ? geminiModel.id : (openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL));
 
     if (!configDoc.exists) {
       return {
@@ -118,18 +119,19 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
     // Try to get active models as fallback
     try {
       const activeModels = await getActiveAIModels();
-      // Prefer OpenAI models if available
+      // Prefer Gemini models if available
+      const geminiModel = activeModels.find(m => m.provider === 'gemini' || m.provider === 'googleai');
       const openaiModel = activeModels.find(m => m.provider === 'openai');
-      const fallbackModel = openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL);
+      const fallbackModel = geminiModel ? geminiModel.id : (openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_TAROT_MODEL));
       return {
         model: fallbackModel,
         promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
         safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
       };
     } catch {
-      // Use OpenAI as absolute fallback
+      // Use Gemini as absolute fallback
       return {
-        model: 'openai/gpt-3.5-turbo',
+        model: 'googleai/gemini-1.5-pro-latest',
         promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
         safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
       };
@@ -237,37 +239,87 @@ This user has provided their Saju information for a more personalized reading.
 - Start your response directly with "### 💭 당신의 꿈, 그 의미는?". Do not use any other headers.
 [END GUEST MODE INSTRUCTIONS]
 {{else}}
-[INTERPRETATION METHOD & READABILITY GUIDELINES]
-1.  **Integrate Perspectives**: Synthesize Eastern philosophy, Western symbolism, and psychological analysis for a rich interpretation. If Saju info is provided, use it for a deeper layer of personalization.
-2.  **Structured Output**: Strictly follow the [OUTPUT FORMAT] below, using all specified Markdown headers.
-3.  **Enhance Readability**:
-    - **Short Paragraphs**: Write in short, focused paragraphs. Break down complex ideas into smaller, digestible chunks. AVOID long walls of text. Each section should be composed of 2-4 short paragraphs.
-    - **Bulleted Lists**: Use bullet points (e.g., \`-\` or \`*\`) for the '주요 상징 분석' and '현실적 조언 및 방향 제시' sections to make them easy to scan.
-    - **Clear Language**: Use clear and empathetic language.
+[INTERPRETATION METHOD & STORYTELLING GUIDELINES]
+1. **깊이 있는 통합적 해석**: 동양철학, 서양 상징학, 심리학적 분석을 하나의 이야기로 엮어내세요. 15년 경력의 꿈 분석 전문가처럼 따뜻하고 지혜로운 목소리로 이야기하세요.
 
-Based on all the provided information, generate a structured and in-depth dream interpretation following the guidelines and format below.
+2. **스토리텔링과 가독성의 균형**:
+   - 긴 내용을 담되, 적절한 문단 나누기로 읽기 쉽게 구성
+   - 중요한 통찰은 별도 줄로 강조
+   - 자연스러운 흐름을 위해 연결어 활용
+   - 시적이면서도 명확한 언어 사용
+
+3. **섹션별 작성 지침**:
+   - 각 섹션은 하나의 완결된 이야기처럼 작성
+   - 단순 나열이 아닌 서사적 흐름 유지
+   - 독자와 대화하듯 친밀한 어조 사용
+
+Based on all the provided information, create a rich, narrative-style dream interpretation following the enhanced format below.
 
 [OUTPUT FORMAT]
 ---
 ### 💭 **당신의 꿈 해몽**
 
-**[꿈의 요약 및 전반적 분석]**
-(사용자의 꿈 내용을 2~3개의 짧은 문단으로 요약하고, 전반적인 상징적·심리적 맥락을 제시합니다.)
+**[꿈의 여정 - 전체적인 이야기]**
 
-**[주요 상징 분석]**
-(꿈에 나타난 주요 상징물 각각에 대해 다각도로 분석합니다. 각 상징을 글머리 기호 \`-\`로 구분하여 작성하세요.)
-- **(상징 1 이름)**:
-    - **동양 철학적 의미:** 음양오행, 방향, 계절 등과 연결하여 간결하게 해석합니다.
-    - **서양 신화/타로적 의미:** 타로 카드, 신화, 연금술의 원형을 활용해 상징을 해석합니다.
-    - **심리학적 의미:** 융의 집단 무의식, 원형(그림자, 아니마/아니무스 등) 또는 프로이트의 욕망 이론을 바탕으로 분석합니다.
-- **(상징 2 이름)**:
-    - (위와 동일한 구조로 분석)
+이 꿈이 들려주는 이야기를 천천히 풀어보겠습니다. {{{dreamDescription}}}에서 시작된 당신의 꿈은...
 
-**[심리적/영적 통찰]**
-(현재 사용자의 무의식이 어떤 메시지를 보내고 있는지, 그리고 자아 통합, 내적 치유, 성장을 위한 가능성은 무엇인지 2~3개의 짧은 문단으로 설명합니다.)
+(첫 문단: 꿈의 전체적인 분위기와 흐름을 시적으로 묘사)
 
-**[현실적 조언 및 방향 제시]**
-(꿈이 암시하는 내용을 바탕으로, 사용자가 현실에서 취할 수 있는 2~3가지의 구체적인 행동 지침을 글머리 기호 \`-\`를 사용하여 제안합니다.)
+(둘째 문단: 꿈의 핵심 메시지를 은유적으로 풀어내기)
+
+(셋째 문단: 현재 삶의 상황과 꿈의 연결고리 제시)
+
+**[꿈속 상징들의 깊은 의미]**
+
+당신의 꿈에 나타난 상징들은 각각 특별한 메시지를 품고 있습니다.
+
+• **첫 번째 상징 - (상징 이름)**
+
+  동양의 지혜로 보면, 이 상징은... (음양오행, 계절, 방향 등과 연결하여 2-3문장으로 풀어내기)
+  
+  서양의 신화와 타로의 눈으로는... (신화적 원형, 타로 카드와 연결하여 2-3문장으로 설명)
+  
+  심리학적으로 들여다보면... (융/프로이트 이론을 삶의 이야기로 풀어내기)
+
+• **두 번째 상징 - (상징 이름)**
+
+  (위와 같은 방식으로 스토리텔링하되, 첫 번째 상징과의 연결성도 언급)
+
+**[마음의 소리 - 심리적/영적 통찰]**
+
+이 꿈을 통해 당신의 무의식이 전하고자 하는 깊은 메시지가 있습니다.
+
+(첫 번째 통찰: 현재 내면의 상태를 따뜻하게 짚어주기)
+
+당신의 영혼은 지금... (성장의 과정을 은유적으로 표현)
+
+(두 번째 통찰: 치유와 통합의 가능성을 희망적으로 제시)
+
+이는 마치... (일상적인 비유를 들어 쉽게 설명)
+
+(세 번째 통찰: 앞으로의 성장 방향을 시적으로 그려내기)
+
+**[삶으로의 초대 - 현실적 조언과 실천]**
+
+이제 이 꿈의 지혜를 당신의 일상으로 가져가는 방법을 안내해드리겠습니다.
+
+• **첫 번째 길 - (구체적인 실천 제목)**
+  
+  당신의 일상에서... (구체적인 상황을 그리며 3-4문장으로 실천 방법 제시)
+  
+  예를 들어... (실제 적용 예시를 스토리로 풀어내기)
+
+• **두 번째 길 - (구체적인 실천 제목)**
+  
+  또 다른 아름다운 실천은... (변화의 과정을 단계별로 그려내기)
+  
+  이를 통해 당신은... (기대되는 변화를 희망적으로 묘사)
+
+• **세 번째 길 - (구체적인 실천 제목)**
+  
+  마지막으로... (일상 속 작은 의식이나 습관을 제안)
+  
+  이 작은 실천이 가져올 변화는... (미래의 가능성을 그려내기)
 
 {{#if sajuInfo}}
 **[사주 연계 특별 분석]**
@@ -283,6 +335,33 @@ export interface DreamPromptConfig {
 }
 
 export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
+  // 개발 모드에서는 환경 변수 기반 설정 우선 사용
+  const isDevelopmentMode = process.env.NODE_ENV === 'development';
+  const fileStorageEnabled = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true';
+  const useMockAuth = process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false';
+  
+  if (isDevelopmentMode && fileStorageEnabled && useMockAuth) {
+    console.log('[PROMPT SERVICE] Development mode - using Gemini priority config');
+    // Gemini API를 우선으로 설정
+    if (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) {
+      return {
+        model: 'googleai/gemini-1.5-pro-latest',
+        promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
+      };
+    } else if (process.env.OPENAI_API_KEY) {
+      return {
+        model: 'openai/gpt-4',
+        promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
+      };
+    } else {
+      // 기본값 - Gemini 우선
+      return {
+        model: 'googleai/gemini-1.5-pro-latest',
+        promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
+      };
+    }
+  }
+
    try {
     const configDoc = await firestore.collection('aiConfiguration').doc('dreamPromptSettings').get();
 
@@ -309,17 +388,18 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
   // Try to get active models as fallback
   try {
     const activeModels = await getActiveAIModels();
-    // Prefer OpenAI models if available
+    // Prefer Gemini models if available
+    const geminiModel = activeModels.find(m => m.provider === 'gemini' || m.provider === 'googleai');
     const openaiModel = activeModels.find(m => m.provider === 'openai');
-    const fallbackModel = openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_DREAM_MODEL);
+    const fallbackModel = geminiModel ? geminiModel.id : (openaiModel ? openaiModel.id : (activeModels.length > 0 ? activeModels[0].id : DEFAULT_DREAM_MODEL));
     return {
       model: fallbackModel,
       promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
     };
   } catch {
-    // Use OpenAI as absolute fallback
+    // Use Gemini as absolute fallback
     return {
-      model: 'openai/gpt-3.5-turbo',
+      model: 'googleai/gemini-1.5-pro-latest',
       promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
     };
   }

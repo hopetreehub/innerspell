@@ -23,25 +23,31 @@ interface AIFeatureMappingsData {
   version: string;
 }
 
-// 기본 AI 공급자 설정
+// 기본 AI 공급자 설정 - 환경 변수에서 API 키 자동 로드 (Gemini 우선)
 const DEFAULT_PROVIDERS: Record<string, Omit<AIProviderConfig, 'id'>> = {
-  openai: {
-    provider: 'openai' as AIProvider,
-    apiKey: '', // 사용자가 설정해야 함
-    baseUrl: 'https://api.openai.com/v1',
-    isActive: true,
-    maxRequestsPerMinute: 60,
-    models: [],
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
   gemini: {
     provider: 'gemini' as AIProvider,
-    apiKey: '', // 사용자가 설정해야 함
+    apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '', // 환경 변수에서 자동 로드
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
     isActive: true,
     maxRequestsPerMinute: 60,
-    models: [],
+    models: [
+      { id: 'gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro', isActive: true },
+      { id: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash', isActive: true }
+    ],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  openai: {
+    provider: 'openai' as AIProvider,
+    apiKey: process.env.OPENAI_API_KEY || '', // 환경 변수에서 자동 로드
+    baseUrl: 'https://api.openai.com/v1',
+    isActive: true,
+    maxRequestsPerMinute: 60,
+    models: [
+      { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', isActive: true },
+      { id: 'gpt-4', name: 'GPT-4', isActive: true }
+    ],
     createdAt: new Date(),
     updatedAt: new Date()
   }
@@ -112,13 +118,19 @@ export async function getAIProviderConfig(
   try {
     const data = await readJSON<AIProvidersData>(AI_PROVIDERS_FILE);
     
+    // 항상 환경 변수의 API 키를 우선 사용
+    const envApiKey = provider === 'openai' 
+      ? process.env.OPENAI_API_KEY 
+      : (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY);
+    
     if (!data || !data.providers[provider]) {
       // 기본 설정 반환
       const defaultConfig = DEFAULT_PROVIDERS[provider];
       if (defaultConfig) {
         return {
           ...defaultConfig,
-          id: provider
+          id: provider,
+          apiKey: envApiKey || defaultConfig.apiKey // 환경 변수 우선
         };
       }
       return null;
@@ -126,10 +138,10 @@ export async function getAIProviderConfig(
     
     const config = data.providers[provider];
     
-    // API 키 복호화
+    // API 키 복호화 - 환경 변수가 있으면 우선 사용
     return {
       ...config,
-      apiKey: config.apiKey ? decrypt(config.apiKey) : ''
+      apiKey: envApiKey || (config.apiKey ? decrypt(config.apiKey) : '')
     };
   } catch (error) {
     console.error('[AI Provider Service] Get config error:', error);
@@ -141,11 +153,21 @@ export async function getAllAIProviderConfigs(): Promise<AIProviderConfig[]> {
   try {
     const data = await readJSON<AIProvidersData>(AI_PROVIDERS_FILE);
     
+    // 환경 변수에서 API 키 가져오기
+    const envKeys = {
+      openai: process.env.OPENAI_API_KEY || '',
+      gemini: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || ''
+    };
+    
     if (!data || !data.providers) {
-      // 기본 설정으로 초기화
+      // 기본 설정으로 초기화 - 환경 변수 적용
       const initialData: AIProvidersData = {
         providers: Object.entries(DEFAULT_PROVIDERS).reduce((acc, [key, value]) => {
-          acc[key] = { ...value, id: key };
+          acc[key] = { 
+            ...value, 
+            id: key,
+            apiKey: envKeys[key as keyof typeof envKeys] || value.apiKey
+          };
           return acc;
         }, {} as Record<string, AIProviderConfig>),
         lastUpdated: new Date().toISOString(),
@@ -156,10 +178,10 @@ export async function getAllAIProviderConfigs(): Promise<AIProviderConfig[]> {
       return Object.values(initialData.providers);
     }
     
-    // API 키 복호화하여 반환
+    // API 키 복호화하여 반환 - 환경 변수 우선
     return Object.values(data.providers).map(config => ({
       ...config,
-      apiKey: config.apiKey ? decrypt(config.apiKey) : ''
+      apiKey: envKeys[config.provider as keyof typeof envKeys] || (config.apiKey ? decrypt(config.apiKey) : '')
     }));
   } catch (error) {
     console.error('[AI Provider Service] Get all configs error:', error);
