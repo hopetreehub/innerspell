@@ -31,13 +31,33 @@ export function BlogList({ initialPosts }: BlogListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [showSearch, setShowSearch] = useState(false);
   const [quickSearchQuery, setQuickSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   
   // posts가 undefined이거나 배열이 아닌 경우 안전하게 처리
   const safePosts = Array.isArray(posts) ? posts : [];
-  const totalPages = Math.ceil(safePosts.length / POSTS_PER_PAGE);
+  
+  // 카테고리별 필터링
+  const filteredPosts = selectedCategory === 'all' 
+    ? safePosts 
+    : selectedCategory === '타로'
+    ? safePosts.filter(post => post.category === '타로' || post.category === 'tarot')
+    : safePosts.filter(post => post.category === selectedCategory);
+  
+  // 카테고리별 포스트 수 계산
+  const categoryCounts = safePosts.reduce((acc, post) => {
+    acc[post.category] = (acc[post.category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  // 실제 카테고리 확인 (개발용)
+  const uniqueCategories = [...new Set(safePosts.map(post => post.category))];
+  console.log('실제 카테고리들:', uniqueCategories);
+  console.log('카테고리별 수:', categoryCounts);
+  
+  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
-  const currentPosts = safePosts.slice(startIndex, endIndex);
+  const currentPosts = filteredPosts.slice(startIndex, endIndex);
 
   const handleQuickSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,8 +66,8 @@ export function BlogList({ initialPosts }: BlogListProps) {
     }
   };
 
-  const featuredPost = safePosts.find(post => post.featured);
-  const popularPosts = safePosts
+  const featuredPost = filteredPosts.find(post => post.featured);
+  const popularPosts = filteredPosts
     .filter(post => !post.featured) // featured 포스트 제외
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3);
@@ -170,9 +190,89 @@ export function BlogList({ initialPosts }: BlogListProps) {
           </div>
         </div>
 
+        {/* 카테고리 필터 */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          <Button
+            variant={selectedCategory === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setSelectedCategory('all');
+              setCurrentPage(1);
+            }}
+          >
+            전체 ({safePosts.length})
+          </Button>
+          <Button
+            variant={selectedCategory === '타로' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setSelectedCategory('타로');
+              setCurrentPage(1);
+            }}
+          >
+            타로 ({(categoryCounts['타로'] || 0) + (categoryCounts['tarot'] || 0)})
+          </Button>
+          <Button
+            variant={selectedCategory === '영성' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setSelectedCategory('영성');
+              setCurrentPage(1);
+            }}
+          >
+            영성 ({categoryCounts['영성'] || 0})
+          </Button>
+          <Button
+            variant={selectedCategory === '꿈해몽' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setSelectedCategory('꿈해몽');
+              setCurrentPage(1);
+            }}
+          >
+            꿈해몽 ({categoryCounts['꿈해몽'] || 0})
+          </Button>
+          <Button
+            variant={selectedCategory === '라이프스타일' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setSelectedCategory('라이프스타일');
+              setCurrentPage(1);
+            }}
+          >
+            라이프스타일 ({categoryCounts['라이프스타일'] || 0})
+          </Button>
+          <Button
+            variant={selectedCategory === '명상' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setSelectedCategory('명상');
+              setCurrentPage(1);
+            }}
+          >
+            명상 ({categoryCounts['명상'] || 0})
+          </Button>
+          <Button
+            variant={selectedCategory === 'general' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setSelectedCategory('general');
+              setCurrentPage(1);
+            }}
+          >
+            일반 ({categoryCounts['general'] || 0})
+          </Button>
+        </div>
+
         {showSearch ? (
           <div className="mb-8">
-            <BlogSearch onClose={() => setShowSearch(false)} />
+            <BlogSearch 
+              onClose={() => {
+                setShowSearch(false);
+                setQuickSearchQuery('');
+              }}
+              initialQuery={quickSearchQuery}
+            />
           </div>
         ) : (
           <div className="grid lg:grid-cols-4 gap-8">

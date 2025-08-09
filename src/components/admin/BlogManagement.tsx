@@ -22,11 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Edit, Trash2, Eye, Save, Loader2, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Save, Loader2, X, RefreshCcw, Upload, Image } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { getBlogPosts } from '@/actions/blogActions';
+// getBlogPosts API route 사용으로 변경
 import type { BlogPost, BlogPostFormData } from '@/types';
 
 const initialFormData: BlogPostFormData = {
@@ -48,13 +48,21 @@ export function BlogManagement() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formData, setFormData] = useState<BlogPostFormData>(initialFormData);
   const [saving, setSaving] = useState(false);
+  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
 
-  // 포스트 목록 로드
+  // 포스트 목록 로드 - API route 사용
   const loadPosts = async () => {
     try {
-      const result = await getBlogPosts();
+      const response = await fetch('/api/blog/posts');
+      const result = await response.json();
+      
       if (result.success && result.posts) {
         setPosts(result.posts);
+      } else {
+        console.error('포스트 로드 실패:', result.error);
+        toast.error('포스트를 불러오는데 실패했습니다.');
       }
     } catch (error) {
       console.error('포스트 로드 오류:', error);
@@ -77,14 +85,90 @@ export function BlogManagement() {
     }));
   };
 
-  // 폼 제출 - API 라우트 사용
+  // 이미지 업로드 핸들러
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 파일 크기 체크 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('이미지 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+
+    // 파일 타입 체크
+    if (!file.type.startsWith('image/')) {
+      toast.error('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    setUploading(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/blog/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setFormData(prev => ({ ...prev, featuredImage: result.url }));
+        setImagePreview(result.url);
+        toast.success('이미지가 업로드되었습니다.');
+      } else {
+        toast.error(result.error || '이미지 업로드에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('이미지 업로드 오류:', error);
+      toast.error('이미지 업로드 중 오류가 발생했습니다.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // 편집할 포스트 설정
+  const handleEdit = (post: BlogPost) => {
+    setEditingPost(post);
+    setFormData({
+      title: post.title,
+      slug: post.slug,
+      content: post.content,
+      excerpt: post.excerpt || '',
+      categories: post.categories || [],
+      tags: post.tags || [],
+      status: post.status,
+      seoTitle: post.seoTitle || '',
+      seoDescription: post.seoDescription || '',
+      featuredImage: post.featuredImage || '',
+    });
+    setImagePreview(post.featuredImage || post.image || '');
+    setIsFormOpen(true);
+  };
+
+  // 편집 취소
+  const handleCancelEdit = () => {
+    setEditingPost(null);
+    setIsFormOpen(false);
+    setFormData(initialFormData);
+    setImagePreview('');
+  };
+
+  // 폼 제출 - API 라우트 사용 (생성/수정)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
-      const response = await fetch('/api/blog/posts', {
-        method: 'POST',
+      const isEditing = !!editingPost;
+      const url = isEditing ? `/api/blog/posts/${editingPost.id}` : '/api/blog/posts';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -94,16 +178,15 @@ export function BlogManagement() {
       const result = await response.json();
       
       if (result.success) {
-        toast.success('블로그 포스트가 생성되었습니다!');
-        setIsFormOpen(false);
-        setFormData(initialFormData);
+        toast.success(isEditing ? '블로그 포스트가 수정되었습니다!' : '블로그 포스트가 생성되었습니다!');
+        handleCancelEdit();
         loadPosts();
       } else {
-        toast.error(result.error || '포스트 생성에 실패했습니다.');
+        toast.error(result.error || (isEditing ? '포스트 수정에 실패했습니다.' : '포스트 생성에 실패했습니다.'));
       }
     } catch (error) {
       toast.error('오류가 발생했습니다.');
-      console.error('Blog post creation error:', error);
+      console.error('Blog post operation error:', error);
     } finally {
       setSaving(false);
     }
@@ -222,14 +305,11 @@ export function BlogManagement() {
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>새 블로그 포스트 작성</CardTitle>
+              <CardTitle>{editingPost ? '블로그 포스트 수정' : '새 블로그 포스트 작성'}</CardTitle>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => {
-                  setIsFormOpen(false);
-                  setFormData(initialFormData);
-                }}
+                onClick={handleCancelEdit}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -328,14 +408,67 @@ export function BlogManagement() {
                 />
               </div>
 
+              {/* 이미지 업로드 섹션 */}
+              <div className="space-y-2">
+                <Label htmlFor="image">대표 이미지</Label>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Input
+                        id="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploading}
+                        className="cursor-pointer"
+                      />
+                      {uploading && (
+                        <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      최대 5MB, JPG/PNG/GIF/WEBP 형식
+                    </p>
+                  </div>
+                  
+                  {/* 이미지 미리보기 */}
+                  {imagePreview && (
+                    <div className="w-32 h-32 relative group">
+                      <img
+                        src={imagePreview}
+                        alt="대표 이미지 미리보기"
+                        className="w-full h-full object-cover rounded-lg border"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => {
+                          setFormData(prev => ({ ...prev, featuredImage: '' }));
+                          setImagePreview('');
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {!imagePreview && (
+                    <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                      <Image className="h-8 w-8 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div className="flex justify-end gap-2 pt-4">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => {
-                    setIsFormOpen(false);
-                    setFormData(initialFormData);
-                  }}
+                  onClick={handleCancelEdit}
                 >
                   취소
                 </Button>
@@ -417,14 +550,24 @@ export function BlogManagement() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleStatusToggle(post.id, post.status)}
+                          onClick={() => handleEdit(post)}
+                          title="포스트 수정"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
+                          onClick={() => handleStatusToggle(post.id, post.status)}
+                          title="상태 변경"
+                        >
+                          <RefreshCcw className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => handleDelete(post.id)}
+                          title="포스트 삭제"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

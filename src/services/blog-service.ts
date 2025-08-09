@@ -66,38 +66,28 @@ export async function getAllPosts(
   lastDoc?: QueryDocumentSnapshot<DocumentData>
 ): Promise<{ posts: BlogPost[]; lastDoc?: QueryDocumentSnapshot<DocumentData> }> {
   try {
-    // 개발 환경에서는 파일 시스템 직접 사용
+    // 개발 환경에서는 API 라우트 사용
     if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
-      const { readJSON } = await import('@/services/file-storage-service');
-      const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
+      const params = new URLSearchParams();
+      if (onlyPublished) params.append('published', 'true');
+      if (categoryFilter) params.append('category', categoryFilter);
       
-      // 필터링
-      let filteredPosts = Array.isArray(posts) ? posts : [];
+      // 서버 컴포넌트에서는 절대 URL 필요
+      const baseUrl = typeof window === 'undefined'
+        ? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:4000')
+        : '';
+      const url = `${baseUrl}/api/blog/posts?${params.toString()}`;
       
-      if (onlyPublished) {
-        filteredPosts = filteredPosts.filter(post => post.status === 'published');
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts');
       }
       
-      if (categoryFilter && categoryFilter !== 'all') {
-        filteredPosts = filteredPosts.filter(post => 
-          post.category === categoryFilter || 
-          (Array.isArray(post.categories) && post.categories.includes(categoryFilter))
-        );
-      }
+      const data = await response.json();
+      const posts = data.posts || [];
       
-      // 최신순 정렬
-      filteredPosts.sort((a, b) => 
-        new Date(b.createdAt || b.publishedAt || 0).getTime() - 
-        new Date(a.createdAt || a.publishedAt || 0).getTime()
-      );
-      
-      // author 필드 정규화
-      const normalizedPosts = filteredPosts.map(post => ({
-        ...post,
-        author: typeof post.author === 'object' ? post.author.name : post.author
-      }));
-      
-      return { posts: normalizedPosts };
+      // API가 이미 필터링과 정규화를 처리함
+      return { posts };
     }
     
     if (!db) {
@@ -283,11 +273,8 @@ export async function searchPosts(searchTerm: string): Promise<BlogPost[]> {
       params.append('search', searchTerm);
       params.append('published', 'true');
       
-      // 서버사이드에서는 절대 URL 사용
-      const baseUrl = process.env.VERCEL_URL 
-        ? `https://${process.env.VERCEL_URL}` 
-        : 'http://localhost:4000';
-      const url = `${baseUrl}/api/blog/posts?${params.toString()}`;
+      // 클라이언트 사이드에서는 상대 경로 사용
+      const url = `/api/blog/posts?${params.toString()}`;
       
       const response = await fetch(url);
       if (!response.ok) {

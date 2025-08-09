@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
     const webPath = `/uploads/blog/${fileName}`;
     
     return NextResponse.json({
+      success: true,
       url: webPath,
       fileName: fileName,
       size: file.size,

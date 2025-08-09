@@ -10,16 +10,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { searchPosts } from '@/services/blog-service';
+import { searchPosts } from '@/services/blog-client';
 import { BlogPost } from '@/types/blog';
 import { useToast } from '@/hooks/use-toast';
 
 interface BlogSearchProps {
   onClose?: () => void;
+  initialQuery?: string;
 }
 
-export function BlogSearch({ onClose }: BlogSearchProps) {
-  const [query, setQuery] = useState('');
+export function BlogSearch({ onClose, initialQuery = '' }: BlogSearchProps) {
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<BlogPost[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);

@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
     const published = searchParams.get('published') === 'true';
     const status = searchParams.get('status');
     const category = searchParams.get('category');
+    const search = searchParams.get('search');
     
     // 필터링
     let filteredPosts = Array.isArray(posts) ? posts : [];
@@ -38,6 +39,29 @@ export async function GET(request: NextRequest) {
         post.category === category || 
         (Array.isArray(post.categories) && post.categories.includes(category))
       );
+    }
+    
+    // 검색 기능
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredPosts = filteredPosts.filter(post => {
+        // 제목에서 검색
+        if (post.title.toLowerCase().includes(searchLower)) return true;
+        
+        // 내용에서 검색
+        if (post.content.toLowerCase().includes(searchLower)) return true;
+        
+        // 요약에서 검색
+        if (post.excerpt && post.excerpt.toLowerCase().includes(searchLower)) return true;
+        
+        // 태그에서 검색
+        if (post.tags && post.tags.some(tag => tag.toLowerCase().includes(searchLower))) return true;
+        
+        // 카테고리에서 검색
+        if (post.category && post.category.toLowerCase().includes(searchLower)) return true;
+        
+        return false;
+      });
     }
     
     // 최신순 정렬

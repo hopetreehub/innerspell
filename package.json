@@ -56,6 +56,7 @@
     "firebase": "^11.9.1",
     "firebase-admin": "^12.3.0",
     "firebase-tools": "^14.11.1",
+    "form-data": "^4.0.4",
     "framer-motion": "^12.18.1",
     "genkit": "^1.8.0",
     "genkitx-anthropic": "^0.23.1",

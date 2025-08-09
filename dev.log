@@ -1,6 +1,6 @@
 
 > nextn@1.0.0 dev
-> next dev --hostname 0.0.0.0 --port 4000 -p 4000
+> next dev --hostname 0.0.0.0 --port 4000
 
    ▲ Next.js 15.3.3
    - Local:        http://localhost:4000
@@ -19,78 +19,8 @@
 ✅ Server instrumentation completed
  ⚠ Duplicate page detected. src/app/robots.ts and src/app/robots.txt/route.ts resolve to /robots.txt
  ⚠ Duplicate page detected. src/app/sitemap.ts and src/app/sitemap.xml/route.ts resolve to /sitemap.xml
- ✓ Ready in 20.1s
- ✓ Compiled /middleware in 290ms (160 modules)
- ○ Compiling /api/blog/posts ...
- ✓ Compiled /api/blog/posts in 1474ms (428 modules)
-🔧 Development mode detected - using mock Firebase Admin
-🔥 Firebase Admin SDK initialized successfully
-📁 File storage service loaded. Enabled: true
-🚀 API Route 시작 - 파일 저장소 모드 확인 중...
-📅 API 호출 시간: 2025-08-09T03:21:06.969Z
-🔍 쿼리 파라미터: { category: null, search: null, featured: null, onlyPublished: true }
-📁 Using file storage for blog posts
-📁 isFileStorageEnabled: true
-📊 getFilteredPosts called with options: { published: true, category: undefined, limit: 20 }
-📁 Reading blog posts file...
-✅ File storage service initialized
-📄 Raw data type: object
-📄 Raw data is array? true
-📚 Loaded 13 posts from file (array format)
-📚 getAllPostsFromFile returned 13 posts
-📝 After published filter: 13 posts
-📁 File service returned 13 posts
-📊 서비스에서 가져온 포스트 수: 13
-✅ 최종 반환: 13개 포스트
-🎯 첫 3개 제목: [ '이미지 테스트 포스트', '타로카드 기초 가이드 2025', '명상 입문 가이드' ]
-📤 API 응답 전송 완료
- GET /api/blog/posts 200 in 10159ms
- ○ Compiling /blog ...
- ✓ Compiled /blog in 16.6s (2744 modules)
-🚀 Blog 페이지 서버 렌더링
-📊 서버에서 직접 데이터를 가져옵니다
-🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
-🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
- ✓ Compiled in 3.4s (1098 modules)
- ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
-📁 File storage service loaded. Enabled: true
-🚀 API Route 시작 - 파일 저장소 모드 확인 중...
-📅 API 호출 시간: 2025-08-09T03:21:48.679Z
-🔍 쿼리 파라미터: { category: null, search: null, featured: null, onlyPublished: true }
-📁 Using file storage for blog posts
-📁 isFileStorageEnabled: true
-📊 getFilteredPosts called with options: { published: true, category: undefined, limit: 20 }
-📁 Reading blog posts file...
-✅ File storage service initialized
-📄 Raw data type: object
-📄 Raw data is array? true
-📚 Loaded 13 posts from file (array format)
-📚 getAllPostsFromFile returned 13 posts
-📝 After published filter: 13 posts
-📁 File service returned 13 posts
-📊 서비스에서 가져온 포스트 수: 13
-✅ 최종 반환: 13개 포스트
-🎯 첫 3개 제목: [ '이미지 테스트 포스트', '타로카드 기초 가이드 2025', '명상 입문 가이드' ]
-📤 API 응답 전송 완료
- GET /api/blog/posts?published=true 200 in 696ms
-✅ 총 13개의 발행된 포스트 로드
- GET /blog 200 in 20652ms
- ○ Compiling /favicon.ico ...
- ✓ Compiled /favicon.ico in 1403ms (1648 modules)
- GET /favicon.ico 200 in 2254ms
+ ✓ Ready in 23.3s
+ ✓ Compiled /middleware in 379ms (160 modules)
  ○ Compiling /admin ...
  ⚠ ./node_modules/handlebars/lib/index.js
 require.extensions is not supported by webpack. Use a loader instead.
@@ -142,109 +72,277 @@ Import trace for requested module:
   user: 'dev-admin@innerspell.com (admin)'
 }
 🔍 UserNav: Showing skeleton (mounted: false loading: false )
- GET /admin 200 in 29964ms
- GET /favicon.ico 200 in 277ms
-🚀 Blog 페이지 서버 렌더링
-📊 서버에서 직접 데이터를 가져옵니다
-🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
-🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
+ GET /admin?tab=blog-management 200 in 37337ms
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+ ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+ GET /favicon.ico 200 in 7640ms
 📁 File storage service loaded. Enabled: true
-🚀 API Route 시작 - 파일 저장소 모드 확인 중...
-📅 API 호출 시간: 2025-08-09T03:24:00.816Z
-🔍 쿼리 파라미터: { category: null, search: null, featured: null, onlyPublished: true }
-📁 Using file storage for blog posts
-📁 isFileStorageEnabled: true
-📊 getFilteredPosts called with options: { published: true, category: undefined, limit: 20 }
-📁 Reading blog posts file...
-✅ File storage service initialized
-📄 Raw data type: object
-📄 Raw data is array? true
-📚 Loaded 13 posts from file (array format)
-📚 getAllPostsFromFile returned 13 posts
-📝 After published filter: 13 posts
-📁 File service returned 13 posts
-📊 서비스에서 가져온 포스트 수: 13
-✅ 최종 반환: 13개 포스트
-🎯 첫 3개 제목: [ '이미지 테스트 포스트', '타로카드 기초 가이드 2025', '명상 입문 가이드' ]
-📤 API 응답 전송 완료
- GET /api/blog/posts?published=true 200 in 289ms
-✅ 총 13개의 발행된 포스트 로드
- GET /blog 200 in 1026ms
- GET /favicon.ico 200 in 235ms
-🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
-🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
- GET /admin 200 in 378ms
- GET /favicon.ico 200 in 220ms
+ GET /api/blog/posts 200 in 7489ms
+🔧 Development mode detected - using mock Firebase Admin
+🔥 Firebase Admin SDK initialized successfully
 📁 File storage service loaded. Enabled: true
 [tarotGuidelineActions] Fetching all tarot guidelines...
 [tarotGuidelineActions] Development mode: using local data only
- POST /admin 200 in 10868ms
- POST /admin 200 in 240ms
- POST /admin 200 in 251ms
-🚀 Blog 페이지 서버 렌더링
-📊 서버에서 직접 데이터를 가져옵니다
-🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
-🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
-🚀 API Route 시작 - 파일 저장소 모드 확인 중...
-📅 API 호출 시간: 2025-08-09T03:25:51.828Z
-🔍 쿼리 파라미터: { category: null, search: null, featured: null, onlyPublished: true }
-📁 Using file storage for blog posts
-📁 isFileStorageEnabled: true
-📊 getFilteredPosts called with options: { published: true, category: undefined, limit: 20 }
-📁 Reading blog posts file...
-📄 Raw data type: object
-📄 Raw data is array? true
-📚 Loaded 13 posts from file (array format)
-📚 getAllPostsFromFile returned 13 posts
-📝 After published filter: 13 posts
-📁 File service returned 13 posts
-📊 서비스에서 가져온 포스트 수: 13
-✅ 최종 반환: 13개 포스트
-🎯 첫 3개 제목: [ '이미지 테스트 포스트', '타로카드 기초 가이드 2025', '명상 입문 가이드' ]
-📤 API 응답 전송 완료
- GET /api/blog/posts?published=true 200 in 252ms
-✅ 총 13개의 발행된 포스트 로드
- GET /blog 200 in 729ms
- GET /favicon.ico 200 in 173ms
+ POST /admin?tab=blog-management 200 in 25252ms
+🎯 Development mode: Skipping CSRF check for /api/blog/upload
+[Error: aborted] { code: 'ECONNRESET' }
+ ⨯ uncaughtException: [Error: aborted] { code: 'ECONNRESET' }
+ ⨯ uncaughtException:  [Error: aborted] { code: 'ECONNRESET' }
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+🎯 Development mode: Skipping CSRF check for /api/blog/upload
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+Upload error: TypeError: Failed to parse body as FormData.
+    at async POST (src/app/api/blog/upload/route.ts:8:21)
+   6 | export async function POST(request: NextRequest) {
+   7 |   try {
+>  8 |     const formData = await request.formData();
+     |                     ^
+   9 |     const file = formData.get('file') as File;
+  10 |     
+  11 |     if (!file) {
+ POST /api/blog/upload 500 in 3035ms
  ⚠ ./node_modules/handlebars/lib/index.js
 require.extensions is not supported by webpack. Use a loader instead.
 
@@ -330,46 +428,303 @@ Import trace for requested module:
   user: 'dev-admin@innerspell.com (admin)'
 }
 🔍 UserNav: Showing skeleton (mounted: false loading: false )
- GET / 200 in 5102ms
- GET /favicon.ico 200 in 259ms
-🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
-🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
-🔍 RootLayoutClient state: { authLoading: false, isMounted: false }
-🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
-🔍 UserNav state: {
-  mounted: false,
-  loading: false,
-  user: 'dev-admin@innerspell.com (admin)'
-}
-🔍 UserNav: Showing skeleton (mounted: false loading: false )
- GET /admin 200 in 412ms
- GET /favicon.ico 200 in 297ms
-📁 File storage service loaded. Enabled: true
-[tarotGuidelineActions] Fetching all tarot guidelines...
-[tarotGuidelineActions] Development mode: using local data only
- POST /admin 200 in 946ms
-[tarotGuidelineActions] Fetching all tarot guidelines...
-[tarotGuidelineActions] Development mode: using local data only
- POST /admin 200 in 222ms
- POST /admin 200 in 218ms
- POST /admin 200 in 204ms
+ GET /reading 200 in 7586ms
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/configure-ai-prompt-settings.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ GET /favicon.ico 200 in 1721ms
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ GET /tarot 200 in 7642ms
+ GET /tarot 200 in 216ms
+ GET /tarot 200 in 217ms
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ GET /tarot/major-01-magician 200 in 14590ms
+ GET /tarot/major-21-world 200 in 305ms
+ ⚠ ./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+
+./node_modules/handlebars/lib/index.js
+require.extensions is not supported by webpack. Use a loader instead.
+
+Import trace for requested module:
+./node_modules/handlebars/lib/index.js
+./node_modules/dotprompt/dist/index.js
+./node_modules/@genkit-ai/core/lib/registry.js
+./node_modules/genkit/lib/registry.js
+./node_modules/genkit/lib/genkit.js
+./node_modules/genkit/lib/index.mjs
+./src/ai/flows/generate-tarot-interpretation.ts
+ ⨯ ./src/services/file-storage-service.ts:1:1
+Module not found: Can't resolve 'fs'
+> 1 | import { promises as fs } from 'fs';
+    | ^
+  2 | import path from 'path';
+  3 |
+  4 | // 환경 변수 로드 (서버 사이드에서만)
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/services/blog-service.ts
+./src/components/blog/BlogSearch.tsx
+./src/components/blog/BlogList.tsx
+ GET /blog 500 in 9374ms
+ GET /tarot/major-21-world 200 in 531ms
+ ⨯ ./src/services/file-storage-service.ts:1:1
+Module not found: Can't resolve 'fs'
+> 1 | import { promises as fs } from 'fs';
+    | ^
+  2 | import path from 'path';
+  3 |
+  4 | // 환경 변수 로드 (서버 사이드에서만)
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/services/blog-service.ts
+./src/components/blog/BlogSearch.tsx
+./src/components/blog/BlogList.tsx
+Time 5.632833
+Time 2.497641
+Time 2.193791
+ GET /tarot/major-21-world 500 in 23682ms
+Time 0.625932
+ GET /blog 500 in 20925ms
+ GET /favicon.ico 500 in 317ms
+Time 0.48808
+ GET /favicon.ico 500 in 327ms
+ GET /tarot/major-01-magician 500 in 420ms
+Time 2.858911
+ GET /blog 500 in 269ms
+ GET /favicon.ico 500 in 240ms
+Time 0.690366
+ GET /blog 500 in 260ms
+ GET /favicon.ico 500 in 229ms
+Shutting down all Genkit servers...
+[?25h
