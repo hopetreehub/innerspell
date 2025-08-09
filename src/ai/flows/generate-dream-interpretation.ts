@@ -42,20 +42,14 @@ const DEFAULT_SAFETY_SETTINGS = [
 ];
 
 export async function generateDreamInterpretation(input: GenerateDreamInterpretationInput): Promise<GenerateDreamInterpretationOutput> {
-  return generateDreamInterpretationFlow(input);
-}
-
-const generateDreamInterpretationFlow = async (flowInput: GenerateDreamInterpretationInput): Promise<GenerateDreamInterpretationOutput> => {
   const ai = await getAI();
   
-  return ai.defineFlow(
-    {
-      name: 'generateDreamInterpretationFlow',
-      inputSchema: GenerateDreamInterpretationInputSchema,
-      outputSchema: GenerateDreamInterpretationOutputSchema,
-    },
-    async (input: GenerateDreamInterpretationInput) => {
-    try {
+  if (!ai) {
+    console.error('[DREAM INTERPRETATION] Failed to initialize AI instance');
+    return { interpretation: 'AI 해석을 생성하는 데 문제가 발생했습니다. AI 인스턴스를 초기화할 수 없습니다.' };
+  }
+  
+  try {
       // Fetch dynamic prompt template and model from the centralized service
       const { promptTemplate, model } = await getDreamPromptConfig();
       const providerConfig = getProviderConfig(model);
@@ -75,7 +69,10 @@ const generateDreamInterpretationFlow = async (flowInput: GenerateDreamInterpret
         };
       }
 
-      const dreamPrompt = await ai.definePrompt(promptConfig);
+      const dreamPrompt = await ai.definePrompt({
+        ...promptConfig,
+        name: `dreamInterpretationPrompt_${Date.now()}`, // 유니크한 이름 사용
+      });
 
       const llmResponse = await dreamPrompt(input);
       const interpretationText = llmResponse.text;
@@ -136,6 +133,4 @@ ${input.dreamDescription}에서 나타나는 상징들을 살펴보면, 이 꿈�
       }
       return { interpretation: userMessage };
     }
-    }
-  )(flowInput);
-};
+}

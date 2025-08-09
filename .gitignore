@@ -75,3 +75,21 @@ playwright-report/
 data/*.json
 data/backups/
 !data/*.sample.json
+
+# 클로드 작업 파일들 추가
+*.png
+playwright-*.js
+check-my-reading.js
+create-blog-posts*.js
+*WORK_ORDER.md
+FINAL_STATUS_REPORT.md
+status-report.md
+responsive-*.png
+admin-*.png
+signup-*.png
+blog-*.png
+community-*.png
+tarot-*.png
+homepage-*.png
+login-*.png
+my-reading-*.png
