@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/pagination";
 import { BlogSearch } from './BlogSearch';
 
-const POSTS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 3;
 
 interface BlogListProps {
   initialPosts: BlogPost[];
@@ -285,16 +285,17 @@ export function BlogList({ initialPosts }: BlogListProps) {
                 <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="aspect-video bg-gradient-to-r from-primary/5 to-accent/5 overflow-hidden">
                     <Image
-                      src={post.image}
+                      src={post.featuredImage || post.image}
                       alt={post.title}
                       width={400}
                       height={225}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
+                        target.src = '/images/blog1.png'; // 실패 시 기본 이미지로 대체
                       }}
                       priority={false}
+                      loading="lazy"
                     />
                   </div>
                   <CardHeader>
@@ -403,6 +404,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
                                 const target = e.target as HTMLImageElement;
                                 target.style.display = 'none';
                               }}
+                              loading="lazy"
                             />
                           </div>
                           <div>
@@ -441,6 +443,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                           }}
+                          loading="lazy"
                         />
                       </div>
                       <div className="mb-2">

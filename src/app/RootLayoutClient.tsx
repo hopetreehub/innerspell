@@ -5,12 +5,12 @@ import { usePathname } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AuthLayout } from '@/components/layout/AuthLayout';
 import type React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Spinner } from '@/components/ui/spinner';
 import { useAuth } from '@/context/AuthContext';
 import { useTokenRefresh } from '@/hooks/useTokenRefresh';
 
-function MainContent({ children }: { children: React.ReactNode }) {
+const MainContent = memo(function MainContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isAuthPage = pathname === '/sign-in' || pathname === '/sign-up' || pathname === '/finish-sign-in';
 
@@ -19,7 +19,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
     }
 
     return <AppLayout>{children}</AppLayout>;
-}
+});
 
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
   const { loading: authLoading } = useAuth();

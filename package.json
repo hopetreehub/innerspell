@@ -16,7 +16,8 @@
     "test:watch": "echo \"Test watch mode will be implemented\" && exit 0",
     "health-check": "curl -f http://localhost:4000/api/health || exit 1",
     "analyze": "cross-env ANALYZE=true next build",
-    "clean": "rm -rf .next out dist"
+    "clean": "rm -rf .next out dist",
+    "test:system": "node scripts/final-system-check.js"
   },
   "dependencies": {
     "@delorenj/taskmaster": "^1.13.3",

@@ -5,19 +5,11 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { cacheBuster, refreshAuthWithCacheBust } from '@/lib/cache-buster';
-import { AIPromptConfigForm } from '@/components/admin/AIPromptConfigForm';
-import { DreamInterpretationConfigForm } from '@/components/admin/DreamInterpretationConfigForm';
-import { UserManagement } from '@/components/admin/UserManagement';
-import { SystemManagement } from '@/components/admin/SystemManagement';
-import { AIProviderManagement } from '@/components/admin/AIProviderManagement';
-import { BlogManagement } from '@/components/admin/BlogManagement';
-import { TarotGuidelineManagement } from '@/components/admin/TarotGuidelineManagement';
+import { AdminTabContent } from '@/components/admin/AdminTabLazy';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Cog, Users, ShieldCheck, MoonStar, Bot, BookOpen, PenTool, BarChart3, Activity, GraduationCap } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
-import { UsageStatsCharts } from '@/components/admin/UsageStatsCharts';
-import { RealTimeMonitoringDashboard } from '@/components/admin/RealTimeMonitoringDashboard';
 
 
 export default function AdminDashboardPage() {
@@ -179,7 +171,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AIProviderManagement />
+              <AdminTabContent activeTab="ai-providers" />
             </CardContent>
           </Card>
         </TabsContent>
@@ -195,7 +187,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <TarotGuidelineManagement />
+              <AdminTabContent activeTab="tarot-guidelines" />
             </CardContent>
           </Card>
         </TabsContent>
@@ -211,7 +203,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AIPromptConfigForm />
+              <AdminTabContent activeTab="tarot-ai-config" />
             </CardContent>
           </Card>
         </TabsContent>
@@ -227,7 +219,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DreamInterpretationConfigForm />
+              <AdminTabContent activeTab="dream-ai-config" />
             </CardContent>
           </Card>
         </TabsContent>
@@ -243,17 +235,17 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <BlogManagement />
+              <AdminTabContent activeTab="blog-management" />
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="user-management">
-          <UserManagement />
+          <AdminTabContent activeTab="user-management" />
         </TabsContent>
 
         <TabsContent value="system-management">
-          <SystemManagement />
+          <AdminTabContent activeTab="system-management" />
         </TabsContent>
 
         <TabsContent value="usage-stats">
@@ -267,7 +259,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <UsageStatsCharts />
+              <AdminTabContent activeTab="usage-stats" />
             </CardContent>
           </Card>
         </TabsContent>
@@ -283,7 +275,7 @@ export default function AdminDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RealTimeMonitoringDashboard />
+              <AdminTabContent activeTab="real-time-monitoring" />
             </CardContent>
           </Card>
         </TabsContent>

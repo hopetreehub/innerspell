@@ -57,7 +57,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       updatedAt: new Date(),
       publishedAt: formData.status === 'published' && !posts[postIndex].publishedAt 
         ? new Date() 
-        : posts[postIndex].publishedAt
+        : posts[postIndex].publishedAt,
+      // featuredImage가 업데이트되면 image 필드도 동기화
+      image: formData.featuredImage || posts[postIndex].featuredImage || posts[postIndex].image
     };
 
     await writeJSON('blog-posts.json', posts);

@@ -2,10 +2,32 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BlogPost, BlogPostFormData } from '@/types/blog';
 import { readJSON, writeJSON } from '@/services/file-storage-service';
 import { nanoid } from 'nanoid';
+import { cache } from '@/services/cache-service';
 
 // GET: 블로그 포스트 목록 조회
 export async function GET(request: NextRequest) {
   try {
+    // URL 파라미터 읽기
+    const searchParams = request.nextUrl.searchParams;
+    const published = searchParams.get('published') === 'true';
+    const status = searchParams.get('status');
+    const category = searchParams.get('category');
+    const search = searchParams.get('search');
+    
+    // 캐시 키 생성
+    const cacheKey = `${published ? 'published' : 'all'}-${status || ''}-${category || ''}-${search || ''}`;
+    
+    // 캐시에서 확인
+    const cachedResult = cache.blogPosts.get(cacheKey);
+    if (cachedResult) {
+      return NextResponse.json(cachedResult, {
+        headers: {
+          'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
+          'X-Cache': 'HIT'
+        }
+      });
+    }
+
     const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
     
     if (!isDevelopment) {
@@ -17,13 +39,6 @@ export async function GET(request: NextRequest) {
 
     // 블로그 포스트 데이터 읽기
     const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
-    
-    // URL 파라미터 읽기
-    const searchParams = request.nextUrl.searchParams;
-    const published = searchParams.get('published') === 'true';
-    const status = searchParams.get('status');
-    const category = searchParams.get('category');
-    const search = searchParams.get('search');
     
     // 필터링
     let filteredPosts = Array.isArray(posts) ? posts : [];
@@ -76,10 +91,20 @@ export async function GET(request: NextRequest) {
       author: typeof post.author === 'object' ? post.author.name : post.author
     }));
 
-    return NextResponse.json({
+    const result = {
       success: true,
       posts: normalizedPosts,
       total: normalizedPosts.length
+    };
+
+    // 캐시에 저장
+    cache.blogPosts.set(result, cacheKey);
+
+    return NextResponse.json(result, {
+      headers: {
+        'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
+        'X-Cache': 'MISS'
+      }
     });
   } catch (error) {
     console.error('❌ GET /api/blog/posts 오류:', error);
@@ -143,6 +168,9 @@ export async function POST(request: NextRequest) {
     // 포스트 추가 및 저장
     posts.unshift(newPost);
     await writeJSON('blog-posts.json', posts);
+    
+    // 캐시 무효화
+    cache.blogPosts.invalidate();
     
     console.log(`✅ 새 포스트 생성 완료: ${newPost.title} (${newPost.id})`);
     console.log(`📊 총 포스트 수: ${posts.length}개`);
