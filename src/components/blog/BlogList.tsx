@@ -20,7 +20,8 @@ import {
 } from "@/components/ui/pagination";
 import { BlogSearch } from './BlogSearch';
 
-const POSTS_PER_PAGE = 3;
+const POSTS_PER_PAGE_OPTIONS = [5, 10, 20];
+const DEFAULT_POSTS_PER_PAGE = 5;
 
 interface BlogListProps {
   initialPosts: BlogPost[];
@@ -32,6 +33,14 @@ export function BlogList({ initialPosts }: BlogListProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [quickSearchQuery, setQuickSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [postsPerPage, setPostsPerPage] = useState(() => {
+    // 로컬스토리지에서 저장된 값 불러오기
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('blogPostsPerPage');
+      return saved ? parseInt(saved) : DEFAULT_POSTS_PER_PAGE;
+    }
+    return DEFAULT_POSTS_PER_PAGE;
+  });
   
   // posts가 undefined이거나 배열이 아닌 경우 안전하게 처리
   const safePosts = Array.isArray(posts) ? posts : [];
@@ -54,10 +63,19 @@ export function BlogList({ initialPosts }: BlogListProps) {
   console.log('실제 카테고리들:', uniqueCategories);
   console.log('카테고리별 수:', categoryCounts);
   
-  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const endIndex = startIndex + POSTS_PER_PAGE;
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+  const startIndex = (currentPage - 1) * postsPerPage;
+  const endIndex = startIndex + postsPerPage;
   const currentPosts = filteredPosts.slice(startIndex, endIndex);
+
+  // 페이지당 포스트 수 변경 핸들러
+  const handlePostsPerPageChange = (value: number) => {
+    setPostsPerPage(value);
+    setCurrentPage(1); // 첫 페이지로 이동
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('blogPostsPerPage', value.toString());
+    }
+  };
 
   const handleQuickSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -279,68 +297,102 @@ export function BlogList({ initialPosts }: BlogListProps) {
             {/* Main Content - Left Side */}
             <div className="lg:col-span-3">
 
-              {/* All Posts Grid */}
-              <div className="grid gap-6 md:grid-cols-2">
+              {/* 페이지당 포스트 수 선택 */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold">전체 포스트</h2>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">표시:</span>
+                  <div className="flex gap-1">
+                    {POSTS_PER_PAGE_OPTIONS.map((option) => (
+                      <Button
+                        key={option}
+                        variant={postsPerPage === option ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => handlePostsPerPageChange(option)}
+                      >
+                        {option}개
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* All Posts - Horizontal Layout */}
+              <div className="space-y-6">
               {currentPosts.map((post) => (
                 <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-video bg-gradient-to-r from-primary/5 to-accent/5 overflow-hidden">
-                    <Image
-                      src={post.featuredImage || post.image}
-                      alt={post.title}
-                      width={400}
-                      height={225}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/images/blog1.png'; // 실패 시 기본 이미지로 대체
-                      }}
-                      priority={false}
-                      loading="lazy"
-                    />
-                  </div>
-                  <CardHeader>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                      <Badge variant="outline" className="text-xs">
-                        {post.category}
-                      </Badge>
-                      <Calendar className="w-4 h-4" />
-                      <span>{new Date(post.publishedAt).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}</span>
-                      <Clock className="w-4 h-4 ml-auto" />
-                      <span>{post.readingTime}분</span>
+                  <div className="flex flex-col md:flex-row">
+                    {/* Image Section - Left Side on Desktop */}
+                    <div className="md:w-1/3 lg:w-2/5">
+                      <div className="aspect-video md:aspect-[4/3] lg:aspect-video h-full bg-gradient-to-r from-primary/5 to-accent/5 overflow-hidden">
+                        <Image
+                          src={post.featuredImage || post.image}
+                          alt={post.title}
+                          width={400}
+                          height={300}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/images/blog1.png';
+                          }}
+                          priority={false}
+                          loading="lazy"
+                        />
+                      </div>
                     </div>
-                    <h3 className="font-headline font-bold text-lg leading-tight">
-                      {post.title}
-                    </h3>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap gap-1">
-                        {post.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
+                    
+                    {/* Content Section - Right Side on Desktop */}
+                    <div className="md:w-2/3 lg:w-3/5 p-6">
+                      <div className="flex flex-col h-full">
+                        {/* Meta Information */}
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                          <Badge variant="outline" className="text-xs">
+                            {post.category}
                           </Badge>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <User className="w-3 h-3" />
-                          <span>{typeof post.author === 'object' ? post.author.name : post.author}</span>
+                          <Calendar className="w-4 h-4" />
+                          <span>{new Date(post.publishedAt).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}</span>
+                          <Clock className="w-4 h-4 ml-auto" />
+                          <span>{post.readingTime}분</span>
                         </div>
-                        <Link href={`/blog/${post.id}`}>
-                          <Button variant="ghost" size="sm" className="gap-1">
-                            읽기
-                            <ArrowRight className="w-3 h-3" />
-                          </Button>
-                        </Link>
+                        
+                        {/* Title */}
+                        <h3 className="font-headline font-bold text-xl lg:text-2xl leading-tight mb-3">
+                          {post.title}
+                        </h3>
+                        
+                        {/* Excerpt */}
+                        <p className="text-muted-foreground text-base mb-4 line-clamp-3 flex-grow">
+                          {post.excerpt}
+                        </p>
+                        
+                        {/* Tags and Action */}
+                        <div className="space-y-3">
+                          <div className="flex flex-wrap gap-1">
+                            {post.tags.slice(0, 4).map((tag) => (
+                              <Badge key={tag} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <User className="w-4 h-4" />
+                              <span>{typeof post.author === 'object' ? post.author.name : post.author}</span>
+                            </div>
+                            <Link href={`/blog/${post.id}`}>
+                              <Button variant="default" size="sm" className="gap-2">
+                                읽어보기
+                                <ArrowRight className="w-4 h-4" />
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </CardContent>
+                  </div>
                 </Card>
               ))}
-            </div>
+              </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
