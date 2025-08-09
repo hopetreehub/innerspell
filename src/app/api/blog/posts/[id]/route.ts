@@ -1,131 +1,131 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { 
-  getPostByIdServer, 
-  updatePostServer, 
-  deletePostServer 
-} from '@/services/blog-service-server';
+import { BlogPost, BlogPostFormData } from '@/types/blog';
+import { readJSON, writeJSON } from '@/services/file-storage-service';
 
-// 관리자 권한 확인 (Mock 버전)
-async function verifyAdmin(request: NextRequest): Promise<{ isAdmin: boolean; userId?: string }> {
-  // 로컬 환경에서는 항상 admin으로 처리 (개발 및 테스트용)
-  return { isAdmin: true, userId: 'mock-admin-id' };
+interface RouteParams {
+  params: Promise<{ id: string }>;
 }
 
-// GET: 개별 포스트 조회
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// PUT: 블로그 포스트 수정
+export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const postId = params.id;
-    console.log(`📝 GET /api/blog/posts/${postId}`);
+    const { id } = await params;
+    console.log(`📝 PUT /api/blog/posts/${id} - 포스트 수정 요청`);
     
-    const post = await getPostByIdServer(postId);
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
     
-    if (!post) {
+    if (!isDevelopment) {
+      return NextResponse.json(
+        { error: 'File storage is not enabled' },
+        { status: 400 }
+      );
+    }
+
+    // request body 읽기 (빈 body 처리)
+    let formData: Partial<BlogPostFormData> = {};
+    
+    try {
+      const text = await request.text();
+      if (text) {
+        formData = JSON.parse(text);
+      }
+    } catch (e) {
+      console.error('❌ JSON 파싱 오류:', e);
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+    
+    console.log('📋 수정 데이터:', formData);
+
+    // 블로그 포스트 데이터 읽기
+    const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
+    
+    const postIndex = posts.findIndex(post => post.id === id);
+    if (postIndex === -1) {
       return NextResponse.json(
         { error: '포스트를 찾을 수 없습니다.' },
         { status: 404 }
       );
     }
+
+    // 포스트 업데이트
+    posts[postIndex] = {
+      ...posts[postIndex],
+      ...formData,
+      updatedAt: new Date(),
+      publishedAt: formData.status === 'published' && !posts[postIndex].publishedAt 
+        ? new Date() 
+        : posts[postIndex].publishedAt
+    };
+
+    await writeJSON('blog-posts.json', posts);
     
-    return NextResponse.json({ post });
+    console.log(`✅ 포스트 수정 완료: ${posts[postIndex].title}`);
+
+    return NextResponse.json({ 
+      success: true, 
+      post: posts[postIndex],
+      message: '포스트가 성공적으로 수정되었습니다.'
+    });
+
   } catch (error) {
-    console.error('❌ Error fetching post:', error);
+    console.error('❌ 포스트 수정 오류:', error);
     return NextResponse.json(
-      { error: '포스트를 불러올 수 없습니다.' },
+      { 
+        success: false, 
+        error: error instanceof Error ? error.message : '포스트 수정에 실패했습니다.' 
+      },
       { status: 500 }
     );
   }
 }
 
-// PUT: 포스트 수정 (관리자만)
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// DELETE: 블로그 포스트 삭제
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const postId = params.id;
-    console.log(`✏️ PUT /api/blog/posts/${postId}`);
+    const { id } = await params;
+    console.log(`🗑️ DELETE /api/blog/posts/${id} - 포스트 삭제 요청`);
     
-    const { isAdmin, userId } = await verifyAdmin(request);
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
     
-    if (!isAdmin) {
+    if (!isDevelopment) {
       return NextResponse.json(
-        { error: '권한이 없습니다.' },
-        { status: 403 }
+        { error: 'File storage is not enabled' },
+        { status: 400 }
       );
     }
-    
-    const updates = await request.json();
-    console.log('📋 수정 데이터:', {
-      title: updates.title,
-      category: updates.category,
-      published: updates.published,
-      hasContent: !!updates.content
-    });
-    
-    // 날짜 문자열을 Date 객체로 변환
-    if (updates.publishedAt && typeof updates.publishedAt === 'string') {
-      updates.publishedAt = new Date(updates.publishedAt);
-    }
-    
-    // 읽기 시간 재계산
-    if (updates.content) {
-      const wordsPerMinute = 200;
-      const words = updates.content.trim().split(/\s+/).length;
-      updates.readingTime = Math.ceil(words / wordsPerMinute);
-    }
-    
-    // 이미지 필드 통일
-    if (updates.featuredImage && !updates.image) {
-      updates.image = updates.featuredImage;
-    }
-    
-    await updatePostServer(postId, updates);
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: '포스트가 수정되었습니다.',
-      postId 
-    });
-  } catch (error) {
-    console.error('❌ Error updating post:', error);
-    return NextResponse.json(
-      { error: '포스트 수정에 실패했습니다.' },
-      { status: 500 }
-    );
-  }
-}
 
-// DELETE: 포스트 삭제 (관리자만)
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const postId = params.id;
-    console.log(`🗑️ DELETE /api/blog/posts/${postId}`);
+    // 블로그 포스트 데이터 읽기
+    const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
     
-    const { isAdmin } = await verifyAdmin(request);
-    
-    if (!isAdmin) {
+    const postIndex = posts.findIndex(post => post.id === id);
+    if (postIndex === -1) {
       return NextResponse.json(
-        { error: '권한이 없습니다.' },
-        { status: 403 }
+        { error: '포스트를 찾을 수 없습니다.' },
+        { status: 404 }
       );
     }
+
+    // 포스트 삭제
+    const deletedPost = posts.splice(postIndex, 1)[0];
+    await writeJSON('blog-posts.json', posts);
     
-    await deletePostServer(postId);
-    
+    console.log(`✅ 포스트 삭제 완료: ${deletedPost.title}`);
+
     return NextResponse.json({ 
       success: true, 
-      message: '포스트가 삭제되었습니다.' 
+      message: '포스트가 성공적으로 삭제되었습니다.'
     });
+
   } catch (error) {
-    console.error('❌ Error deleting post:', error);
+    console.error('❌ 포스트 삭제 오류:', error);
     return NextResponse.json(
-      { error: '포스트 삭제에 실패했습니다.' },
+      { 
+        success: false, 
+        error: error instanceof Error ? error.message : '포스트 삭제에 실패했습니다.' 
+      },
       { status: 500 }
     );
   }

@@ -292,6 +292,76 @@ export async function togglePostStatus(
   }
 }
 
+// 블로그 포스트 수정
+export async function updateBlogPost(
+  postId: string,
+  formData: Partial<BlogPostFormData>
+) {
+  try {
+    // 개발 환경 체크
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      // 개발 환경에서는 파일 시스템 사용
+      const { readJSON, writeJSON } = await import('@/services/file-storage-service');
+      const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
+      
+      const postIndex = posts.findIndex(post => post.id === postId);
+      if (postIndex === -1) {
+        return { success: false, error: '포스트를 찾을 수 없습니다.' };
+      }
+      
+      // 기존 포스트 데이터 업데이트
+      posts[postIndex] = {
+        ...posts[postIndex],
+        ...formData,
+        updatedAt: new Date(),
+        // 게시 상태로 변경 시 게시일 설정
+        publishedAt: formData.status === 'published' && !posts[postIndex].publishedAt 
+          ? new Date() 
+          : posts[postIndex].publishedAt
+      };
+      
+      // 파일에 저장
+      await writeJSON('blog-posts.json', posts);
+      
+      console.log('✅ 블로그 포스트가 수정되었습니다', {
+        postId,
+        title: formData.title
+      });
+      
+      revalidatePath('/admin');
+      revalidatePath('/blog');
+      return { success: true };
+    }
+    
+    // 프로덕션 환경 - Firebase 사용
+    const { firestore } = await import('@/lib/firebase/admin');
+    
+    const updateData: any = {
+      ...formData,
+      updatedAt: new Date()
+    };
+    
+    // 게시 상태로 변경 시 게시일 설정
+    if (formData.status === 'published') {
+      const doc = await firestore.collection('blog-posts').doc(postId).get();
+      if (!doc.data()?.publishedAt) {
+        updateData.publishedAt = new Date();
+      }
+    }
+    
+    await firestore.collection('blog-posts').doc(postId).update(updateData);
+    
+    revalidatePath('/admin');
+    revalidatePath('/blog');
+    return { success: true };
+  } catch (error) {
+    console.error('블로그 포스트 수정 오류:', error);
+    return { success: false, error: '포스트 수정에 실패했습니다.' };
+  }
+}
+
 // 블로그 포스트 삭제
 export async function deleteBlogPost(postId: string) {
   try {

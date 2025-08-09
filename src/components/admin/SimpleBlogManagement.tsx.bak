@@ -1,20 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -22,11 +23,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Edit, Trash2, Eye, Save, Loader2, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { getBlogPosts } from '@/actions/blogActions';
+import { 
+  createBlogPost, 
+  getBlogPosts, 
+  togglePostStatus, 
+  deleteBlogPost 
+} from '@/actions/blogActions';
 import type { BlogPost, BlogPostFormData } from '@/types';
 
 const initialFormData: BlogPostFormData = {
@@ -42,22 +48,36 @@ const initialFormData: BlogPostFormData = {
   featuredImage: '',
 };
 
-export function BlogManagement() {
+const statusConfig = {
+  draft: { label: '초안', className: 'bg-yellow-100 text-yellow-800' },
+  published: { label: '게시됨', className: 'bg-green-100 text-green-800' },
+  archived: { label: '보관됨', className: 'bg-gray-100 text-gray-800' },
+};
+
+export function SimpleBlogManagement() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [formData, setFormData] = useState<BlogPostFormData>(initialFormData);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>('');
 
   // 포스트 목록 로드
   const loadPosts = async () => {
     try {
-      const result = await getBlogPosts();
+      setLoading(true);
+      console.log('🔍 loadPosts 호출됨');
+      const result = await getBlogPosts(20);
+      console.log('📊 getBlogPosts 결과:', result);
       if (result.success && result.posts) {
+        console.log(`✅ ${result.posts.length}개 포스트 로드됨`);
         setPosts(result.posts);
+      } else {
+        console.log('❌ 포스트 로드 실패:', result);
       }
     } catch (error) {
-      console.error('포스트 로드 오류:', error);
+      console.error('❌ loadPosts 에러:', error);
       toast.error('포스트를 불러오는데 실패했습니다.');
     } finally {
       setLoading(false);
@@ -68,36 +88,84 @@ export function BlogManagement() {
     loadPosts();
   }, []);
 
-  // 제목 변경 시 슬러그 자동 생성
-  const handleTitleChange = (title: string) => {
+  // 슬러그 자동 생성
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9가-힣\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+  };
+
+  const handleTitleChange = (value: string) => {
     setFormData(prev => ({
       ...prev,
-      title,
-      slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      title: value,
+      slug: generateSlug(value)
     }));
   };
 
-  // 폼 제출 - API 라우트 사용
+  // 이미지 업로드 처리
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 파일 크기 체크 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('파일 크기가 너무 큽니다. (최대 5MB)');
+      return;
+    }
+
+    // 파일 타입 체크
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('허용되지 않는 파일 형식입니다. (jpg, png, webp만 허용)');
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      const formDataToUpload = new FormData();
+      formDataToUpload.append('file', file);
+
+      const response = await fetch('/api/blog/upload', {
+        method: 'POST',
+        body: formDataToUpload,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setFormData(prev => ({ ...prev, featuredImage: result.url }));
+        setImagePreview(result.url);
+        toast.success('이미지 업로드 완료');
+      } else {
+        toast.error(result.error || '업로드 실패');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('업로드 중 오류가 발생했습니다');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚨 handleSubmit 호출됨!');
+    console.log('📝 formData:', formData);
     setSaving(true);
 
     try {
-      const response = await fetch('/api/blog/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      
-      const result = await response.json();
+      const result = await createBlogPost(formData);
       
       if (result.success) {
         toast.success('블로그 포스트가 생성되었습니다!');
-        setIsFormOpen(false);
+        setIsDialogOpen(false);
         setFormData(initialFormData);
-        loadPosts();
+        loadPosts(); // 목록 새로고침
       } else {
         toast.error(result.error || '포스트 생성에 실패했습니다.');
       }
@@ -109,22 +177,12 @@ export function BlogManagement() {
     }
   };
 
-  // 상태 토글
   const handleStatusToggle = async (postId: string, currentStatus: BlogPost['status']) => {
     const newStatus = currentStatus === 'draft' ? 'published' : 
                      currentStatus === 'published' ? 'archived' : 'draft';
     
     try {
-      const response = await fetch(`/api/blog/posts/${postId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      
-      const result = await response.json();
-      
+      const result = await togglePostStatus(postId, newStatus);
       if (result.success) {
         toast.success('포스트 상태가 변경되었습니다.');
         loadPosts();
@@ -136,19 +194,13 @@ export function BlogManagement() {
     }
   };
 
-  // 삭제
   const handleDelete = async (postId: string) => {
     if (!confirm('정말로 이 포스트를 삭제하시겠습니까?')) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/blog/posts/${postId}`, {
-        method: 'DELETE',
-      });
-      
-      const result = await response.json();
-      
+      const result = await deleteBlogPost(postId);
       if (result.success) {
         toast.success('포스트가 삭제되었습니다.');
         loadPosts();
@@ -209,37 +261,24 @@ export function BlogManagement() {
       {/* 새 포스트 버튼 */}
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">블로그 포스트 관리</h3>
-        {!isFormOpen && (
-          <Button onClick={() => setIsFormOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            새 포스트 작성
-          </Button>
-        )}
-      </div>
-
-      {/* 인라인 폼 */}
-      {isFormOpen && (
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>새 블로그 포스트 작성</CardTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  setIsFormOpen(false);
-                  setFormData(initialFormData);
-                }}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              새 포스트 작성
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>새 블로그 포스트 작성</DialogTitle>
+              <DialogDescription>
+                새로운 블로그 포스트를 작성합니다.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4 pb-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">제목 *</Label>
+                  <Label htmlFor="title">제목</Label>
                   <Input
                     id="title"
                     value={formData.title}
@@ -249,7 +288,7 @@ export function BlogManagement() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="slug">URL 슬러그 *</Label>
+                  <Label htmlFor="slug">URL 슬러그</Label>
                   <Input
                     id="slug"
                     value={formData.slug}
@@ -259,7 +298,6 @@ export function BlogManagement() {
                   />
                 </div>
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="excerpt">요약</Label>
                 <Input
@@ -269,9 +307,8 @@ export function BlogManagement() {
                   placeholder="포스트 요약"
                 />
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="content">내용 *</Label>
+                <Label htmlFor="content">내용</Label>
                 <Textarea
                   id="content"
                   value={formData.content}
@@ -280,6 +317,23 @@ export function BlogManagement() {
                   rows={8}
                   required
                 />
+              </div>
+              
+              {/* 이미지 업로드 필드 */}
+              <div className="space-y-2">
+                <Label htmlFor="image">포스트 이미지</Label>
+                <input
+                  id="image"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+                />
+                {uploading && <p className="text-sm text-gray-500">업로드 중...</p>}
+                {formData.featuredImage && (
+                  <p className="text-sm text-green-600">이미지 업로드 완료: {formData.featuredImage}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -327,15 +381,11 @@ export function BlogManagement() {
                   placeholder="타로, 기초, 입문, 2025"
                 />
               </div>
-
-              <div className="flex justify-end gap-2 pt-4">
+              <div className="flex justify-end gap-2">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => {
-                    setIsFormOpen(false);
-                    setFormData(initialFormData);
-                  }}
+                  onClick={() => setIsDialogOpen(false)}
                 >
                   취소
                 </Button>
@@ -354,21 +404,27 @@ export function BlogManagement() {
                 </Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
-      )}
+          </DialogContent>
+        </Dialog>
+      </div>
 
       {/* 포스트 목록 */}
       <Card>
-        <CardContent className="p-0">
+        <CardHeader>
+          <CardTitle>포스트 목록</CardTitle>
+          <CardDescription>
+            작성된 블로그 포스트를 관리합니다.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+            <div className="text-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+              <p className="mt-2 text-muted-foreground">포스트를 불러오는 중...</p>
             </div>
           ) : posts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-              <p className="text-lg mb-2">아직 작성된 포스트가 없습니다</p>
-              <p className="text-sm">새 포스트를 작성해보세요!</p>
+            <div className="text-center py-8 text-muted-foreground">
+              아직 작성된 포스트가 없습니다.
             </div>
           ) : (
             <Table>
@@ -376,9 +432,8 @@ export function BlogManagement() {
                 <TableRow>
                   <TableHead>제목</TableHead>
                   <TableHead>상태</TableHead>
-                  <TableHead>작성일</TableHead>
-                  <TableHead>조회수</TableHead>
-                  <TableHead className="text-right">작업</TableHead>
+                  <TableHead>생성일</TableHead>
+                  <TableHead className="text-right">액션</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -387,43 +442,31 @@ export function BlogManagement() {
                     <TableCell>
                       <div>
                         <div className="font-medium">{post.title}</div>
-                        <div className="text-sm text-gray-500">{post.slug}</div>
+                        <div className="text-sm text-muted-foreground">
+                          /{post.slug}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          post.status === 'published' ? 'default' :
-                          post.status === 'draft' ? 'secondary' : 'outline'
-                        }
-                      >
-                        {post.status === 'published' ? '게시됨' :
-                         post.status === 'draft' ? '초안' : '보관됨'}
+                      <Badge className={statusConfig[post.status].className}>
+                        {statusConfig[post.status].label}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {format(new Date(post.createdAt), 'yyyy-MM-dd', { locale: ko })}
+                      {format(new Date(post.createdAt), 'PPP', { locale: ko })}
                     </TableCell>
-                    <TableCell>{post.views || 0}</TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex justify-end gap-2">
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleStatusToggle(post.id, post.status)}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleStatusToggle(post.id, post.status)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
+                          variant="outline"
+                          size="sm"
                           onClick={() => handleDelete(post.id)}
                         >
                           <Trash2 className="h-4 w-4" />

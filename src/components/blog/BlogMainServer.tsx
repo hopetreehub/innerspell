@@ -120,7 +120,7 @@ export function BlogMainServer({ initialPosts, currentPage = 1, allPosts }: Blog
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <User className="w-4 h-4" />
-                              {post.author}
+                              {typeof post.author === 'object' ? post.author.name : post.author}
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="w-4 h-4" />
@@ -194,7 +194,7 @@ export function BlogMainServer({ initialPosts, currentPage = 1, allPosts }: Blog
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <User className="w-4 h-4" />
-                              {post.author}
+                              {typeof post.author === 'object' ? post.author.name : post.author}
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="w-4 h-4" />

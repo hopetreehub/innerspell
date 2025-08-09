@@ -1,130 +1,141 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllPostsServer, createPostServer } from '@/services/blog-service-server';
+import { BlogPost, BlogPostFormData } from '@/types/blog';
+import { readJSON, writeJSON } from '@/services/file-storage-service';
+import { nanoid } from 'nanoid';
 
-// 관리자 권한 확인 (Mock 버전)
-async function verifyAdmin(request: NextRequest): Promise<{ isAdmin: boolean; userId?: string }> {
-  // 로컬 환경에서는 항상 admin으로 처리 (개발 및 테스트용)
-  return { isAdmin: true, userId: 'mock-admin-id' };
-}
-
-// GET: 포스트 목록 조회
+// GET: 블로그 포스트 목록 조회
 export async function GET(request: NextRequest) {
   try {
-    console.log('🚀 API Route 시작 - 파일 저장소 모드 확인 중...');
-    console.log('📅 API 호출 시간:', new Date().toISOString());
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
     
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category');
-    const search = searchParams.get('search');
-    const featured = searchParams.get('featured');
-    const onlyPublished = searchParams.get('published') !== 'false';
-    
-    console.log('🔍 쿼리 파라미터:', { category, search, featured, onlyPublished });
-
-    // 서비스 함수를 통해 데이터 가져오기 (파일 저장소 또는 Mock 데이터)
-    const posts = await getAllPostsServer(onlyPublished, category || undefined);
-    console.log(`📊 서비스에서 가져온 포스트 수: ${posts.length}`);
-    
-    let filteredPosts = [...posts];
-    
-    // 추가 필터링
-    if (featured === 'true') {
-      filteredPosts = filteredPosts.filter(post => post.featured);
-      console.log(`⭐ featured 필터 후: ${filteredPosts.length}개`);
-    }
-    
-    if (search) {
-      const lowerSearch = search.toLowerCase();
-      filteredPosts = filteredPosts.filter(post => 
-        post.title.toLowerCase().includes(lowerSearch) ||
-        post.excerpt.toLowerCase().includes(lowerSearch) ||
-        post.tags.some(tag => tag.toLowerCase().includes(lowerSearch))
+    if (!isDevelopment) {
+      return NextResponse.json(
+        { error: 'File storage is not enabled' },
+        { status: 400 }
       );
-      console.log(`🔍 검색 필터 후: ${filteredPosts.length}개`);
+    }
+
+    // 블로그 포스트 데이터 읽기
+    const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
+    
+    // URL 파라미터 읽기
+    const searchParams = request.nextUrl.searchParams;
+    const published = searchParams.get('published') === 'true';
+    const status = searchParams.get('status');
+    const category = searchParams.get('category');
+    
+    // 필터링
+    let filteredPosts = Array.isArray(posts) ? posts : [];
+    
+    if (published) {
+      filteredPosts = filteredPosts.filter(post => post.status === 'published');
+    } else if (status) {
+      filteredPosts = filteredPosts.filter(post => post.status === status);
     }
     
-    const finalPosts = filteredPosts.slice(0, 20);
-    console.log(`✅ 최종 반환: ${finalPosts.length}개 포스트`);
-    console.log('🎯 첫 3개 제목:', finalPosts.slice(0, 3).map(p => p.title));
+    if (category) {
+      filteredPosts = filteredPosts.filter(post => 
+        post.category === category || 
+        (Array.isArray(post.categories) && post.categories.includes(category))
+      );
+    }
+    
+    // 최신순 정렬
+    filteredPosts.sort((a, b) => 
+      new Date(b.createdAt || b.publishedAt || 0).getTime() - 
+      new Date(a.createdAt || a.publishedAt || 0).getTime()
+    );
 
-    const response = {
-      posts: finalPosts,
-      hasMore: false,
-      lastDocId: null,
-      debug: {
-        timestamp: new Date().toISOString(),
-        totalPosts: posts.length,
-        finalCount: finalPosts.length
-      }
-    };
-    
-    console.log('📤 API 응답 전송 완료');
-    return NextResponse.json(response);
-    
+    // author 필드 정규화
+    const normalizedPosts = filteredPosts.map(post => ({
+      ...post,
+      author: typeof post.author === 'object' ? post.author.name : post.author
+    }));
+
+    return NextResponse.json({
+      success: true,
+      posts: normalizedPosts,
+      total: normalizedPosts.length
+    });
   } catch (error) {
-    console.error('❌ API Route 에러:', error);
+    console.error('❌ GET /api/blog/posts 오류:', error);
     return NextResponse.json(
-      { error: '포스트 목록을 불러올 수 없습니다.', debug: error.message },
+      { error: 'Failed to fetch posts' },
       { status: 500 }
     );
   }
 }
 
-// POST: 새 포스트 생성 (관리자만)
+// POST: 새 블로그 포스트 생성
 export async function POST(request: NextRequest) {
   try {
-    console.log('📝 POST /api/blog/posts - 포스트 생성 시작');
+    console.log('📝 POST /api/blog/posts - 새 포스트 생성 요청');
     
-    const { isAdmin, userId } = await verifyAdmin(request);
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
     
-    if (!isAdmin) {
+    if (!isDevelopment) {
       return NextResponse.json(
-        { error: '권한이 없습니다.' },
-        { status: 403 }
+        { error: 'File storage is not enabled' },
+        { status: 400 }
       );
     }
 
-    const postData = await request.json();
-    console.log('📋 받은 포스트 데이터:', {
-      title: postData.title,
-      category: postData.category,
-      published: postData.published,
-      hasContent: !!postData.content,
-      hasExcerpt: !!postData.excerpt
-    });
+    const formData: BlogPostFormData = await request.json();
+    console.log('📋 받은 데이터:', formData);
+
+    // 블로그 포스트 데이터 읽기
+    const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
+    console.log(`📚 현재 포스트 수: ${posts.length}개`);
+
+    // 새 포스트 생성
+    const newPost: BlogPost = {
+      id: nanoid(),
+      title: formData.title,
+      slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      content: formData.content,
+      excerpt: formData.excerpt || formData.content.substring(0, 200) + '...',
+      author: formData.author || {
+        name: 'InnerSpell',
+        image: '/images/logo.png',
+        role: 'admin'
+      },
+      category: formData.categories?.[0] || formData.category || '일반',
+      tags: formData.tags || [],
+      status: formData.status || 'draft',
+      featuredImage: formData.featuredImage || '',
+      views: 0,
+      likes: 0,
+      readingTime: Math.ceil(formData.content.split(' ').length / 200) + ' min',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      publishedAt: formData.status === 'published' ? new Date() : null,
+      // 추가 필드들
+      authorId: 'mock-admin-id',
+      published: formData.status === 'published',
+      featured: false,
+      image: formData.featuredImage || '/images/blog1.png'
+    } as any;
+
+    // 포스트 추가 및 저장
+    posts.unshift(newPost);
+    await writeJSON('blog-posts.json', posts);
     
-    // 데이터 준비
-    // 날짜 문자열을 Date 객체로 변환
-    if (postData.publishedAt && typeof postData.publishedAt === 'string') {
-      postData.publishedAt = new Date(postData.publishedAt);
-    } else {
-      postData.publishedAt = new Date();
-    }
-
-    // 읽기 시간 계산 (단어 수 기준)
-    const wordsPerMinute = 200;
-    const words = postData.content.trim().split(/\s+/).length;
-    postData.readingTime = Math.ceil(words / wordsPerMinute);
-
-    // 작성자 정보 추가
-    postData.author = postData.author || 'InnerSpell Team';
-    postData.authorId = userId;
-    postData.image = postData.image || postData.featuredImage || '/images/blog1.png';
-    postData.views = 0;
-    postData.likes = 0;
-
-    // Firestore에 포스트 생성
-    const postId = await createPostServer(postData);
+    console.log(`✅ 새 포스트 생성 완료: ${newPost.title} (${newPost.id})`);
+    console.log(`📊 총 포스트 수: ${posts.length}개`);
 
     return NextResponse.json({ 
       success: true, 
-      postId,
+      post: newPost,
       message: '포스트가 성공적으로 생성되었습니다.'
     });
+
   } catch (error) {
-    console.error('❌ Error creating post:', error);
+    console.error('❌ 포스트 생성 오류:', error);
     return NextResponse.json(
-      { error: '포스트 생성에 실패했습니다.', details: error.message },
+      { 
+        success: false, 
+        error: error instanceof Error ? error.message : '포스트 생성에 실패했습니다.' 
+      },
       { status: 500 }
     );
   }

@@ -318,7 +318,7 @@ export function BlogMainWithPagination() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <User className="w-3 h-3" />
-                          <span>{post.author}</span>
+                          <span>{typeof post.author === 'object' ? post.author.name : post.author}</span>
                         </div>
                         <Link href={`/blog/${post.id}`}>
                           <Button variant="ghost" size="sm" className="gap-1">

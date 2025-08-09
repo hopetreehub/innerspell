@@ -1,20 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
   Select,
   SelectContent,
@@ -42,12 +35,13 @@ const initialFormData: BlogPostFormData = {
   featuredImage: '',
 };
 
-export function BlogManagement() {
+export default function SimpleBlogManagementV3() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formData, setFormData] = useState<BlogPostFormData>(initialFormData);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // 포스트 목록 로드
   const loadPosts = async () => {
@@ -77,9 +71,43 @@ export function BlogManagement() {
     }));
   };
 
+  // 이미지 업로드
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    try {
+      const formDataToUpload = new FormData();
+      formDataToUpload.append('file', file);
+
+      const response = await fetch('/api/blog/upload', {
+        method: 'POST',
+        body: formDataToUpload,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setFormData(prev => ({ ...prev, featuredImage: result.url }));
+        toast.success('이미지 업로드 완료');
+      } else {
+        toast.error(result.error || '업로드 실패');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('업로드 중 오류가 발생했습니다');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   // 폼 제출 - API 라우트 사용
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚨 V3: handleSubmit 호출됨!');
+    console.log('📝 V3: formData:', formData);
     setSaving(true);
 
     try {
@@ -92,18 +120,19 @@ export function BlogManagement() {
       });
       
       const result = await response.json();
+      console.log('📤 V3: API 응답:', result);
       
       if (result.success) {
         toast.success('블로그 포스트가 생성되었습니다!');
         setIsFormOpen(false);
         setFormData(initialFormData);
-        loadPosts();
+        loadPosts(); // 목록 새로고침
       } else {
         toast.error(result.error || '포스트 생성에 실패했습니다.');
       }
     } catch (error) {
       toast.error('오류가 발생했습니다.');
-      console.error('Blog post creation error:', error);
+      console.error('V3: Blog post creation error:', error);
     } finally {
       setSaving(false);
     }
@@ -208,7 +237,7 @@ export function BlogManagement() {
 
       {/* 새 포스트 버튼 */}
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">블로그 포스트 관리</h3>
+        <h3 className="text-lg font-semibold">블로그 포스트 관리 V3</h3>
         {!isFormOpen && (
           <Button onClick={() => setIsFormOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
@@ -280,6 +309,23 @@ export function BlogManagement() {
                   rows={8}
                   required
                 />
+              </div>
+              
+              {/* 이미지 업로드 필드 */}
+              <div className="space-y-2">
+                <Label htmlFor="image">포스트 이미지</Label>
+                <input
+                  id="image"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+                />
+                {uploading && <p className="text-sm text-gray-500">업로드 중...</p>}
+                {formData.featuredImage && (
+                  <p className="text-sm text-green-600">이미지 업로드 완료: {formData.featuredImage}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">

@@ -27,12 +27,7 @@ import { Plus, Edit, Trash2, Eye, Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { 
-  createBlogPost, 
-  getBlogPosts, 
-  togglePostStatus, 
-  deleteBlogPost 
-} from '@/actions/blogActions';
+import { getBlogPosts } from '@/actions/blogActions';
 import type { BlogPost, BlogPostFormData } from '@/types';
 
 const initialFormData: BlogPostFormData = {
@@ -67,11 +62,17 @@ export function SimpleBlogManagement() {
   const loadPosts = async () => {
     try {
       setLoading(true);
+      console.log('🔍 loadPosts 호출됨');
       const result = await getBlogPosts(20);
+      console.log('📊 getBlogPosts 결과:', result);
       if (result.success && result.posts) {
+        console.log(`✅ ${result.posts.length}개 포스트 로드됨`);
         setPosts(result.posts);
+      } else {
+        console.log('❌ 포스트 로드 실패:', result);
       }
     } catch (error) {
+      console.error('❌ loadPosts 에러:', error);
       toast.error('포스트를 불러오는데 실패했습니다.');
     } finally {
       setLoading(false);
@@ -148,10 +149,20 @@ export function SimpleBlogManagement() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚨 handleSubmit 호출됨!');
+    console.log('📝 formData:', formData);
     setSaving(true);
 
     try {
-      const result = await createBlogPost(formData);
+      const response = await fetch('/api/blog/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      const result = await response.json();
       
       if (result.success) {
         toast.success('블로그 포스트가 생성되었습니다!');
@@ -174,7 +185,16 @@ export function SimpleBlogManagement() {
                      currentStatus === 'published' ? 'archived' : 'draft';
     
     try {
-      const result = await togglePostStatus(postId, newStatus);
+      const response = await fetch(`/api/blog/posts/${postId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      
+      const result = await response.json();
+      
       if (result.success) {
         toast.success('포스트 상태가 변경되었습니다.');
         loadPosts();
@@ -192,7 +212,12 @@ export function SimpleBlogManagement() {
     }
 
     try {
-      const result = await deleteBlogPost(postId);
+      const response = await fetch(`/api/blog/posts/${postId}`, {
+        method: 'DELETE',
+      });
+      
+      const result = await response.json();
+      
       if (result.success) {
         toast.success('포스트가 삭제되었습니다.');
         loadPosts();
@@ -260,28 +285,14 @@ export function SimpleBlogManagement() {
               새 포스트 작성
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>새 블로그 포스트 작성</DialogTitle>
               <DialogDescription>
                 새로운 블로그 포스트를 작성합니다.
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {console.log('🔥 DEBUG: 폼 렌더링 시작')}
-              
-              {/* 테스트: 맨 위에 이미지 필드 */}
-              <div className="space-y-2 border-2 border-red-500 p-2">
-                <Label htmlFor="test-image" className="text-red-600 font-bold">🖼️ 테스트 이미지 필드</Label>
-                <input
-                  id="test-image"
-                  type="file"
-                  accept="image/*"
-                  className="block w-full border-2 border-red-300 p-2"
-                />
-                <p className="text-red-600 text-sm">이 필드가 보이면 렌더링 정상!</p>
-              </div>
-              
+            <form onSubmit={handleSubmit} className="space-y-4 pb-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">제목</Label>
@@ -315,7 +326,6 @@ export function SimpleBlogManagement() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="content">내용</Label>
-                {console.log('🐞 DEBUG: 내용 필드 렌더링 중')}
                 <Textarea
                   id="content"
                   value={formData.content}
@@ -324,15 +334,11 @@ export function SimpleBlogManagement() {
                   rows={8}
                   required
                 />
-                {console.log('🐞 DEBUG: 내용 Textarea 렌더링 완료')}
               </div>
-              {console.log('🐞 DEBUG: 내용 섹션 완료, 이미지 섹션 시작')}
               
-              {/* 이미지 업로드 필드 - SIMPLIFIED */}
+              {/* 이미지 업로드 필드 */}
               <div className="space-y-2">
-                {console.log('🐞 DEBUG: 이미지 섹션 div 진입')}
                 <Label htmlFor="image">포스트 이미지</Label>
-                {console.log('🐞 DEBUG: 포스트 이미지 라벨 렌더링')}
                 <input
                   id="image"
                   type="file"
@@ -345,9 +351,7 @@ export function SimpleBlogManagement() {
                 {formData.featuredImage && (
                   <p className="text-sm text-green-600">이미지 업로드 완료: {formData.featuredImage}</p>
                 )}
-                {console.log('🐞 DEBUG: 파일 입력 필드 렌더링 완료')}
               </div>
-              {console.log('🐞 DEBUG: 이미지 섹션 완료')}
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
