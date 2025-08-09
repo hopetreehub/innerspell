@@ -56,12 +56,19 @@ export async function getAllPostsServer(
     // 파일 저장소 사용 가능한 경우
     if (isFileStorageEnabled) {
       console.log('📁 Using file storage for blog posts');
-      const posts = await blogFileService.getFilteredPosts({
-        published: onlyPublished ? true : undefined,
-        category: categoryFilter,
-        limit: 20
-      });
-      return posts;
+      console.log('📁 isFileStorageEnabled:', isFileStorageEnabled);
+      try {
+        const posts = await blogFileService.getFilteredPosts({
+          published: onlyPublished ? true : undefined,
+          category: categoryFilter,
+          limit: 20
+        });
+        console.log(`📁 File service returned ${posts.length} posts`);
+        return posts;
+      } catch (error) {
+        console.error('❌ Error getting posts from file:', error);
+        return [];
+      }
     }
     
     // 기존 Mock 데이터 폴백

@@ -72,7 +72,13 @@ export async function getAllPosts(
       if (onlyPublished) params.append('published', 'true');
       if (categoryFilter && categoryFilter !== 'all') params.append('category', categoryFilter);
       
-      const response = await fetch(`/api/blog/posts?${params.toString()}`);
+      // 서버사이드에서는 절대 URL 사용
+      const baseUrl = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : 'http://localhost:4000';
+      const url = `${baseUrl}/api/blog/posts?${params.toString()}`;
+      
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to fetch posts');
       }
@@ -264,7 +270,13 @@ export async function searchPosts(searchTerm: string): Promise<BlogPost[]> {
       params.append('search', searchTerm);
       params.append('published', 'true');
       
-      const response = await fetch(`/api/blog/posts?${params.toString()}`);
+      // 서버사이드에서는 절대 URL 사용
+      const baseUrl = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : 'http://localhost:4000';
+      const url = `${baseUrl}/api/blog/posts?${params.toString()}`;
+      
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to search posts');
       }

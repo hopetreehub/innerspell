@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPostByIdServer, updatePostServer, deletePostServer } from '@/services/blog-service-server';
+import { 
+  getPostByIdServer, 
+  updatePostServer, 
+  deletePostServer 
+} from '@/services/blog-service-server';
 
 // 관리자 권한 확인 (Mock 버전)
 async function verifyAdmin(request: NextRequest): Promise<{ isAdmin: boolean; userId?: string }> {
@@ -7,13 +11,16 @@ async function verifyAdmin(request: NextRequest): Promise<{ isAdmin: boolean; us
   return { isAdmin: true, userId: 'mock-admin-id' };
 }
 
-// GET: 특정 포스트 조회
+// GET: 개별 포스트 조회
 export async function GET(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const post = await getPostByIdServer(params.postId);
+    const postId = params.id;
+    console.log(`📝 GET /api/blog/posts/${postId}`);
+    
+    const post = await getPostByIdServer(postId);
     
     if (!post) {
       return NextResponse.json(
@@ -21,10 +28,10 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    return NextResponse.json(post);
+    
+    return NextResponse.json({ post });
   } catch (error) {
-    console.error('Error fetching post:', error);
+    console.error('❌ Error fetching post:', error);
     return NextResponse.json(
       { error: '포스트를 불러올 수 없습니다.' },
       { status: 500 }
@@ -35,12 +42,13 @@ export async function GET(
 // PUT: 포스트 수정 (관리자만)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    console.log('📝 PUT /api/blog/posts/[postId] - 포스트 수정 시작');
+    const postId = params.id;
+    console.log(`✏️ PUT /api/blog/posts/${postId}`);
     
-    const { isAdmin } = await verifyAdmin(request);
+    const { isAdmin, userId } = await verifyAdmin(request);
     
     if (!isAdmin) {
       return NextResponse.json(
@@ -48,59 +56,43 @@ export async function PUT(
         { status: 403 }
       );
     }
-
+    
     const updates = await request.json();
-    console.log('📋 받은 수정 데이터:', {
-      postId: params.postId,
+    console.log('📋 수정 데이터:', {
       title: updates.title,
       category: updates.category,
       published: updates.published,
-      hasContent: !!updates.content,
-      hasExcerpt: !!updates.excerpt
+      hasContent: !!updates.content
     });
-
-    // 개발 모드에서는 Mock 업데이트
-    const isDevelopmentMode = process.env.NODE_ENV === 'development' && 
-      (process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
-       process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false');
     
-    if (isDevelopmentMode) {
-      console.log('✅ Mock 포스트 수정 완료:', params.postId);
-      return NextResponse.json({ 
-        success: true, 
-        message: '포스트가 성공적으로 수정되었습니다. (개발 모드)'
-      });
-    }
-
-    // 프로덕션 모드
-    // 날짜 문자열 변환
+    // 날짜 문자열을 Date 객체로 변환
     if (updates.publishedAt && typeof updates.publishedAt === 'string') {
       updates.publishedAt = new Date(updates.publishedAt);
     }
-
+    
     // 읽기 시간 재계산
     if (updates.content) {
       const wordsPerMinute = 200;
       const words = updates.content.trim().split(/\s+/).length;
       updates.readingTime = Math.ceil(words / wordsPerMinute);
     }
-
-    // image 필드 처리 (featuredImage로 오는 경우도 처리)
-    if (updates.featuredImage) {
+    
+    // 이미지 필드 통일
+    if (updates.featuredImage && !updates.image) {
       updates.image = updates.featuredImage;
-      delete updates.featuredImage;
     }
-
-    await updatePostServer(params.postId, updates);
-
+    
+    await updatePostServer(postId, updates);
+    
     return NextResponse.json({ 
       success: true, 
-      message: '포스트가 성공적으로 수정되었습니다.'
+      message: '포스트가 수정되었습니다.',
+      postId 
     });
   } catch (error) {
     console.error('❌ Error updating post:', error);
     return NextResponse.json(
-      { error: '포스트 수정에 실패했습니다.', details: error.message },
+      { error: '포스트 수정에 실패했습니다.' },
       { status: 500 }
     );
   }
@@ -109,9 +101,12 @@ export async function PUT(
 // DELETE: 포스트 삭제 (관리자만)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
+    const postId = params.id;
+    console.log(`🗑️ DELETE /api/blog/posts/${postId}`);
+    
     const { isAdmin } = await verifyAdmin(request);
     
     if (!isAdmin) {
@@ -120,15 +115,15 @@ export async function DELETE(
         { status: 403 }
       );
     }
-
-    await deletePostServer(params.postId);
-
+    
+    await deletePostServer(postId);
+    
     return NextResponse.json({ 
       success: true, 
-      message: '포스트가 성공적으로 삭제되었습니다.'
+      message: '포스트가 삭제되었습니다.' 
     });
   } catch (error) {
-    console.error('Error deleting post:', error);
+    console.error('❌ Error deleting post:', error);
     return NextResponse.json(
       { error: '포스트 삭제에 실패했습니다.' },
       { status: 500 }

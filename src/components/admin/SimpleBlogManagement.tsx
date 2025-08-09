@@ -45,6 +45,7 @@ const initialFormData: BlogPostFormData = {
   status: 'draft',
   seoTitle: '',
   seoDescription: '',
+  featuredImage: '',
 };
 
 const statusConfig = {
@@ -59,6 +60,8 @@ export function SimpleBlogManagement() {
   const [formData, setFormData] = useState<BlogPostFormData>(initialFormData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>('');
 
   // 포스트 목록 로드
   const loadPosts = async () => {
@@ -95,6 +98,52 @@ export function SimpleBlogManagement() {
       title: value,
       slug: generateSlug(value)
     }));
+  };
+
+  // 이미지 업로드 처리
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 파일 크기 체크 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('파일 크기가 너무 큽니다. (최대 5MB)');
+      return;
+    }
+
+    // 파일 타입 체크
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('허용되지 않는 파일 형식입니다. (jpg, png, webp만 허용)');
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      const formDataToUpload = new FormData();
+      formDataToUpload.append('file', file);
+
+      const response = await fetch('/api/blog/upload', {
+        method: 'POST',
+        body: formDataToUpload,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setFormData(prev => ({ ...prev, featuredImage: result.url }));
+        setImagePreview(result.url);
+        toast.success('이미지 업로드 완료');
+      } else {
+        toast.error(result.error || '업로드 실패');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('업로드 중 오류가 발생했습니다');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -219,6 +268,20 @@ export function SimpleBlogManagement() {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {console.log('🔥 DEBUG: 폼 렌더링 시작')}
+              
+              {/* 테스트: 맨 위에 이미지 필드 */}
+              <div className="space-y-2 border-2 border-red-500 p-2">
+                <Label htmlFor="test-image" className="text-red-600 font-bold">🖼️ 테스트 이미지 필드</Label>
+                <input
+                  id="test-image"
+                  type="file"
+                  accept="image/*"
+                  className="block w-full border-2 border-red-300 p-2"
+                />
+                <p className="text-red-600 text-sm">이 필드가 보이면 렌더링 정상!</p>
+              </div>
+              
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">제목</Label>
@@ -252,6 +315,7 @@ export function SimpleBlogManagement() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="content">내용</Label>
+                {console.log('🐞 DEBUG: 내용 필드 렌더링 중')}
                 <Textarea
                   id="content"
                   value={formData.content}
@@ -260,7 +324,31 @@ export function SimpleBlogManagement() {
                   rows={8}
                   required
                 />
+                {console.log('🐞 DEBUG: 내용 Textarea 렌더링 완료')}
               </div>
+              {console.log('🐞 DEBUG: 내용 섹션 완료, 이미지 섹션 시작')}
+              
+              {/* 이미지 업로드 필드 - SIMPLIFIED */}
+              <div className="space-y-2">
+                {console.log('🐞 DEBUG: 이미지 섹션 div 진입')}
+                <Label htmlFor="image">포스트 이미지</Label>
+                {console.log('🐞 DEBUG: 포스트 이미지 라벨 렌더링')}
+                <input
+                  id="image"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+                />
+                {uploading && <p className="text-sm text-gray-500">업로드 중...</p>}
+                {formData.featuredImage && (
+                  <p className="text-sm text-green-600">이미지 업로드 완료: {formData.featuredImage}</p>
+                )}
+                {console.log('🐞 DEBUG: 파일 입력 필드 렌더링 완료')}
+              </div>
+              {console.log('🐞 DEBUG: 이미지 섹션 완료')}
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="categories">카테고리 (쉼표로 구분)</Label>
@@ -292,6 +380,19 @@ export function SimpleBlogManagement() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tags">태그 (쉼표로 구분)</Label>
+                <Input
+                  id="tags"
+                  value={formData.tags.join(', ')}
+                  onChange={(e) => setFormData(prev => ({ 
+                    ...prev, 
+                    tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                  }))}
+                  placeholder="타로, 기초, 입문, 2025"
+                />
               </div>
               <div className="flex justify-end gap-2">
                 <Button

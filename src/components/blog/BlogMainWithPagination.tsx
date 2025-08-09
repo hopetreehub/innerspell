@@ -41,6 +41,8 @@ export function BlogMainWithPagination() {
 
   // API를 통해 블로그 포스트 가져오기
   useEffect(() => {
+    if (!isMounted) return;
+    
     const loadPosts = async () => {
       try {
         setIsLoading(true);
@@ -55,7 +57,7 @@ export function BlogMainWithPagination() {
         const data = await response.json();
         console.log(`📊 API에서 받은 포스트 수: ${data.posts?.length || 0}`);
         
-        if (data.posts) {
+        if (data.posts && Array.isArray(data.posts)) {
           // 날짜 객체로 변환
           const postsWithDates = data.posts.map((post: BlogPost) => ({
             ...post,
@@ -68,6 +70,9 @@ export function BlogMainWithPagination() {
           console.log(`✅ ${postsWithDates.length}개 포스트 로드 완료`);
           
           setPosts(postsWithDates);
+        } else {
+          console.warn('⚠️ 포스트 데이터가 비어있거나 유효하지 않습니다');
+          setPosts([]);
         }
       } catch (error) {
         console.error('❌ 포스트 로드 실패:', error);
@@ -79,7 +84,7 @@ export function BlogMainWithPagination() {
     };
 
     loadPosts();
-  }, []);
+  }, [isMounted]);
   
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;

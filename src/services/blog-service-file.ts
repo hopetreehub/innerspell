@@ -18,14 +18,11 @@ async function initializeBlogPostsFile(): Promise<void> {
   if (!exists) {
     console.log('📝 Initializing empty blog posts file...');
     
-    const initialData: BlogPostsData = {
-      posts: [],
-      lastUpdated: new Date().toISOString(),
-      version: '1.0.0'
-    };
+    // 배열 형태로 초기화 (현재 파일 구조에 맞춤)
+    const initialData: any[] = [];
     
     await fileStorage.writeJSON(BLOG_POSTS_FILE, initialData, false);
-    console.log('✅ Blog posts file initialized (empty)');
+    console.log('✅ Blog posts file initialized (empty array)');
   }
 }
 
@@ -38,24 +35,68 @@ export async function getAllPostsFromFile(): Promise<BlogPost[]> {
   }
 
   try {
-    await initializeBlogPostsFile();
+    // initializeBlogPostsFile을 제거하고 직접 파일 읽기
+    console.log('📁 Reading blog posts file...');
+    const rawData = await fileStorage.readJSON<any>(BLOG_POSTS_FILE);
+    console.log('📄 Raw data type:', typeof rawData);
+    console.log('📄 Raw data is array?', Array.isArray(rawData));
     
-    const data = await fileStorage.readJSON<BlogPostsData>(BLOG_POSTS_FILE);
-    if (!data || !data.posts) {
-      console.warn('⚠️ No posts found in file, returning empty array');
-      return [];
+    // 배열 형태인 경우 (현재 파일 구조)
+    if (Array.isArray(rawData)) {
+      console.log(`📚 Loaded ${rawData.length} posts from file (array format)`);
+      // Date 객체로 변환
+      const posts = rawData.map(post => ({
+        ...post,
+        publishedAt: new Date(post.publishedAt),
+        updatedAt: new Date(post.updatedAt),
+        createdAt: new Date(post.createdAt),
+        // status를 published 필드로 매핑
+        published: post.status === 'published',
+        // categories가 배열이 아닌 경우 처리
+        category: Array.isArray(post.categories) && post.categories.length > 0 
+          ? post.categories[0] 
+          : post.category || 'general',
+        // author 정보 정규화
+        author: typeof post.author === 'object' ? post.author.name : post.author,
+        // 기본값 설정
+        readingTime: post.readingTime || 5,
+        image: post.image || post.featuredImage || '/images/blog1.png',
+        featured: post.featured || false,
+        views: post.viewCount || post.views || 0,
+        likes: post.likes || 0
+      }));
+      return posts;
     }
     
-    // Date 객체로 변환
-    const posts = data.posts.map(post => ({
-      ...post,
-      publishedAt: new Date(post.publishedAt),
-      updatedAt: new Date(post.updatedAt),
-      createdAt: new Date(post.createdAt)
-    }));
+    // 객체 형태인 경우 (기존 형식)
+    if (rawData && rawData.posts) {
+      console.log(`📚 Loaded ${rawData.posts.length} posts from file (object format)`);
+      // Date 객체로 변환
+      const posts = rawData.posts.map(post => ({
+        ...post,
+        publishedAt: new Date(post.publishedAt),
+        updatedAt: new Date(post.updatedAt),
+        createdAt: new Date(post.createdAt),
+        // status를 published 필드로 매핑
+        published: post.status === 'published',
+        // categories가 배열이 아닌 경우 처리
+        category: Array.isArray(post.categories) && post.categories.length > 0 
+          ? post.categories[0] 
+          : post.category || 'general',
+        // author 정보 정규화
+        author: typeof post.author === 'object' ? post.author.name : post.author,
+        // 기본값 설정
+        readingTime: post.readingTime || 5,
+        image: post.image || post.featuredImage || '/images/blog1.png',
+        featured: post.featured || false,
+        views: post.viewCount || post.views || 0,
+        likes: post.likes || 0
+      }));
+      return posts;
+    }
     
-    console.log(`📚 Loaded ${posts.length} posts from file`);
-    return posts;
+    console.warn('⚠️ No posts found in file, returning empty array');
+    return [];
   } catch (error) {
     console.error('❌ Error loading posts from file:', error);
     return [];
@@ -106,14 +147,8 @@ export async function createPostInFile(postData: Partial<BlogPost>): Promise<str
     // 포스트 추가
     posts.unshift(newPost); // 최신 포스트를 앞에 추가
     
-    // 파일에 저장
-    const data: BlogPostsData = {
-      posts,
-      lastUpdated: new Date().toISOString(),
-      version: '1.0.0'
-    };
-    
-    await fileStorage.writeJSON(BLOG_POSTS_FILE, data);
+    // 파일에 저장 (배열 형태로)
+    await fileStorage.writeJSON(BLOG_POSTS_FILE, posts);
     
     console.log('✅ Created new post:', newPost.id);
     return newPost.id;
@@ -152,14 +187,8 @@ export async function updatePostInFile(
       image: updates.image || updates.featuredImage || posts[index].image
     };
     
-    // 파일에 저장
-    const data: BlogPostsData = {
-      posts,
-      lastUpdated: new Date().toISOString(),
-      version: '1.0.0'
-    };
-    
-    await fileStorage.writeJSON(BLOG_POSTS_FILE, data);
+    // 파일에 저장 (배열 형태로)
+    await fileStorage.writeJSON(BLOG_POSTS_FILE, posts);
     
     console.log('✅ Updated post:', id);
   } catch (error) {
@@ -185,14 +214,8 @@ export async function deletePostFromFile(id: string): Promise<void> {
       throw new Error(`Post not found: ${id}`);
     }
     
-    // 파일에 저장
-    const data: BlogPostsData = {
-      posts: filteredPosts,
-      lastUpdated: new Date().toISOString(),
-      version: '1.0.0'
-    };
-    
-    await fileStorage.writeJSON(BLOG_POSTS_FILE, data);
+    // 파일에 저장 (배열 형태로)
+    await fileStorage.writeJSON(BLOG_POSTS_FILE, filteredPosts);
     
     console.log('✅ Deleted post:', id);
   } catch (error) {
@@ -213,11 +236,18 @@ export async function getFilteredPosts(
     limit?: number;
   } = {}
 ): Promise<BlogPost[]> {
+  console.log('📊 getFilteredPosts called with options:', options);
   let posts = await getAllPostsFromFile();
+  console.log(`📚 getAllPostsFromFile returned ${posts.length} posts`);
   
-  // published 필터
+  // published 필터 (status 필드 사용)
   if (options.published !== undefined) {
-    posts = posts.filter(post => post.published === options.published);
+    if (options.published === true) {
+      posts = posts.filter(post => post.status === 'published');
+    } else {
+      posts = posts.filter(post => post.status !== 'published');
+    }
+    console.log(`📝 After published filter: ${posts.length} posts`);
   }
   
   // category 필터

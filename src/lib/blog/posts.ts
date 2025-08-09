@@ -23,6 +23,67 @@ export interface BlogPost {
   views?: number;
 }
 
+// getAllPosts 함수 export 추가
+export async function getAllPosts(): Promise<BlogPost[]> {
+  // 서버사이드 렌더링 중에는 mockPosts 사용
+  if (typeof window === 'undefined') {
+    console.log('📊 서버에서 직접 데이터를 가져옵니다');
+    console.log('🔍 mockPosts 타입:', typeof mockPosts);
+    console.log('🔍 mockPosts 값:', mockPosts);
+    console.log(`🔍 mockPosts 배열 길이: ${mockPosts?.length || 0}`);
+    
+    // mockPosts가 정의되지 않았거나 빈 배열인 경우 빈 배열 반환
+    if (!mockPosts || !Array.isArray(mockPosts)) {
+      console.log('⚠️ mockPosts가 정의되지 않았습니다. 빈 배열 반환');
+      return [];
+    }
+    
+    const publishedPosts = mockPosts.filter(post => post.published);
+    console.log(`✅ 발행된 포스트 ${publishedPosts.length}개 반환`);
+    return publishedPosts;
+  }
+  
+  // 클라이언트: API 호출
+  try {
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://your-domain.com' 
+      : 'http://localhost:4000';
+    const response = await fetch(`${baseUrl}/api/blog/posts?published=true`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.posts || [];
+    }
+    console.error('Failed to fetch posts: HTTP', response.status);
+    return mockPosts ? mockPosts.filter(post => post.published) : [];
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    return mockPosts ? mockPosts.filter(post => post.published) : [];
+  }
+}
+
+// 단일 포스트 조회
+export async function getPostById(id: string): Promise<BlogPost | null> {
+  // 서버사이드 렌더링 중에는 mockPosts 사용
+  if (typeof window === 'undefined') {
+    console.log('Server-side rendering: using mockPosts for post', id);
+    return mockPosts.find(post => post.id === id) || null;
+  }
+  
+  // 클라이언트: API 호출
+  try {
+    const response = await fetch(`/api/blog/posts/${id}`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.post || null;
+    }
+    console.error(`Failed to fetch post ${id}: HTTP`, response.status);
+    return mockPosts.find(post => post.id === id) || null;
+  } catch (error) {
+    console.error('Failed to fetch post:', error);
+    return mockPosts.find(post => post.id === id) || null;
+  }
+}
+
 // Mock 데이터는 더 이상 사용하지 않음 (파일 스토리지로 이전됨)
 // 이전 mockPosts는 migrate-blog-posts-to-admin.ts로 마이그레이션됨
 export const mockPosts: BlogPost[] = [

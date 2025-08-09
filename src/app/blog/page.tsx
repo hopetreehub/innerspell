@@ -1,4 +1,6 @@
 import { Metadata } from 'next';
+import { BlogList } from '@/components/blog/BlogList';
+import { getAllPosts } from '@/services/blog-service';
 
 export const metadata: Metadata = {
   title: '블로그 | InnerSpell - 타로, 점술, 꿈해몽, 자기계발 전문 블로그',
@@ -45,30 +47,20 @@ export const metadata: Metadata = {
   },
 };
 
-import { BlogMainWithPagination } from '@/components/blog/BlogMainWithPagination';
-
 // 서버 사이드에서 직접 블로그 데이터 제공
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default function BlogPage() {
-  // 2025-07-26: 서버 사이드 데이터 디버깅
+export default async function BlogPage() {
+  // 서버 사이드에서 블로그 포스트 가져오기
   console.log('🚀 Blog 페이지 서버 렌더링');
-  console.log('📊 API를 통해 데이터를 가져옵니다');
-  console.log('🕐 Deployment timestamp:', new Date().toISOString());
+  console.log('📊 서버에서 직접 데이터를 가져옵니다');
   
-  return (
-    <>
-      {/* 캐시 버스팅을 위한 메타 태그 */}
-      <meta name="cache-bust" content={`v0.1.3-${Date.now()}`} />
-      
-      {/* 임시 디버그 정보 (숨김) */}
-      <div style={{ display: 'none' }}>
-        <p>Debug: API data will be loaded</p>
-        <p>Debug: Timestamp = {new Date().toISOString()}</p>
-        <p>Debug: Build timestamp = {process.env.NEXT_PUBLIC_BUILD_TIMESTAMP}</p>
-      </div>
-      <BlogMainWithPagination />
-    </>
-  );
+  // 발행된 포스트만 가져오기 (getAllPosts에서 이미 필터링됨)
+  const result = await getAllPosts();
+  const publishedPosts = result.posts || [];
+  
+  console.log(`✅ 총 ${publishedPosts.length}개의 발행된 포스트 로드`);
+  
+  return <BlogList initialPosts={publishedPosts} />;
 }

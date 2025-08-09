@@ -2,7 +2,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { BlogPostDetail } from '@/components/blog/BlogPostDetail';
-import { getAllPosts } from '@/lib/blog/posts';
+import { getAllPostsFromFile } from '@/services/blog-service-file';
 import { BlogPostJsonLd } from '@/components/blog/BlogJsonLd';
 
 type Props = {
@@ -11,8 +11,14 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const posts = await getAllPosts();
+  console.log('generateMetadata: Looking for slug:', slug);
+  
+  const posts = await getAllPostsFromFile();
+  console.log('generateMetadata: Found', posts.length, 'posts');
+  console.log('generateMetadata: Post IDs:', posts.map(p => p.id));
+  
   const post = posts.find(p => p.id === slug);
+  console.log('generateMetadata: Found post:', post ? post.title : 'NOT FOUND');
 
   if (!post) {
     return {
@@ -37,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           alt: post.title,
         },
       ],
-      publishedTime: post.publishedAt.toISOString(),
+      publishedTime: post.publishedAt instanceof Date ? post.publishedAt.toISOString() : new Date(post.publishedAt).toISOString(),
       authors: [post.author],
     },
     twitter: {
@@ -51,10 +57,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const posts = await getAllPosts();
+  console.log('BlogPostPage: Looking for slug:', slug);
+  
+  const posts = await getAllPostsFromFile();
+  console.log('BlogPostPage: Found', posts.length, 'posts');
+  console.log('BlogPostPage: Post IDs:', posts.map(p => p.id));
+  
   const post = posts.find(p => p.id === slug);
+  console.log('BlogPostPage: Found post:', post ? post.title : 'NOT FOUND');
 
   if (!post) {
+    console.log('BlogPostPage: Calling notFound() for slug:', slug);
     notFound();
   }
 

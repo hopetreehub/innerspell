@@ -42,7 +42,8 @@ export async function createBlogPost(
       const { writeJSON, readJSON } = await import('@/services/file-storage-service');
       
       // 슬러그 중복 검사
-      const existingPosts = await readJSON<BlogPost[]>('blog-posts.json') || [];
+      const existingData = await readJSON<BlogPost[]>('blog-posts.json');
+      const existingPosts = Array.isArray(existingData) ? existingData : [];
       const slugExists = existingPosts.some(post => post.slug === validatedData.slug);
       
       if (slugExists) {
@@ -156,17 +157,17 @@ export async function getBlogPosts(
       const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
       
       // 필터링
-      let filteredPosts = posts;
+      let filteredPosts = Array.isArray(posts) ? posts : [];
       if (status) {
-        filteredPosts = posts.filter(post => post.status === status);
+        filteredPosts = filteredPosts.filter(post => post.status === status);
       }
       if (category) {
-        filteredPosts = filteredPosts.filter(post => post.categories.includes(category));
+        filteredPosts = filteredPosts.filter(post => post.categories && post.categories.includes(category));
       }
       
       // 최신순 정렬
       filteredPosts.sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.createdAt || b.publishedAt).getTime() - new Date(a.createdAt || a.publishedAt).getTime()
       );
       
       // 페이지네이션
