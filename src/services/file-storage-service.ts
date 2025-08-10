@@ -70,6 +70,19 @@ async function withFileLock<T>(
 }
 
 /**
+ * 파일 존재 여부 확인
+ */
+export async function fileExists(fileName: string): Promise<boolean> {
+  const filePath = path.join(DATA_DIR, fileName);
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * JSON 파일 읽기
  */
 export async function readJSON<T>(fileName: string): Promise<T | null> {
@@ -101,7 +114,9 @@ export async function writeJSON<T>(
   
   await withFileLock(filePath, async () => {
     try {
-      await ensureDirectory(DATA_DIR);
+      // 파일이 위치할 디렉토리 확인 및 생성
+      const fileDir = path.dirname(filePath);
+      await ensureDirectory(fileDir);
       
       // 백업 생성
       if (createBackup) {
@@ -177,20 +192,6 @@ async function cleanupOldBackups(fileName: string): Promise<void> {
     }
   } catch (error) {
     console.error('❌ Backup cleanup failed:', error);
-  }
-}
-
-/**
- * 파일 존재 여부 확인
- */
-export async function fileExists(fileName: string): Promise<boolean> {
-  const filePath = path.join(DATA_DIR, fileName);
-  
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
   }
 }
 
