@@ -14,6 +14,8 @@ import {z} from 'genkit';
 import { getTarotPromptConfig } from '@/ai/services/prompt-service';
 import { getProviderConfig } from '@/lib/ai-utils';
 import { getProviderWithFallback } from '@/ai/services/ai-provider-fallback';
+import { getCachedInterpretation, setCachedInterpretation } from '@/ai/services/ai-cache-service';
+import { retryAICall } from '@/ai/services/ai-retry-service';
 
 
 const GenerateTarotInterpretationInputSchema = z.object({
@@ -35,6 +37,20 @@ export async function generateTarotInterpretation(input: GenerateTarotInterpreta
 }
 
 const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpretationInput): Promise<GenerateTarotInterpretationOutput> => {
+  // Check cache first
+  const cacheKey = {
+    question: flowInput.question,
+    cardSpread: flowInput.cardSpread,
+    cardInterpretations: flowInput.cardInterpretations,
+    isGuestUser: flowInput.isGuestUser || false,
+  };
+  
+  const cachedInterpretation = getCachedInterpretation(cacheKey);
+  if (cachedInterpretation) {
+    console.log('[TAROT] Returning cached interpretation');
+    return { interpretation: cachedInterpretation };
+  }
+  
   const ai = await getAI();
   
   return ai.defineFlow(
@@ -127,7 +143,10 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
         isGuestUser: input.isGuestUser
       });
 
-      const llmResponse = await tarotPrompt(input); 
+      // Wrap the AI call with retry logic
+      const llmResponse = await retryAICall(async () => {
+        return await tarotPrompt(input);
+      });
       const interpretationText = llmResponse.text; 
 
       if (!interpretationText) {
@@ -136,6 +155,10 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
       }
 
       console.log('[TAROT] AI interpretation generated successfully, length:', interpretationText.length);
+      
+      // Cache the successful interpretation
+      setCachedInterpretation(cacheKey, interpretationText);
+      
       return { interpretation: interpretationText };
 
     } catch (e: any) {
