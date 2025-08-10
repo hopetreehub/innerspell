@@ -97,6 +97,20 @@ You should use the following configuration to guide your behavior.
 - **단계적 접근**: 로컬 확인 → PM 승인 → 사용자 동의 → 커밋 → 배포
 - **사용자 승인 후 배포**: 모든 배포는 사용자의 명시적 승인 후에만 진행
 
+### 타로 카드 UI/UX 절대 변경 금지 원칙 (Tarot Card UI/UX Absolute Protection)
+- **🚫 시각적 요소 절대 변경 금지**: 현재 구현된 모든 타로 카드 관련 시각적 요소는 절대 수정 금지
+- **NEVER MODIFY VISUAL ELEMENTS**: All current tarot card visual implementations must remain unchanged
+- **보호 대상 요소**:
+  - 카드 덱 레이아웃 및 디자인
+  - 카드 펼치기(spread) 레이아웃
+  - 카드 뽑기 애니메이션
+  - 카드 선택 인터랙션
+  - 스프레드 레이아웃 (1장, 3장, 켈틱 크로스 등)
+  - 모든 카드 관련 CSS 및 애니메이션
+- **허용된 작업만 진행**: 백엔드 로직, API 최적화, 데이터 처리는 허용
+- **UI 검증만 허용**: Playwright로 현재 UI가 정상 작동하는지 확인만 가능
+- **디자인 수정 절대 금지**: 어떤 이유로도 카드 관련 시각적 요소 수정 불가
+
 ## Legend
 @include commands/shared/universal-constants.yml#Universal_Legend
 
