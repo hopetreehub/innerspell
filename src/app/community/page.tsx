@@ -6,8 +6,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-  title: '커뮤니티 - InnerSpell',
-  description: 'InnerSpell 커뮤니티에서 타로와 영성에 대한 이야기를 나누고, 교육 상담을 받으며, 리딩 경험을 공유하세요.',
+  title: '커뮤니티',
+  description: '타로와 영성 커뮤니티. 타로 리딩 경험 공유, 꿈 해석 토론, 명상 경험담, 타로 교육 상담까지. 함께 성장하는 영적 커뮤니티에 참여하세요.',
+  keywords: ['타로커뮤니티', '영성커뮤니티', '타로공유', '꿈해몽토론', '명상경험', '타로교육', '타로상담', '영적성장', '커뮤니티', '경험공유'],
+  openGraph: {
+    title: '타로 & 영성 커뮤니티 - InnerSpell',
+    description: '타로 리딩 경험과 영적 통찰을 나누는 따뜻한 커뮤니티. 함께 배우고 성장하세요.',
+    images: [
+      {
+        url: '/images/community-og.png',
+        width: 1200,
+        height: 630,
+        alt: 'InnerSpell 커뮤니티',
+      },
+    ],
+  },
 };
 
 const communityLinks = [

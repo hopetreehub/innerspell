@@ -7,6 +7,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import './globals.css';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { AuthErrorBoundary } from '@/components/auth/AuthErrorBoundary';
+import { JsonLd, websiteJsonLd } from '@/components/seo/JsonLd';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -79,6 +80,7 @@ export default function RootLayout({
           integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" 
           crossOrigin="anonymous">
         </script>
+        <JsonLd data={websiteJsonLd} />
       </head>
       <body className="font-body antialiased">
         <ThemeProvider
