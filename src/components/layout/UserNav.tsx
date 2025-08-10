@@ -17,6 +17,7 @@ import { auth } from '@/lib/firebase/client';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { LogOut, User, Settings, LogIn, UserPlus, Shield, BookOpen } from 'lucide-react';
+import { logoutFromKakao } from '@/lib/firebase/auth-providers';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
@@ -33,39 +34,70 @@ export function UserNav() {
 
   const handleSignOut = async () => {
     try {
-      // Clear all localStorage items
-      localStorage.clear();
-      
-      // Clear all sessionStorage items
-      sessionStorage.clear();
-      
-      // Use the logout function from AuthContext which handles both dev and prod
-      logout();
-      
-      // Also try to sign out from Firebase if available (for production)
-      if (auth && process.env.NODE_ENV !== 'development') {
+      // 1. First sign out from Firebase to prevent re-authentication
+      if (auth && auth.currentUser) {
         await signOut(auth);
+        console.log('Firebase signOut completed');
       }
       
-      // Clear any service worker caches
+      // 2. Clear all localStorage items
+      localStorage.clear();
+      
+      // 3. Clear all sessionStorage items
+      sessionStorage.clear();
+      
+      // 4. Clear Firebase-specific IndexedDB databases
+      if ('indexedDB' in window) {
+        const firebaseDBNames = [
+          'firebaseLocalStorageDb',
+          'firestore/[DEFAULT]/innerspell-an7ce/main',
+          'firebase-heartbeat-database',
+          'firebase-installations-database'
+        ];
+        
+        for (const dbName of firebaseDBNames) {
+          try {
+            await indexedDB.deleteDatabase(dbName);
+          } catch (e) {
+            // Ignore errors
+          }
+        }
+      }
+      
+      // 5. Sign out from Kakao if logged in via Kakao
+      try {
+        await logoutFromKakao();
+      } catch (error) {
+        console.log('Kakao logout error (may not be logged in via Kakao):', error);
+      }
+      
+      // 6. Clear any service worker caches
       if ('caches' in window) {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map(name => caches.delete(name)));
       }
       
+      // 7. Clear all cookies
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+      
+      // 8. Use the logout function from AuthContext
+      logout();
+      
       toast({ title: '로그아웃 성공', description: '성공적으로 로그아웃되었습니다.' });
       
-      // Force hard reload with cache bypass
-      router.push('/?logout=true');
-      router.refresh();
-      
-      // Additional forced reload after a short delay
-      setTimeout(() => {
-        window.location.href = '/?logout=true';
-      }, 100);
+      // 9. Force complete page reload to clear any in-memory state
+      // Use replace to prevent back button issues
+      window.location.replace('/?logout=true&t=' + Date.now());
     } catch (error) {
       console.error('Error signing out:', error);
       toast({ variant: 'destructive', title: '로그아웃 오류', description: '로그아웃 중 문제가 발생했습니다.' });
+      
+      // Even on error, try to force reload
+      window.location.replace('/?logout=true&t=' + Date.now());
     }
   };
 

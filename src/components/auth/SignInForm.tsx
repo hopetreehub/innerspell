@@ -22,7 +22,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, KeyRound, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
-import { DevAuthHelper } from '@/components/DevAuthHelper';
+import { KakaoLoginButton } from '@/components/auth/KakaoLoginButton';
 
 const formSchema = z.object({
   email: z.string().email({ message: '유효한 이메일 주소를 입력해주세요.' }),
@@ -310,18 +310,29 @@ export function SignInForm() {
           </span>
         </div>
       </div>
-      <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
-        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
-        Google로 로그인
-      </Button>
+      <div className="space-y-3">
+        <Button 
+          variant="outline" 
+          className="w-full bg-[#FEE500] hover:bg-[#FFEB00] text-black border-[#FEE500] hover:border-[#FFEB00] font-medium"
+          disabled={loading}
+        >
+          <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3C7.03 3 3 6.58 3 10.95c0 2.76 1.8 5.19 4.52 6.58l-1.05 3.88c-.06.22.16.4.36.29L11.35 18.5c.21.02.43.02.65.02 4.97 0 9-3.58 9-7.95S16.97 3 12 3z"/>
+          </svg>
+          카카오로 로그인
+        </Button>
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
+          Google로 로그인
+        </Button>
+      </div>
       <p className="mt-6 text-center text-sm text-muted-foreground">
         계정이 없으신가요?{' '}
         <Link href="/sign-up" className="font-medium text-primary hover:underline">
           회원가입
         </Link>
       </p>
-      <DevAuthHelper />
     </>
   );
 }

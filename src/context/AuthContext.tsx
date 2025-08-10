@@ -3,7 +3,7 @@
 
 import type React from 'react';
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase/client';
 import { getUserProfile, type AppUser } from '@/actions/userActions';
 
@@ -64,32 +64,76 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setRefreshTrigger(prev => prev + 1);
   };
 
-  const logout = () => {
+  const logout = async () => {
     setIsLoggedOut(true);
     setUser(null);
     setFirebaseUser(null);
     
-    // EMERGENCY CACHE INVALIDATION ON LOGOUT
-    // Clear any localStorage items related to auth
-    localStorage.removeItem('emailForSignIn');
-    localStorage.setItem('user-logged-out', 'true');
-    localStorage.setItem('cache-bust-timestamp', Date.now().toString());
+    // Sign out from Firebase Auth
+    try {
+      if (auth) {
+        await signOut(auth);
+      }
+    } catch (error) {
+      console.error('Firebase signOut error:', error);
+    }
     
-    // Notify other tabs about logout
-    localStorage.setItem('auth-state-changed', 'logged-out');
+    // EMERGENCY CACHE INVALIDATION ON LOGOUT
+    // Clear ALL localStorage items
+    localStorage.clear();
+    
+    // Clear ALL sessionStorage items
+    sessionStorage.clear();
+    
+    // Clear IndexedDB - specifically Firebase databases
+    if ('indexedDB' in window) {
+      // Firebase uses specific database names
+      const firebaseDBNames = [
+        'firebaseLocalStorageDb',
+        'firestore/[DEFAULT]/innerspell-an7ce/main',
+        'firebase-heartbeat-database',
+        'firebase-installations-database'
+      ];
+      
+      // Try to delete specific Firebase databases
+      for (const dbName of firebaseDBNames) {
+        try {
+          await indexedDB.deleteDatabase(dbName);
+          console.log(`Deleted IndexedDB: ${dbName}`);
+        } catch (e) {
+          console.log(`Failed to delete ${dbName}:`, e);
+        }
+      }
+      
+      // Also try to get all databases if the API is available
+      if (indexedDB.databases) {
+        try {
+          const databases = await indexedDB.databases();
+          for (const db of databases) {
+            if (db.name && (db.name.includes('firebase') || db.name.includes('firestore'))) {
+              await indexedDB.deleteDatabase(db.name);
+              console.log(`Deleted IndexedDB: ${db.name}`);
+            }
+          }
+        } catch (e) {
+          console.log('Failed to enumerate databases:', e);
+        }
+      }
+    }
+    
+    // Clear all cookies
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
     
     // Force cache invalidation by adding timestamp to URL
-    const cacheBuster = `cb=${Date.now()}`;
     if (typeof window !== 'undefined') {
-      // Clear browser cache for auth-related pages
+      // Clear browser cache for all pages
       if ('caches' in window) {
-        caches.keys().then(names => {
-          names.forEach(name => {
-            if (name.includes('auth') || name.includes('admin')) {
-              caches.delete(name);
-            }
-          });
-        });
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
       }
       
       // Trigger a hard refresh with cache busting
@@ -99,7 +143,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       window.location.href = currentUrl.toString();
     }
     
-    console.log("AuthProvider: User logged out with cache invalidation");
+    console.log("AuthProvider: User logged out with complete cache invalidation");
   };
 
   const login = () => {
