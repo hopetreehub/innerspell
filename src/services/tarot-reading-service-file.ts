@@ -195,6 +195,65 @@ export async function getUserReadingsFromFile(
   }
 
   try {
+    // 먼저 전체 인덱스에서 사용자의 리딩을 찾습니다
+    const allIndexPath = path.join(READINGS_DIR, ALL_READINGS_FILE);
+    const allIndex = await fileStorage.readJSON<AllReadingsIndex>(allIndexPath);
+    
+    if (allIndex && allIndex.readings) {
+      // 사용자의 리딩만 필터링
+      const userReadings = allIndex.readings.filter(r => r.userId === userId);
+      
+      // 각 리딩의 상세 정보를 읽습니다
+      const detailedReadings: SavedReading[] = [];
+      
+      for (const summary of userReadings) {
+        // 먼저 개별 파일을 시도
+        const readingPath = getReadingFilePath(userId, summary.id);
+        const reading = await fileStorage.readJSON<ReadingFileData>(readingPath);
+        
+        if (reading) {
+          detailedReadings.push({
+            id: reading.id,
+            userId: reading.userId,
+            question: reading.question,
+            spreadName: reading.spreadName,
+            spreadNumCards: reading.spreadNumCards,
+            drawnCards: reading.drawnCards.map(card => ({
+              id: card.id,
+              name: card.name || card.id,
+              imageSrc: card.imageSrc || `/images/tarot/${card.id}.png`,
+              isReversed: card.isReversed,
+              position: card.position
+            })),
+            interpretationText: reading.interpretationText,
+            createdAt: new Date(reading.createdAt),
+            tags: reading.tags,
+            note: reading.note
+          });
+        } else {
+          // 개별 파일이 없으면 요약 정보만이라도 반환
+          detailedReadings.push({
+            id: summary.id,
+            userId: summary.userId,
+            question: summary.question,
+            spreadName: summary.spreadName,
+            spreadNumCards: 0, // 기본값
+            drawnCards: [], // 빈 배열
+            interpretationText: '', // 빈 문자열
+            createdAt: new Date(summary.createdAt),
+            tags: [],
+            note: ''
+          });
+        }
+      }
+      
+      // 최신 순으로 정렬
+      detailedReadings.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      
+      return limit ? detailedReadings.slice(0, limit) : detailedReadings;
+    }
+    
+    // fallback: 사용자별 인덱스 파일 확인
     const userIndexPath = getUserIndexPath(userId);
     const userIndex = await fileStorage.readJSON<UserReadingsIndex>(userIndexPath);
     

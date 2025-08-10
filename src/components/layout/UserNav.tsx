@@ -16,7 +16,7 @@ import { useAuth } from '@/context/AuthContext';
 import { auth } from '@/lib/firebase/client';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { LogOut, User, Settings, LogIn, UserPlus, Shield } from 'lucide-react';
+import { LogOut, User, Settings, LogIn, UserPlus, Shield, BookOpen } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
@@ -125,6 +125,10 @@ export function UserNav() {
           <DropdownMenuItem onClick={() => router.push('/profile')}>
             <User className="mr-2 h-4 w-4" />
             <span>프로필</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/tarot/history')}>
+            <BookOpen className="mr-2 h-4 w-4" />
+            <span>리딩 기록</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/settings')}>
             <Settings className="mr-2 h-4 w-4" />
