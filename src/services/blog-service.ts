@@ -66,8 +66,8 @@ export async function getAllPosts(
   lastDoc?: QueryDocumentSnapshot<DocumentData>
 ): Promise<{ posts: BlogPost[]; lastDoc?: QueryDocumentSnapshot<DocumentData> }> {
   try {
-    // 개발 환경에서는 API 라우트 사용
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
+    // 개발 환경이거나 파일 스토리지가 활성화된 경우 API 라우트 사용
+    if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true') {
       const params = new URLSearchParams();
       if (onlyPublished) params.append('published', 'true');
       if (categoryFilter) params.append('category', categoryFilter);
@@ -267,8 +267,8 @@ export async function getPostCountByCategory(): Promise<Record<string, number>> 
 // 검색 기능 (간단한 버전 - 향후 Algolia나 ElasticSearch 연동 고려)
 export async function searchPosts(searchTerm: string): Promise<BlogPost[]> {
   try {
-    // 개발 환경에서는 API 라우트 사용
-    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true') {
+    // 개발 환경이거나 파일 스토리지가 활성화된 경우 API 라우트 사용
+    if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true') {
       const params = new URLSearchParams();
       params.append('search', searchTerm);
       params.append('published', 'true');
