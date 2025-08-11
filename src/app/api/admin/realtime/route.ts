@@ -101,7 +101,7 @@ async function getRealRealtimeData() {
         // 시스템 메트릭스 (초기값 0)
         cpuUsage: 0,
         memoryUsage: 0,
-        diskUsage: 0
+        diskUsage: 0,
         networkLatency: Math.round(averageResponseTime / 10), // 응답시간 기반 네트워크 지연
         activeConnections: estimatedActiveUsers
       },
