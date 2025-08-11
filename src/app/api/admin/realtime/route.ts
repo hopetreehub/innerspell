@@ -3,9 +3,62 @@ import { headers } from 'next/headers';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import { admin } from '@/lib/firebase/admin';
+import { shouldUseDevelopmentFallback, developmentLog } from '@/lib/firebase/development-mode';
+
+// 개발 모드 mock 데이터 생성
+function getMockRealtimeData() {
+  const now = new Date();
+  
+  return {
+    timestamp: now.toISOString(),
+    stats: {
+      totalActiveUsers: Math.floor(Math.random() * 50) + 20,
+      totalSessions: Math.floor(Math.random() * 100) + 50,
+      currentTarotReadings: Math.floor(Math.random() * 10) + 5,
+      currentDreamInterpretations: Math.floor(Math.random() * 5) + 2,
+      activeAISessions: Math.floor(Math.random() * 15) + 5,
+      totalBlogViews: Math.floor(Math.random() * 200) + 100,
+      avgResponseTime: Math.random() * 200 + 100,
+      errorRate: Math.random() * 2,
+      cpuUsage: Math.random() * 80 + 10,
+      memoryUsage: Math.random() * 70 + 20,
+      diskUsage: Math.random() * 60 + 20,
+      networkLatency: Math.random() * 50 + 10
+    },
+    recentEvents: [
+      {
+        id: `event-${Date.now()}-1`,
+        type: 'tarot_reading' as const,
+        user: 'user@example.com',
+        timestamp: new Date(Date.now() - Math.random() * 300000).toISOString(),
+        details: '타로 리딩 완료'
+      },
+      {
+        id: `event-${Date.now()}-2`,
+        type: 'user_login' as const,
+        user: 'admin@innerspell.com',
+        timestamp: new Date(Date.now() - Math.random() * 300000).toISOString(),
+        details: '로그인 성공'
+      },
+      {
+        id: `event-${Date.now()}-3`,
+        type: 'blog_view' as const,
+        user: 'visitor@example.com',
+        timestamp: new Date(Date.now() - Math.random() * 300000).toISOString(),
+        details: '블로그 포스트 조회'
+      }
+    ]
+  };
+}
 
 // 실시간 데이터를 Firebase에서 가져오는 함수
 async function getRealRealtimeData() {
+  // 개발 모드 fallback 확인
+  if (shouldUseDevelopmentFallback()) {
+    developmentLog('RealtimeAPI', 'Using mock realtime data');
+    return getMockRealtimeData();
+  }
+  
   try {
     const db = getFirestore(admin);
     const auth = getAuth(admin);
@@ -205,8 +258,10 @@ export async function GET(request: NextRequest) {
     const apiKey = headersList.get('x-admin-api-key') || 
                    request.nextUrl.searchParams.get('api_key');
     
-    // API 키 검증 (개발 환경에서는 생략)
-    if (process.env.NODE_ENV === 'production' && apiKey !== process.env.ADMIN_API_KEY) {
+    // API 키 검증 (개발 모드에서는 생략)
+    if (process.env.NODE_ENV === 'production' && 
+        !shouldUseDevelopmentFallback() && 
+        apiKey !== process.env.ADMIN_API_KEY) {
       return NextResponse.json(
         { error: '관리자 권한이 필요합니다.' },
         { status: 401 }

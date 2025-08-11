@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import { adminApp } from '@/lib/firebase/admin';
+import { shouldUseDevelopmentFallback, developmentLog } from '@/lib/firebase/development-mode';
 
 export interface SystemStatus {
   name: string;
@@ -20,7 +21,83 @@ export interface SystemLogs {
   source?: string;
 }
 
+// 개발 모드 mock 시스템 상태
+function getMockSystemHealth() {
+  const now = new Date();
+  const results: SystemStatus[] = [
+    {
+      name: "애플리케이션 서버",
+      status: "Online",
+      icon: "Server",
+      variant: "default",
+      details: "Vercel Edge Functions",
+      lastCheck: now.toISOString()
+    },
+    {
+      name: "데이터베이스",
+      status: "Demo Mode",
+      icon: "Database",
+      variant: "secondary",
+      details: "Mock 데이터 사용 중",
+      lastCheck: now.toISOString()
+    },
+    {
+      name: "AI 서비스",
+      status: "Ready",
+      icon: "Cpu",
+      variant: "default",
+      details: "API 키 설정 필요",
+      lastCheck: now.toISOString()
+    },
+    {
+      name: "파일 스토리지",
+      status: "Ready",
+      icon: "HardDrive",
+      variant: "default",
+      details: "Local 스토리지 준비",
+      lastCheck: now.toISOString()
+    },
+    {
+      name: "캐시 시스템",
+      status: "Active",
+      icon: "Zap",
+      variant: "default",
+      details: "In-memory 캐시 활성",
+      lastCheck: now.toISOString()
+    }
+  ];
+  
+  const logs: SystemLogs[] = [
+    {
+      timestamp: now.toISOString(),
+      level: 'INFO',
+      message: 'Demo mode activated - using mock data',
+      source: 'system'
+    },
+    {
+      timestamp: new Date(Date.now() - 60000).toISOString(),
+      level: 'SYSTEM',
+      message: 'System health check completed',
+      source: 'health-monitor'
+    },
+    {
+      timestamp: new Date(Date.now() - 120000).toISOString(),
+      level: 'INFO',
+      message: 'Cache system initialized',
+      source: 'cache-service'
+    }
+  ];
+  
+  return { results, logs };
+}
+
 async function checkSystemHealth() {
+  // 개발 모드 fallback 확인
+  if (shouldUseDevelopmentFallback()) {
+    developmentLog('SystemStatusAPI', 'Using mock system health data');
+    return getMockSystemHealth();
+  }
+  
   const results: SystemStatus[] = [];
   const logs: SystemLogs[] = [];
   
@@ -349,8 +426,10 @@ export async function GET(request: NextRequest) {
     const apiKey = headersList.get('x-admin-api-key') || 
                    request.nextUrl.searchParams.get('api_key');
     
-    // API 키 검증 (개발 환경에서는 생략)
-    if (process.env.NODE_ENV === 'production' && apiKey !== process.env.ADMIN_API_KEY) {
+    // API 키 검증 (개발 모드에서는 생략)
+    if (process.env.NODE_ENV === 'production' && 
+        !shouldUseDevelopmentFallback() && 
+        apiKey !== process.env.ADMIN_API_KEY) {
       return NextResponse.json(
         { error: '관리자 권한이 필요합니다.' },
         { status: 401 }

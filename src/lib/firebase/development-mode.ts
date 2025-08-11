@@ -19,7 +19,9 @@ export const hasFirebaseCredentials = () => {
 
 // 개발 모드에서 Firebase 없이 작동할지 결정
 export const shouldUseDevelopmentFallback = () => {
-  return isDevelopmentMode && !hasFirebaseCredentials();
+  // 프로덕션에서도 Firebase 자격 증명이 없으면 fallback 사용
+  const enableDevMode = process.env.NEXT_PUBLIC_ENABLE_DEV_MODE === 'true';
+  return (isDevelopmentMode || enableDevMode || !hasFirebaseCredentials());
 };
 
 // 개발용 mock 데이터
@@ -86,7 +88,16 @@ export const developmentMockData = {
     totalBlogPosts: 23,
     publishedPosts: 20,
     totalCategories: 4,
-    systemHealth: 'good' as const
+    systemHealth: 'good' as const,
+    // 사용자 상세 데이터 추가
+    id: 'dev-admin-123',
+    email: 'admin@innerspell.com',
+    displayName: 'Demo Admin',
+    photoURL: null,
+    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30일 전
+    lastActivity: new Date(),
+    usage: 47,
+    isAdmin: true
   },
 
   // 타로 가이드라인 (이미 구현됨)

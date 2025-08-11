@@ -184,6 +184,17 @@ export default function RealTimeMonitoringDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* 데모 모드 배너 */}
+      {environmentInfo?.usingMockData && (
+        <Alert className="border-orange-200 bg-orange-50 dark:bg-orange-950 dark:border-orange-800">
+          <AlertTriangle className="h-4 w-4 text-orange-600" />
+          <AlertDescription className="text-orange-800 dark:text-orange-200">
+            <strong>데모 모드:</strong> 현재 실제 데이터베이스가 연결되지 않아 샘플 데이터를 표시하고 있습니다. 
+            Firebase 설정을 완료하면 실제 데이터가 표시됩니다.
+          </AlertDescription>
+        </Alert>
+      )}
+      
       {/* 헤더 및 제어 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
