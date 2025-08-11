@@ -933,19 +933,19 @@ export function TarotReadingClient() {
               </div>
             </LayoutGroup>
           </CardContent>
-           {(stage === 'cards_selected' || stage === 'interpreting' || stage === 'interpretation_ready') && (
+           {(stage === 'cards_selected' || stage === 'interpreting' || stage === 'interpretation_ready' || (stage === 'spread_revealed' && selectedCardsForReading.length === selectedSpread.numCards)) && (
             <CardFooter className="mt-6 flex justify-center">
               <Button
                 onClick={handleGetInterpretation}
                 disabled={
                   isShufflingAnimationActive ||
                   stage === 'interpreting' ||
-                  stage !== 'cards_selected'
+                  (stage !== 'cards_selected' && !(stage === 'spread_revealed' && selectedCardsForReading.length === selectedSpread.numCards))
                 }
                 aria-disabled={
                   isShufflingAnimationActive ||
                   stage === 'interpreting' ||
-                  stage !== 'cards_selected'
+                  (stage !== 'cards_selected' && !(stage === 'spread_revealed' && selectedCardsForReading.length === selectedSpread.numCards))
                 }
                 className="bg-accent px-6 py-3 text-lg text-accent-foreground hover:bg-accent/90"
                 aria-label={stage === 'interpreting' ? 'AI가 해석하는 중' : 'AI 해석 받기'}

@@ -1,0 +1,34 @@
+=== 타로 리딩 CSRF 오류 점검 ===
+
+1. 타로 리딩 페이지 이동...
+2. 질문 입력...
+3. 카드 섞기 클릭...
+4. 카드 펼치기 클릭...
+펼쳐진 카드 수: 0
+대체 선택자로 찾은 카드 수: 78
+
+테스트 중 오류: elementHandle.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - attempting click action[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is visible, enabled and stable[22m
+[2m      - scrolling into view if needed[22m
+[2m      - done scrolling[22m
+[2m      - <img alt="카드 뒷면" width="512" height="819" data-nimg="1" sizes="200px" decoding="async" class="transition-opacity duration-300 opacity-100" src="http://localhost:4000/_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=3840&q=85" srcset="/_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=16&q=85 16w, /_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=32&q=85 32w, /_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=48&q=85 48w, /_next/image?url=%2Fimages%2Ftar…/> from <div tabindex="0" role="button" aria-label="펼쳐진 8번째 카드 선택 (The Emperor (황제))" class="h-80 shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:z-20 shadow-md border border-black/10 hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg">…</div> subtree intercepts pointer events[22m
+[2m    - retrying click action[22m
+[2m    - waiting 20ms[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is visible, enabled and stable[22m
+[2m      - scrolling into view if needed[22m
+[2m      - done scrolling[22m
+[2m      - <img alt="카드 뒷면" width="512" height="819" data-nimg="1" sizes="200px" decoding="async" class="transition-opacity duration-300 opacity-100" src="http://localhost:4000/_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=3840&q=85" srcset="/_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=16&q=85 16w, /_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=32&q=85 32w, /_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=48&q=85 48w, /_next/image?url=%2Fimages%2Ftar…/> from <div tabindex="0" role="button" aria-label="펼쳐진 8번째 카드 선택 (The Emperor (황제))" class="h-80 shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:z-20 shadow-md border border-black/10 hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg">…</div> subtree intercepts pointer events[22m
+[2m    - retrying click action[22m
+[2m      - waiting 100ms[22m
+[2m    57 × waiting for element to be visible, enabled and stable[22m
+[2m       - element is visible, enabled and stable[22m
+[2m       - scrolling into view if needed[22m
+[2m       - done scrolling[22m
+[2m       - <img alt="카드 뒷면" width="512" height="819" data-nimg="1" sizes="200px" decoding="async" class="transition-opacity duration-300 opacity-100" src="http://localhost:4000/_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=3840&q=85" srcset="/_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=16&q=85 16w, /_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=32&q=85 32w, /_next/image?url=%2Fimages%2Ftarot-spread%2Fback%2Fback.png&w=48&q=85 48w, /_next/image?url=%2Fimages%2Ftar…/> from <div tabindex="0" role="button" aria-label="펼쳐진 8번째 카드 선택 (The Emperor (황제))" class="h-80 shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:z-20 shadow-md border border-black/10 hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg">…</div> subtree intercepts pointer events[22m
+[2m     - retrying click action[22m
+[2m       - waiting 500ms[22m
+

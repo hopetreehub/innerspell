@@ -48,9 +48,9 @@ export const metadata: Metadata = {
   },
 };
 
-// 서버 사이드에서 직접 블로그 데이터 제공 - 캐시 활성화로 성능 개선
-export const dynamic = 'force-static';
-export const revalidate = 300; // 5분 캐시
+// 서버 사이드에서 직접 블로그 데이터 제공
+export const dynamic = 'force-dynamic'; // Vercel에서 정적 생성 문제 해결
+export const revalidate = 60; // 1분 캐시
 
 export default async function BlogPage() {
   // 서버 사이드에서 블로그 포스트 가져오기

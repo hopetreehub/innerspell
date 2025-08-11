@@ -1,0 +1,23 @@
+# 테스트 파일들
+*.test.js
+*.spec.js
+check-*.js
+test-*.js
+debug-*.js
+simple-*.js
+inspect-*.js
+measure-*.js
+verify-*.js
+final-*.js
+monitor-*.js
+quick-*.js
+tarot-*.js
+
+# 스크린샷
+*.png
+*.jpg
+
+# 기타
+.env.local
+.env.development
+*.log

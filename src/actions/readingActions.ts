@@ -31,8 +31,10 @@ export async function saveUserReading(
 
     const { userId, question, spreadName, spreadNumCards, drawnCards, interpretationText } = validationResult.data;
 
-    // 개발 환경에서는 파일 저장 사용
-    const isDevelopment = process.env.NODE_ENV === 'development';
+    // 개발 환경 또는 Firebase 설정이 없을 때 파일 저장 사용
+    const isDevelopment = process.env.NODE_ENV === 'development' || 
+                         !process.env.FIREBASE_SERVICE_ACCOUNT_KEY || 
+                         process.env.FIREBASE_SERVICE_ACCOUNT_KEY.includes('여기에');
     
     if (isDevelopment) {
       console.log('📁 개발 환경: 파일 시스템에 저장');
@@ -115,8 +117,10 @@ export async function getUserReadings(userId: string): Promise<SavedReading[]> {
   
   console.log(`🔍 getUserReadings called with userId: ${userId}`);
   
-  // 개발 환경에서는 파일에서 읽기
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  // 개발 환경 또는 Firebase 설정이 없을 때 파일에서 읽기
+  const isDevelopment = process.env.NODE_ENV === 'development' || 
+                       !process.env.FIREBASE_SERVICE_ACCOUNT_KEY || 
+                       process.env.FIREBASE_SERVICE_ACCOUNT_KEY.includes('여기에');
   
   if (isDevelopment) {
     console.log('📁 개발 환경: 파일에서 리딩 목록 읽기');
@@ -194,8 +198,10 @@ export async function deleteUserReading(userId: string, readingId: string): Prom
     return { success: false, error: '사용자 ID 또는 리딩 ID가 제공되지 않았습니다.' };
   }
   
-  // 개발 환경에서는 파일에서 삭제
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  // 개발 환경 또는 Firebase 설정이 없을 때 파일에서 삭제
+  const isDevelopment = process.env.NODE_ENV === 'development' || 
+                       !process.env.FIREBASE_SERVICE_ACCOUNT_KEY || 
+                       process.env.FIREBASE_SERVICE_ACCOUNT_KEY.includes('여기에');
   
   if (isDevelopment) {
     console.log('📁 개발 환경: 파일에서 리딩 삭제');
