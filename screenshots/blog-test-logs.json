@@ -1,0 +1,859 @@
+{
+  "allLogs": [
+    {
+      "type": "console",
+      "level": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "timestamp": "2025-08-07T02:32:40.437Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔥 Initializing REAL Firebase only",
+      "timestamp": "2025-08-07T02:32:40.909Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "Firebase config validation: {hasApiKey: true, authDomain: innerspell-an7ce.firebaseapp.com, projectId: innerspell-an7ce, storageBucket: innerspell-an7ce.firebasestorage.app, messagingSenderId: 944680989471}",
+      "timestamp": "2025-08-07T02:32:40.952Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "✅ Real Firebase initialized successfully",
+      "timestamp": "2025-08-07T02:32:40.953Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "✅ Auth, Firestore, and Storage ready",
+      "timestamp": "2025-08-07T02:32:40.953Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🚀 DEV AUTH ENABLED - Using Mock Admin User",
+      "timestamp": "2025-08-07T02:32:41.633Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "✅ Mock Admin: dev-admin@innerspell.com - Role: admin",
+      "timestamp": "2025-08-07T02:32:41.635Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🚀 DEV AUTH ENABLED - Using Mock Admin User",
+      "timestamp": "2025-08-07T02:32:41.635Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "✅ Mock Admin: dev-admin@innerspell.com - Role: admin",
+      "timestamp": "2025-08-07T02:32:41.636Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: false}",
+      "timestamp": "2025-08-07T02:32:41.637Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: false}",
+      "timestamp": "2025-08-07T02:32:41.638Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.640Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.643Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.645Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.647Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: false, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:41.683Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: Showing skeleton (mounted: false loading: false )",
+      "timestamp": "2025-08-07T02:32:41.684Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: false, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:41.684Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: Showing skeleton (mounted: false loading: false )",
+      "timestamp": "2025-08-07T02:32:41.687Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: false, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:41.706Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: Showing skeleton (mounted: false loading: false )",
+      "timestamp": "2025-08-07T02:32:41.707Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: false, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:41.708Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: Showing skeleton (mounted: false loading: false )",
+      "timestamp": "2025-08-07T02:32:41.708Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: User state changed: {email: dev-admin@innerspell.com, role: admin, hasUser: true, isAdmin: true}",
+      "timestamp": "2025-08-07T02:32:41.769Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🎉 Dev Auth Active - Skipping Firebase setup",
+      "timestamp": "2025-08-07T02:32:41.771Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:41.781Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:41.782Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.786Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.788Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.792Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.792Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:41.801Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:41.802Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:41.804Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:41.804Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:41.823Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:41.823Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:41.825Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:41.826Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔄 [TarotGuidelineManagement] Loading tarot guidelines data...",
+      "timestamp": "2025-08-07T02:32:41.964Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Admin Page - Auth State Check: {loading: false, user: dev-admin@innerspell.com (admin), isDevMode: true, NEXT_PUBLIC_ENABLE_DEV_AUTH: true}",
+      "timestamp": "2025-08-07T02:32:41.975Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🚀 Dev Mode: Bypassing auth check for admin page",
+      "timestamp": "2025-08-07T02:32:41.976Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:41.985Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:41.986Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.988Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.989Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:41.993Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.003Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.012Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.014Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.014Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.014Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.026Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.027Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.032Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.033Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:42.073Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:42.073Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.075Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.078Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.080Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.082Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.097Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.098Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.100Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.101Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.121Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.121Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.126Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.126Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:42.161Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:42.162Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.164Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.167Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.169Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:42.172Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.182Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.182Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.183Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.183Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.199Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.200Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:42.201Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:42.202Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "📊 [TarotGuidelineManagement] Data loading result: {success: true, data: Object}",
+      "timestamp": "2025-08-07T02:32:42.746Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "✅ [TarotGuidelineManagement] Data loaded successfully: {guidelines: 35, spreads: 6, styles: 6, combinations: 10}",
+      "timestamp": "2025-08-07T02:32:42.746Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "📤 Uploading image to: blog-images/1754533970351_chxefi.png",
+      "timestamp": "2025-08-07T02:32:50.355Z"
+    },
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/innerspell-an7ce.firebasestorage.app/o?name=blog-images%2F1754533970351_chxefi.png' from origin 'http://localhost:4000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.",
+      "timestamp": "2025-08-07T02:32:50.699Z"
+    },
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Failed to load resource: net::ERR_FAILED",
+      "timestamp": "2025-08-07T02:32:50.700Z"
+    },
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/innerspell-an7ce.firebasestorage.app/o?name=blog-images%2F1754533970351_chxefi.png' from origin 'http://localhost:4000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.",
+      "timestamp": "2025-08-07T02:32:53.072Z"
+    },
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Failed to load resource: net::ERR_FAILED",
+      "timestamp": "2025-08-07T02:32:53.072Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "[Toast] Creating toast: {id: 1, title: 오류, description: 필수 필드를 모두 입력해주세요., variant: destructive}",
+      "timestamp": "2025-08-07T02:32:57.205Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:57.205Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:32:57.206Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:57.208Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:57.210Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:57.211Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:32:57.213Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:57.221Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:57.221Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:57.222Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:57.223Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:57.232Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:57.234Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:32:57.235Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:32:57.235Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "[Toaster] Rendering toasts: [Object]",
+      "timestamp": "2025-08-07T02:32:57.263Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "[Toaster] Rendering toasts: [Object]",
+      "timestamp": "2025-08-07T02:32:57.264Z"
+    },
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/innerspell-an7ce.firebasestorage.app/o?name=blog-images%2F1754533970351_chxefi.png' from origin 'http://localhost:4000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.",
+      "timestamp": "2025-08-07T02:32:57.769Z"
+    },
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Failed to load resource: net::ERR_FAILED",
+      "timestamp": "2025-08-07T02:32:57.770Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:33:02.209Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+      "timestamp": "2025-08-07T02:33:02.210Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:33:02.210Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:33:02.211Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:33:02.213Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+      "timestamp": "2025-08-07T02:33:02.214Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:33:02.222Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:33:02.222Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:33:02.222Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:33:02.222Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:33:02.231Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:33:02.232Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+      "timestamp": "2025-08-07T02:33:02.232Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+      "timestamp": "2025-08-07T02:33:02.232Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "[Toaster] Rendering toasts: [Object]",
+      "timestamp": "2025-08-07T02:33:02.249Z"
+    },
+    {
+      "type": "console",
+      "level": "log",
+      "text": "[Toaster] Rendering toasts: [Object]",
+      "timestamp": "2025-08-07T02:33:02.249Z"
+    }
+  ],
+  "networkRequests": [
+    {
+      "type": "request",
+      "method": "GET",
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer mock-token",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:32:42.487Z"
+    },
+    {
+      "type": "request",
+      "method": "GET",
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "headers": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "authorization": "Bearer mock-token",
+        "referer": "http://localhost:4000/admin",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "timestamp": "2025-08-07T02:32:42.487Z"
+    },
+    {
+      "type": "response",
+      "status": 200,
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "headers": {
+        "transfer-encoding": "chunked",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "x-dns-prefetch-control": "on",
+        "cross-origin-opener-policy": "unsafe-none",
+        "connection": "keep-alive",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "x-content-type-options": "nosniff",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "cross-origin-embedder-policy": "unsafe-none",
+        "keep-alive": "timeout=5",
+        "x-xss-protection": "1; mode=block",
+        "date": "Thu, 07 Aug 2025 02:32:42 GMT",
+        "content-type": "application/json",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+        "x-frame-options": "DENY"
+      },
+      "timestamp": "2025-08-07T02:32:42.812Z"
+    },
+    {
+      "type": "response",
+      "status": 200,
+      "url": "http://localhost:4000/api/blog/posts?published=false",
+      "headers": {
+        "transfer-encoding": "chunked",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "x-dns-prefetch-control": "on",
+        "cross-origin-opener-policy": "unsafe-none",
+        "connection": "keep-alive",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "x-content-type-options": "nosniff",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "cross-origin-embedder-policy": "unsafe-none",
+        "keep-alive": "timeout=5",
+        "x-xss-protection": "1; mode=block",
+        "date": "Thu, 07 Aug 2025 02:32:43 GMT",
+        "content-type": "application/json",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+        "x-frame-options": "DENY"
+      },
+      "timestamp": "2025-08-07T02:32:43.211Z"
+    }
+  ],
+  "corsErrors": [
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/innerspell-an7ce.firebasestorage.app/o?name=blog-images%2F1754533970351_chxefi.png' from origin 'http://localhost:4000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.",
+      "timestamp": "2025-08-07T02:32:50.699Z"
+    },
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/innerspell-an7ce.firebasestorage.app/o?name=blog-images%2F1754533970351_chxefi.png' from origin 'http://localhost:4000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.",
+      "timestamp": "2025-08-07T02:32:53.072Z"
+    },
+    {
+      "type": "console",
+      "level": "error",
+      "text": "Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/v0/b/innerspell-an7ce.firebasestorage.app/o?name=blog-images%2F1754533970351_chxefi.png' from origin 'http://localhost:4000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.",
+      "timestamp": "2025-08-07T02:32:57.769Z"
+    }
+  ],
+  "csrfErrors": [],
+  "authErrors": [],
+  "failedApiRequests": []
+}

@@ -1,0 +1,322 @@
+
+'use client';
+
+import type React from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { onAuthStateChanged, User as FirebaseUser, signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase/client';
+import { getUserProfile, type AppUser } from '@/actions/userActions';
+
+interface AuthContextType {
+  user: AppUser | null;
+  firebaseUser: FirebaseUser | null;
+  loading: boolean;
+  refreshUser: () => void;
+  logout: () => void;
+  login: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  // 🚀 개발 환경 Mock 인증 확인
+  const enableDevAuth = process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true';
+  
+  // Mock 관리자 사용자 데이터
+  const mockAdminUser: AppUser = {
+    uid: 'dev-admin-123',
+    email: 'dev-admin@innerspell.com',
+    displayName: 'Dev Admin',
+    photoURL: undefined,
+    role: 'admin',
+    creationTime: new Date().toISOString(),
+    lastSignInTime: new Date().toISOString(),
+    birthDate: '',
+    sajuInfo: '',
+    subscriptionStatus: 'premium' as const,
+  };
+  
+  const mockFirebaseUser = {
+    uid: 'dev-admin-123',
+    email: 'dev-admin@innerspell.com',
+    displayName: 'Dev Admin',
+    photoURL: null,
+    metadata: {
+      creationTime: new Date().toISOString(),
+      lastSignInTime: new Date().toISOString(),
+    },
+  } as unknown as FirebaseUser;
+  
+  // 개발 환경에서는 Mock 사용자로 초기화
+  const [user, setUser] = useState<AppUser | null>(enableDevAuth ? mockAdminUser : null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(enableDevAuth ? mockFirebaseUser : null);
+  const [loading, setLoading] = useState(!enableDevAuth); // Mock 사용 시 로딩 없음
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+  
+  // 개발 환경 확인 로그
+  if (typeof window !== 'undefined' && enableDevAuth) {
+    console.log('🚀 DEV AUTH ENABLED - Using Mock Admin User');
+    console.log('✅ Mock Admin:', mockAdminUser.email, '- Role:', mockAdminUser.role);
+  }
+
+  const refreshUser = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const logout = async () => {
+    setIsLoggedOut(true);
+    setUser(null);
+    setFirebaseUser(null);
+    
+    // Sign out from Firebase Auth
+    try {
+      if (auth) {
+        await signOut(auth);
+      }
+    } catch (error) {
+      console.error('Firebase signOut error:', error);
+    }
+    
+    // EMERGENCY CACHE INVALIDATION ON LOGOUT
+    // Clear ALL localStorage items
+    localStorage.clear();
+    
+    // Clear ALL sessionStorage items
+    sessionStorage.clear();
+    
+    // Clear IndexedDB - specifically Firebase databases
+    if ('indexedDB' in window) {
+      // Firebase uses specific database names
+      const firebaseDBNames = [
+        'firebaseLocalStorageDb',
+        'firestore/[DEFAULT]/innerspell-an7ce/main',
+        'firebase-heartbeat-database',
+        'firebase-installations-database'
+      ];
+      
+      // Try to delete specific Firebase databases
+      for (const dbName of firebaseDBNames) {
+        try {
+          await indexedDB.deleteDatabase(dbName);
+          console.log(`Deleted IndexedDB: ${dbName}`);
+        } catch (e) {
+          console.log(`Failed to delete ${dbName}:`, e);
+        }
+      }
+      
+      // Also try to get all databases if the API is available
+      if (indexedDB.databases) {
+        try {
+          const databases = await indexedDB.databases();
+          for (const db of databases) {
+            if (db.name && (db.name.includes('firebase') || db.name.includes('firestore'))) {
+              await indexedDB.deleteDatabase(db.name);
+              console.log(`Deleted IndexedDB: ${db.name}`);
+            }
+          }
+        } catch (e) {
+          console.log('Failed to enumerate databases:', e);
+        }
+      }
+    }
+    
+    // Clear all cookies
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+    
+    // Force cache invalidation by adding timestamp to URL
+    if (typeof window !== 'undefined') {
+      // Clear browser cache for all pages
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      }
+      
+      // Trigger a hard refresh with cache busting
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('logout', 'true');
+      currentUrl.searchParams.set('cache_bust', Date.now().toString());
+      window.location.href = currentUrl.toString();
+    }
+    
+    console.log("AuthProvider: User logged out with complete cache invalidation");
+  };
+
+  const login = () => {
+    // This function is kept for interface compatibility but does nothing in production
+    console.log("AuthProvider: login() called - redirecting to sign-in page");
+  };
+
+  // Tab synchronization for auth state
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'auth-state-changed') {
+        const newState = e.newValue;
+        if (newState === 'logged-out') {
+          logout();
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    let unsubscribe: (() => void) | undefined;
+
+    // 🔥 개발 환경에서 Mock 인증 사용 시 Firebase 건너뛰기
+    if (enableDevAuth) {
+      console.log('🎉 Dev Auth Active - Skipping Firebase setup');
+      return () => {
+        console.log('🔥 Dev Auth: Cleanup');
+      };
+    }
+
+    // 🔥 프로덕션에서는 실제 Firebase 사용
+    
+    if (!auth) {
+      console.warn("AuthProvider: Firebase auth is not initialized. Skipping auth state listener.");
+      setLoading(false);
+      return;
+    }
+
+    // ⚡ 성능 최적화: 로딩 시간 단축 - 5초로 단축
+    const maxWaitTimeout = setTimeout(() => {
+      if (isMounted) {
+        console.warn('🚨 AuthContext: Max wait timeout reached - forcing loading to false');
+        setLoading(false);
+      }
+    }, 5000);
+
+    console.log('🔥 AuthContext: Setting up onAuthStateChanged listener');
+    
+    // CACHE BUSTING: Add timestamp to prevent cached auth state
+    const cacheBustParam = new URLSearchParams(window.location.search).get('cache_bust');
+    if (cacheBustParam) {
+      console.log('🚀 Cache bust parameter detected:', cacheBustParam);
+    }
+
+    unsubscribe = onAuthStateChanged(auth, async (currentFirebaseUser) => {
+      console.log('🔥 AuthContext: onAuthStateChanged triggered with user:', currentFirebaseUser ? currentFirebaseUser.email : 'null');
+      if (currentFirebaseUser) {
+        setFirebaseUser(currentFirebaseUser);
+        console.log('🔥 AuthContext: Fetching user profile for UID:', currentFirebaseUser.uid);
+        let profile;
+        try {
+          profile = await getUserProfile(currentFirebaseUser.uid);
+          console.log('🔥 AuthContext: getUserProfile result:', profile);
+        } catch (error) {
+          console.error('🚨 AuthContext: getUserProfile error:', error);
+          profile = null;
+        }
+        
+        // ⚡ 성능 최적화: 프로필 생성 과정 간소화
+        if (!profile && currentFirebaseUser.email) {
+          console.log('🔥 AuthContext: No profile found, creating new profile for:', currentFirebaseUser.email);
+          
+          // 바로 생성하지 말고 임시 프로필 먼저 생성하여 빠른 로딩
+          const tempProfile = {
+            uid: currentFirebaseUser.uid,
+            email: currentFirebaseUser.email,
+            displayName: currentFirebaseUser.displayName || currentFirebaseUser.email,
+            photoURL: currentFirebaseUser.photoURL || undefined,
+            role: currentFirebaseUser.email === 'admin@innerspell.com' || currentFirebaseUser.email === 'junsupark9999@gmail.com' ? 'admin' : 'user',
+            creationTime: currentFirebaseUser.metadata.creationTime,
+            lastSignInTime: currentFirebaseUser.metadata.lastSignInTime,
+            birthDate: '',
+            sajuInfo: '',
+            subscriptionStatus: 'free' as const,
+          };
+          
+          profile = tempProfile;
+          console.log('🔥 AuthContext: Created temp profile for', currentFirebaseUser.email, 'with role:', tempProfile.role);
+          console.log('🔥 AuthContext: Profile details:', { email: profile.email, role: profile.role, uid: profile.uid });
+          
+          // 백그라운드에서 실제 프로필 생성 (비동기)
+          setTimeout(async () => {
+            try {
+              const { createOrUpdateUserProfile } = await import('@/actions/userActions');
+              await createOrUpdateUserProfile(currentFirebaseUser.uid, {
+                email: currentFirebaseUser.email,
+                name: currentFirebaseUser.displayName || currentFirebaseUser.email,
+                avatar: currentFirebaseUser.photoURL || undefined,
+              });
+              console.log('🔥 AuthContext: Background profile creation completed');
+            } catch (error) {
+              console.error('🚨 Background profile creation failed:', error);
+            }
+          }, 100);
+        }
+        
+        // If still no profile, create a default one 
+        if (!profile) {
+          // 🛡️ 보안 개선: 관리자 권한은 서버에서만 검증
+          const newAppUser: AppUser = {
+            uid: currentFirebaseUser.uid,
+            email: currentFirebaseUser.email || undefined,
+            displayName: currentFirebaseUser.displayName || undefined,
+            photoURL: currentFirebaseUser.photoURL || undefined,
+            creationTime: currentFirebaseUser.metadata.creationTime,
+            lastSignInTime: currentFirebaseUser.metadata.lastSignInTime,
+            role: currentFirebaseUser.email === 'admin@innerspell.com' || currentFirebaseUser.email === 'junsupark9999@gmail.com' ? 'admin' : 'user', // 🔥 긴급 수정: 관리자 이메일은 즉시 admin 권한
+            birthDate: '',
+            sajuInfo: '',
+            subscriptionStatus: 'free',
+          };
+          profile = newAppUser;
+          
+          console.log(`🔥 AuthContext: Created fallback profile for ${currentFirebaseUser.email} with role: ${profile.role}`);
+          console.log('🔥 AuthContext: Fallback profile check - Is admin?', profile.role === 'admin');
+          
+          // 관리자 권한 재확인 로그
+          if (currentFirebaseUser.email === 'admin@innerspell.com' || currentFirebaseUser.email === 'junsupark9999@gmail.com') {
+            console.log('🎯 AuthContext: ADMIN EMAIL DETECTED - Should have admin role!');
+          }
+        }
+
+        setUser(profile);
+        console.log('🔥 AuthContext: User set to:', profile ? `${profile.email} (${profile.role})` : 'null');
+
+      } else {
+        console.log('🔥 AuthContext: No Firebase user, setting to null');
+        setUser(null);
+        setFirebaseUser(null);
+      }
+      setLoading(false);
+      console.log('🔥 AuthContext: Loading set to false');
+    });
+
+    return () => {
+      isMounted = false;
+      console.log('🔥 AuthContext: Cleanup - unsubscribing');
+      clearTimeout(maxWaitTimeout);
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [refreshTrigger, isLoggedOut]);
+
+  const value = { user, firebaseUser, loading, refreshUser, logout, login };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

@@ -1,0 +1,47 @@
+[
+  {
+    "page": "Main Page (/)",
+    "status": "PASS",
+    "title": "InnerSpell - 당신의 내면을 탐험하세요",
+    "hasHeader": true,
+    "hasMainContent": true,
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "page": "Tarot List (/tarot)",
+    "status": "FAIL",
+    "error": "locator.isVisible: Error: strict mode violation: locator('.grid, [class*=\"grid\"]') resolved to 4 elements:\n    1) <div tabindex=\"0\" role=\"tablist\" aria-orientation=\"horizontal\" data-orientation=\"horizontal\" class=\"h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground grid w-full max-w-4xl mx-auto grid-cols-6 mb-8\">…</div> aka getByText('메이저 아르카나마이너 아르카나완드컵소드펜타클')\n    2) <div class=\"grid grid-cols-1 md:grid-cols-3 gap-6 mb-8\">…</div> aka getByText('시작과 잠재력 (0-6)자아 발견과 기본적인 인생 구조를 세우는 단계개인적 정체성과 기본 구조 형성도전과 성장 (7-13')\n    3) <div class=\"grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6\">…</div> aka getByText('00바보The Fool새로운 시작순수함01마법사The')\n    4) <div class=\"grid grid-cols-1 md:grid-cols-12 gap-8 items-start mb-8\">…</div> aka locator('div').filter({ hasText: 'InnerSpellAI' }).nth(3)\n\nCall log:\n\u001b[2m    - checking visibility of locator('.grid, [class*=\"grid\"]')\u001b[22m\n",
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "page": "Tarot Card Detail (/tarot/major-00-fool)",
+    "status": "FAIL",
+    "error": "locator.isVisible: Error: strict mode violation: locator('button:has-text(\"Back\"), a:has-text(\"Back\"), [href=\"/tarot\"]') resolved to 2 elements:\n    1) <a href=\"/tarot\" class=\"transition-colors hover:text-primary text-foreground/80 hover:scale-105 transform duration-200 relative after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-1/2 after:bg-primary after:transition-all after:duration-300 hover:after:w-full hover:after:left-0\">타로카드</a> aka getByRole('link', { name: '타로카드' })\n    2) <a href=\"/tarot\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&>svg]:pointer-events-none [&>svg]:size-4 [&>svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">…</a> aka getByRole('link', { name: '타로 카드 목록' })\n\nCall log:\n\u001b[2m    - checking visibility of locator('button:has-text(\"Back\"), a:has-text(\"Back\"), [href=\"/tarot\"]')\u001b[22m\n",
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "page": "Dream Interpretation (/dream-interpretation)",
+    "status": "PASS",
+    "title": "꿈 해몽 - InnerSpell - InnerSpell",
+    "hasTextarea": true,
+    "hasSubmitButton": true,
+    "hasForm": true,
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "page": "Admin Page (/admin)",
+    "status": "FAIL",
+    "error": "locator.isVisible: Error: strict mode violation: locator('form, input[type=\"email\"], input[type=\"password\"]') resolved to 2 elements:\n    1) <form class=\"space-y-4\">…</form> aka getByText('이메일비밀번호비밀번호 없이 이메일로 로그인로그인')\n    2) <input value=\"\" type=\"password\" name=\"password\" id=\"«r5»-form-item\" aria-invalid=\"false\" placeholder=\"••••••••\" autocomplete=\"current-password\" aria-describedby=\"«r5»-form-item-description\" class=\"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visibl…/> aka getByRole('textbox', { name: '비밀번호' })\n\nCall log:\n\u001b[2m    - checking visibility of locator('form, input[type=\"email\"], input[type=\"password\"]')\u001b[22m\n",
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "page": "Navigation Test",
+    "status": "PASS",
+    "message": "Navigation between pages working"
+  }
+]

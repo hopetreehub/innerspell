@@ -1,0 +1,72 @@
+[
+  {
+    "name": "home",
+    "url": "http://localhost:4000",
+    "description": "홈페이지",
+    "status": 200,
+    "isSuccess": true,
+    "title": "InnerSpell - AI 타로와 함께 내면 탐험",
+    "hasContent": true,
+    "screenshotPath": "/mnt/e/project/test-studio-firebase/status-screenshots/home.png"
+  },
+  {
+    "name": "tarot",
+    "url": "http://localhost:4000/tarot",
+    "description": "타로 카드 페이지",
+    "status": 200,
+    "isSuccess": true,
+    "title": "InnerSpell - 당신의 내면을 탐험하세요",
+    "hasContent": true,
+    "screenshotPath": "/mnt/e/project/test-studio-firebase/status-screenshots/tarot.png"
+  },
+  {
+    "name": "new-reading",
+    "url": "http://localhost:4000/tarot/new-reading",
+    "description": "새로운 리딩 페이지",
+    "status": 200,
+    "isSuccess": true,
+    "title": "",
+    "hasContent": true,
+    "screenshotPath": "/mnt/e/project/test-studio-firebase/status-screenshots/new-reading.png"
+  },
+  {
+    "name": "history",
+    "url": "http://localhost:4000/tarot/history",
+    "description": "히스토리 페이지",
+    "status": 200,
+    "isSuccess": true,
+    "title": "",
+    "hasContent": true,
+    "screenshotPath": "/mnt/e/project/test-studio-firebase/status-screenshots/history.png"
+  },
+  {
+    "name": "blog",
+    "url": "http://localhost:4000/blog",
+    "description": "블로그 페이지",
+    "status": 200,
+    "isSuccess": true,
+    "title": "블로그 | InnerSpell - 타로, 점술, 꿈해몽, 자기계발 전문 블로그 - InnerSpell",
+    "hasContent": true,
+    "screenshotPath": "/mnt/e/project/test-studio-firebase/status-screenshots/blog.png"
+  },
+  {
+    "name": "about",
+    "url": "http://localhost:4000/about",
+    "description": "어바웃 페이지",
+    "status": 200,
+    "isSuccess": true,
+    "title": "InnerSpell - 당신의 내면을 탐험하세요",
+    "hasContent": true,
+    "screenshotPath": "/mnt/e/project/test-studio-firebase/status-screenshots/about.png"
+  },
+  {
+    "name": "admin",
+    "url": "http://localhost:4000/admin",
+    "description": "어드민 페이지",
+    "status": 200,
+    "isSuccess": true,
+    "title": "관리자 대시보드 - InnerSpell - InnerSpell",
+    "hasContent": true,
+    "screenshotPath": "/mnt/e/project/test-studio-firebase/status-screenshots/admin.png"
+  }
+]

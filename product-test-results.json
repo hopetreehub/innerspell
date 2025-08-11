@@ -1,0 +1,144 @@
+{
+  "timestamp": "2025-08-10T21:16:48.935Z",
+  "performance": {
+    "홈": {
+      "loadTime": 2526,
+      "htmlSize": 84317,
+      "scripts": 31,
+      "styles": 4,
+      "images": 6
+    },
+    "타로": {
+      "loadTime": 1713,
+      "htmlSize": 110805,
+      "scripts": 23,
+      "styles": 4,
+      "images": 24
+    },
+    "꿈해몽": {
+      "loadTime": 1863,
+      "htmlSize": 47747,
+      "scripts": 23,
+      "styles": 4,
+      "images": 2
+    },
+    "블로그": {
+      "loadTime": 2255,
+      "htmlSize": 96267,
+      "scripts": 27,
+      "styles": 4,
+      "images": 10
+    },
+    "커뮤니티": {
+      "loadTime": 1523,
+      "htmlSize": 104096,
+      "scripts": 47,
+      "styles": 4,
+      "images": 2
+    }
+  },
+  "seo": {
+    "홈": {
+      "hasTitle": true,
+      "titleLength": 28,
+      "hasDescription": false,
+      "descriptionLength": 0,
+      "hasOgTags": false,
+      "h1Count": 1
+    },
+    "타로": {
+      "hasTitle": true,
+      "titleLength": 26,
+      "hasDescription": false,
+      "descriptionLength": 0,
+      "hasOgTags": false,
+      "h1Count": 1
+    },
+    "꿈해몽": {
+      "hasTitle": true,
+      "titleLength": 30,
+      "hasDescription": false,
+      "descriptionLength": 0,
+      "hasOgTags": false,
+      "h1Count": 1
+    },
+    "블로그": {
+      "hasTitle": true,
+      "titleLength": 56,
+      "hasDescription": false,
+      "descriptionLength": 0,
+      "hasOgTags": false,
+      "h1Count": 1
+    },
+    "커뮤니티": {
+      "hasTitle": true,
+      "titleLength": 30,
+      "hasDescription": false,
+      "descriptionLength": 0,
+      "hasOgTags": false,
+      "h1Count": 1
+    }
+  },
+  "functionality": {
+    "auth": {
+      "kakaoLoginButton": false,
+      "googleLoginButton": false,
+      "emailLoginForm": false
+    },
+    "tarot": {
+      "categoriesCount": 0,
+      "categoriesVisible": false
+    },
+    "blog": {
+      "postsCount": 0,
+      "postsVisible": false,
+      "categoriesCount": 0
+    },
+    "navigation": {
+      "desktopNavItems": 6,
+      "hasMobileMenu": true
+    }
+  },
+  "responsive": {
+    "Mobile": {
+      "hasMainContent": true,
+      "hasNavigation": true,
+      "viewport": {
+        "name": "Mobile",
+        "width": 375,
+        "height": 667
+      }
+    },
+    "Tablet": {
+      "hasMainContent": true,
+      "hasNavigation": true,
+      "viewport": {
+        "name": "Tablet",
+        "width": 768,
+        "height": 1024
+      }
+    },
+    "Desktop": {
+      "hasMainContent": true,
+      "hasNavigation": true,
+      "viewport": {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    }
+  },
+  "summary": {
+    "totalPages": 5,
+    "avgLoadTime": 1976,
+    "authSystemOK": false,
+    "blogPostsFound": false,
+    "responsiveOK": true,
+    "seoBasicsOK": true
+  },
+  "accessibility": {
+    "imagesWithoutAlt": 0,
+    "totalImages": 6,
+    "buttons": 0
+  }
+}

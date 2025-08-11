@@ -1,0 +1,11 @@
+Fix: TypeScript 오류 추가 수정 - Firebase async 처리 완료
+
+- readingExperienceActions.ts: 모든 getFieldValue() async/await 처리
+- newsletterActions.ts: Firebase import 및 async 처리
+- aiProviderActions.ts: safeFirestoreOperation 반환 타입 처리
+
+진행 상황: 452개 → 435개 오류로 감소
+
+🤖 Generated with Claude Code
+
+Co-Authored-By: Claude <noreply@anthropic.com>

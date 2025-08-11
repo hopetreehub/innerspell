@@ -1,0 +1,6 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="300" fill="#3b82f6"/>
+                <circle cx="150" cy="150" r="80" fill="#ffffff"/>
+                <text x="150" y="160" text-anchor="middle" font-size="24" font-family="Arial" fill="#000000">API 프록시</text>
+                <text x="150" y="190" text-anchor="middle" font-size="16" font-family="Arial" fill="#000000">테스트</text>
+            </svg>

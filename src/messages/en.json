@@ -1,0 +1,251 @@
+{
+  "common": {
+    "appName": "InnerSpell",
+    "tagline": "Explore Your Inner Self",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "navigation": {
+    "home": "Home",
+    "reading": "Tarot Reading",
+    "tarot": "Tarot Cards",
+    "cards": "Card Dictionary",
+    "dream": "Dream Interpretation",
+    "blog": "Blog",
+    "community": "Community",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "admin": "Admin Settings",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out"
+  },
+  "home": {
+    "hero": {
+      "title": "Spiritual Journey with AI",
+      "subtitle": "Where modern technology meets ancient wisdom to explore your inner self",
+      "cta": "Start Tarot Reading",
+      "features": {
+        "ai": {
+          "title": "AI-Powered Insights",
+          "description": "Get deeper tarot interpretations with cutting-edge AI technology"
+        },
+        "community": {
+          "title": "Community",
+          "description": "Share experiences and gain insights with other users"
+        },
+        "privacy": {
+          "title": "Privacy Protected",
+          "description": "Your personal information and readings are securely protected"
+        }
+      }
+    },
+    "stats": {
+      "readings": "Total Readings",
+      "users": "Active Users",
+      "interpretations": "AI Interpretations",
+      "satisfaction": "Satisfaction Rate"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign In",
+      "subtitle": "Welcome back to InnerSpell",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign Up",
+      "or": "or",
+      "continueWith": "Continue with {provider}",
+      "errors": {
+        "invalidCredentials": "Invalid email or password",
+        "tooManyAttempts": "Too many attempts. Please try again later",
+        "networkError": "Network error occurred"
+      }
+    },
+    "signUp": {
+      "title": "Sign Up",
+      "subtitle": "Start your spiritual journey with InnerSpell",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "terms": "I agree to the Terms of Service",
+      "privacy": "I agree to the Privacy Policy",
+      "submit": "Sign Up",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign In",
+      "errors": {
+        "emailExists": "Email already in use",
+        "passwordMismatch": "Passwords do not match",
+        "weakPassword": "Password must be at least 6 characters",
+        "termsRequired": "Please agree to the terms"
+      }
+    }
+  },
+  "reading": {
+    "title": "Tarot Reading",
+    "subtitle": "Select cards and find answers to your questions",
+    "selectSpread": "Select Spread",
+    "spreads": {
+      "single": {
+        "name": "One Card",
+        "description": "Daily guidance or answer to a simple question"
+      },
+      "threeCard": {
+        "name": "Three Card",
+        "description": "Past, Present, Future or Situation, Action, Outcome"
+      },
+      "celtic": {
+        "name": "Celtic Cross",
+        "description": "In-depth analysis for complex situations"
+      }
+    },
+    "question": {
+      "placeholder": "Enter your question...",
+      "tips": "Specific and open-ended questions yield better insights"
+    },
+    "actions": {
+      "shuffle": "Shuffle Cards",
+      "draw": "Draw Cards",
+      "reset": "Start Over",
+      "save": "Save Reading",
+      "share": "Share"
+    },
+    "interpretation": {
+      "title": "Interpretation",
+      "aiInsight": "AI Insight",
+      "traditional": "Traditional Meaning",
+      "personal": "Personal Interpretation",
+      "loading": "AI is interpreting the cards..."
+    }
+  },
+  "tarot": {
+    "cards": {
+      "title": "Tarot Card Dictionary",
+      "subtitle": "Learn about all 78 tarot cards",
+      "majorArcana": "Major Arcana",
+      "minorArcana": "Minor Arcana",
+      "suits": {
+        "wands": "Wands",
+        "cups": "Cups",
+        "swords": "Swords",
+        "pentacles": "Pentacles"
+      },
+      "search": {
+        "placeholder": "Search by card name or keyword...",
+        "noResults": "No results found"
+      },
+      "detail": {
+        "upright": "Upright",
+        "reversed": "Reversed",
+        "keywords": "Keywords",
+        "element": "Element",
+        "planet": "Planet",
+        "zodiac": "Zodiac",
+        "number": "Number",
+        "relatedCards": "Related Cards"
+      }
+    }
+  },
+  "community": {
+    "title": "Community",
+    "subtitle": "Share experiences with other users",
+    "categories": {
+      "all": "All",
+      "readings": "Reading Shares",
+      "insights": "Insights",
+      "questions": "Questions",
+      "stories": "Stories"
+    },
+    "post": {
+      "create": "Create Post",
+      "edit": "Edit",
+      "delete": "Delete",
+      "report": "Report",
+      "like": "Like",
+      "comment": "Comment",
+      "share": "Share",
+      "views": "Views",
+      "anonymous": "Anonymous"
+    },
+    "form": {
+      "title": "Title",
+      "content": "Content",
+      "category": "Category",
+      "tags": "Tags",
+      "isAnonymous": "Post anonymously",
+      "submit": "Post",
+      "cancel": "Cancel"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "settings": "Settings",
+    "stats": {
+      "totalReadings": "Total Readings",
+      "savedReadings": "Saved Readings",
+      "communityPosts": "Community Posts",
+      "joinedDate": "Joined"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "readings": "My Readings",
+      "posts": "My Posts",
+      "favorites": "Favorites",
+      "settings": "Settings"
+    },
+    "settings": {
+      "account": "Account Settings",
+      "privacy": "Privacy",
+      "notifications": "Notifications",
+      "appearance": "Theme",
+      "language": "Language"
+    }
+  },
+  "errors": {
+    "404": {
+      "title": "Page Not Found",
+      "message": "The page you requested does not exist",
+      "action": "Go to Home"
+    },
+    "500": {
+      "title": "Server Error",
+      "message": "A temporary error has occurred",
+      "action": "Refresh"
+    },
+    "offline": {
+      "title": "Offline",
+      "message": "Please check your internet connection",
+      "action": "Try Again"
+    }
+  },
+  "footer": {
+    "about": "About",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "contact": "Contact Us",
+    "copyright": "© 2024 InnerSpell. All rights reserved."
+  }
+}

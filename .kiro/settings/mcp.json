@@ -1,0 +1,139 @@
+{
+  "mcpServers": {
+    "supercloud": {
+      "command": "uvx",
+      "args": ["supercloud-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["supercloud"]
+    },
+    "sequential-thinking": {
+      "command": "uvx",
+      "args": ["sequential-thinking-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["sequential-thinking"]
+    },
+    "shrimp-task-manager": {
+      "command": "uvx",
+      "args": ["shrimp-task-manager-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["shrimp-task-manager"]
+    },
+    "aws-docs": {
+      "command": "uvx",
+      "args": ["awslabs.aws-documentation-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["aws-docs"]
+    },
+    "web-dev-tools": {
+      "command": "uvx",
+      "args": ["web-dev-tools-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["web-dev-tools"]
+    },
+    "react-helper": {
+      "command": "uvx",
+      "args": ["react-helper-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["react-helper"]
+    },
+    "nextjs-assistant": {
+      "command": "uvx",
+      "args": ["nextjs-assistant-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["nextjs-assistant"]
+    },
+    "css-wizard": {
+      "command": "uvx",
+      "args": ["css-wizard-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["css-wizard"]
+    },
+    "tailwind-helper": {
+      "command": "uvx",
+      "args": ["tailwind-helper-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["tailwind-helper"]
+    },
+    "typescript-assistant": {
+      "command": "uvx",
+      "args": ["typescript-assistant-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["typescript-assistant"]
+    },
+    "api-designer": {
+      "command": "uvx",
+      "args": ["api-designer-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["api-designer"]
+    },
+    "web-accessibility": {
+      "command": "uvx",
+      "args": ["web-accessibility-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["web-accessibility"]
+    },
+    "performance-optimizer": {
+      "command": "uvx",
+      "args": ["performance-optimizer-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["performance-optimizer"]
+    },
+    "context7": {
+      "command": "uvx",
+      "args": ["context7-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["context7"]
+    },
+    "magic": {
+      "command": "uvx",
+      "args": ["magic-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": ["magic"]
+    }
+  }
+}
