@@ -42,7 +42,7 @@ import type {
 } from '@/types';
 import { tarotInterpretationStyles, tarotSpreads } from '@/types';
 import { tarotDeck as allCards } from '@/lib/tarot-data';
-import { generateTarotInterpretation } from '@/ai/flows/generate-tarot-interpretation';
+import { generateTarotInterpretationAPI } from '@/lib/api/tarot-api';
 import { saveUserReading } from '@/actions/readingActions';
 import { shareReadingClient } from '@/lib/firebase/client-share';
 import { useAuth } from '@/context/AuthContext';
@@ -407,7 +407,7 @@ export function TarotReadingClient() {
       .join('\n');
 
     try {
-      const result = await generateTarotInterpretation({
+      const result = await generateTarotInterpretationAPI({
         question: `${question} (해석 스타일: ${interpretationMethod})`,
         cardSpread: selectedSpread.name,
         cardInterpretations: cardInterpretationsText,
