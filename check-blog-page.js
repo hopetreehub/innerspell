@@ -14,7 +14,7 @@ const { chromium } = require('playwright');
   
   try {
     console.log('1. 블로그 페이지로 이동 중...');
-    await page.goto('http://localhost:4000/blog', { 
+    await page.goto('https://test-studio-firebase.vercel.app/blog', { 
       waitUntil: 'networkidle',
       timeout: 30000 
     });

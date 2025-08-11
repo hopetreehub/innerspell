@@ -173,3 +173,42 @@ export function BlogMainJsonLd() {
     />
   );
 }
+
+export function BlogTagJsonLd({ tag }: { tag: string }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${tag} 태그 포스트 | InnerSpell 블로그`,
+    description: `${tag} 태그와 관련된 모든 포스트를 찾아보세요. AI 시대 영적 성장과 자기계발을 위한 인사이트를 제공합니다.`,
+    url: `https://innerspell.com/blog/tag/${encodeURIComponent(tag)}`,
+    isPartOf: {
+      '@type': 'Blog',
+      name: 'InnerSpell 블로그',
+      url: 'https://innerspell.com/blog',
+    },
+    about: {
+      '@type': 'Thing',
+      name: tag,
+      description: `${tag} 관련 콘텐츠`,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'InnerSpell',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://innerspell.com/logo.png',
+      },
+      url: 'https://innerspell.com',
+    },
+    inLanguage: 'ko-KR',
+    isAccessibleForFree: true,
+  };
+
+  return (
+    <Script
+      id="blog-tag-jsonld"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}

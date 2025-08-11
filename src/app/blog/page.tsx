@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { BlogList } from '@/components/blog/BlogList';
-import { getAllPosts } from '@/services/blog-service';
+// import { getAllPosts } from '@/services/blog-service';
+import { mockPosts } from '@/lib/blog/posts';
 
 export const metadata: Metadata = {
   title: '블로그 | InnerSpell - 타로, 점술, 꿈해몽, 자기계발 전문 블로그',
@@ -56,9 +57,8 @@ export default async function BlogPage() {
   console.log('🚀 Blog 페이지 서버 렌더링');
   console.log('📊 서버에서 직접 데이터를 가져옵니다');
   
-  // 발행된 포스트만 가져오기 (getAllPosts에서 이미 필터링됨)
-  const result = await getAllPosts();
-  const publishedPosts = result.posts || [];
+  // 발행된 포스트만 가져오기
+  const publishedPosts = mockPosts.filter(post => post.published === true);
   
   console.log(`✅ 총 ${publishedPosts.length}개의 발행된 포스트 로드`);
   
