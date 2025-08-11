@@ -16,6 +16,12 @@ import { getProviderConfig } from '@/lib/ai-utils';
 import { getProviderWithFallback } from '@/ai/services/ai-provider-fallback';
 import { getCachedInterpretation, setCachedInterpretation } from '@/ai/services/ai-cache-service';
 import { retryAICall } from '@/ai/services/ai-retry-service';
+import { 
+  extractStyleFromQuestion, 
+  extractSpreadType, 
+  extractCardIds, 
+  generateStyledPrompt 
+} from '@/ai/services/tarot-style-service';
 
 
 const GenerateTarotInterpretationInputSchema = z.object({
@@ -62,6 +68,13 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
     async (input: GenerateTarotInterpretationInput) => {
     
     try {
+      // 스타일 정보 추출
+      const { styleId, styleName, cleanQuestion } = extractStyleFromQuestion(input.question);
+      const spreadType = extractSpreadType(input.cardSpread);
+      const cardIds = extractCardIds(input.cardInterpretations);
+      
+      console.log('[TAROT] Style extracted:', { styleId, styleName, spreadType, cardCount: cardIds.length });
+      
       // Try to get the best available provider with automatic fallback
       let providerInfo;
       let model: string;
@@ -73,7 +86,16 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
         const config = await getTarotPromptConfig();
         providerInfo = { provider: config.model.split('/')[0], model: config.model };
         model = config.model;
-        promptTemplate = config.promptTemplate;
+        
+        // 스타일별 프롬프트 생성
+        promptTemplate = await generateStyledPrompt(
+          styleId,
+          spreadType,
+          cardIds,
+          cleanQuestion,
+          input.cardInterpretations
+        );
+        
         safetySettings = config.safetySettings;
       } catch (error) {
         console.log('[TAROT] Primary config failed, using fallback system:', error);
@@ -82,26 +104,15 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
         providerInfo = fallbackInfo;
         model = `${fallbackInfo.provider}/${fallbackInfo.model}`;
         
-        // Use default prompt template
-        promptTemplate = `당신은 전문적인 타로 카드 해석사입니다. 
-사용자의 질문과 뽑힌 카드들을 바탕으로 깊이 있고 의미 있는 해석을 제공해주세요.
-
-질문: {{question}}
-카드 스프레드: {{cardSpread}}
-뽑힌 카드들: {{cardInterpretations}}
-
-다음 형식으로 해석해주세요:
-## 서론
-질문에 대한 공감과 전체적인 흐름 소개
-
-## 본론  
-각 카드의 의미와 위치별 해석
-
-## 실행 가능한 조언과 격려
-구체적이고 실용적인 조언
-
-## 결론
-희망적이고 긍정적인 마무리`;
+        // 스타일별 프롬프트 생성 (fallback의 경우도 동일하게)
+        promptTemplate = await generateStyledPrompt(
+          styleId,
+          spreadType,
+          cardIds,
+          cleanQuestion,
+          input.cardInterpretations
+        );
+        
         safetySettings = [];
         
         if (fallbackInfo.fallbackInfo.fallbackUsed) {

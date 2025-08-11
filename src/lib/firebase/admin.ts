@@ -67,6 +67,11 @@ const db = firestore;
 const FieldValue = admin.firestore.FieldValue;
 const auth = admin.auth();
 
+// Export with consistent naming for API routes
+export const adminApp = admin;
+export const adminAuth = auth;
+export const adminFirestore = firestore;
+
 // Initialize admin function for API routes
 export function initAdmin() {
   if (!admin.apps.length) {

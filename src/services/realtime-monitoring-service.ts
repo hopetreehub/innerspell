@@ -93,6 +93,9 @@ export async function getRealTimeStats(): Promise<RealTimeStats> {
   const stats = await getUsageStats();
   const recentActivities = await getRecentActivities(10);
   
+  // 데모 모드인지 확인
+  const isDemoMode = process.env.NEXT_PUBLIC_ENABLE_DEV_MODE === 'true';
+  
   // 오늘의 활동 계산
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -104,6 +107,19 @@ export async function getRealTimeStats(): Promise<RealTimeStats> {
   const todayReadings = todayActivities.filter(
     activity => activity.action === 'tarot_reading' || activity.action === 'dream_interpretation'
   ).length;
+  
+  // 데모 모드일 때 샘플 데이터 반환
+  if (isDemoMode) {
+    return {
+      activeUsers: 12,
+      activeSessions: 8,
+      todayReadings: 47,
+      avgResponseTime: 245,
+      systemStatus: 'healthy',
+      lastUpdated: new Date(),
+      peakConcurrentUsers: 25
+    };
+  }
   
   // 실제 응답시간은 추후 구현 예정, 현재는 0으로 초기화
   const avgResponseTime = 0;
@@ -147,7 +163,7 @@ export async function getEnvironmentInfo(): Promise<{
      
   return {
     nodeEnv: process.env.NODE_ENV || 'development',
-    usingMockData: process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true',
+    usingMockData: process.env.NEXT_PUBLIC_ENABLE_DEV_MODE === 'true' || process.env.NEXT_PUBLIC_USE_REAL_AUTH !== 'true',
     fileStorageEnabled: isFileStorageEnabled,
     buildVersion: process.env.NEXT_PUBLIC_BUILD_VERSION || '1.0.0',
     serverUptime: process.uptime ? process.uptime() : 0

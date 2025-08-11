@@ -9,6 +9,7 @@ import {
 } from '@/types/tarot-instructions';
 import { TarotCard } from '@/types/index';
 import { tarotDeck } from '@/lib/tarot-data';
+import { shouldUseDevelopmentFallback } from '@/lib/firebase/development-mode';
 
 const TAROT_INSTRUCTIONS_COLLECTION = 'tarotCardInstructions';
 const TAROT_TEMPLATES_COLLECTION = 'tarotInstructionTemplates';
@@ -94,6 +95,39 @@ export class TarotInstructionsService {
    * Get instruction for a specific card and interpretation method
    */
   static async getInstruction(cardId: string, interpretationMethod: string): Promise<TarotCardInstruction | null> {
+    // Development fallback - 기본 지침 반환
+    if (shouldUseDevelopmentFallback()) {
+      const card = tarotDeck.find(c => c.id === cardId);
+      if (!card) return null;
+      
+      // 스타일별 기본 지침 생성
+      const styleSpecificText = {
+        'traditional-rws': '전통적 웨이트 관점에서',
+        'thoth-crowley': '토트 카발라 체계에서',
+        'psychological-jungian': '융의 원형 심리학적 관점에서',
+        'spiritual-growth': '영적 성장의 관점에서',
+        'practical-action': '실용적 행동 중심으로',
+        'shadow-work': '그림자 작업의 관점에서',
+        'realistic-insight': '현실적이고 직설적으로'
+      };
+      
+      const prefix = styleSpecificText[interpretationMethod] || '타로의 지혜로';
+      
+      return {
+        id: `${cardId}-${interpretationMethod}`,
+        cardId,
+        interpretationMethod,
+        uprightInstruction: `${prefix} ${card.meaningUpright}`,
+        reversedInstruction: `${prefix} ${card.meaningReversed}`,
+        keywords: card.keywords || [],
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: 'system',
+        updatedBy: 'system'
+      } as TarotCardInstruction;
+    }
+    
     try {
       const snapshot = await firestore
         .collection(TAROT_INSTRUCTIONS_COLLECTION)
@@ -112,7 +146,24 @@ export class TarotInstructionsService {
       return { ...data, id: doc.id } as TarotCardInstruction;
     } catch (error) {
       console.error(`Error fetching instruction for card ${cardId} with method ${interpretationMethod}:`, error);
-      throw new Error(`Failed to fetch instruction for card ${cardId}`);
+      
+      // 에러 발생 시에도 기본 지침 반환
+      const card = tarotDeck.find(c => c.id === cardId);
+      if (!card) return null;
+      
+      return {
+        id: `${cardId}-${interpretationMethod}`,
+        cardId,
+        interpretationMethod,
+        uprightInstruction: card.meaningUpright,
+        reversedInstruction: card.meaningReversed,
+        keywords: card.keywords || [],
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: 'system',
+        updatedBy: 'system'
+      } as TarotCardInstruction;
     }
   }
 
