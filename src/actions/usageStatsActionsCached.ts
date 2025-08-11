@@ -105,7 +105,7 @@ export async function getSystemAlerts() {
 }
 
 // 사용량 통계 캐시 무효화
-export function invalidateUsageStatsCache(dateRange?: string) {
+export async function invalidateUsageStatsCache(dateRange?: string) {
   if (dateRange) {
     invalidateCache(`usage-stats:${dateRange}`);
   } else {
@@ -114,7 +114,7 @@ export function invalidateUsageStatsCache(dateRange?: string) {
 }
 
 // 실시간 데이터 캐시 무효화
-export function invalidateRealTimeCache() {
+export async function invalidateRealTimeCache() {
   invalidateCache('realtime-stats');
   invalidateCache('active-sessions');
   invalidateCache('activity-logs:.*');
@@ -122,6 +122,6 @@ export function invalidateRealTimeCache() {
 }
 
 // 전체 통계 캐시 무효화
-export function invalidateAllStatsCache() {
+export async function invalidateAllStatsCache() {
   invalidateCache('.*'); // 모든 캐시 삭제
 }
