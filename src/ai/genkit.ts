@@ -28,6 +28,52 @@ async function getAIProviderKeys() {
     return aiConfigCache;
   }
   
+  // 🔴 CRITICAL: Vercel 환경에서는 환경변수를 우선적으로 사용
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV !== undefined;
+  
+  console.log('[GENKIT] Environment check:', {
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL: process.env.VERCEL,
+    VERCEL_ENV: process.env.VERCEL_ENV,
+    isProduction,
+    isVercel
+  });
+  
+  // Vercel 또는 프로덕션 환경에서는 환경변수 우선 사용
+  if (isProduction || isVercel) {
+    console.log('[GENKIT] Production/Vercel mode - checking environment variables first');
+    
+    const envKeys = {
+      googleApiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY,
+      openaiApiKey: process.env.OPENAI_API_KEY,
+      anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+      grokApiKey: process.env.GROK_API_KEY,
+      openrouterApiKey: process.env.OPENROUTER_API_KEY,
+      huggingfaceApiKey: process.env.HUGGINGFACE_API_KEY,
+      timestamp: Date.now()
+    };
+    
+    console.log('[GENKIT] Production environment keys status:', {
+      hasGoogleKey: !!envKeys.googleApiKey,
+      googleKeyLength: envKeys.googleApiKey?.length || 0,
+      googleKeyPrefix: envKeys.googleApiKey?.substring(0, 10) + '...',
+      hasOpenAIKey: !!envKeys.openaiApiKey,
+      openaiKeyLength: envKeys.openaiApiKey?.length || 0,
+      openaiKeyPrefix: envKeys.openaiApiKey?.substring(0, 10) + '...',
+      hasAnthropicKey: !!envKeys.anthropicApiKey
+    });
+    
+    // 최소한 하나의 AI 키가 있으면 사용
+    if (envKeys.googleApiKey || envKeys.openaiApiKey || envKeys.anthropicApiKey) {
+      console.log('[GENKIT] Valid API keys found in environment variables');
+      aiConfigCache = envKeys;
+      return envKeys;
+    } else {
+      console.warn('[GENKIT] ⚠️ No valid API keys found in environment variables!');
+    }
+  }
+  
   try {
     // 개발 모드에서 먼저 환경 변수 확인
     const isDevelopmentMode = process.env.NODE_ENV === 'development';
@@ -148,48 +194,84 @@ let aiInstance: ReturnType<typeof genkit> | null = null;
 export async function getAI() {
   if (!aiInstance) {
     console.log('[GENKIT] Initializing AI instance...');
-    const keys = await getAIProviderKeys();
     
-    const plugins = [];
-    
-    // Google AI / Gemini
-    if (keys.googleApiKey) {
-      console.log('[GENKIT] Adding Google AI plugin');
-      plugins.push(googleAI({
-        apiKey: keys.googleApiKey
-      }));
+    try {
+      const keys = await getAIProviderKeys();
+      
+      // 🔴 CRITICAL: API 키 존재 확인
+      if (!keys.googleApiKey && !keys.openaiApiKey && !keys.anthropicApiKey) {
+        const errorMsg = '[GENKIT] CRITICAL ERROR: No AI API keys available! Please check environment variables.';
+        console.error(errorMsg);
+        console.error('[GENKIT] Required keys: GOOGLE_API_KEY or OPENAI_API_KEY');
+        console.error('[GENKIT] Current environment:', {
+          NODE_ENV: process.env.NODE_ENV,
+          VERCEL: process.env.VERCEL,
+          hasGoogleKey: !!process.env.GOOGLE_API_KEY,
+          hasGeminiKey: !!process.env.GEMINI_API_KEY,
+          hasOpenAIKey: !!process.env.OPENAI_API_KEY
+        });
+        throw new Error('No AI provider API keys configured. Check Vercel environment variables.');
+      }
+      
+      const plugins = [];
+      
+      // Google AI / Gemini - 우선순위 1
+      if (keys.googleApiKey) {
+        try {
+          console.log('[GENKIT] Adding Google AI plugin with key length:', keys.googleApiKey.length);
+          plugins.push(googleAI({
+            apiKey: keys.googleApiKey
+          }));
+          console.log('[GENKIT] ✅ Google AI plugin added successfully');
+        } catch (error) {
+          console.error('[GENKIT] Failed to add Google AI plugin:', error);
+        }
+      }
+      
+      // OpenAI - 우선순위 2
+      if (keys.openaiApiKey) {
+        try {
+          console.log('[GENKIT] Adding OpenAI plugin with key length:', keys.openaiApiKey.length);
+          plugins.push(openAI({
+            apiKey: keys.openaiApiKey
+          }));
+          console.log('[GENKIT] ✅ OpenAI plugin added successfully');
+        } catch (error) {
+          console.error('[GENKIT] Failed to add OpenAI plugin:', error);
+        }
+      }
+      
+      // Anthropic / Claude - 우선순위 3
+      if (keys.anthropicApiKey) {
+        try {
+          console.log('[GENKIT] Adding Anthropic plugin');
+          plugins.push(anthropic({
+            apiKey: keys.anthropicApiKey
+          }));
+          console.log('[GENKIT] ✅ Anthropic plugin added successfully');
+        } catch (error) {
+          console.error('[GENKIT] Failed to add Anthropic plugin:', error);
+        }
+      }
+      
+      console.log(`[GENKIT] Initializing Genkit with ${plugins.length} plugins`);
+      
+      if (plugins.length === 0) {
+        const criticalError = '[GENKIT] CRITICAL: No AI provider plugins could be initialized!';
+        console.error(criticalError);
+        throw new Error('Failed to initialize any AI provider plugins');
+      }
+      
+      aiInstance = genkit({
+        plugins,
+        // Model is now specified dynamically in each flow based on Admin settings.
+      });
+      
+      console.log('[GENKIT] ✅ AI instance initialized successfully');
+    } catch (error) {
+      console.error('[GENKIT] Failed to initialize AI instance:', error);
+      throw error;
     }
-    
-    // OpenAI - Primary API
-    if (keys.openaiApiKey) {
-      console.log('[GENKIT] Adding OpenAI plugin');
-      plugins.push(openAI({
-        apiKey: keys.openaiApiKey
-      }));
-    }
-    
-    // Anthropic / Claude
-    if (keys.anthropicApiKey) {
-      console.log('[GENKIT] Adding Anthropic plugin');
-      plugins.push(anthropic({
-        apiKey: keys.anthropicApiKey
-      }));
-    }
-    
-    // For Grok and OpenRouter, we need to use different OpenAI plugin configurations
-    // For now, we'll skip these to avoid duplicate plugin registration
-    // They can be added later with proper namespace management
-    
-    console.log(`[GENKIT] Initializing Genkit with ${plugins.length} plugins`);
-    
-    if (plugins.length === 0) {
-      console.error('[GENKIT] WARNING: No AI provider plugins available! AI features will not work.');
-    }
-    
-    aiInstance = genkit({
-      plugins,
-      // Model is now specified dynamically in each flow based on Admin settings.
-    });
   }
   
   return aiInstance;

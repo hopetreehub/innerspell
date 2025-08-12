@@ -39,6 +39,14 @@ export type GenerateTarotInterpretationOutput = z.infer<typeof GenerateTarotInte
 
 
 export async function generateTarotInterpretation(input: GenerateTarotInterpretationInput): Promise<GenerateTarotInterpretationOutput> {
+  console.log('[TAROT] ========== GENERATE INTERPRETATION START ==========');
+  console.log('[TAROT] Environment check:', {
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL: process.env.VERCEL,
+    VERCEL_ENV: process.env.VERCEL_ENV,
+    timestamp: new Date().toISOString()
+  });
+  
   return generateTarotInterpretationFlow(input);
 }
 
@@ -57,7 +65,28 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
     return { interpretation: cachedInterpretation };
   }
   
-  const ai = await getAI();
+  console.log('[TAROT] Initializing AI instance...');
+  let ai;
+  try {
+    ai = await getAI();
+    console.log('[TAROT] ✅ AI instance obtained successfully');
+  } catch (error) {
+    console.error('[TAROT] ❌ Failed to get AI instance:', error);
+    console.error('[TAROT] Error details:', {
+      message: error?.message,
+      type: error?.constructor?.name,
+      stack: error?.stack
+    });
+    
+    // Vercel 환경에서 더 자세한 에러 메시지 제공
+    if (error?.message?.includes('No AI provider API keys')) {
+      return { 
+        interpretation: '⚠️ AI 설정 오류: Vercel 환경변수에 AI API 키가 설정되지 않았습니다. GOOGLE_API_KEY 또는 OPENAI_API_KEY를 Vercel Dashboard에서 설정해주세요.' 
+      };
+    }
+    
+    throw error;
+  }
   
   return ai.defineFlow(
     {
@@ -81,11 +110,26 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
       let promptTemplate: string;
       let safetySettings: any[];
       
-      try {
-        // First try to get configured provider
-        const config = await getTarotPromptConfig();
-        providerInfo = { provider: config.model.split('/')[0], model: config.model };
-        model = config.model;
+      // 🔴 CRITICAL: Vercel 환경에서는 환경변수 기반 모델 우선 사용
+      const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV !== undefined;
+      const isProduction = process.env.NODE_ENV === 'production';
+      
+      if (isVercel || isProduction) {
+        console.log('[TAROT] Vercel/Production environment detected - using environment-based configuration');
+        
+        // 환경변수에서 직접 모델 설정
+        if (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY) {
+          model = 'googleai/gemini-1.5-flash-latest';
+          providerInfo = { provider: 'googleai', model: 'gemini-1.5-flash-latest' };
+          console.log('[TAROT] Using Google AI/Gemini from environment');
+        } else if (process.env.OPENAI_API_KEY) {
+          model = 'openai/gpt-3.5-turbo';
+          providerInfo = { provider: 'openai', model: 'gpt-3.5-turbo' };
+          console.log('[TAROT] Using OpenAI from environment');
+        } else {
+          console.error('[TAROT] No API keys found in environment!');
+          throw new Error('No AI API keys configured in Vercel environment');
+        }
         
         // 스타일별 프롬프트 생성
         promptTemplate = await generateStyledPrompt(
@@ -96,27 +140,46 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
           input.cardInterpretations
         );
         
-        safetySettings = config.safetySettings;
-      } catch (error) {
-        console.log('[TAROT] Primary config failed, using fallback system:', error);
-        // Use fallback system if primary config fails
-        const fallbackInfo = await getProviderWithFallback();
-        providerInfo = fallbackInfo;
-        model = `${fallbackInfo.provider}/${fallbackInfo.model}`;
-        
-        // 스타일별 프롬프트 생성 (fallback의 경우도 동일하게)
-        promptTemplate = await generateStyledPrompt(
-          styleId,
-          spreadType,
-          cardIds,
-          cleanQuestion,
-          input.cardInterpretations
-        );
-        
         safetySettings = [];
-        
-        if (fallbackInfo.fallbackInfo.fallbackUsed) {
-          console.log('[TAROT] Using fallback provider due to primary failure');
+      } else {
+        // 개발 환경에서는 기존 로직 사용
+        try {
+          // First try to get configured provider
+          const config = await getTarotPromptConfig();
+          providerInfo = { provider: config.model.split('/')[0], model: config.model };
+          model = config.model;
+          
+          // 스타일별 프롬프트 생성
+          promptTemplate = await generateStyledPrompt(
+            styleId,
+            spreadType,
+            cardIds,
+            cleanQuestion,
+            input.cardInterpretations
+          );
+          
+          safetySettings = config.safetySettings;
+        } catch (error) {
+          console.log('[TAROT] Primary config failed, using fallback system:', error);
+          // Use fallback system if primary config fails
+          const fallbackInfo = await getProviderWithFallback();
+          providerInfo = fallbackInfo;
+          model = `${fallbackInfo.provider}/${fallbackInfo.model}`;
+          
+          // 스타일별 프롬프트 생성 (fallback의 경우도 동일하게)
+          promptTemplate = await generateStyledPrompt(
+            styleId,
+            spreadType,
+            cardIds,
+            cleanQuestion,
+            input.cardInterpretations
+          );
+          
+          safetySettings = [];
+          
+          if (fallbackInfo.fallbackInfo.fallbackUsed) {
+            console.log('[TAROT] Using fallback provider due to primary failure');
+          }
         }
       }
       
