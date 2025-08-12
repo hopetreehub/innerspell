@@ -13,12 +13,17 @@ monitor-*.js
 quick-*.js
 tarot-*.js
 
-# 스크린샷 (public 폴더 제외)
-/screenshots/*.png
-/screenshots/*.jpg
-/*.png
-/*.jpg
-# public 폴더의 이미지는 포함되어야 함
+# 스크린샷 - 루트 디렉토리의 스크린샷만 제외
+check-*.png
+fixed-*.png
+verify-*.png
+image-check-*.png
+screenshot-*.png
+tarot-reading-*.png
+test-*.png
+monitor-*.png
+final-*.png
+playwright-*.png
 
 # 기타
 .env.local
