@@ -2,7 +2,7 @@
 // src/components/reading/TarotReadingClient.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -311,19 +311,30 @@ export function TarotReadingClient() {
     setStage('spread_revealed');
   };
 
-  const handleCardSelectFromSpread = (clickedSpreadCard: TarotCardType) => {
-     const cardAlreadySelected = selectedCardsForReading.find(
+  const handleCardSelectFromSpread = useCallback((clickedSpreadCard: TarotCardType) => {
+    console.log('🎯 카드 선택 시도:', {
+      cardName: clickedSpreadCard.name,
+      cardId: clickedSpreadCard.id,
+      isReversed: clickedSpreadCard.isReversed,
+      currentSelectedCount: selectedCardsForReading.length,
+      maxCards: selectedSpread.numCards,
+      currentStage: stage
+    });
+
+    const cardAlreadySelected = selectedCardsForReading.find(
       (c) => c.id === clickedSpreadCard.id && c.isReversed === clickedSpreadCard.isReversed
     );
 
     let newSelectedCards: TarotCardType[];
 
     if (cardAlreadySelected) {
+      console.log('🔄 이미 선택된 카드 제거:', clickedSpreadCard.name);
       newSelectedCards = selectedCardsForReading.filter(
         (c) => !(c.id === clickedSpreadCard.id && c.isReversed === clickedSpreadCard.isReversed)
       );
     } else {
       if (selectedCardsForReading.length >= selectedSpread.numCards) {
+        console.log('⚠️ 최대 카드 수 초과:', selectedCardsForReading.length, '>=', selectedSpread.numCards);
         toast({
           description: `최대 ${selectedSpread.numCards}장까지 선택할 수 있습니다.`,
         });
@@ -331,6 +342,7 @@ export function TarotReadingClient() {
       }
       const originalCardData = allCards.find(c => c.id === clickedSpreadCard.id);
       if (!originalCardData) {
+        console.error('❌ 카드 데이터를 찾을 수 없음:', clickedSpreadCard.id);
         toast({ variant: 'destructive', title: '오류', description: '선택한 카드를 찾을 수 없습니다.'});
         return;
       }
@@ -340,16 +352,30 @@ export function TarotReadingClient() {
         isFaceUp: true,
       };
       newSelectedCards = [...selectedCardsForReading, cardToAdd];
+      console.log('➕ 새 카드 추가:', cardToAdd.name, '총 선택된 카드:', newSelectedCards.length);
     }
 
     setSelectedCardsForReading(newSelectedCards);
 
-    setStage(
-      newSelectedCards.length === selectedSpread.numCards
-        ? 'cards_selected'
-        : 'spread_revealed',
-    );
-  };
+    const newStage = newSelectedCards.length === selectedSpread.numCards ? 'cards_selected' : 'spread_revealed';
+    console.log('🔄 상태 변경:', stage, '->', newStage);
+    setStage(newStage);
+
+    // 강제 상태 업데이트 확실히 하기
+    setTimeout(() => {
+      if (newSelectedCards.length === selectedSpread.numCards) {
+        console.log('🎉 모든 카드 선택 완료, cards_selected 상태로 강제 전환');
+        setStage('cards_selected');
+      }
+    }, 100);
+
+    console.log('✅ 카드 선택 완료:', {
+      선택된카드수: newSelectedCards.length,
+      필요카드수: selectedSpread.numCards,
+      새로운상태: newStage,
+      선택된카드들: newSelectedCards.map(c => c.name)
+    });
+  }, [selectedCardsForReading, selectedSpread.numCards, stage, toast, allCards]);
 
 
   const handleGetInterpretation = async () => {
@@ -804,9 +830,33 @@ export function TarotReadingClient() {
                 <h3 className="font-headline text-xl text-primary">
                   펼쳐진 카드 ({selectedCardsForReading.length}/{selectedSpread.numCards} 선택됨)
                 </h3>
+                <div className="flex justify-center gap-2 mt-3 mb-3">
+                  {Array.from({ length: selectedSpread.numCards }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-4 h-4 rounded-full border-2 transition-all duration-300 ${
+                        i < selectedCardsForReading.length
+                          ? 'bg-primary border-primary shadow-md'
+                          : 'bg-transparent border-muted-foreground'
+                      }`}
+                    />
+                  ))}
+                </div>
                 <p className="text-sm text-muted-foreground" id="spread-instruction">
-                  {selectedSpread.description} 카드를 클릭하여 ${selectedSpread.numCards}장 선택하세요.
+                  {selectedSpread.description} 카드를 클릭하여 
+                  {selectedCardsForReading.length < selectedSpread.numCards && 
+                    ` ${selectedSpread.numCards - selectedCardsForReading.length}장 더`
+                  } 선택하세요.
                 </p>
+                {selectedCardsForReading.length > 0 && (
+                  <p className="text-xs text-primary mt-2 animate-pulse">
+                    ✨ {selectedCardsForReading.length}장 선택됨! 
+                    {selectedCardsForReading.length === selectedSpread.numCards ? 
+                      ' 이제 AI 해석을 받아보세요.' : 
+                      ` ${selectedSpread.numCards - selectedCardsForReading.length}장 더 선택하세요.`
+                    }
+                  </p>
+                )}
               </div>
               <div
                 ref={spreadContainerRef}
@@ -816,13 +866,27 @@ export function TarotReadingClient() {
               >
                 <div className="flex space-x-[-188px]">
                   <AnimatePresence>
-                    {displayableRevealedCards.map((cardInSpread, index) => (
+                    {displayableRevealedCards.map((cardInSpread, index) => {
+                      const isCardSelected = selectedCardsForReading.some(
+                        (c) => c.id === cardInSpread.id && c.isReversed === cardInSpread.isReversed
+                      );
+                      const selectedIndex = selectedCardsForReading.findIndex(
+                        (c) => c.id === cardInSpread.id && c.isReversed === cardInSpread.isReversed
+                      );
+                      
+                      return (
                         <motion.div
                           key={cardInSpread.id + (cardInSpread.isReversed ? '-rev-spread' : '-upr-spread')}
                           role="button"
                           tabIndex={0}
                           aria-label={`펼쳐진 ${index + 1}번째 카드 선택 (${cardInSpread.name})`}
-                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCardSelectFromSpread(cardInSpread); }}
+                          onKeyDown={(e) => { 
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              console.log('⌨️ 키보드로 카드 선택:', cardInSpread.name);
+                              handleCardSelectFromSpread(cardInSpread);
+                            }
+                          }}
                           layoutId={cardInSpread.id + (cardInSpread.isReversed ? '-rev-layout' : '-upr-layout')}
                           initial={{ opacity: 0, y: 20, scale: 0.9 }}
                           animate={{
@@ -837,8 +901,21 @@ export function TarotReadingClient() {
                             transition: { duration: 0.2, ease: "easeIn" },
                           }}
                           transition={{ duration: 0.25, delay: index * 0.03 }}
-                          onClick={() => handleCardSelectFromSpread(cardInSpread)}
-                          className={`${TARGET_CARD_HEIGHT_CLASS} shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:z-20 shadow-md border border-black/10 hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('🖱️ 마우스로 카드 선택:', cardInSpread.name, 'index:', index);
+                            handleCardSelectFromSpread(cardInSpread);
+                          }}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            console.log('👇 마우스 다운:', cardInSpread.name);
+                          }}
+                          className={`${TARGET_CARD_HEIGHT_CLASS} shrink-0 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:z-20 shadow-md border-2 ${
+                            isCardSelected 
+                              ? 'border-primary bg-primary/5 card-selected' 
+                              : 'border-black/10 hover:border-primary/50'
+                          } focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg card-hover-effect relative`}
                           style={{ aspectRatio: `${IMAGE_ORIGINAL_WIDTH} / ${IMAGE_ORIGINAL_HEIGHT}` }}
                         >
                           <motion.div
@@ -849,14 +926,20 @@ export function TarotReadingClient() {
                               alt={`카드 뒷면`}
                               width={IMAGE_ORIGINAL_WIDTH}
                               height={IMAGE_ORIGINAL_HEIGHT}
-                              className="h-full w-auto object-contain rounded-lg"
+                              className="h-full w-auto object-contain rounded-lg pointer-events-none"
                               sizes={CARD_IMAGE_SIZES}
                               priority={index < 10}
                               aspectRatio="portrait"
                             />
+                            {isCardSelected && (
+                              <div className="card-selection-indicator">
+                                {selectedIndex + 1}
+                              </div>
+                            )}
                           </motion.div>
                         </motion.div>
-                      ))}
+                      );
+                    })}
                   </AnimatePresence>
                 </div>
               </div>
