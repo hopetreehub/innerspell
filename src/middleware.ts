@@ -106,11 +106,22 @@ export async function middleware(request: NextRequest) {
       const isDevelopmentMode = process.env.NODE_ENV === 'development';
       const isUploadApi = request.nextUrl.pathname.startsWith('/api/upload/');
       const isBlogApi = request.nextUrl.pathname.startsWith('/api/blog/');
-      const isTarotApi = request.nextUrl.pathname.startsWith('/api/generate-tarot-interpretation');
+      const isTarotApi = request.nextUrl.pathname.startsWith('/api/generate-tarot-interpretation') || 
+                        request.nextUrl.pathname === '/api/generate-tarot-interpretation';
       const isActivityApi = request.nextUrl.pathname.startsWith('/api/admin/activities');
       const isReadingApi = request.nextUrl.pathname.startsWith('/api/reading/');
       
       // 🔴 CRITICAL: 타로 해석 API는 프로덕션에서도 CSRF 검증 완화
+      console.log('🔍 CSRF Check:', {
+        pathname: request.nextUrl.pathname,
+        isTarotApi,
+        isReadingApi,
+        isDevelopmentMode,
+        method: request.method,
+        headerToken: headerToken?.substring(0, 10),
+        csrfToken: csrfToken?.substring(0, 10)
+      });
+      
       if (isTarotApi || isReadingApi || (isDevelopmentMode && (isUploadApi || isBlogApi || isActivityApi))) {
         console.log('🎯 Skipping CSRF check for', request.nextUrl.pathname, 'Environment:', process.env.NODE_ENV);
         // 타로 관련 API에 대해 CSRF 검증 완전히 건너뛰기
