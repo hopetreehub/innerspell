@@ -1,0 +1,36 @@
+[
+  {
+    "type": "REQUEST",
+    "url": "http://localhost:4000/api/admin/activities",
+    "method": "POST",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "http://localhost:4000/reading",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": "{\"userId\":\"dev-admin-123\",\"action\":\"tarot_reading\",\"details\":{\"spreadType\":\"삼위일체 조망 (Trinity View)\",\"cardCount\":3,\"interpretationMethod\":\"전통 RWS (라이더-웨이트-스미스)\"}}"
+  },
+  {
+    "type": "RESPONSE",
+    "url": "http://localhost:4000/api/admin/activities",
+    "status": 200,
+    "statusText": "OK"
+  },
+  {
+    "type": "REQUEST",
+    "url": "http://localhost:4000/api/generate-tarot-interpretation",
+    "method": "POST",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "http://localhost:4000/reading",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "postData": "{\"question\":\"오늘의 운세는 어떤가요? (해석 스타일: 전통 RWS (라이더-웨이트-스미스))\",\"cardSpread\":\"삼위일체 조망 (Trinity View)\",\"cardInterpretations\":\"1. The Chariot (전차) (과거) (정방향): 강한 의지력, 결단력, 성공적인 전진을 상징합니다. 목표를 향해 나아가세요....\\n2. 2 of Cups (컵 2) (현재) (정방향): 컵 2 카드는 정방향에서 [의미]를 나타냅니다....\\n3. 8 of Cups (컵 8) (미래) (역방향): 컵 8 카드는 역방향에서 [의미]를 나타냅니다....\",\"isGuestUser\":false}"
+  }
+]

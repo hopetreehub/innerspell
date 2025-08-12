@@ -175,6 +175,48 @@ export async function GET(request: NextRequest) {
 }
 
 /**
+ * 타로 리딩 저장 API
+ * POST /api/reading/history
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // 개발 환경에서 CSRF 검사 비활성화
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    if (isDevelopment) {
+      console.log('🔧 [DEV] CSRF 검사 비활성화');
+    }
+    
+    const body = await request.json();
+    
+    console.log('💾 [API] 리딩 저장 요청:', {
+      userId: body.userId,
+      question: body.question?.substring(0, 50) + '...',
+      spreadName: body.spreadName,
+      drawnCardsCount: body.drawnCards?.length || 0
+    });
+
+    // saveUserReading 함수 호출
+    const { saveUserReading } = await import('@/actions/readingActions');
+    const result = await saveUserReading(body);
+
+    if (result.success) {
+      return NextResponse.json(result);
+    } else {
+      return NextResponse.json(
+        { error: result.error },
+        { status: 400 }
+      );
+    }
+  } catch (error) {
+    console.error('[API] 리딩 저장 중 오류:', error);
+    return NextResponse.json(
+      { error: '리딩 저장 중 오류가 발생했습니다.' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
  * 사용자의 리딩 분석 데이터 생성
  */
 async function generateAnalytics(userId: string): Promise<ReadingAnalytics> {

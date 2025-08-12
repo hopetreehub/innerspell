@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-12T21:55:44.940Z",
+  "tests": [
+    {
+      "name": "Debug API",
+      "url": "https://test-studio-firebase.vercel.app/api/debug-env?key=debug-innerspell-2025",
+      "status": "completed",
+      "screenshot": "01-debug-api.png"
+    },
+    {
+      "name": "Test Tarot API",
+      "url": "https://test-studio-firebase.vercel.app/api/test-tarot?key=debug-innerspell-2025",
+      "status": "completed",
+      "screenshot": "02-test-tarot-api.png"
+    }
+  ]
+}

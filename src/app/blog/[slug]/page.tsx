@@ -4,16 +4,60 @@ import { notFound } from 'next/navigation';
 import { BlogPostDetail } from '@/components/blog/BlogPostDetail';
 import { getAllPostsFromFile } from '@/services/blog-service-file';
 import { BlogPostJsonLd } from '@/components/blog/BlogJsonLd';
+import { mockPosts } from '@/lib/blog/posts';
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
+// generateStaticParams 추가 - 모든 블로그 포스트의 정적 페이지 생성
+export async function generateStaticParams() {
+  console.log('generateStaticParams: Generating static params for blog posts');
+  
+  // Mock 데이터를 우선 사용, fallback으로 file storage 시도
+  let posts = mockPosts;
+  
+  try {
+    const filePosts = await getAllPostsFromFile();
+    if (filePosts.length > 0) {
+      posts = filePosts;
+      console.log(`generateStaticParams: Using ${filePosts.length} posts from file storage`);
+    } else {
+      console.log(`generateStaticParams: Using ${mockPosts.length} mock posts as fallback`);
+    }
+  } catch (error) {
+    console.log('generateStaticParams: File storage failed, using mock posts');
+  }
+  
+  const params = posts
+    .filter(post => post.published) // published 포스트만
+    .map((post) => ({
+      slug: post.id,
+    }));
+  
+  console.log('generateStaticParams: Generated params for:', params.map(p => p.slug));
+  return params;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   console.log('generateMetadata: Looking for slug:', slug);
   
-  const posts = await getAllPostsFromFile();
+  // Mock 데이터를 우선 사용, fallback으로 file storage 시도
+  let posts = mockPosts;
+  
+  try {
+    const filePosts = await getAllPostsFromFile();
+    if (filePosts.length > 0) {
+      posts = filePosts;
+      console.log('generateMetadata: Using file storage posts');
+    } else {
+      console.log('generateMetadata: Using mock posts as fallback');
+    }
+  } catch (error) {
+    console.log('generateMetadata: File storage failed, using mock posts');
+  }
+  
   console.log('generateMetadata: Found', posts.length, 'posts');
   console.log('generateMetadata: Post IDs:', posts.map(p => p.id));
   
@@ -59,7 +103,21 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   console.log('BlogPostPage: Looking for slug:', slug);
   
-  const posts = await getAllPostsFromFile();
+  // Mock 데이터를 우선 사용, fallback으로 file storage 시도
+  let posts = mockPosts;
+  
+  try {
+    const filePosts = await getAllPostsFromFile();
+    if (filePosts.length > 0) {
+      posts = filePosts;
+      console.log('BlogPostPage: Using file storage posts');
+    } else {
+      console.log('BlogPostPage: Using mock posts as fallback');
+    }
+  } catch (error) {
+    console.log('BlogPostPage: File storage failed, using mock posts');
+  }
+  
   console.log('BlogPostPage: Found', posts.length, 'posts');
   console.log('BlogPostPage: Post IDs:', posts.map(p => p.id));
   

@@ -1,0 +1,472 @@
+[
+  {
+    "type": "log",
+    "text": "🔥 Initializing REAL Firebase only",
+    "time": "2025-08-12T15:45:53.663Z"
+  },
+  {
+    "type": "log",
+    "text": "Firebase config validation: {hasApiKey: true, authDomain: mock-auth-domain, projectId: mock-project-id, storageBucket: mock-storage-bucket, messagingSenderId: mock-sender-id}",
+    "time": "2025-08-12T15:45:53.664Z"
+  },
+  {
+    "type": "log",
+    "text": "✅ Real Firebase initialized successfully",
+    "time": "2025-08-12T15:45:53.666Z"
+  },
+  {
+    "type": "log",
+    "text": "✅ Auth, Firestore, and Storage ready",
+    "time": "2025-08-12T15:45:53.666Z"
+  },
+  {
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "time": "2025-08-12T15:45:53.831Z"
+  },
+  {
+    "type": "log",
+    "text": "🚀 DEV AUTH ENABLED - Using Mock Admin User",
+    "time": "2025-08-12T15:45:54.084Z"
+  },
+  {
+    "type": "log",
+    "text": "✅ Mock Admin: dev-admin@innerspell.com - Role: admin",
+    "time": "2025-08-12T15:45:54.085Z"
+  },
+  {
+    "type": "log",
+    "text": "🚀 DEV AUTH ENABLED - Using Mock Admin User",
+    "time": "2025-08-12T15:45:54.085Z"
+  },
+  {
+    "type": "log",
+    "text": "✅ Mock Admin: dev-admin@innerspell.com - Role: admin",
+    "time": "2025-08-12T15:45:54.085Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: false}",
+    "time": "2025-08-12T15:45:54.086Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: false}",
+    "time": "2025-08-12T15:45:54.086Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.088Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.089Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.090Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.090Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: false, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.103Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: Showing skeleton (mounted: false loading: false )",
+    "time": "2025-08-12T15:45:54.103Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: false, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.103Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: Showing skeleton (mounted: false loading: false )",
+    "time": "2025-08-12T15:45:54.104Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: false, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.114Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: Showing skeleton (mounted: false loading: false )",
+    "time": "2025-08-12T15:45:54.114Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: false, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.114Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: Showing skeleton (mounted: false loading: false )",
+    "time": "2025-08-12T15:45:54.115Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: User state changed: {email: dev-admin@innerspell.com, role: admin, hasUser: true, isAdmin: true}",
+    "time": "2025-08-12T15:45:54.156Z"
+  },
+  {
+    "type": "log",
+    "text": "🎉 Dev Auth Active - Skipping Firebase setup",
+    "time": "2025-08-12T15:45:54.158Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:45:54.165Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:45:54.165Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.166Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.166Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.167Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.167Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.172Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.173Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.173Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.174Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.183Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.183Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.184Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.184Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:45:54.221Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:45:54.222Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.222Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.222Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.223Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.224Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.228Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.228Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.228Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.229Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.235Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.235Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.236Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.236Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:45:54.306Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:45:54.306Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.306Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.307Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.308Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.308Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.314Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.314Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.315Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.315Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.320Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.320Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.320Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.320Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:45:54.374Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:45:54.374Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.374Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.375Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.375Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 Navbar Mobile: Rendering admin menu for user: dev-admin@innerspell.com role: admin",
+    "time": "2025-08-12T15:45:54.376Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.378Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.378Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.379Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.379Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.383Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.383Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:45:54.383Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:45:54.384Z"
+  },
+  {
+    "type": "log",
+    "text": "[Toast] Creating toast: {id: 1, title: 덱 섞기 완료, description: 카드가 섞였습니다. 이제 카드를 펼쳐보세요.}",
+    "time": "2025-08-12T15:46:01.009Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:46:01.011Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 RootLayoutClient state: {authLoading: false, isMounted: true}",
+    "time": "2025-08-12T15:46:01.012Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:46:01.012Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:46:01.012Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:46:01.012Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:46:01.013Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:46:01.017Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:46:01.017Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav state: {mounted: true, loading: false, user: dev-admin@innerspell.com (admin)}",
+    "time": "2025-08-12T15:46:01.018Z"
+  },
+  {
+    "type": "log",
+    "text": "🔍 UserNav: User found, showing profile dropdown for: dev-admin@innerspell.com",
+    "time": "2025-08-12T15:46:01.018Z"
+  },
+  {
+    "type": "log",
+    "text": "[Toaster] Rendering toasts: [Object]",
+    "time": "2025-08-12T15:46:01.065Z"
+  },
+  {
+    "type": "log",
+    "text": "[Toaster] Rendering toasts: [Object]",
+    "time": "2025-08-12T15:46:01.065Z"
+  }
+]

@@ -20,7 +20,12 @@ export async function saveUserReading(
 ): Promise<{ success: boolean; readingId?: string; error?: string | object }> {
   try {
     console.log('💾 리딩 저장 시작');
-    console.log('📤 저장 요청 데이터:', input);
+    console.log('📤 저장 요청 데이터:', {
+      userId: input.userId,
+      question: input.question?.substring(0, 50) + '...',
+      spreadName: input.spreadName,
+      drawnCardsCount: input.drawnCards?.length || 0
+    });
     
     // Validate the input using the centralized schema from types/index.ts
     const validationResult = SaveReadingInputSchema.safeParse(input);

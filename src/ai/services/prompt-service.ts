@@ -15,7 +15,7 @@ import { getActiveAIModels } from '@/ai/services/ai-provider-service';
 // --- TAROT INTERPRETATION CONFIG ---
 
 // Default model is now determined dynamically from AI provider configs
-const DEFAULT_TAROT_MODEL = 'googleai/gemini-1.5-pro-latest'; // Fallback only
+const DEFAULT_TAROT_MODEL = 'googleai/gemini-1.5-flash-latest'; // Fallback only
 const DEFAULT_TAROT_PROMPT_TEMPLATE = `[SYSTEM INSTRUCTIONS START]
 You are a compassionate, insightful, and wise tarot reader. Your primary goal is to provide a hopeful, empowering, and positive interpretation based on the user's unique situation and the cards drawn. You must synthesize the provided information into a coherent, flowing narrative.
 
@@ -131,7 +131,7 @@ export async function getTarotPromptConfig(): Promise<TarotPromptConfig> {
     } catch {
       // Use Gemini as absolute fallback
       return {
-        model: 'googleai/gemini-1.5-pro-latest',
+        model: 'googleai/gemini-1.5-flash-latest',
         promptTemplate: DEFAULT_TAROT_PROMPT_TEMPLATE,
         safetySettings: DEFAULT_TAROT_SAFETY_SETTINGS,
       };
@@ -345,7 +345,7 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
     // Gemini API를 우선으로 설정
     if (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) {
       return {
-        model: 'googleai/gemini-1.5-pro-latest',
+        model: 'googleai/gemini-1.5-flash-latest',
         promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
       };
     } else if (process.env.OPENAI_API_KEY) {
@@ -356,7 +356,7 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
     } else {
       // 기본값 - Gemini 우선
       return {
-        model: 'googleai/gemini-1.5-pro-latest',
+        model: 'googleai/gemini-1.5-flash-latest',
         promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
       };
     }
@@ -399,7 +399,7 @@ export async function getDreamPromptConfig(): Promise<DreamPromptConfig> {
   } catch {
     // Use Gemini as absolute fallback
     return {
-      model: 'googleai/gemini-1.5-pro-latest',
+      model: 'googleai/gemini-1.5-flash-latest',
       promptTemplate: DEFAULT_DREAM_PROMPT_TEMPLATE,
     };
   }

@@ -135,15 +135,24 @@ export default function TarotPage() {
                       <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden bg-card">
                         <div className="relative aspect-[2/3] bg-gray-100 dark:bg-gray-800">
                           {card.imageUrl ? (
-                            <Image
-                              src={card.imageUrl}
-                              alt={card.name}
-                              fill
-                              unoptimized
-                              className="object-cover group-hover:scale-105 transition-transform duration-300"
-                              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
-                              loading="lazy"
-                            />
+                            // 15-21번 카드는 직접 img 태그 사용 (Next.js Image 컴포넌트 문제 회피)
+                            card.number >= 15 && card.number <= 21 ? (
+                              <img
+                                src={card.imageUrl}
+                                alt={card.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <Image
+                                src={card.imageUrl}
+                                alt={card.name}
+                                fill
+                                unoptimized
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+                                loading="lazy"
+                              />
+                            )
                           ) : (
                             <div className="flex items-center justify-center h-full bg-muted">
                               <div className="text-center p-4">
@@ -233,15 +242,24 @@ export default function TarotPage() {
                       <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden bg-card">
                         <div className="relative aspect-[2/3] bg-gray-100 dark:bg-gray-800">
                           {card.imageUrl ? (
-                            <Image
-                              src={card.imageUrl}
-                              alt={card.name}
-                              fill
-                              unoptimized
-                              className="object-cover group-hover:scale-105 transition-transform duration-300"
-                              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
-                              loading="lazy"
-                            />
+                            // 15-21번 카드는 직접 img 태그 사용 (Next.js Image 컴포넌트 문제 회피)
+                            card.number >= 15 && card.number <= 21 ? (
+                              <img
+                                src={card.imageUrl}
+                                alt={card.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <Image
+                                src={card.imageUrl}
+                                alt={card.name}
+                                fill
+                                unoptimized
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+                                loading="lazy"
+                              />
+                            )
                           ) : (
                             <div className="flex items-center justify-center h-full bg-muted">
                               <div className="text-center p-4">

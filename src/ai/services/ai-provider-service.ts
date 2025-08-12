@@ -48,6 +48,11 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
       console.log('[getActiveAIModels] No active models found, using defaults');
       activeModels.push(
         {
+          id: 'googleai/gemini-1.5-flash-latest',
+          name: 'Gemini 1.5 Flash (Google AI)',
+          provider: 'googleai'
+        },
+        {
           id: 'openai/gpt-3.5-turbo',
           name: 'GPT-3.5 Turbo (OpenAI)',
           provider: 'openai'
@@ -61,11 +66,6 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
           id: 'googleai/gemini-1.5-pro-latest',
           name: 'Gemini 1.5 Pro (Google AI)',
           provider: 'googleai'
-        },
-        {
-          id: 'googleai/gemini-1.5-flash-latest',
-          name: 'Gemini 1.5 Flash (Google AI)',
-          provider: 'googleai'
         }
       );
     }
@@ -76,6 +76,11 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
     console.error('[getActiveAIModels] Error getting active AI models:', error);
     // Return default models on error (OpenAI first)
     const defaultModels = [
+      {
+        id: 'googleai/gemini-1.5-flash-latest',
+        name: 'Gemini 1.5 Flash (Google AI)',
+        provider: 'googleai'
+      },
       {
         id: 'openai/gpt-3.5-turbo',
         name: 'GPT-3.5 Turbo (OpenAI)',
@@ -89,11 +94,6 @@ export async function getActiveAIModels(): Promise<{ id: string; name: string; p
       {
         id: 'googleai/gemini-1.5-pro-latest',
         name: 'Gemini 1.5 Pro (Google AI)',
-        provider: 'googleai'
-      },
-      {
-        id: 'googleai/gemini-1.5-flash-latest',
-        name: 'Gemini 1.5 Flash (Google AI)',
         provider: 'googleai'
       }
     ];

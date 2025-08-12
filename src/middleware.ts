@@ -108,9 +108,10 @@ export async function middleware(request: NextRequest) {
       const isBlogApi = request.nextUrl.pathname.startsWith('/api/blog/');
       const isTarotApi = request.nextUrl.pathname.startsWith('/api/generate-tarot-interpretation');
       const isActivityApi = request.nextUrl.pathname.startsWith('/api/admin/activities');
+      const isReadingApi = request.nextUrl.pathname.startsWith('/api/reading/');
       
       // 개발 모드에서 특정 API는 CSRF 검증 완화
-      if (isDevelopmentMode && (isUploadApi || isBlogApi || isTarotApi || isActivityApi)) {
+      if (isDevelopmentMode && (isUploadApi || isBlogApi || isTarotApi || isActivityApi || isReadingApi)) {
         console.log('🎯 Development mode: Skipping CSRF check for', request.nextUrl.pathname);
         // 개발 모드에서는 특정 API에 대해 CSRF 검증 완전히 건너뛰기
         // continue to next without CSRF validation
