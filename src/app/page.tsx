@@ -78,6 +78,7 @@ export default function HomePage() {
                       src={feature.imageSrc}
                       alt={feature.title}
                       fill
+                      unoptimized
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       data-ai-hint={feature.dataAiHint}
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" // More specific sizes

@@ -330,6 +330,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
                           alt={post.title}
                           width={400}
                           height={300}
+                          unoptimized
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
@@ -451,6 +452,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
                               alt={post.title}
                               width={64}
                               height={48}
+                              unoptimized
                               className="w-full h-full object-cover"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
@@ -490,6 +492,7 @@ export function BlogList({ initialPosts }: BlogListProps) {
                           alt={featuredPost.title}
                           width={300}
                           height={180}
+                          unoptimized
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;

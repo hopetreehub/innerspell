@@ -49,6 +49,7 @@ export function HeroSection() {
                 width={600}
                 height={600}
                 priority // LCP candidate for homepage
+                unoptimized
                 className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                 data-ai-hint="mystical tarot"
                 sizes="(max-width: 768px) 100vw, 50vw" 

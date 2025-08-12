@@ -49,7 +49,7 @@ export function Navbar() {
         {/* 로고 섹션 - 데스크톱에서 전체의 1/4 위치 (25%) */}
         <div className="flex-1 lg:flex-none lg:absolute lg:left-1/4 lg:transform lg:-translate-x-1/2">
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.png" alt="InnerSpell 로고" width={32} height={32} className="h-8 w-8" />
+            <Image src="/logo.png" alt="InnerSpell 로고" width={32} height={32} unoptimized className="h-8 w-8" />
             <span className="font-headline text-2xl font-bold text-primary">InnerSpell</span>
           </Link>
         </div>
