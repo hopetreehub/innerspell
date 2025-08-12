@@ -13,9 +13,12 @@ monitor-*.js
 quick-*.js
 tarot-*.js
 
-# 스크린샷
-*.png
-*.jpg
+# 스크린샷 (public 폴더 제외)
+/screenshots/*.png
+/screenshots/*.jpg
+/*.png
+/*.jpg
+# public 폴더의 이미지는 포함되어야 함
 
 # 기타
 .env.local
