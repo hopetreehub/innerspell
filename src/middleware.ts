@@ -122,9 +122,10 @@ export async function middleware(request: NextRequest) {
         csrfToken: csrfToken?.substring(0, 10)
       });
       
-      if (isTarotApi || isReadingApi || (isDevelopmentMode && (isUploadApi || isBlogApi || isActivityApi))) {
-        console.log('🎯 Skipping CSRF check for', request.nextUrl.pathname, 'Environment:', process.env.NODE_ENV);
-        // 타로 관련 API에 대해 CSRF 검증 완전히 건너뛰기
+      if (isTarotApi || isReadingApi || isActivityApi || (isDevelopmentMode && (isUploadApi || isBlogApi))) {
+        console.log('🎯 [MIDDLEWARE] Skipping CSRF check for', request.nextUrl.pathname, 'Environment:', process.env.NODE_ENV);
+        console.log('🎯 [MIDDLEWARE] Conditions:', { isTarotApi, isReadingApi, isActivityApi });
+        // 타로 및 활동 API에 대해 CSRF 검증 완전히 건너뛰기
         // continue to next without CSRF validation
       } else if (!validApiSecret && headerToken !== csrfToken) {
         return new NextResponse(
