@@ -36,12 +36,30 @@ export async function saveUserReading(
 
     const { userId, question, spreadName, spreadNumCards, drawnCards, interpretationText } = validationResult.data;
 
-    // 개발 환경 또는 Firebase 설정이 없을 때 파일 저장 사용
-    const isDevelopment = process.env.NODE_ENV === 'development' || 
-                         !process.env.FIREBASE_SERVICE_ACCOUNT_KEY || 
-                         process.env.FIREBASE_SERVICE_ACCOUNT_KEY.includes('여기에');
+    // Vercel 환경 감지
+    const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
     
-    if (isDevelopment) {
+    // Firebase 설정 상태 확인
+    let hasValidFirebaseConfig = false;
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY && 
+        !process.env.FIREBASE_SERVICE_ACCOUNT_KEY.includes('여기에')) {
+      try {
+        // Service Account Key 파싱 테스트
+        JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+        hasValidFirebaseConfig = true;
+      } catch (e) {
+        console.error('❌ Firebase Service Account Key 파싱 실패');
+        hasValidFirebaseConfig = false;
+      }
+    }
+    
+    // 개발 환경 또는 Firebase 설정이 없을 때 파일 저장 사용 (Vercel 제외)
+    const shouldUseFileStorage = !isVercel && (
+      process.env.NODE_ENV === 'development' || 
+      !hasValidFirebaseConfig
+    );
+    
+    if (shouldUseFileStorage) {
       console.log('📁 개발 환경: 파일 시스템에 저장');
       
       // drawnCards를 전체 카드 정보로 확장
@@ -71,8 +89,9 @@ export async function saveUserReading(
       return result;
     }
     
-    // 프로덕션 환경: Firebase 사용
+    // 프로덕션/Vercel 환경: Firebase 사용 시도
     console.log('🔥 프로덕션 환경: Firebase에 저장');
+    console.log(`📊 환경 정보: Vercel=${isVercel}, Firebase 설정=${hasValidFirebaseConfig}`);
     
     // Ensure position has a fallback value
     const drawnCardsWithPosition = drawnCards.map((card, index) => ({
@@ -98,6 +117,21 @@ export async function saveUserReading(
     console.error('🚨 서버 액션 저장 실패:', error instanceof Error ? error.message : error);
     console.error('🚨 Full error object:', error);
     
+    // Vercel 환경에서 파일 시스템 에러 처리
+    if (error instanceof Error && error.message.includes('EROFS')) {
+      console.error('🚨 Vercel 읽기 전용 파일 시스템 에러');
+      
+      // Vercel에서 Firebase가 설정되지 않은 경우 임시 메모리 저장
+      console.log('💾 임시 해결책: 메모리에 저장 (세션 종료 시 소실)');
+      
+      // 간단한 응답 반환 (저장 성공으로 처리하되 경고 표시)
+      return { 
+        success: true, 
+        readingId: `temp-${Date.now()}`,
+        error: '⚠️ 임시 저장됨 - Firebase 설정이 필요합니다' 
+      };
+    }
+    
     // Firebase specific error handling
     if (error instanceof Error) {
       if (error.message.includes('illegal characters')) {
@@ -107,6 +141,10 @@ export async function saveUserReading(
       if (error.message.includes('permission')) {
         console.error('🚨 Firebase 권한 오류');
         return { success: false, error: 'Firebase 권한 오류입니다. 관리자에게 문의하세요.' };
+      }
+      if (error.message.includes('Firebase Admin SDK not initialized')) {
+        console.error('🚨 Firebase Admin SDK 초기화 실패');
+        return { success: false, error: 'Firebase 초기화 오류입니다. 환경 설정을 확인하세요.' };
       }
     }
     

@@ -499,15 +499,51 @@ export function TarotReadingClient() {
         interpretationLength: interpretation.length
       });
 
-      // 🔧 개선: 서버 액션 사용으로 보안 강화
-      const result = await saveUserReading({
-        userId: user.uid,
-        question: question,
-        spreadName: selectedSpread.name,
-        spreadNumCards: selectedSpread.numCards,
-        drawnCards: drawnCardsToSave,
-        interpretationText: interpretation,
-      });
+      // 🔧 Vercel 환경 감지 및 처리 방식 분기
+      let result;
+      const isVercel = typeof window !== 'undefined' && 
+        (window.location.hostname.includes('vercel.app') || 
+         window.location.hostname.includes('innerspell'));
+      
+      if (isVercel) {
+        // Vercel 환경: API 라우트 사용
+        console.log('🌐 Vercel 환경 감지 - API 라우트 사용');
+        
+        // Firebase Auth 토큰 가져오기
+        const token = await user.getIdToken();
+        
+        const response = await fetch('/api/save-reading', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            question: question,
+            spreadName: selectedSpread.name,
+            spreadNumCards: selectedSpread.numCards,
+            drawnCards: drawnCardsToSave,
+            interpretationText: interpretation,
+          }),
+        });
+        
+        result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to save reading');
+        }
+      } else {
+        // 로컬 환경: 서버 액션 사용
+        console.log('💻 로컬 환경 - 서버 액션 사용');
+        result = await saveUserReading({
+          userId: user.uid,
+          question: question,
+          spreadName: selectedSpread.name,
+          spreadNumCards: selectedSpread.numCards,
+          drawnCards: drawnCardsToSave,
+          interpretationText: interpretation,
+        });
+      }
 
       if (!result) {
         throw new Error('저장 함수가 결과를 반환하지 않았습니다.');
