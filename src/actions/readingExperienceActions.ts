@@ -116,7 +116,30 @@ export async function createReadingExperience(
     const userDoc = await userRef.get();
     
     if (!userDoc.exists) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      // 사용자 프로필이 없으면 자동 생성
+      console.log(`🔄 사용자 프로필 자동 생성 - 공유 기능: ${userId}`);
+      
+      try {
+        const defaultProfile = {
+          email: '',
+          name: '익명 사용자',
+          avatar: null,
+          level: 'beginner',
+          bio: '',
+          followersCount: 0,
+          followingCount: 0,
+          postsCount: 0,
+          role: 'user',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await userRef.set(defaultProfile);
+        console.log(`✅ 사용자 프로필 자동 생성 완료 - 공유 기능: ${userId}`);
+      } catch (error) {
+        console.error('사용자 프로필 자동 생성 실패:', error);
+        throw new Error('사용자 프로필 생성에 실패했습니다.');
+      }
     }
 
     const userData = userDoc.data() as UserProfile;

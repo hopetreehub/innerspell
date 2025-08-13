@@ -7,6 +7,7 @@ import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import type { SavedReading, SavedReadingCard } from '@/types';
 import { findCardById } from '@/data/all-tarot-cards';
 import { SaveReadingInputSchema, type SaveReadingInput } from '@/types';
+import { ensureUserProfile } from '@/lib/firebase/ensure-user-profile';
 import { 
   saveReadingToFile, 
   getUserReadingsFromFile, 
@@ -92,6 +93,9 @@ export async function saveUserReading(
     // 프로덕션/Vercel 환경: Firebase 사용 시도
     console.log('🔥 프로덕션 환경: Firebase에 저장');
     console.log(`📊 환경 정보: Vercel=${isVercel}, Firebase 설정=${hasValidFirebaseConfig}`);
+    
+    // 사용자 프로필 확인 및 생성
+    await ensureUserProfile({ uid: userId });
     
     // Ensure position has a fallback value
     const drawnCardsWithPosition = drawnCards.map((card, index) => ({
