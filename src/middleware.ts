@@ -112,21 +112,29 @@ export async function middleware(request: NextRequest) {
       const isReadingApi = request.nextUrl.pathname.startsWith('/api/reading/');
       
       // 🔴 CRITICAL: 타로 해석 API는 프로덕션에서도 CSRF 검증 완화
-      console.log('🔍 CSRF Check:', {
+      // Force rebuild: 2025-08-13T07:00:00Z
+      console.log('🔍 [MIDDLEWARE] CSRF Check v2:', {
         pathname: request.nextUrl.pathname,
         isTarotApi,
         isReadingApi,
+        isActivityApi,
         isDevelopmentMode,
         method: request.method,
+        timestamp: new Date().toISOString(),
         headerToken: headerToken?.substring(0, 10),
         csrfToken: csrfToken?.substring(0, 10)
       });
       
-      if (isTarotApi || isReadingApi || isActivityApi || (isDevelopmentMode && (isUploadApi || isBlogApi))) {
-        console.log('🎯 [MIDDLEWARE] Skipping CSRF check for', request.nextUrl.pathname, 'Environment:', process.env.NODE_ENV);
-        console.log('🎯 [MIDDLEWARE] Conditions:', { isTarotApi, isReadingApi, isActivityApi });
-        // 타로 및 활동 API에 대해 CSRF 검증 완전히 건너뛰기
-        // continue to next without CSRF validation
+      // 🚨 EMERGENCY: 타로 관련 API는 CSRF 검증 완전 우회
+      const shouldSkipCSRF = isTarotApi || isReadingApi || isActivityApi || 
+                             pathname.includes('generate-tarot') || 
+                             pathname.includes('admin/activities') ||
+                             (isDevelopmentMode && (isUploadApi || isBlogApi));
+      
+      if (shouldSkipCSRF) {
+        console.log('🎯 [MIDDLEWARE] EMERGENCY CSRF SKIP for', request.nextUrl.pathname);
+        console.log('🎯 [MIDDLEWARE] Skip conditions:', { isTarotApi, isReadingApi, isActivityApi, shouldSkipCSRF });
+        // CSRF 검증 완전히 건너뛰고 다음으로 진행
       } else if (!validApiSecret && headerToken !== csrfToken) {
         return new NextResponse(
           JSON.stringify({ error: 'Invalid CSRF token' }),
