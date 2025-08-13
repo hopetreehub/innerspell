@@ -148,18 +148,18 @@ class RateLimiter {
 
 // Create rate limiters for different tiers
 const rateLimiters = {
-  // Default rate limiter for all requests
+  // Default rate limiter for all requests (임시 완화)
   default: new RateLimiter({
     windowMs: 60 * 60 * 1000, // 1 hour
-    maxRequests: 100, // 100 requests per hour globally
-    maxRequestsPerUser: 10, // 10 requests per user per hour
+    maxRequests: 1000, // 1000 requests per hour globally
+    maxRequestsPerUser: 100, // 100 requests per user per hour
   }),
   
-  // Premium rate limiter for authenticated users
+  // Premium rate limiter for authenticated users (임시 완화)
   premium: new RateLimiter({
     windowMs: 60 * 60 * 1000, // 1 hour
-    maxRequests: 500, // 500 requests per hour globally
-    maxRequestsPerUser: 50, // 50 requests per user per hour
+    maxRequests: 2000, // 2000 requests per hour globally
+    maxRequestsPerUser: 200, // 200 requests per user per hour
   }),
 };
 
@@ -177,11 +177,20 @@ export function checkRateLimit(userId?: string, isPremium: boolean = false): {
   if (!allowed) {
     const resetTime = limiter.getResetTime(userId);
     const resetMinutes = Math.ceil(resetTime / 1000 / 60);
+    const stats = limiter.getStats(userId);
+    
+    console.error('[RATE_LIMITER] Request blocked:', {
+      userId,
+      isPremium,
+      stats,
+      resetTime,
+      resetMinutes
+    });
     
     return {
       allowed: false,
       resetTime,
-      message: `API 사용량 한도를 초과했습니다. ${resetMinutes}분 후에 다시 시도해주세요.`,
+      message: `AI 모델에 대한 요청이 많아 현재 응답할 수 없습니다. ${resetMinutes}분 후 다시 시도해 주세요. (사용량: ${stats.userUsage}/${stats.userLimit})`,
     };
   }
   

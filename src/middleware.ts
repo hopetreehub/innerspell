@@ -15,7 +15,7 @@ const authRateLimiter = rateLimit({
 
 const aiRateLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 10 // 10 AI requests per minute
+  max: 100 // 100 AI requests per minute (임시 완화)
 });
 
 export async function middleware(request: NextRequest) {
