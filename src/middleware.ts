@@ -110,7 +110,8 @@ export async function middleware(request: NextRequest) {
                         request.nextUrl.pathname === '/api/generate-tarot-interpretation';
       const isActivityApi = request.nextUrl.pathname.startsWith('/api/admin/activities');
       const isReadingApi = request.nextUrl.pathname.startsWith('/api/reading/') || 
-                           request.nextUrl.pathname === '/api/save-reading';
+                           request.nextUrl.pathname === '/api/save-reading' ||
+                           request.nextUrl.pathname === '/api/simple-save';
       
       // 🔴 CRITICAL: 타로 해석 API는 프로덕션에서도 CSRF 검증 완화
       // Force rebuild: 2025-08-13T07:00:00Z

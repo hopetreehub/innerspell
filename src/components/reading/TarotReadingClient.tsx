@@ -499,42 +499,17 @@ export function TarotReadingClient() {
         interpretationLength: interpretation.length
       });
 
-      // 🔧 Vercel 환경 감지 및 처리 방식 분기
-      let result;
-      const isVercel = typeof window !== 'undefined' && 
-        (window.location.hostname.includes('vercel.app') || 
-         window.location.hostname.includes('innerspell'));
+      // 🔧 완전 단순화된 저장 로직
+      console.log('💾 단순화된 저장 시작');
       
-      if (isVercel) {
-        // Vercel 환경: API 라우트 사용
-        console.log('🌐 Vercel 환경 감지 - API 라우트 사용');
-        
-        // Firebase Auth 토큰 가져오기
-        const token = await user.getIdToken();
-        
-        const response = await fetch('/api/save-reading', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            question: question,
-            spreadName: selectedSpread.name,
-            spreadNumCards: selectedSpread.numCards,
-            drawnCards: drawnCardsToSave,
-            interpretationText: interpretation,
-          }),
-        });
-        
-        result = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(result.error || 'Failed to save reading');
-        }
-      } else {
-        // 로컬 환경: 서버 액션 사용
-        console.log('💻 로컬 환경 - 서버 액션 사용');
+      let result;
+      const isLocal = typeof window !== 'undefined' && 
+        window.location.hostname === 'localhost' && 
+        window.location.port === '4000';
+      
+      if (isLocal) {
+        // 로컬: 서버 액션 직접 사용
+        console.log('🏠 로컬 환경 - 서버 액션 사용');
         result = await saveUserReading({
           userId: user.uid,
           question: question,
@@ -543,6 +518,31 @@ export function TarotReadingClient() {
           drawnCards: drawnCardsToSave,
           interpretationText: interpretation,
         });
+      } else {
+        // 모든 다른 환경: 단순 API 사용
+        console.log('🌐 프로덕션 환경 - 단순 API 사용');
+        
+        const response = await fetch('/api/simple-save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user.uid,
+            question: question,
+            spreadName: selectedSpread.name,
+            spreadNumCards: selectedSpread.numCards,
+            drawnCards: drawnCardsToSave,
+            interpretationText: interpretation,
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        result = await response.json();
       }
 
       if (!result) {
