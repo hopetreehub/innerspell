@@ -6,6 +6,12 @@ import { initAdmin } from '@/lib/firebase/admin';
 export async function POST(request: NextRequest) {
   console.log('[API] Save reading request received');
   
+  // 🚨 CSRF 우회 헤더 추가
+  const response = new Response();
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
   try {
     // 인증 확인
     const authHeader = request.headers.get('authorization');
@@ -73,4 +79,16 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// OPTIONS 메소드 지원 (CORS preflight)
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-csrf-token',
+    },
+  });
 }

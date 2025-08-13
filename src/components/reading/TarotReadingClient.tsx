@@ -503,7 +503,8 @@ export function TarotReadingClient() {
       let result;
       const isVercel = typeof window !== 'undefined' && 
         (window.location.hostname.includes('vercel.app') || 
-         window.location.hostname.includes('innerspell'));
+         window.location.hostname.includes('innerspell') ||
+         window.location.port !== '4000'); // 로컬 포트 4000이 아니면 Vercel로 간주
       
       if (isVercel) {
         // Vercel 환경: API 라우트 사용
@@ -512,12 +513,24 @@ export function TarotReadingClient() {
         // Firebase Auth 토큰 가져오기
         const token = await user.getIdToken();
         
+        // CSRF 토큰 가져오기
+        const csrfToken = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('csrf-token='))
+          ?.split('=')[1];
+        
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        };
+        
+        if (csrfToken) {
+          headers['x-csrf-token'] = csrfToken;
+        }
+        
         const response = await fetch('/api/save-reading', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
+          headers,
           body: JSON.stringify({
             question: question,
             spreadName: selectedSpread.name,
