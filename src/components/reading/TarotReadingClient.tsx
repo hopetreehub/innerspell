@@ -456,9 +456,14 @@ export function TarotReadingClient() {
     if (interpretation && stage === 'interpretation_ready' && isInterpretationDialogOpen) {
       let index = 0;
       setDisplayedInterpretation('');
+      
+      // 비로그인 사용자에게는 제한된 해석만 보여줌
+      const maxLength = user ? interpretation.length : Math.min(interpretation.length, 500);
+      const displayText = user ? interpretation : interpretation.substring(0, maxLength) + '\n\n**\ud83d\udd12 전체 해석을 보려면 무료 회원가입이 필요합니다.**';
+      
       const intervalId = setInterval(() => {
-        if (index < interpretation.length) {
-          setDisplayedInterpretation((prev) => prev + interpretation[index]);
+        if (index < displayText.length) {
+          setDisplayedInterpretation((prev) => prev + displayText[index]);
           index++;
         } else {
           clearInterval(intervalId);
