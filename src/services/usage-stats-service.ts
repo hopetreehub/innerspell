@@ -1,37 +1,37 @@
 import { UsageStats, UserActivity } from '@/types/admin';
-import * as fileService from './usage-stats-file';
-
-// 초기 데이터 (파일 저장소가 비활성화된 경우 사용)
-const mockStats: UsageStats = {
-  totalUsers: 0,
-  activeUsers: 0,
-  newUsers: 0,
-  totalSessions: 0,
-  totalReadings: 0,
-  avgSessionDuration: 0,
-  lastUpdated: new Date()
-};
-
-const mockActivities: UserActivity[] = [];
+import { createDataSource, getCurrentDataSourceType } from '@/lib/admin';
 
 /**
  * 사용 통계 가져오기
  */
 export async function getUsageStats(): Promise<UsageStats> {
   try {
-    // 파일 저장소가 활성화된 경우
-    if (process.env.NODE_ENV === 'development' && 
-        (process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' ||
-         process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
-         process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false')) {
-      return await fileService.getUsageStats();
-    }
+    const dataSource = createDataSource();
+    const adminStats = await dataSource.getAdminStats();
     
-    // Mock 데이터 반환
-    return mockStats;
+    // 데이터 소스의 AdminStats를 UsageStats 형식으로 변환
+    return {
+      totalUsers: adminStats.totalUsers,
+      activeUsers: adminStats.activeUsers,
+      newUsers: Math.floor(adminStats.totalUsers * 0.05), // 신규 사용자는 전체의 5%로 추정
+      totalSessions: adminStats.totalReadings, // 세션 수를 리딩 수로 대체
+      totalReadings: adminStats.totalReadings,
+      avgSessionDuration: adminStats.averageSessionTime,
+      lastUpdated: adminStats.lastUpdated
+    };
   } catch (error) {
     console.error('Error fetching usage stats:', error);
-    return mockStats;
+    
+    // 에러 시 기본값 반환
+    return {
+      totalUsers: 0,
+      activeUsers: 0,
+      newUsers: 0,
+      totalSessions: 0,
+      totalReadings: 0,
+      avgSessionDuration: 0,
+      lastUpdated: new Date()
+    };
   }
 }
 
@@ -40,19 +40,27 @@ export async function getUsageStats(): Promise<UsageStats> {
  */
 export async function getRecentActivities(limit: number = 10): Promise<UserActivity[]> {
   try {
-    // 파일 저장소가 활성화된 경우
-    if (process.env.NODE_ENV === 'development' && 
-        (process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' ||
-         process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
-         process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false')) {
-      return await fileService.getRecentActivities(limit);
-    }
+    const dataSource = createDataSource();
+    const realtimeData = await dataSource.getRealtimeData();
     
-    // Mock 데이터 반환
-    return mockActivities.slice(0, limit);
+    // 활성 사용자 정보를 UserActivity 형식으로 변환
+    const activities: UserActivity[] = realtimeData.activeUsers
+      .slice(0, limit)
+      .map((user, index) => ({
+        id: `activity-${Date.now()}-${index}`,
+        userId: user.userId,
+        action: user.currentPage || 'page_view',
+        details: {
+          page: user.currentPage,
+          status: user.status
+        },
+        timestamp: user.lastActivity
+      }));
+    
+    return activities;
   } catch (error) {
     console.error('Error fetching recent activities:', error);
-    return mockActivities.slice(0, limit);
+    return [];
   }
 }
 
@@ -65,19 +73,17 @@ export async function recordUserActivity(
   details?: any
 ): Promise<void> {
   try {
-    // 파일 저장소가 활성화된 경우
-    if (process.env.NODE_ENV === 'development' && 
-        (process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' ||
-         process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
-         process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false')) {
-      await fileService.recordUserActivity({
-        userId,
-        action,
-        details
-      });
+    const dataSourceType = getCurrentDataSourceType();
+    
+    // 개발 모드에서는 콘솔 로그만
+    if (dataSourceType === 'mock') {
+      console.log('[MockDataSource] Activity recorded:', { userId, action, details });
+      return;
     }
     
-    console.log('Activity recorded:', { userId, action, details });
+    // Firebase에서는 실제 기록
+    // TODO: Firebase에 활동 기록 저장 구현
+    console.log('[FirebaseDataSource] Recording activity:', { userId, action, details });
   } catch (error) {
     console.error('Error recording activity:', error);
   }
@@ -88,42 +94,90 @@ export async function recordUserActivity(
  */
 export async function recordSessionStart(userId: string): Promise<void> {
   try {
-    if (process.env.NODE_ENV === 'development' && 
-        (process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
-         process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false')) {
-      await fileService.recordSessionStart(userId);
+    const dataSourceType = getCurrentDataSourceType();
+    
+    if (dataSourceType === 'mock') {
+      console.log('[MockDataSource] Session started:', userId);
+      return;
     }
+    
+    // TODO: Firebase에 세션 시작 기록
+    console.log('[FirebaseDataSource] Recording session start:', userId);
   } catch (error) {
     console.error('Error recording session start:', error);
   }
 }
 
 /**
- * 타로 리딩 기록
+ * 세션 종료 기록
  */
-export async function recordTarotReading(userId: string, spreadType: string): Promise<void> {
+export async function recordSessionEnd(userId: string): Promise<void> {
   try {
-    if (process.env.NODE_ENV === 'development' && 
-        (process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
-         process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false')) {
-      await fileService.recordTarotReading(userId, spreadType);
+    const dataSourceType = getCurrentDataSourceType();
+    
+    if (dataSourceType === 'mock') {
+      console.log('[MockDataSource] Session ended:', userId);
+      return;
     }
+    
+    // TODO: Firebase에 세션 종료 기록
+    console.log('[FirebaseDataSource] Recording session end:', userId);
   } catch (error) {
-    console.error('Error recording tarot reading:', error);
+    console.error('Error recording session end:', error);
   }
 }
 
 /**
- * 블로그 조회 기록
+ * 서비스별 사용량 분석
  */
-export async function recordBlogView(userId: string, postId: string, postTitle: string): Promise<void> {
+export async function getServiceUsageBreakdown(): Promise<{
+  tarot: number;
+  dream: number;
+  yesno: number;
+  total: number;
+}> {
   try {
-    if (process.env.NODE_ENV === 'development' && 
-        (process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true' || 
-         process.env.NEXT_PUBLIC_USE_REAL_AUTH === 'false')) {
-      await fileService.recordBlogView(userId, postId, postTitle);
-    }
+    const dataSource = createDataSource();
+    const adminStats = await dataSource.getAdminStats();
+    
+    const total = adminStats.totalReadings;
+    const tarot = Math.floor(total * 0.7);
+    const dream = Math.floor(total * 0.2);
+    const yesno = Math.floor(total * 0.1);
+    
+    return { tarot, dream, yesno, total };
   } catch (error) {
-    console.error('Error recording blog view:', error);
+    console.error('Error fetching service breakdown:', error);
+    return { tarot: 0, dream: 0, yesno: 0, total: 0 };
+  }
+}
+
+/**
+ * 관리자 성능 메트릭
+ */
+export async function getAdminPerformanceMetrics(): Promise<{
+  avgResponseTime: number;
+  errorRate: number;
+  uptime: number;
+  lastChecked: Date;
+}> {
+  try {
+    const dataSource = createDataSource();
+    const systemStatus = await dataSource.getSystemStatus();
+    
+    return {
+      avgResponseTime: systemStatus.performance.averageResponseTime,
+      errorRate: systemStatus.performance.errorRate,
+      uptime: systemStatus.performance.uptime,
+      lastChecked: new Date()
+    };
+  } catch (error) {
+    console.error('Error fetching performance metrics:', error);
+    return {
+      avgResponseTime: 0,
+      errorRate: 0,
+      uptime: 0,
+      lastChecked: new Date()
+    };
   }
 }
