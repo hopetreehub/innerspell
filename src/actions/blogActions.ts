@@ -66,7 +66,7 @@ export async function createBlogPost(
     
     console.log('✅ 블로그 포스트가 생성되었습니다:', newPost.id);
     
-    revalidatePath('/admin');
+    revalidatePath('/admin/blog-management');
     revalidatePath('/blog');
     return { success: true, id: newPost.id };
   } catch (error) {
@@ -131,7 +131,7 @@ export async function togglePostStatus(
       publishedAt: newStatus === 'published' && !post.publishedAt ? new Date() : post.publishedAt
     });
     
-    revalidatePath('/admin');
+    revalidatePath('/admin/blog-management');
     revalidatePath('/blog');
     return { success: true };
   } catch (error) {
@@ -172,7 +172,7 @@ export async function updateBlogPost(
       title: formData.title
     });
     
-    revalidatePath('/admin');
+    revalidatePath('/admin/blog-management');
     revalidatePath('/blog');
     return { success: true };
   } catch (error) {
@@ -196,7 +196,7 @@ export async function deleteBlogPost(postId: string) {
     // 포스트 삭제
     await dataSource.deleteBlogPost(postId);
     
-    revalidatePath('/admin');
+    revalidatePath('/admin/blog-management');
     return { success: true };
   } catch (error) {
     console.error('블로그 포스트 삭제 오류:', error);
