@@ -131,6 +131,7 @@ export async function middleware(request: NextRequest) {
       const shouldSkipCSRF = isTarotApi || isReadingApi || isActivityApi || 
                              pathname.includes('generate-tarot') || 
                              pathname.includes('admin/activities') ||
+                             pathname.includes('/api/blog/upload') || // Firebase Storage 업로드는 CSRF 스킵
                              (isDevelopmentMode && (isUploadApi || isBlogApi));
       
       if (shouldSkipCSRF) {

@@ -17,6 +17,7 @@ if (!admin.apps.length) {
       admin.initializeApp({
         credential: admin.credential.applicationDefault(),
         projectId: 'innerspell-an7ce-dev',
+        storageBucket: 'innerspell-an7ce.appspot.com',
       });
     } else {
       // Try using service account key from environment variable (Vercel)
@@ -78,6 +79,7 @@ if (!admin.apps.length) {
       admin.initializeApp({
         credential: credential,
         projectId: cleanProjectId,
+        storageBucket: `${cleanProjectId}.appspot.com`,
       });
     }
     
@@ -96,11 +98,13 @@ const firestore = admin.firestore();
 const db = firestore;
 const FieldValue = admin.firestore.FieldValue;
 const auth = admin.auth();
+const storage = admin.storage();
 
 // Export with consistent naming for API routes
 export const adminApp = admin;
 export const adminAuth = auth;
 export const adminFirestore = firestore;
+export const adminStorage = storage;
 
 // Initialize admin function for API routes
 export function initAdmin() {
