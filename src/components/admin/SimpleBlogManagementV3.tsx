@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { getBlogPosts } from '@/actions/blogActions';
+import { getCsrfToken } from '@/lib/csrf';
 import type { BlogPost, BlogPostFormData } from '@/types';
 
 const initialFormData: BlogPostFormData = {
@@ -84,6 +85,9 @@ export default function SimpleBlogManagementV3() {
 
       const response = await fetch('/api/blog/upload', {
         method: 'POST',
+        headers: {
+          'x-csrf-token': getCsrfToken() || ''
+        },
         body: formDataToUpload,
       });
 

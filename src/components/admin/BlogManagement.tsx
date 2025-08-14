@@ -28,6 +28,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 // getBlogPosts API route 사용으로 변경
 import type { BlogPost, BlogPostFormData } from '@/types';
+import { getCsrfToken } from '@/lib/csrf';
 
 const initialFormData: BlogPostFormData = {
   title: '',
@@ -110,6 +111,9 @@ export function BlogManagement() {
       
       const response = await fetch('/api/blog/upload', {
         method: 'POST',
+        headers: {
+          'x-csrf-token': getCsrfToken() || ''
+        },
         body: formData,
       });
       
