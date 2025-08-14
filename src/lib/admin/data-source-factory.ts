@@ -12,15 +12,53 @@ function hasValidFirebaseConfig(): boolean {
     return false;
   }
 
+  // 일반 서비스 계정 키
   const hasServiceAccount = !!(
     process.env.FIREBASE_SERVICE_ACCOUNT_KEY &&
-    !process.env.FIREBASE_SERVICE_ACCOUNT_KEY.includes('여기에')
+    !process.env.FIREBASE_SERVICE_ACCOUNT_KEY.includes('여기에') &&
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY.trim().length > 0
+  );
+
+  // Base64 인코딩된 서비스 계정 키
+  const hasBase64ServiceAccount = !!(
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64 &&
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64.trim().length > 0
   );
 
   const hasGoogleCreds = !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
   const hasAdminConfig = !!process.env.FIREBASE_ADMIN_SDK_CONFIG;
+  
+  // Application Default Credentials 확인
+  const hasADC = !!(
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+    process.env.GCLOUD_PROJECT ||
+    process.env.GCP_PROJECT ||
+    process.env.GOOGLE_CLOUD_PROJECT
+  );
+  
+  // Firebase Admin SDK가 이미 초기화되었는지 확인
+  let isFirebaseInitialized = false;
+  try {
+    const { getFirebaseStatus } = require('@/lib/firebase/admin');
+    const status = getFirebaseStatus();
+    isFirebaseInitialized = status.initialized && status.mode !== 'mock';
+  } catch (error) {
+    // Firebase admin 모듈 로드 실패는 무시
+  }
 
-  return hasServiceAccount || hasGoogleCreds || hasAdminConfig;
+  const hasConfig = hasServiceAccount || hasBase64ServiceAccount || hasGoogleCreds || hasAdminConfig || hasADC || isFirebaseInitialized;
+  
+  console.log('[DataSourceFactory] Firebase config check:', {
+    hasServiceAccount,
+    hasBase64ServiceAccount,
+    hasGoogleCreds,
+    hasAdminConfig,
+    hasADC,
+    isFirebaseInitialized,
+    result: hasConfig
+  });
+
+  return hasConfig;
 }
 
 // 환경 확인
@@ -53,7 +91,11 @@ export function createDataSource(options?: Partial<DataSourceOptions>): DataSour
   // 데이터 소스 결정 로직
   let useFirebase = false;
 
-  if (isProduction() && !isDevModeForced() && hasValidFirebaseConfig()) {
+  // Vercel 환경이면서 Firebase 설정이 있으면 무조건 Firebase 사용
+  if (process.env.VERCEL && hasValidFirebaseConfig()) {
+    console.log('[DataSourceFactory] Vercel environment detected with Firebase config - forcing Firebase');
+    useFirebase = true;
+  } else if (isProduction() && !isDevModeForced() && hasValidFirebaseConfig()) {
     useFirebase = true;
   }
 

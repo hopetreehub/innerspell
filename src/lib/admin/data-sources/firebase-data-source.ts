@@ -10,32 +10,67 @@ import {
   DataSourceOptions
 } from '../types/data-source';
 import { firestore } from '@/lib/firebase/admin';
-import { getDatabase } from 'firebase-admin/database';
 import { FieldValue } from 'firebase-admin/firestore';
 
 export class FirebaseDataSource extends BaseDataSource {
   private db: FirebaseFirestore.Firestore;
-  private realtimeDb: any;
+  private connectionCheckInterval?: NodeJS.Timeout;
 
   constructor(options: DataSourceOptions) {
     super(options);
     this.db = firestore;
     
     try {
-      this.realtimeDb = getDatabase();
       this.connected = true;
+      
+      // 연결 상태 확인 시작
+      this.startConnectionMonitoring();
+      
+      console.log('[FirebaseDataSource] Initialized successfully (Firestore only)');
     } catch (error) {
       this.setError(error as Error);
       this.connected = false;
+      console.error('[FirebaseDataSource] Initialization failed:', error);
+    }
+  }
+  
+  private async startConnectionMonitoring() {
+    // 초기 연결 확인
+    await this.checkConnection();
+    
+    // 주기적 연결 확인 (5분마다)
+    this.connectionCheckInterval = setInterval(async () => {
+      await this.checkConnection();
+    }, 5 * 60 * 1000);
+  }
+  
+  private async checkConnection() {
+    try {
+      // Firestore 연결 테스트
+      const testQuery = await this.db.collection('_health_check')
+        .limit(1)
+        .get();
+      
+      this.connected = true;
+      console.log('[FirebaseDataSource] Connection healthy');
+    } catch (error) {
+      this.connected = false;
+      this.setError(error as Error);
+      console.error('[FirebaseDataSource] Connection check failed:', error);
+    }
+  }
+  
+  destroy() {
+    if (this.connectionCheckInterval) {
+      clearInterval(this.connectionCheckInterval);
     }
   }
 
   async getAdminStats(): Promise<AdminStats> {
     try {
-      // 실시간 통계는 Realtime Database에서
-      const statsRef = this.realtimeDb.ref('stats/current');
-      const snapshot = await statsRef.once('value');
-      const currentStats = snapshot.val();
+      // 실시간 통계를 Firestore에서 가져오기
+      const realtimeDoc = await this.db.collection('stats').doc('realtime').get();
+      const realtimeStats = realtimeDoc.exists ? realtimeDoc.data() : null;
 
       // 사용자 수는 Firestore에서
       const usersSnapshot = await this.db.collection('users').count().get();
@@ -50,12 +85,22 @@ export class FirebaseDataSource extends BaseDataSource {
         .get();
       const activeUsers = activeUsersSnapshot.data().count;
 
+      // 오늘의 통계
+      const today = new Date().toISOString().split('T')[0];
+      const todayDoc = await this.db
+        .collection('stats')
+        .doc('daily')
+        .collection(today.substring(0, 7))
+        .doc(today)
+        .get();
+      const todayStats = todayDoc.exists ? todayDoc.data() : null;
+
       return {
         totalUsers,
         activeUsers,
-        totalReadings: currentStats?.totalReadings || 0,
-        todayReadings: currentStats?.todayReadings || 0,
-        averageSessionTime: currentStats?.averageSessionTime || 0,
+        totalReadings: realtimeStats?.totalReadings || 0,
+        todayReadings: realtimeStats?.todayReadings || todayStats?.totalReadings || 0,
+        averageSessionTime: todayStats?.averageSessionTime || 0,
         lastUpdated: new Date()
       };
     } catch (error) {
@@ -184,37 +229,48 @@ export class FirebaseDataSource extends BaseDataSource {
 
   async getRealtimeData(): Promise<RealtimeData> {
     try {
-      // 활성 사용자 조회
-      const activeUsersRef = this.realtimeDb.ref('monitoring/activeUsers');
-      const activeUsersSnapshot = await activeUsersRef.once('value');
-      const activeUsersData = activeUsersSnapshot.val() || {};
+      // 활성 사용자 조회 (최근 5분 이내 활동)
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      const activeUsersSnapshot = await this.db
+        .collection('users')
+        .where('lastActivity', '>', fiveMinutesAgo)
+        .orderBy('lastActivity', 'desc')
+        .limit(100)
+        .get();
 
-      const activeUsers = Object.entries(activeUsersData).map(([userId, data]: [string, any]) => ({
-        userId,
-        email: data.email,
-        lastActivity: new Date(data.lastActivity),
-        status: data.status as 'active' | 'idle',
-        currentPage: data.currentPage
-      }));
+      const activeUsers = activeUsersSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          userId: doc.id,
+          email: data.email || 'unknown',
+          lastActivity: data.lastActivity?.toDate() || new Date(),
+          status: (Date.now() - (data.lastActivity?.toDate()?.getTime() || 0) < 60000) ? 'active' as const : 'idle' as const,
+          currentPage: data.currentPage || '/'
+        };
+      });
 
-      // 오늘 통계
-      const todayStatsRef = this.realtimeDb.ref('monitoring/todayStats');
-      const todayStatsSnapshot = await todayStatsRef.once('value');
-      const todayStats = todayStatsSnapshot.val() || {
-        readings: 0,
-        newUsers: 0,
-        peakConcurrentUsers: 0
-      };
+      // 실시간 통계 가져오기
+      const realtimeDoc = await this.db.collection('stats').doc('realtime').get();
+      const realtimeData = realtimeDoc.exists ? realtimeDoc.data() : null;
 
-      // 현재 진행 중인 리딩 수
-      const currentReadingsRef = this.realtimeDb.ref('monitoring/currentReadings');
-      const currentReadingsSnapshot = await currentReadingsRef.once('value');
-      const currentReadings = currentReadingsSnapshot.val() || 0;
+      // 오늘의 통계
+      const today = new Date().toISOString().split('T')[0];
+      const todayDoc = await this.db
+        .collection('stats')
+        .doc('daily')
+        .collection(today.substring(0, 7))
+        .doc(today)
+        .get();
+      const todayData = todayDoc.exists ? todayDoc.data() : null;
 
       return {
         activeUsers,
-        currentReadings,
-        todayStats
+        currentReadings: realtimeData?.currentReadings || 0,
+        todayStats: {
+          readings: realtimeData?.todayReadings || todayData?.totalReadings || 0,
+          newUsers: realtimeData?.todayNewUsers || todayData?.newUsers || 0,
+          peakConcurrentUsers: activeUsers.length
+        }
       };
     } catch (error) {
       this.setError(error as Error);
@@ -223,13 +279,9 @@ export class FirebaseDataSource extends BaseDataSource {
   }
 
   subscribeToRealtimeUpdates(callback: (data: RealtimeData) => void): () => void {
-    const refs = {
-      activeUsers: this.realtimeDb.ref('monitoring/activeUsers'),
-      todayStats: this.realtimeDb.ref('monitoring/todayStats'),
-      currentReadings: this.realtimeDb.ref('monitoring/currentReadings')
-    };
-
-    const listeners: any[] = [];
+    // Firestore는 실시간 리스너를 지원하지만, 
+    // 비용 절감을 위해 폴링 방식으로 구현
+    let intervalId: NodeJS.Timeout | null = null;
 
     // 데이터 수집 함수
     const collectAndCallback = async () => {
@@ -241,19 +293,17 @@ export class FirebaseDataSource extends BaseDataSource {
       }
     };
 
-    // 각 ref에 리스너 등록
-    Object.entries(refs).forEach(([key, ref]) => {
-      const listener = ref.on('value', () => {
-        collectAndCallback();
-      });
-      listeners.push({ ref, listener });
-    });
+    // 초기 데이터 로드
+    collectAndCallback();
+
+    // 30초마다 업데이트 (실시간 대신 주기적 업데이트)
+    intervalId = setInterval(collectAndCallback, 30000);
 
     // 클린업 함수 반환
     return () => {
-      listeners.forEach(({ ref, listener }) => {
-        ref.off('value', listener);
-      });
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
     };
   }
 

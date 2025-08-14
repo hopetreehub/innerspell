@@ -1,5 +1,54 @@
 {
-  "public": true,
+  "public": false,
   "framework": "nextjs",
-  "regions": ["iad1"]
+  "regions": ["icn1"],
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "functions": {
+    "src/app/api/admin/setup-firebase/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/admin/firebase-status/route.ts": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "FORCE_DATA_SOURCE": "firebase"
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/health",
+      "destination": "/api/admin/firebase-status"
+    }
+  ]
 }

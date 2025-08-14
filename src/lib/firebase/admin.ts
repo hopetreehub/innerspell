@@ -23,12 +23,42 @@ if (!admin.apps.length) {
       if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY && 
           !process.env.FIREBASE_SERVICE_ACCOUNT_KEY.includes('여기에')) {
         try {
-          const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+          let serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+          
+          // Base64 디코딩 지원
+          if (serviceAccountKey.startsWith('ey') || !serviceAccountKey.includes('{')) {
+            console.log('🔐 Decoding Base64 encoded service account key...');
+            serviceAccountKey = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
+          }
+          
+          // JSON 파싱
+          const serviceAccount = JSON.parse(serviceAccountKey);
+          
+          // 필수 필드 검증
+          if (!serviceAccount.project_id || !serviceAccount.private_key || !serviceAccount.client_email) {
+            throw new Error('Invalid service account key: missing required fields');
+          }
+          
           credential = admin.credential.cert(serviceAccount);
           console.log('✅ Using Firebase service account from FIREBASE_SERVICE_ACCOUNT_KEY');
+          console.log('📌 Project ID:', serviceAccount.project_id);
         } catch (parseError) {
           console.error('❌ Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:', parseError);
           console.log('🔄 Falling back to mock mode');
+          credential = admin.credential.applicationDefault();
+        }
+      } else if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64) {
+        // Base64로 인코딩된 서비스 계정 키 지원
+        try {
+          console.log('🔐 Using Base64 encoded service account key...');
+          const decoded = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64, 'base64').toString('utf-8');
+          const serviceAccount = JSON.parse(decoded);
+          
+          credential = admin.credential.cert(serviceAccount);
+          console.log('✅ Using Firebase service account from FIREBASE_SERVICE_ACCOUNT_KEY_BASE64');
+          console.log('📌 Project ID:', serviceAccount.project_id);
+        } catch (error) {
+          console.error('❌ Failed to decode Base64 service account key:', error);
           credential = admin.credential.applicationDefault();
         }
       } else {
@@ -77,6 +107,46 @@ export function initAdmin() {
   if (!admin.apps.length) {
     throw new Error('Firebase Admin not initialized');
   }
+}
+
+// Firebase 연결 상태 확인
+export async function checkFirebaseConnection(): Promise<{
+  connected: boolean;
+  projectId?: string;
+  error?: string;
+}> {
+  try {
+    // Firestore 연결 테스트
+    const testDoc = await firestore.collection('_connection_test').doc('test').get();
+    
+    return {
+      connected: true,
+      projectId: admin.app().options.projectId
+    };
+  } catch (error) {
+    console.error('Firebase connection check failed:', error);
+    return {
+      connected: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+}
+
+// Firebase 서비스 상태 확인
+export function getFirebaseStatus() {
+  if (!admin.apps.length) {
+    return {
+      initialized: false,
+      mode: 'not-initialized'
+    };
+  }
+  
+  return {
+    initialized: true,
+    mode: isDevelopmentMode ? 'mock' : 'production',
+    projectId: admin.app().options.projectId,
+    hasServiceAccount: !!(process.env.FIREBASE_SERVICE_ACCOUNT_KEY || process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64)
+  };
 }
 
 export { admin, firestore, db, FieldValue, auth };
