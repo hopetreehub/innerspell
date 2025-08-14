@@ -6,6 +6,49 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
+// GET: 블로그 포스트 조회
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  try {
+    const { id } = await params;
+    console.log(`📖 GET /api/blog/posts/${id} - 포스트 조회 요청`);
+    
+    const isDevelopment = process.env.NEXT_PUBLIC_ENABLE_FILE_STORAGE === 'true' || process.env.NODE_ENV === 'development';
+    
+    if (!isDevelopment) {
+      return NextResponse.json(
+        { error: 'File storage is not enabled' },
+        { status: 400 }
+      );
+    }
+
+    // 블로그 포스트 데이터 읽기
+    const posts = await readJSON<BlogPost[]>('blog-posts.json') || [];
+    
+    const post = posts.find(post => post.id === id || post.slug === id);
+    if (!post) {
+      return NextResponse.json(
+        { error: '포스트를 찾을 수 없습니다.' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      post: post
+    });
+
+  } catch (error) {
+    console.error('❌ 포스트 조회 오류:', error);
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: error instanceof Error ? error.message : '포스트 조회에 실패했습니다.' 
+      },
+      { status: 500 }
+    );
+  }
+}
+
 // PUT: 블로그 포스트 수정
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
