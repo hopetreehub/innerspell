@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-08-14T02:02:05.778Z",
+  "tests": [
+    {
+      "test": "Test 1: /signin → /sign-in redirect",
+      "originalUrl": "http://localhost:4000/signin",
+      "finalUrl": "http://0.0.0.0:4000/sign-in",
+      "success": true,
+      "screenshot": "01-signin-redirect-test.png"
+    },
+    {
+      "test": "Test 2: /signin?redirect=/reading → /sign-in?redirect=/reading",
+      "originalUrl": "http://localhost:4000/signin?redirect=/reading",
+      "finalUrl": "http://0.0.0.0:4000/sign-in?redirect=%2Freading",
+      "success": true,
+      "screenshot": "02-signin-with-query-redirect-test.png"
+    },
+    {
+      "test": "Test 3: Multiple query parameters preservation",
+      "originalUrl": "http://localhost:4000/signin?redirect=/dashboard&from=homepage",
+      "finalUrl": "http://0.0.0.0:4000/sign-in?redirect=%2Fdashboard&from=homepage",
+      "success": true,
+      "screenshot": "03-signin-multiple-query-redirect-test.png"
+    }
+  ]
+}

@@ -44,7 +44,7 @@ import {
   getEnvironmentInfo,
   getAdminPerformanceMetrics,
   getSystemAlerts 
-} from '@/actions/usageStatsActions';
+} from '@/actions/realtimeMonitoringActions';
 import { useActivityStream } from '@/hooks/useActivityStream';
 
 export default function RealTimeMonitoringDashboard() {
