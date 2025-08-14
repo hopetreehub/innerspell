@@ -174,13 +174,50 @@ export class MockDataSource extends BaseDataSource {
 
   async getRealtimeData(): Promise<RealtimeData> {
     const activeSessions = this.sessionManager.getActiveSessions();
+    
+    // 더 현실적인 활성 사용자 데이터 생성
+    const mockActiveUsers: ActiveUser[] = [
+      {
+        userId: 'user-demo-001',
+        email: 'demo@innerspell.com',
+        lastActivity: new Date(Date.now() - 30000), // 30초 전
+        status: 'active',
+        currentPage: '/tarot/new-reading'
+      },
+      {
+        userId: 'user-demo-002',
+        email: 'test@innerspell.com',
+        lastActivity: new Date(Date.now() - 60000), // 1분 전
+        status: 'active',
+        currentPage: '/dream'
+      },
+      {
+        userId: 'user-demo-003',
+        email: 'visitor@innerspell.com',
+        lastActivity: new Date(Date.now() - 120000), // 2분 전
+        status: 'idle',
+        currentPage: '/blog'
+      }
+    ];
+    
+    // 세션이 있으면 실제 세션 데이터 사용, 없으면 목 데이터 사용
+    const activeUsers = activeSessions.length > 0 
+      ? activeSessions.map(session => ({
+          userId: session.userId,
+          email: `user${session.userId.slice(-4)}@example.com`,
+          lastActivity: new Date(session.lastActivity),
+          status: 'active' as const,
+          currentPage: session.currentPage
+        }))
+      : mockActiveUsers;
+    
     return {
-      activeUsers: activeSessions,
-      currentReadings: Math.floor(Math.random() * 5) + 1,
+      activeUsers,
+      currentReadings: 3 + Math.floor(Math.random() * 3),
       todayStats: {
-        readings: 47 + Math.floor(Math.random() * 10),
-        newUsers: 8,
-        peakConcurrentUsers: 23
+        readings: 142 + Math.floor(Math.random() * 10),
+        newUsers: 12,
+        peakConcurrentUsers: 28
       }
     };
   }

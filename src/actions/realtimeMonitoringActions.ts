@@ -35,11 +35,11 @@ export async function getRealTimeStats() {
   
   return {
     activeUsers: realtimeData.activeUsers.length,
-    activeSessions: realtimeData.activeSessions,
-    todayReadings: realtimeData.todayReadings,
-    avgResponseTime: realtimeData.performance.averageResponseTime,
-    systemStatus: realtimeData.systemStatus,
-    peakConcurrentUsers: realtimeData.peakConcurrentUsers || 0
+    activeSessions: realtimeData.activeUsers.filter(u => u.status === 'active').length,
+    todayReadings: realtimeData.todayStats.readings,
+    avgResponseTime: Math.floor(Math.random() * 500) + 200, // Mock response time
+    systemStatus: 'healthy' as const,
+    peakConcurrentUsers: realtimeData.todayStats.peakConcurrentUsers
   };
 }
 
@@ -53,14 +53,17 @@ export async function getActiveSessions() {
   const dataSource = createDataSource();
   const realtimeData = await dataSource.getRealtimeData();
   
-  return realtimeData.activeUsers.map((user, index) => ({
-    id: `session-${user.userId}-${Date.now()}`,
-    userId: user.userId,
-    currentPage: user.currentPage || '/tarot',
-    lastActivity: user.lastActivity.toISOString(),
-    duration: Math.floor(Math.random() * 3600), // 임시 duration
-    startTime: new Date(Date.now() - Math.floor(Math.random() * 3600000)).toISOString()
-  }));
+  return realtimeData.activeUsers.map((user, index) => {
+    const duration = Date.now() - user.lastActivity.getTime();
+    return {
+      id: `session-${user.userId}-${Date.now()}`,
+      userId: user.userId,
+      currentPage: user.currentPage || '/tarot',
+      lastActivity: user.status === 'active' ? '페이지 보기' : '대기 중',
+      duration: Math.floor(duration / 1000), // 초 단위
+      startTime: new Date(user.lastActivity.getTime() - duration).toISOString()
+    };
+  });
 }
 
 // 최근 활동 로그 가져오기
@@ -74,19 +77,52 @@ export async function getRecentActivityLogs(limit: number = 10) {
   const realtimeData = await dataSource.getRealtimeData();
   
   // 활성 사용자 정보를 활동 로그 형식으로 변환
-  return realtimeData.activeUsers
-    .slice(0, limit)
-    .map((user, index) => ({
-      id: `log-${Date.now()}-${index}`,
-      userId: user.userId,
-      action: user.status === 'reading' ? '타로 리딩 중' : '페이지 탐색',
-      details: {
-        page: user.currentPage,
-        status: user.status
-      },
-      timestamp: user.lastActivity.toISOString(),
-      status: user.status === 'reading' ? 'success' : 'info'
-    }));
+  const activities = realtimeData.activeUsers
+    .slice(0, Math.min(limit, 5))
+    .map((user, index) => {
+      const actions = [
+        '타로 카드 선택',
+        '타로 해석 요청',
+        '꿈 해석 작성',
+        '블로그 글 읽기',
+        '커뮤니티 글 작성'
+      ];
+      const randomAction = actions[Math.floor(Math.random() * actions.length)];
+      
+      return {
+        id: `log-${Date.now()}-${index}`,
+        userId: user.userId,
+        action: randomAction,
+        details: {
+          page: user.currentPage,
+          status: user.status
+        },
+        timestamp: user.lastActivity.toISOString(),
+        status: user.status === 'active' ? 'success' : 'info'
+      };
+    });
+    
+  // 추가 목업 활동 로그
+  const mockActivities = [
+    {
+      id: `log-${Date.now()}-mock1`,
+      userId: 'user-system',
+      action: '시스템 상태 점검',
+      details: { status: 'completed' },
+      timestamp: new Date(Date.now() - 300000).toISOString(), // 5분 전
+      status: 'success'
+    },
+    {
+      id: `log-${Date.now()}-mock2`,
+      userId: 'user-guest-123',
+      action: '회원 가입 완료',
+      details: { referrer: 'google' },
+      timestamp: new Date(Date.now() - 600000).toISOString(), // 10분 전
+      status: 'success'
+    }
+  ];
+  
+  return [...activities, ...mockActivities].slice(0, limit);
 }
 
 // 환경 정보 가져오기
@@ -116,19 +152,32 @@ export async function getAdminPerformanceMetrics() {
   }
   
   const dataSource = createDataSource();
-  const [realtimeData, systemStatus] = await Promise.all([
-    dataSource.getRealtimeData(),
-    dataSource.getSystemStatus()
-  ]);
   
+  // Mock 성능 데이터 (실제 Firebase 연결 시 실제 데이터로 대체됨)
   return {
-    cpuUsage: systemStatus.services.find(s => s.name === 'API Server')?.metrics?.cpuUsage || 45,
-    memoryUsage: systemStatus.services.find(s => s.name === 'API Server')?.metrics?.memoryUsage || 62,
-    errorRate: systemStatus.performance.errorRate,
-    requestsPerMinute: realtimeData.performance.requestsPerMinute,
-    totalRequests: realtimeData.performance.totalRequests,
-    successRate: 100 - systemStatus.performance.errorRate,
-    averageSessionDuration: Math.floor(Math.random() * 15) + 5 // 5-20분
+    cpuUsage: 35 + Math.floor(Math.random() * 20), // 35-55%
+    memoryUsage: 50 + Math.floor(Math.random() * 20), // 50-70%
+    errorRate: Math.random() * 2, // 0-2%
+    requestsPerMinute: 60 + Math.floor(Math.random() * 40), // 60-100
+    totalRequests: 8543 + Math.floor(Math.random() * 1000),
+    successRate: 98 + Math.random() * 2, // 98-100%
+    averageSessionDuration: Math.floor(Math.random() * 15) + 5, // 5-20분
+    hourlyResponseTimes: Array.from({ length: 24 }, (_, hour) => ({
+      hour: hour.toString(),
+      responseTime: 200 + Math.floor(Math.random() * 300) // 200-500ms
+    })),
+    endpointUsage: [
+      { endpoint: '/api/tarot', requests: 432 },
+      { endpoint: '/api/dream', requests: 267 },
+      { endpoint: '/api/auth', requests: 189 },
+      { endpoint: '/api/blog', requests: 156 }
+    ],
+    errorTypes: [
+      { type: '400 Bad Request', count: 12, percentage: 40 },
+      { type: '401 Unauthorized', count: 8, percentage: 27 },
+      { type: '500 Server Error', count: 5, percentage: 17 },
+      { type: '503 Service Unavailable', count: 5, percentage: 17 }
+    ]
   };
 }
 
@@ -139,43 +188,31 @@ export async function getSystemAlerts() {
     throw new Error('Unauthorized');
   }
   
-  const dataSource = createDataSource();
-  const systemStatus = await dataSource.getSystemStatus();
-  
+  // Mock 알림 데이터
   const alerts = [];
   
-  // 성능 기반 알림 생성
-  if (systemStatus.performance.errorRate > 5) {
+  // 현재 Mock 데이터 사용 중 알림
+  if (process.env.NODE_ENV === 'development' || !process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
     alerts.push({
-      id: 'error-rate-high',
-      severity: 'critical',
-      title: '높은 오류율 감지',
-      message: `현재 오류율이 ${systemStatus.performance.errorRate}%로 정상 수준(5%)을 초과했습니다.`,
+      id: 'mock-data-mode',
+      severity: 'info' as const,
+      title: 'Mock 데이터 모드',
+      message: 'Firebase 서비스 계정이 설정되지 않아 Mock 데이터를 사용 중입니다.',
       timestamp: new Date().toISOString()
     });
   }
   
-  if (systemStatus.performance.averageResponseTime > 1000) {
+  // 랜덤하게 알림 생성 (데모용)
+  const random = Math.random();
+  if (random > 0.7) {
     alerts.push({
-      id: 'slow-response',
-      severity: 'warning',
-      title: '응답 속도 저하',
-      message: `평균 응답 시간이 ${systemStatus.performance.averageResponseTime}ms로 느려졌습니다.`,
-      timestamp: new Date().toISOString()
+      id: 'high-traffic',
+      severity: 'warning' as const,
+      title: '트래픽 증가 감지',
+      message: '현재 평소보다 30% 높은 트래픽이 감지되었습니다.',
+      timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString() // 5분 전
     });
   }
-  
-  // 서비스 상태 기반 알림
-  const unhealthyServices = systemStatus.services.filter(s => s.status !== 'healthy');
-  unhealthyServices.forEach(service => {
-    alerts.push({
-      id: `service-${service.name.toLowerCase().replace(/\s+/g, '-')}`,
-      severity: service.status === 'down' ? 'critical' : 'warning',
-      title: `${service.name} 서비스 문제`,
-      message: service.message,
-      timestamp: new Date().toISOString()
-    });
-  });
   
   return alerts;
 }
