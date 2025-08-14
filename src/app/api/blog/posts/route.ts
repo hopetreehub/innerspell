@@ -123,10 +123,14 @@ export async function GET(request: NextRequest) {
       new Date(a.createdAt || a.publishedAt || 0).getTime()
     );
 
-    // author 필드 정규화
+    // author 필드 정규화 및 날짜 필드 확인
     const normalizedPosts = filteredPosts.map(post => ({
       ...post,
-      author: typeof post.author === 'object' ? post.author.name : post.author
+      author: typeof post.author === 'object' ? post.author.name : post.author,
+      // 날짜 필드가 있는지 확인하고, 없으면 publishedAt을 createdAt으로 사용
+      createdAt: post.createdAt || post.publishedAt || new Date(),
+      publishedAt: post.publishedAt || post.createdAt || new Date(),
+      updatedAt: post.updatedAt || post.publishedAt || post.createdAt || new Date()
     }));
 
     const result = {

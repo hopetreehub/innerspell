@@ -535,7 +535,12 @@ export function BlogManagement() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {format(new Date(post.createdAt), 'yyyy-MM-dd', { locale: ko })}
+                      {post.createdAt ? 
+                        format(new Date(post.createdAt), 'yyyy-MM-dd', { locale: ko }) : 
+                        post.publishedAt ? 
+                          format(new Date(post.publishedAt), 'yyyy-MM-dd', { locale: ko }) : 
+                          '-'
+                      }
                     </TableCell>
                     <TableCell>{post.views || 0}</TableCell>
                     <TableCell className="text-right">
