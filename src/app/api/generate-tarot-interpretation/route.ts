@@ -62,7 +62,8 @@ export async function POST(request: NextRequest) {
       cardInterpretations: body.cardInterpretations,
       isGuestUser: body.isGuestUser || false,
       spreadId: body.spreadId,
-      styleId: body.styleId
+      styleId: body.styleId,
+      numCards: body.numCards
     });
 
     console.log('[API] Interpretation generated successfully, length:', result.interpretation.length);

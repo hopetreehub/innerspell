@@ -55,7 +55,8 @@ export async function saveUserReading(
         spreadNumCards,
         drawnCards: enrichedCards,
         interpretationText,
-        interpretationStyle: (input as any).interpretationStyle // 해석 스타일 정보도 저장
+        interpretationStyle: (input as any).interpretationStyle, // 해석 스타일 정보도 저장
+        spreadId: (input as any).spreadId // 스프레드 ID도 저장
       });
       
       if (result.success) {

@@ -412,6 +412,8 @@ export function TarotReadingClient() {
         cardSpread: selectedSpread.name,
         cardInterpretations: cardInterpretationsText,
         isGuestUser: !user,
+        spreadId: selectedSpread.id,
+        numCards: selectedSpread.numCards
       });
       setInterpretation(result.interpretation);
       setStage('interpretation_ready');
@@ -481,7 +483,9 @@ export function TarotReadingClient() {
         spreadNumCards: selectedSpread.numCards,
         drawnCards: drawnCardsToSave,
         interpretationText: interpretation,
-      });
+        spreadId: selectedSpread.id,
+        interpretationStyle: interpretationMethod
+      } as any);
 
       if (!result) {
         throw new Error('저장 함수가 결과를 반환하지 않았습니다.');

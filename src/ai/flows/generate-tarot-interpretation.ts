@@ -16,6 +16,7 @@ import { getProviderConfig } from '@/lib/ai-utils';
 import { getProviderWithFallback } from '@/ai/services/ai-provider-fallback';
 import { getCachedInterpretation, setCachedInterpretation } from '@/ai/services/ai-cache-service';
 import { retryAICall } from '@/ai/services/ai-retry-service';
+import { enhancePromptWithSpreadInfo } from '@/ai/prompts/spread-specific-prompts';
 
 
 const GenerateTarotInterpretationInputSchema = z.object({
@@ -23,6 +24,8 @@ const GenerateTarotInterpretationInputSchema = z.object({
   cardSpread: z.string().describe('The selected tarot card spread (e.g., 1-card, 3-card, custom). Also includes card position names if defined for the spread.'),
   cardInterpretations: z.string().describe('The interpretation of each card in the spread, including its name, orientation (upright/reversed), and potentially its position in the spread. This is a single string containing all card details.'),
   isGuestUser: z.boolean().optional().describe('Whether the user is a guest (not logged in). If true, provide a shorter, teaser interpretation.'),
+  spreadId: z.string().optional().describe('The ID of the spread being used (e.g., single-spark, trinity-view, celtic-cross)'),
+  numCards: z.number().optional().describe('The number of cards in the spread'),
 });
 export type GenerateTarotInterpretationInput = z.infer<typeof GenerateTarotInterpretationInputSchema>;
 
@@ -111,11 +114,18 @@ const generateTarotInterpretationFlow = async (flowInput: GenerateTarotInterpret
       
       const providerConfig = getProviderConfig(model);
       
+      // Enhance prompt with spread-specific instructions
+      const enhancedPromptTemplate = enhancePromptWithSpreadInfo(
+        promptTemplate,
+        input.spreadId || 'default',
+        input.numCards || 3
+      );
+      
       // Configure prompt based on provider capabilities
       const promptConfig: any = {
         name: 'generateTarotInterpretationRuntimePrompt', 
         input: { schema: GenerateTarotInterpretationInputSchema }, 
-        prompt: promptTemplate, 
+        prompt: enhancedPromptTemplate, 
         model: model,
       };
       
