@@ -56,7 +56,10 @@ export default function TarotHistoryPage() {
   }, [user]);
 
   useEffect(() => {
-    filterAndSortReadings();
+    // readings가 배열인지 확인 후 필터링 실행
+    if (Array.isArray(readings)) {
+      filterAndSortReadings();
+    }
   }, [readings, searchQuery, filterType, sortOrder]);
 
   const loadReadings = async () => {
@@ -66,15 +69,28 @@ export default function TarotHistoryPage() {
     try {
       const isDevelopment = process.env.NODE_ENV === 'development';
       
+      let result;
       if (isDevelopment) {
-        const result = await getUserReadings(user.uid);
+        result = await getUserReadings(user.uid);
+      } else {
+        result = await getUserReadingsClient(user.uid);
+      }
+      
+      // 결과가 배열인지 확인
+      if (Array.isArray(result)) {
         setReadings(result);
       } else {
-        const result = await getUserReadingsClient(user.uid);
-        setReadings(result);
+        console.error('getUserReadings returned non-array:', result);
+        setReadings([]);
+        toast({
+          variant: 'destructive',
+          title: '데이터 오류',
+          description: '타로리딩 데이터 형식이 올바르지 않습니다.',
+        });
       }
     } catch (error) {
       console.error('Failed to load readings:', error);
+      setReadings([]); // 안전한 기본값
       toast({
         variant: 'destructive',
         title: '오류',
@@ -86,6 +102,13 @@ export default function TarotHistoryPage() {
   };
 
   const filterAndSortReadings = () => {
+    // 방어적 프로그래밍: readings가 배열인지 확인
+    if (!Array.isArray(readings)) {
+      console.warn('readings is not an array:', readings);
+      setFilteredReadings([]);
+      return;
+    }
+
     let filtered = [...readings];
 
     // 검색 필터
