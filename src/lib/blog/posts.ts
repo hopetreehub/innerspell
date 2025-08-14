@@ -8,6 +8,7 @@ import {
 
 export interface BlogPost {
   id: string;
+  slug: string;
   title: string;
   excerpt: string;
   content: string;
@@ -89,6 +90,7 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
 export const mockPosts: BlogPost[] = [
   {
     id: 'tarot-basics-2025',
+    slug: 'tarot-basics-2025',
     title: '타로카드 기초 가이드 2025',
     excerpt: '타로카드의 기본 개념부터 실제 리딩 방법까지 완벽 정리',
     content: `# 타로카드 기초 가이드 2025: AI 시대의 직관력 개발
@@ -192,6 +194,7 @@ InnerSpell과 함께 타로의 지혜를 탐험하고, 당신만의 내면의 �
   },
   {
     id: 'meditation-guide-2025',
+    slug: 'meditation-guide-2025',
     title: '명상 입문 가이드',
     excerpt: '초보자를 위한 명상 기법과 실습 방법',
     content: `# 명상 입문 가이드: 2025년 AI 시대의 마음챙김 혁명
@@ -346,6 +349,7 @@ A: 네, 특히 초보자에게는 가이드 명상이 도움됩니다. InnerSpel
   },
   {
     id: 'dream-interpretation-basics',
+    slug: 'dream-interpretation-basics',
     title: '꿈해몽 기초 해석법',
     excerpt: '꿈의 상징과 의미를 이해하는 방법',
     content: `# 꿈해몽 기초 해석법: 무의식의 메시지를 읽는 현대적 접근
@@ -534,6 +538,7 @@ InnerSpell의 AI 꿈 해석 서비스와 함께 당신의 꿈이 전하는 메�
   },
   {
     id: 'tarot-spread-complete-guide',
+    slug: 'tarot-spread-complete-guide',
     title: '타로 스프레드 완벽 가이드: 켈틱 크로스부터 쓰리카드까지',
     excerpt: '효과적인 타로 리딩을 위한 다양한 스프레드 방법을 상세하게 알아봅니다.',
     content: `# 타로 스프레드 완벽 가이드: 켈틱 크로스부터 쓰리카드까지
@@ -776,6 +781,7 @@ A: 점핑 카드(jumping card)는 특별한 메시지일 수 있습니다. 리�
   },
   {
     id: 'spiritual-productivity-2025',
+    slug: 'spiritual-productivity-2025',
     title: '영성과 생산성의 조화: 2025년 목표 달성 전략',
     excerpt: '영적 수행과 현실적 목표 달성을 동시에 이루는 혁신적인 방법론',
     content: `# 영성과 생산성의 조화: 2025년 목표 달성 전략
@@ -1004,6 +1010,7 @@ A: 먼저 개인적 변화로 보여주세요. 그 다음 '마음챙김', '에�
   },
   {
     id: 'ai-tarot-integration',
+    slug: 'ai-tarot-integration',
     title: 'AI 시대의 타로: 직관과 기술의 완벽한 융합',
     excerpt: 'AI 기술을 활용한 타로 해석의 새로운 가능성과 한계점을 탐구합니다.',
     content: `# AI 시대의 타로: 직관과 기술의 완벽한 융합
@@ -1152,6 +1159,7 @@ AI 시대의 타로는 **고대의 지혜와 미래의 기술이 만나는 경�
   },
   {
     id: 'dream-journal-power',
+    slug: 'dream-journal-power',
     title: '꿈 일기의 힘: 무의식과 소통하는 가장 효과적인 방법',
     excerpt: '꿈 일기 작성법과 해석 기법을 통해 내면의 지혜에 접근하는 방법',
     content: `# 꿈 일기의 힘: 무의식과 소통하는 가장 효과적인 방법
@@ -1391,6 +1399,7 @@ A: 처음에는 핵심만 간단히, 익숙해지면 점차 상세하게 쓰세�
   },
   {
     id: 'tarot-2025-new-year-guide',
+    slug: 'tarot-2025-new-year-guide',
     title: '2025년 타로 신년 운세: 새해 목표 달성을 위한 완벽 가이드',
     excerpt: '새해를 맞아 타로 카드로 2025년 운세를 확인하고, 개인별 맞춤 목표 설정 방법과 성취 전략을 타로의 지혜로 알아보세요.',
     content: `# 2025년 타로 신년 운세 가이드
@@ -1439,6 +1448,7 @@ A: 처음에는 핵심만 간단히, 익숙해지면 점차 상세하게 쓰세�
   },
   {
     id: 'ai-tarot-future-guide',
+    slug: 'ai-tarot-future-guide',
     title: 'AI 타로의 미래: 디지털 시대 영성과 전통의 만남',
     excerpt: 'AI 기술과 전통 타로가 만나 새로운 영적 경험을 창조합니다. 디지털 시대의 타로 리딩이 가져올 변화와 가능성을 탐구해보세요.',
     content: `# AI 타로의 미래: 디지털 영성의 새로운 지평
@@ -1485,6 +1495,7 @@ AI는 전통 타로를 대체하는 것이 아니라 보완하는 도구입니�
   },
   {
     id: 'dream-meaning-psychology',
+    slug: 'dream-meaning-psychology',
     title: '꿈의 심리학: 무의식이 전하는 메시지 해독법',
     excerpt: '프로이드와 융의 꿈 이론부터 현대 심리학까지, 꿈이 담고 있는 무의식의 메시지를 과학적으로 분석하고 해석하는 방법을 알아보세요.',
     content: `# 꿈의 심리학: 무의식의 언어를 읽는 법
@@ -1546,6 +1557,7 @@ AI는 전통 타로를 대체하는 것이 아니라 보완하는 도구입니�
   },
   {
     id: 'tarot-meditation-practice',
+    slug: 'tarot-meditation-practice',
     title: '타로 명상: 카드와 함께하는 내면 여행',
     excerpt: '타로 카드를 활용한 명상 기법으로 더 깊은 자기 이해와 영적 통찰을 얻으세요. 일상에서 쉽게 실천할 수 있는 타로 명상법을 소개합니다.',
     content: `# 타로 명상: 카드와 함께하는 내면 여행
@@ -1626,6 +1638,7 @@ AI는 전통 타로를 대체하는 것이 아니라 보완하는 도구입니�
   },
   {
     id: 'modern-spirituality-guide',
+    slug: 'modern-spirituality-guide',
     title: '현대인을 위한 영성 가이드: 바쁜 일상 속 영적 성장법',
     excerpt: '바쁜 현대 생활 속에서도 실천할 수 있는 영적 성장 방법들을 소개합니다. 일상에 영성을 통합하여 더 의미 있고 평화로운 삶을 살아보세요.',
     content: `# 현대인을 위한 영성 가이드
@@ -1773,6 +1786,7 @@ export const mockPostsOriginal: BlogPost[] = [
   // === 새로 추가된 SEO 최적화 블로그 글들 ===
   {
     id: 'tarot-card-meanings-complete-2025',
+    slug: 'tarot-card-meanings-complete-2025',
     title: '타로카드 의미 총정리 2025: 78장 완벽 해석 가이드 | 메이저/마이너 아르카나',
     excerpt: '타로카드 78장의 의미를 완벽 정리! 메이저 아르카나 22장과 마이너 아르카나 56장의 상세한 해석, 역방향 의미, 연애·직업·건강 운세까지 한 번에 확인하세요.',
     content: `
@@ -1919,6 +1933,7 @@ A: 네, 가능합니다. 에너지는 계속 변화하며, 질문하는 시점�
   },
   {
     id: 'dream-symbols-meaning-dictionary-2025',
+    slug: 'dream-symbols-meaning-dictionary-2025',
     title: '꿈 상징 의미 사전 2025: 100가지 꿈 해몽 완벽 가이드 | 심리학적 해석',
     excerpt: '꿈에서 자주 등장하는 100가지 상징과 그 의미를 심리학적 관점에서 해석합니다. 물, 동물, 사람, 장소별 꿈 해몽 방법을 상세히 안내합니다.',
     content: `
@@ -2167,6 +2182,7 @@ A: 꿈 해석은 절대적이지 않습니다. 개인의 경험과 상황에 따
   },
   {
     id: 'spiritual-growth-meditation-guide-2025',
+    slug: 'spiritual-growth-meditation-guide-2025',
     title: '영적 성장을 위한 명상 가이드 2025: 초보자부터 고급자까지 단계별 수행법',
     excerpt: '영적 성장을 원하는 모든 이들을 위한 완벽한 명상 가이드. 기초 호흡법부터 고급 명상 기법까지, 단계별 수행법과 실제 경험담을 제시합니다.',
     content: `
@@ -2546,6 +2562,7 @@ A: 명상으로 인해 감수성이 높아지고 자각이 증가하면서 일�
   },
   {
     id: 'tarot-love-reading-guide-2025',
+    slug: 'tarot-love-reading-guide-2025',
     title: '타로로 보는 연애운 2025: 사랑 타로 완벽 가이드 | 연애 상황별 해석법',
     excerpt: '연애와 사랑에 특화된 타로 리딩 완벽 가이드. 짝사랑, 연인 관계, 이별, 재회 등 상황별 타로 해석법과 실제 스프레드를 상세히 안내합니다.',
     content: `
@@ -2868,6 +2885,7 @@ A: 부정적인 카드도 경고나 조언의 의미입니다. 현재 상황을 
   },
   {
     id: 'tarot-beginner-complete-guide',
+    slug: 'tarot-beginner-complete-guide',
     title: '타로 입문자를 위한 완벽 가이드: 카드 선택부터 첫 리딩까지',
     excerpt: '타로에 관심이 있지만 어디서부터 시작해야 할지 모르겠다면? 이 완벽 가이드가 타로의 기초부터 실제 리딩 방법까지 차근차근 알려드립니다.',
     content: '타로 입문자를 위한 완벽한 가이드입니다. 타로의 기초부터 실제 리딩 방법까지 모든 것을 배워보세요.',
@@ -2882,6 +2900,7 @@ A: 부정적인 카드도 경고나 조언의 의미입니다. 현재 상황을 
   },
   {
     id: 'dream-interpretation-psychology-guide',
+    slug: 'dream-interpretation-psychology-guide',
     title: '꿈 해몽의 심리학적 접근: 무의식이 전하는 메시지 읽기',
     excerpt: '융과 프로이트의 꿈 이론부터 현대 심리학까지, 과학적 관점에서 바라본 꿈 해석의 모든 것. 당신의 꿈이 전하는 깊은 메시지를 발견해보세요.',
     content: '심리학적 관점에서 이해하는 꿈 해석의 모든 것을 알아보세요.',
@@ -2896,6 +2915,7 @@ A: 부정적인 카드도 경고나 조언의 의미입니다. 현재 상황을 
   },
   {
     id: 'spiritual-mindfulness-meditation-guide',
+    slug: 'spiritual-mindfulness-meditation-guide',
     title: '영성과 일상의 조화: 현대인을 위한 마음챙김 명상 실천법',
     excerpt: '바쁜 일상 속에서도 내면의 평화를 찾을 수 있는 실용적인 영성 수행법. 마음챙김 명상부터 일상 속 영성 실천까지, 현대적 관점에서 접근하는 영적 성장 가이드.',
     content: '현대인을 위한 실용적인 영성 수행법과 마음챙김 명상을 배워보세요.',
@@ -2910,6 +2930,7 @@ A: 부정적인 카드도 경고나 조언의 의미입니다. 현재 상황을 
   },
   {
     id: 'ai-tarot-reading-technology-future',
+    slug: 'ai-tarot-reading-technology-future',
     title: 'AI 타로 리딩의 혁신: 전통과 기술의 만남에서 찾는 새로운 가능성',
     excerpt: '인공지능이 타로 해석에 가져다준 변화와 기회들. 전통적 타로의 지혜와 AI 기술의 결합이 만들어내는 개인화된 영성 경험의 미래를 탐험해보세요.',
     content: 'AI 기술과 전통 타로의 만남이 가져오는 새로운 가능성을 탐험해보세요.',
@@ -2924,6 +2945,7 @@ A: 부정적인 카드도 경고나 조언의 의미입니다. 현재 상황을 
   },
   {
     id: 'tarot-beginner-guide',
+    slug: 'tarot-beginner-guide',
     title: '초보자를 위한 타로 카드 시작 가이드',
     excerpt: '타로 카드를 처음 접하는 분들을 위한 완벽한 입문 가이드입니다. 카드의 의미부터 스프레드까지 차근차근 배워보세요.',
     content: `
@@ -3026,6 +3048,7 @@ A: 카드를 비단이나 나무 상자에 보관하고, 직사광선을 피하�
   },
   {
     id: 'dream-symbols-meaning',
+    slug: 'dream-symbols-meaning',
     title: '꿈에서 자주 나타나는 상징들의 의미',
     excerpt: '꿈 속에서 나타나는 다양한 상징들이 무엇을 의미하는지 알아보세요. 물, 불, 동물 등의 상징을 해석해드립니다.',
     content: `
@@ -3155,6 +3178,7 @@ A: 이는 그리움, 미완성된 감정, 또는 그 분으로부터 받은 가�
   },
   {
     id: 'major-arcana-deep-dive',
+    slug: 'major-arcana-deep-dive',
     title: '메이저 아르카나 22장 완벽 해석',
     excerpt: '타로 카드의 핵심인 메이저 아르카나 22장의 깊은 의미를 탐구해보세요. 각 카드의 상징과 해석법을 자세히 설명합니다.',
     content: `
@@ -3324,6 +3348,7 @@ A: 카드의 기본 의미를 익히되, 개인적 직감과 카드에서 느끼
   },
   {
     id: 'meditation-spiritual-growth',
+    slug: 'meditation-spiritual-growth',
     title: '명상을 통한 영적 성장의 여정',
     excerpt: '일상 속에서 실천할 수 있는 명상법과 영적 성장을 위한 다양한 방법들을 소개합니다.',
     content: `
@@ -3531,6 +3556,7 @@ A: 명상은 내면의 고요와 자기 관찰에 집중하는 반면, 기도는
   },
   {
     id: 'tarot-goal-setting-2025',
+    slug: 'tarot-goal-setting-2025',
     title: '타로 카드로 2025년 목표 설정하는 법: AI 시대 직관적 성공 전략',
     excerpt: '새해 목표 설정에 타로의 지혜를 활용해보세요. 직관과 논리를 결합한 목표 달성 방법을 제시합니다.',
     content: `
@@ -3714,6 +3740,7 @@ A: 오히려 더 중요해졌습니다. AI가 대체할 수 없는 인간의 직
   },
   {
     id: 'dream-manifestation-techniques',
+    slug: 'dream-manifestation-techniques',
     title: '꿈 메시지를 활용한 현실 창조법: 무의식의 힘으로 목표 실현하기',
     excerpt: '밤에 꾸는 꿈이 단순한 환상이 아닙니다. 꿈 속 메시지를 해석하고 현실 창조에 활용하는 실전 기법을 알려드립니다.',
     content: `
@@ -3918,6 +3945,7 @@ A: 작은 실험부터 시작하세요. 꿈의 아이디어를 단계별로 나�
   },
   {
     id: 'spiritual-productivity-habits',
+    slug: 'spiritual-productivity-habits',
     title: '영적 성장과 생산성의 완벽한 조화: 30분 일일 루틴으로 인생 바꾸기',
     excerpt: '바쁜 현대인을 위한 영적 성장과 생산성 향상을 동시에 달성하는 실전 루틴을 소개합니다.',
     content: `

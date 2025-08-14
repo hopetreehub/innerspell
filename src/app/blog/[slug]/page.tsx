@@ -32,7 +32,7 @@ export async function generateStaticParams() {
   const params = posts
     .filter(post => post.published) // published 포스트만
     .map((post) => ({
-      slug: post.id,
+      slug: post.slug || post.id, // slug 우선, fallback으로 id
     }));
   
   console.log('generateStaticParams: Generated params for:', params.map(p => p.slug));
@@ -59,9 +59,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   
   console.log('generateMetadata: Found', posts.length, 'posts');
-  console.log('generateMetadata: Post IDs:', posts.map(p => p.id));
+  console.log('generateMetadata: Available posts:', posts.map(p => ({ id: p.id, slug: p.slug })));
   
-  const post = posts.find(p => p.id === slug);
+  const post = posts.find(p => p.slug === slug || p.id === slug); // slug로 먼저 찾고, 없으면 id로 찾기
   console.log('generateMetadata: Found post:', post ? post.title : 'NOT FOUND');
 
   if (!post) {
@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: post.excerpt,
       type: 'article',
-      url: `https://innerspell.com/blog/${slug}`,
+      url: `https://innerspell.com/blog/${post.slug || slug}`,
       images: [
         {
           url: post.image,
@@ -119,9 +119,9 @@ export default async function BlogPostPage({ params }: Props) {
   }
   
   console.log('BlogPostPage: Found', posts.length, 'posts');
-  console.log('BlogPostPage: Post IDs:', posts.map(p => p.id));
+  console.log('BlogPostPage: Available posts:', posts.map(p => ({ id: p.id, slug: p.slug })));
   
-  const post = posts.find(p => p.id === slug);
+  const post = posts.find(p => p.slug === slug || p.id === slug); // slug로 먼저 찾고, 없으면 id로 찾기
   console.log('BlogPostPage: Found post:', post ? post.title : 'NOT FOUND');
 
   if (!post) {
